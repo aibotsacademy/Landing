@@ -44,6 +44,19 @@
 </head>
 
 <body>
+
+<script>
+  (function (w,d,t,u,n,a,m) {
+    w['BablicObject'] = n;
+    w[n] = w[n] || function () {
+      (w[n].q=w[n].q||[]).push(arguments);
+    };
+    a = d.createElement(t), m = d.getElementsByTagName(t)[0];
+    a.async = 1; a.src = u; m.parentNode.insertBefore(a,m);
+  })(window, document, 'script', '//cdn.bablic.com/js/bablic.3.0.js', 'bablic');
+  bablic('init', {key: 'your-api-key'});
+</script>
+
     <!-- Spinner Start -->
     <div id="spinner"
         class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
