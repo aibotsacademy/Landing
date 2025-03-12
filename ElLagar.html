@@ -48,35 +48,6 @@
 
 <body>
 
-<script type="text/javascript">
-  (function(d, t) {
-      var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
-      v.onload = function() {
-        window.voiceflow.chat.load({
-          verify: { projectID: '67cdad774bb3f24b43613ecf' },
-          url: 'https://general-runtime.voiceflow.com',
-          versionID: 'production',
-          voice: {
-            url: "https://runtime-api.voiceflow.com"
-          }
-        });
-      }
-      v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
-  })(document, 'script');
-</script>
-
-<script>
-  (function (w,d,t,u,n,a,m) {
-    w['BablicObject'] = n;
-    w[n] = w[n] || function () {
-      (w[n].q=w[n].q||[]).push(arguments);
-    };
-    a = d.createElement(t), m = d.getElementsByTagName(t)[0];
-    a.async = 1; a.src = u; m.parentNode.insertBefore(a,m);
-  })(window, document, 'script', '//cdn.bablic.com/js/bablic.3.0.js', 'bablic');
-  bablic('init', {key: 'your-api-key'});
-</script>
-
     <!-- Spinner Start -->
     <div id="spinner"
         class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
@@ -194,5 +165,22 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
 </body>
+
+<script type="text/javascript">
+  (function(d, t) {
+      var v = d.createElement(t), s = d.getElementsByTagName(t)[0];
+      v.onload = function() {
+        window.voiceflow.chat.load({
+          verify: { projectID: '67cdad774bb3f24b43613ecf' },
+          url: 'https://general-runtime.voiceflow.com',
+          versionID: 'production',
+          voice: {
+            url: "https://runtime-api.voiceflow.com"
+          }
+        });
+      }
+      v.src = "https://cdn.voiceflow.com/widget-next/bundle.mjs"; v.type = "text/javascript"; s.parentNode.insertBefore(v, s);
+  })(document, 'script');
+</script>
 
 </html>
