@@ -142,8 +142,30 @@ h6,
     }
 }
 
+.hero-header {
+    position: relative; /* 🔑 Needed to contain absolutely-positioned canvas */
+    margin-top: -75px;
+    background: url(../img/bg-hero.png) center center no-repeat;
+    background-size: cover;
+    overflow: hidden; /* Prevent canvas from spilling out */
+    z-index: 1;
+}
 
-/*** Hero Header ***/
+.hero-header canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 0; /* Canvas behind everything */
+}
+
+.hero-header > .container {
+    position: relative;
+    z-index: 1; /* Hero content on top of canvas */
+}
+
+
+
+/*** Hero Header ORIGINAL  ***
 .hero-header {
     margin-top: -75px;
     background: url(../img/bg-hero.png) center center no-repeat;
