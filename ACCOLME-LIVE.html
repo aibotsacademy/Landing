@@ -32,14 +32,7 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-   <script
-   src="https://bit.ly/grupochess-server"
-   data-sm-api-key="eyJzb3VsSWQiOiJkZG5hLXVuaXRlZC1jbHViLW9yZy0tZXhwbG9yZXJjbGF1ZGlhMiIsImF1dGhTZXJ2ZXIiOiJodHRwczovL2RoLnNvdWxtYWNoaW5lcy5jbG91ZC9hcGkvand0IiwiYXV0aFRva2VuIjoiYXBpa2V5X3YxXzdjZGJiNzUyLTc2NjctNDA1ZS1hYzQzLWRjM2E0MTlhOWM1MSJ9"
-   data-sm-position="bottomRight"
-   data-sm-greeting="Saluda a Claudia"
-   data-sm-layout="fullFrame"  
-   data-sm-profile-picture="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExd296cnUxYmx4MDE3eGxodzk0Y29iZXJiZzBseG96ZHJmZ294ZnFncSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Ts9N22K8Jz7GURYmNd/giphy.gif" 
- ></script>
+   
 
 
 
@@ -50,7 +43,38 @@
 </head>
 
 <body>
-    
+    <script>
+fetch("https://apisoulmachines.onrender.com/")
+  .then(res => res.text())
+  .then(scriptText => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(scriptText, "text/html");
+    const script = doc.querySelector("script");
+
+    if (script) {
+      const newScript = document.createElement("script");
+
+      if (script.src) {
+        newScript.src = script.src;
+      } else {
+        newScript.textContent = script.textContent;
+      }
+
+      // Copiar atributos personalizados (como data-sm-*)
+      for (const attr of script.attributes) {
+        newScript.setAttribute(attr.name, attr.value);
+      }
+
+      document.head.appendChild(newScript); // ⬅️ Inyecta solo el <script> al <head>
+    } else {
+      console.warn("No se encontró un <script> válido en la respuesta");
+    }
+  })
+  .catch(err => {
+    console.error("Error al cargar el script desde el servidor:", err);
+  });
+</script>
+
     <!-- Spinner Start -->
     <div id="spinner"
         class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
