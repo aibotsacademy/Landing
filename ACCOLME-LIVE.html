@@ -32,25 +32,13 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-<script
-    
-     
-    const response = await fetch('https://apisoulmachines.onrender.com/get_api_key', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-    const data = await response.json();
-    const apiKey = data.api_key; 
-
-   src="https://bit.ly/grupochess-server"
-   data-sm-api-key=apikey
-   data-sm-position="bottomRight"
-   data-sm-greeting="Saluda a EMMA"
-   data-sm-layout="fullFrame"  
-   data-sm-profile-picture="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNZgOFYTqro2hjPTDFOJWMEiVv6C_Fo0Bz3Q&s" 
- ></script>
+<script>
+  fetch("https://apisoulmachines.onrender.com/")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("widget-container").innerHTML = html;
+    });
+</script>
 
 
 
