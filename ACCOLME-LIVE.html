@@ -34,13 +34,23 @@
 
 <script>
   fetch("https://apisoulmachines.onrender.com/")
-    .then(res => res.text())
-    .then(code => {
-      const script = document.createElement("script");
-      script.textContent = code;
-      document.head.appendChild(script);
-    })
-    .catch(err => console.error("Error al cargar el script dinámico:", err));
+  .then(res => res.text())
+  .then(code => {
+    const range = document.createRange();
+    const fragment = range.createContextualFragment(code);
+
+    // Busca el <script> dentro del fragmento recibido
+    const script = fragment.querySelector("script");
+
+    if (script) {
+      document.head.appendChild(script); // Inyecta directamente en <head>
+    } else {
+      console.warn("No se encontró un <script> válido en la respuesta.");
+    }
+  })
+  .catch(err => console.error("Error al cargar el script dinámico:", err));
+
+
 </script>
 
 
