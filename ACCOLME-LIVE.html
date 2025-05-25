@@ -35,10 +35,28 @@
     <script>
   fetch("https://apisoulmachines.onrender.com/")
     .then(res => res.text())
-    .then(html => {
-      document.getElementById("widget-container").innerHTML = html;
+    .then(scriptText => {
+      const tempDiv = document.createElement("div");
+      tempDiv.innerHTML = scriptText;
+
+      const script = tempDiv.querySelector("script");
+
+      if (script) {
+        const newScript = document.createElement("script");
+        newScript.src = script.src;
+
+        // Copiar todos los atributos data-sm-*
+        for (const attr of script.attributes) {
+          if (attr.name.startsWith("data-")) {
+            newScript.setAttribute(attr.name, attr.value);
+          }
+        }
+
+        document.getElementById("widget-container").appendChild(newScript);
+      }
     });
 </script>
+
 
 
 
