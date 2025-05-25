@@ -33,7 +33,7 @@
     <link href="css/style.css" rel="stylesheet">
 
   <script>
-  fetch('/bot-html')  // ruta que devuelve el fragmento HTML completo
+  fetch('http://https://apisoulmachines.onrender.com')  // ruta que devuelve el fragmento HTML completo
     .then(response => response.text())
     .then(htmlFragment => {
       document.getElementById('bot-container').innerHTML = htmlFragment;
