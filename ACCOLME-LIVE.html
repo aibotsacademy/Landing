@@ -32,31 +32,16 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
- <script>
-  fetch("https://apisoulmachines.onrender.com")
-    .then(res => res.text())
-    .then(scriptHTML => {
-      // Creamos un contenedor temporal para interpretar el HTML recibido
-      const temp = document.createElement("div");
-      temp.innerHTML = scriptHTML;
-      
-      // Tomamos el <script> del contenido
-      const script = temp.querySelector("script");
-      const newScript = document.createElement("script");
-      newScript.src = script.src;
-
-      // Copiamos los atributos personalizados (dataset)
-      for (const attr of script.attributes) {
-        if (attr.name !== "src") {
-          newScript.setAttribute(attr.name, attr.value);
-        }
-      }
-
-      // Insertamos en el <head>
-      document.head.appendChild(newScript);
-    })
-    .catch(console.error);
+<script>
+fetch("/bot-script")
+  .then(res => res.text())
+  .then(code => {
+    const script = document.createElement("script");
+    script.textContent = code;
+    document.head.appendChild(script);
+  });
 </script>
+
 
 
 
