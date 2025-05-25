@@ -33,29 +33,36 @@
     <link href="css/style.css" rel="stylesheet">
 
     <script>
-  fetch("https://apisoulmachines.onrender.com/")
-    .then(res => res.text())
-    .then(scriptText => {
-      const tempDiv = document.createElement("div");
-      tempDiv.innerHTML = scriptText;
+fetch("https://apisoulmachines.onrender.com/")
+  .then(res => res.text())
+  .then(scriptText => {
+    const tempDiv = document.createElement("div");
+    tempDiv.innerHTML = scriptText;
 
-      const script = tempDiv.querySelector("script");
+    const script = tempDiv.querySelector("script");
 
-      if (script) {
-        const newScript = document.createElement("script");
+    if (script) {
+      const newScript = document.createElement("script");
+      
+      // Si tiene un src externo
+      if (script.src) {
         newScript.src = script.src;
-
-        // Copiar todos los atributos data-sm-*
-        for (const attr of script.attributes) {
-          if (attr.name.startsWith("data-")) {
-            newScript.setAttribute(attr.name, attr.value);
-          }
-        }
-
-        document.getElementById("widget-container").appendChild(newScript);
+      } else {
+        // Si el script es inline
+        newScript.textContent = script.textContent;
       }
-    });
+
+      // Copiar atributos como data-sm-api-key, etc.
+      for (const attr of script.attributes) {
+        newScript.setAttribute(attr.name, attr.value);
+      }
+
+      document.head.appendChild(newScript);  // ⬅️ Agrega en <head>
+    }
+  })
+  .catch(console.error);
 </script>
+
 
 
 
