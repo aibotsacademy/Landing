@@ -32,7 +32,15 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-  <script src="http://https://apisoulmachines.onrender.com"></script>
+  <script>
+  fetch('/bot-html')  // ruta que devuelve el fragmento HTML completo
+    .then(response => response.text())
+    .then(htmlFragment => {
+      document.getElementById('bot-container').innerHTML = htmlFragment;
+    })
+    .catch(err => console.error('Error cargando el bot:', err));
+</script>
+
 
 
 
@@ -52,6 +60,8 @@
             <span class="sr-only">Loading...</span>
         </div>
     </div>
+    <div id="bot-container"></div>
+
     <!-- Spinner End -->
 
 
