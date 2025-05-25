@@ -32,13 +32,7 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-<script>
-  fetch("https://apisoulmachines.onrender.com/")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("widget-container").innerHTML = html;
-    });
-</script>
+
 
 
 
@@ -91,6 +85,14 @@
                     <div class="btn btn-sm border rounded-pill text-white px-3 mb-3 animated slideInRight">ACCOLME AI</div>
                     <h1 class="display-4 text-white mb-4 animated slideInRight">Saluda a EMMA</h1>
                     <p class="text-white mb-4 animated slideInRight">Haz click en EMMA 👇🏼</p>
+                    <div class="text-center mt-4">
+                        <iframe 
+                            src="https://apisoulmachines.onrender.com/" 
+                            style="width:100%; max-width: 600px; height: 650px; border: none; border-radius: 20px; box-shadow: 0 0 20px rgba(0,0,0,0.2);" 
+                            title="EMMA Virtual Assistant"
+                            loading="lazy">
+                        </iframe>
+                    </div>
                     
                 </div>
                 <div class="col-lg-6 align-self-end text-center text-lg-end">
