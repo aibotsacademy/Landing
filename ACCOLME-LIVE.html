@@ -32,7 +32,18 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-   <script>
+   
+
+
+
+
+
+
+
+</head>
+
+<body>
+    <script>
 fetch("https://apisoulmachines.onrender.com/")
   .then(res => res.text())
   .then(scriptText => {
@@ -54,7 +65,7 @@ fetch("https://apisoulmachines.onrender.com/")
         newScript.setAttribute(attr.name, attr.value);
       }
 
-      document.head.appendChild(newScript); // ⬅️ Inyecta solo el <script> al <head>
+      document.body.appendChild(newScript); // ⬅️ Inyecta solo el <script> al <head>
     } else {
       console.warn("No se encontró un <script> válido en la respuesta");
     }
@@ -64,16 +75,6 @@ fetch("https://apisoulmachines.onrender.com/")
   });
 </script>
 
-
-
-
-
-
-
-
-</head>
-
-<body>
 
     <!-- Spinner Start -->
     <div id="spinner"
