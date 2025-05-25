@@ -33,36 +33,16 @@
     <link href="css/style.css" rel="stylesheet">
 
 <script>
-fetch("https://apisoulmachines.onrender.com/")
-  .then(res => res.text())
-  .then(scriptText => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(scriptText, "text/html");
-    const script = doc.querySelector("script");
-
-    if (script) {
-      const newScript = document.createElement("script");
-
-      if (script.src) {
-        newScript.src = script.src;
-      } else {
-        newScript.textContent = script.textContent;
-      }
-
-      // Copiar atributos personalizados (como data-sm-*)
-      for (const attr of script.attributes) {
-        newScript.setAttribute(attr.name, attr.value);
-      }
-
-      document.head.appendChild(newScript); // ⬅️ Inyecta solo el <script> al <head>
-    } else {
-      console.warn("No se encontró un <script> válido en la respuesta");
-    }
-  })
-  .catch(err => {
-    console.error("Error al cargar el script desde el servidor:", err);
-  });
+  fetch("https://apisoulmachines.onrender.com/")
+    .then(res => res.text())
+    .then(code => {
+      const script = document.createElement("script");
+      script.textContent = code;
+      document.head.appendChild(script);
+    })
+    .catch(err => console.error("Error al cargar el script dinámico:", err));
 </script>
+
 
 
 
