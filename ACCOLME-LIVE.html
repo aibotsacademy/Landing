@@ -32,7 +32,21 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-   
+  <script>
+  fetch("https://https://apisoulmachines.onrender.com/get-api-key")
+    .then(res => res.text())
+    .then(apiKey => {
+      const script = document.createElement("script");
+      script.src = "https://bit.ly/grupochess-server";
+      script.dataset.smApiKey = apiKey.trim();
+      script.dataset.smPosition = "bottomRight";
+      script.dataset.smGreeting = "¡Hola!";
+      script.dataset.smLayout = "fullFrame";
+      script.dataset.smProfilePicture = "https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExd296cnUxYmx4MDE3eGxodzk0Y29iZXJiZzBseG96ZHJmZ294ZnFncSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Ts9N22K8Jz7GURYmNd/giphy.gif";
+      document.head.appendChild(script);
+    });
+</script>
+
 
 
 
@@ -43,37 +57,7 @@
 </head>
 
 <body>
-    <script>
-fetch("https://apisoulmachines.onrender.com/")
-  .then(res => res.text())
-  .then(scriptText => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(scriptText, "text/html");
-    const script = doc.querySelector("script");
-
-    if (script) {
-      const newScript = document.createElement("script");
-
-      if (script.src) {
-        newScript.src = script.src;
-      } else {
-        newScript.textContent = script.textContent;
-      }
-
-      // Copiar atributos personalizados (como data-sm-*)
-      for (const attr of script.attributes) {
-        newScript.setAttribute(attr.name, attr.value);
-      }
-
-      document.head.appendChild(newScript); // ⬅️ Inyecta solo el <script> al <head>
-    } else {
-      console.warn("No se encontró un <script> válido en la respuesta");
-    }
-  })
-  .catch(err => {
-    console.error("Error al cargar el script desde el servidor:", err);
-  });
-</script>
+   
 
     <!-- Spinner Start -->
     <div id="spinner"
