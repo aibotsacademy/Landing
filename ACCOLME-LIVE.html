@@ -32,36 +32,38 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-    <script>
+   <script>
 fetch("https://apisoulmachines.onrender.com/")
   .then(res => res.text())
   .then(scriptText => {
-    const tempDiv = document.createElement("div");
-    tempDiv.innerHTML = scriptText;
-
-    const script = tempDiv.querySelector("script");
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(scriptText, "text/html");
+    const script = doc.querySelector("script");
 
     if (script) {
       const newScript = document.createElement("script");
-      
-      // Si tiene un src externo
+
       if (script.src) {
         newScript.src = script.src;
       } else {
-        // Si el script es inline
         newScript.textContent = script.textContent;
       }
 
-      // Copiar atributos como data-sm-api-key, etc.
+      // Copiar atributos personalizados (como data-sm-*)
       for (const attr of script.attributes) {
         newScript.setAttribute(attr.name, attr.value);
       }
 
-      document.head.appendChild(newScript);  // ⬅️ Agrega en <head>
+      document.head.appendChild(newScript); // ⬅️ Inyecta solo el <script> al <head>
+    } else {
+      console.warn("No se encontró un <script> válido en la respuesta");
     }
   })
-  .catch(console.error);
+  .catch(err => {
+    console.error("Error al cargar el script desde el servidor:", err);
+  });
 </script>
+
 
 
 
