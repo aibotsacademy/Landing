@@ -153,6 +153,21 @@
 
 <!-- JS Logic -->
 <script>
+
+function openClaudia() {
+  const wrapper = document.getElementById('claudia-iframe-wrapper');
+  wrapper.style.display = 'block';
+
+  const iframe = wrapper.querySelector('iframe');
+
+  iframe.onload = () => {
+    // Give it a small delay to allow script loading
+    setTimeout(() => {
+      iframe.contentWindow.postMessage({ action: 'activateMetahuman' }, '*');
+    }, 1000);
+  };
+}
+
   function openClaudia() {
     document.getElementById('claudia-iframe-wrapper').style.display = 'block';
   }
