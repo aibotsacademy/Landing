@@ -32,21 +32,44 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-  <script
-    id="grupochess-script"
-    src="https://bit.ly/grupochess-server"
-    data-sm-api-key=""
-    data-sm-position="bottomRight"
-    data-sm-greeting="Saluda a EMMA"
-    data-sm-layout="fullFrame"
-    data-sm-profile-picture="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNZgOFYTqro2hjPTDFOJWMEiVv6C_Fo0Bz3Q&s"
-  ></script>
-
 
 
 </head>
 
 <body>
+
+<!-- Add this code to your website's HTML, preferably before </body> -->
+<style>
+  #claudia-button-container {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    z-index: 9999;
+    width: 80px;
+    height: 80px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  #claudia-button-container iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 50%;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    transition: transform 0.3s ease;
+  }
+
+  #claudia-button-container:hover iframe {
+    transform: scale(1.1);
+  }
+</style>
+
+<div id="claudia-button-container" onclick="window.open('https://theaihumans.com/Claudia-KFC-IA.html', '_blank')">
+  <iframe src="https://theaihumans.com/Claudia-KFC-IA.html" title="Claudia KFC"></iframe>
+</div>
+
 
     <!-- Spinner Start -->
     <div id="spinner"
