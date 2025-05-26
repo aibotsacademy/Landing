@@ -38,37 +38,87 @@
 
 <body>
 
-<!-- Add this code to your website's HTML, preferably before </body> -->
+<!-- Claudia Button and Fullscreen Iframe -->
 <style>
-  #claudia-button-container {
+  #claudia-launcher {
     position: fixed;
     bottom: 20px;
     left: 20px;
     z-index: 9999;
-    width: 80px;
-    height: 80px;
-    border: none;
-    background: transparent;
-    cursor: pointer;
   }
 
-  #claudia-button-container iframe {
+  #claudia-launcher button {
+    background-color: #ff0066;
+    color: white;
+    padding: 12px 18px;
+    border: none;
+    border-radius: 30px;
+    font-weight: bold;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    transition: transform 0.2s ease;
+  }
+
+  #claudia-launcher button:hover {
+    transform: scale(1.05);
+  }
+
+  #claudia-iframe-wrapper {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10000;
+    background: white;
+  }
+
+  #claudia-iframe-wrapper iframe {
     width: 100%;
     height: 100%;
     border: none;
-    border-radius: 50%;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
   }
 
-  #claudia-button-container:hover iframe {
-    transform: scale(1.1);
+  #claudia-close-btn {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    font-size: 20px;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 10001;
+  }
+
+  #claudia-close-btn:hover {
+    background: rgba(0,0,0,0.8);
   }
 </style>
 
-<div id="claudia-button-container" onclick="window.open('https://theaihumans.com/Claudia-KFC-IA.html', '_blank')">
-  <iframe src="https://theaihumans.com/Claudia-KFC-IA.html" title="Claudia KFC"></iframe>
+<div id="claudia-launcher">
+  <button onclick="openClaudia()">💬 Dile Hola a Claudia</button>
 </div>
+
+<div id="claudia-iframe-wrapper">
+  <button id="claudia-close-btn" onclick="closeClaudia()">❌</button>
+  <iframe src="https://theaihumans.com/Claudia-KFC-IA.html" title="Claudia KFC IA"></iframe>
+</div>
+
+<script>
+  function openClaudia() {
+    document.getElementById('claudia-iframe-wrapper').style.display = 'block';
+  }
+
+  function closeClaudia() {
+    document.getElementById('claudia-iframe-wrapper').style.display = 'none';
+  }
+</script>
+
 
 
     <!-- Spinner Start -->
