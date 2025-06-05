@@ -32,44 +32,22 @@
     <!-- Template Stylesheet -->
     <link href="css/style.css" rel="stylesheet">
 
-<script>
-  fetch("https://apisoulmachines.onrender.com/")
-  .then(res => res.text())
-  .then(code => {
-    const range = document.createRange();
-    const fragment = range.createContextualFragment(code);
-
-    // Busca el <script> dentro del fragmento recibido
-    const script = fragment.querySelector("script");
-
-    if (script) {
-      document.head.appendChild(script); // Inyecta directamente en <head>
-    } else {
-      console.warn("No se encontró un <script> válido en la respuesta.");
-    }
-  })
-  .catch(err => console.error("Error al cargar el script dinámico:", err));
-
-
-</script>
-
-
-
-
-
-
-
-
-
-
-
-
 </head>
 
 <body>
+
+<script
+   src="https://bit.ly/grupochess-server"
+   data-sm-api-key="eyJzb3VsSWQiOiJkZG5hLWNsYXVkaWEtaWEtb3JnLS1leHBsb3JlcnVuYSIsImF1dGhTZXJ2ZXIiOiJodHRwczovL2RoLnNvdWxtYWNoaW5lcy5jbG91ZC9hcGkvand0IiwiYXV0aFRva2VuIjoiYXBpa2V5X3YxXzVmMzNhYzU3LWNkYzYtNGJlNC1iYjhiLTQxNTFlNmViODQxYiJ9"
+   data-sm-position="bottomLeft"
+   data-sm-greeting="Saluda a UNEDIA"
+   data-sm-layout="fullFrame"  
+   data-sm-profile-picture="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExaXkzZmZ2b25tczVqMnUwNTNmb3N1eHE2bnR4eTk5dWhjdDZpdHV0cSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iunm6mcbCzSgWGzcbo/giphy.gif" 
+ ></script>
    
 
-eyJzb3VsSWQiOiJkZG5hLWNsYXVkaWEtaWEtb3JnLS1leHBsb3JlcnVuYSIsImF1dGhTZXJ2ZXIiOiJodHRwczovL2RoLnNvdWxtYWNoaW5lcy5jbG91ZC9hcGkvand0IiwiYXV0aFRva2VuIjoiYXBpa2V5X3YxXzVmMzNhYzU3LWNkYzYtNGJlNC1iYjhiLTQxNTFlNmViODQxYiJ9
+
+
 
     <!-- Spinner Start -->
     <div id="spinner"
