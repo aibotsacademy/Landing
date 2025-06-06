@@ -315,17 +315,18 @@
     <script src="js/main.js"></script>
 
     <script>
-  window.addEventListener("message", function(event) {
-    if (event.data.action === "activateMetahuman") {
-      // Aquí llamas la función que inicia al humano digital
-      if (typeof activateDigitalHuman === "function") {
-        activateDigitalHuman();
+  window.addEventListener("DOMContentLoaded", function () {
+    setTimeout(() => {
+      const claudiaLauncher = document.getElementById("claudia-launcher");
+      if (claudiaLauncher) {
+        claudiaLauncher.click(); // Simula clic en el contenedor
       } else {
-        console.warn("No existe activateDigitalHuman()");
+        console.warn("No se encontró el contenedor #claudia-launcher");
       }
-    }
+    }, 1500); // Espera 1.5 segundos tras carga para mayor seguridad
   });
 </script>
+
 
 </body>  
 
