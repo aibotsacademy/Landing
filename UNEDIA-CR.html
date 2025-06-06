@@ -125,6 +125,26 @@
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+    <script>
+window.addEventListener("message", (event) => {
+  if (event.data.action === "clickAt") {
+    const { x, y } = event.data;
+    const el = document.elementFromPoint(x, y);
+    if (el) {
+      el.dispatchEvent(new MouseEvent("click", {
+        bubbles: true,
+        cancelable: true,
+        clientX: x,
+        clientY: y
+      }));
+      console.log("✅ Click simulado en", x, y, "sobre", el);
+    } else {
+      console.warn("⚠️ No se encontró ningún elemento en esas coordenadas");
+    }
+  }
+});
+</script>
+
 </body>  
 
 </html>
