@@ -159,36 +159,14 @@
 
   wrapper.style.display = 'block';
 
+  // Esperamos a que cargue el iframe, luego enviamos un mensaje
   iframe.onload = () => {
-    // Esperamos un poco para asegurar que el contenido del iframe cargó
     setTimeout(() => {
-      try {
-        const iframeDoc = iframe.contentWindow.document;
-
-        // 🧠 OPCIÓN 1: Simular clic sobre un botón con ID
-        const targetButton = iframeDoc.querySelector('claudia-iframe-wrapper');
-        if (targetButton) {
-          targetButton.click();
-        } else {
-          console.warn("No se encontró el botón dentro del iframe");
-        }
-
-        // 🧠 OPCIÓN 2: Simular clic por coordenadas (fallback)
-        const event = new MouseEvent('click', {
-          view: iframe.contentWindow,
-          bubbles: true,
-          cancelable: true
-        });
-
-        const targetElement = iframeDoc.elementFromPoint(100, 200); // <-- Ajusta las coordenadas
-        if (targetElement) {
-          targetElement.dispatchEvent(event);
-        }
-
-      } catch (e) {
-        console.error("Error accediendo al contenido del iframe:", e);
-      }
-    }, 1000); // Espera 1s tras carga
+      iframe.contentWindow.postMessage(
+        { action: "clickAt", x: 20, y: 580 }, // coordenadas aproximadas
+        "*"
+      );
+    }, 1500);
   };
 }
 
