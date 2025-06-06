@@ -126,26 +126,36 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
     <script>
-  window.addEventListener('load', () => {
-    setTimeout(() => {
-      // Coordenadas para click en la esquina inferior izquierda, por ejemplo (20, window.innerHeight - 20)
-      const x = 20;
-      const y = window.innerHeight - 20;
+  window.onload = function() {
+    // Tamaño del margen desde la esquina inferior izquierda (en píxeles)
+    const margen = 100;
 
-      const target = document.elementFromPoint(x, y);
-      if (target) {
-        target.dispatchEvent(new MouseEvent('click', {
-          bubbles: true,
-          cancelable: true,
-          clientX: x,
-          clientY: y
-        }));
-        console.log(`Click automático simulado en (${x}, ${y})`, target);
-      } else {
-        console.warn(`No se encontró elemento para hacer click en (${x}, ${y})`);
-      }
-    }, 1000); // espera 1 segundo para asegurar que todo cargó
-  });
+    // Coordenadas x, y para el clic simulado
+    // x será margen desde la izquierda
+    // y será ventana altura menos margen desde abajo
+    const x = margen;
+    const y = window.innerHeight - margen;
+
+    // Crear evento de clic simulado
+    const clickEvent = new MouseEvent('click', {
+      clientX: x,
+      clientY: y,
+      view: window,
+      bubbles: true,
+      cancelable: true
+    });
+
+    // Encontrar el elemento en la posición (x,y)
+    const element = document.elementFromPoint(x, y);
+
+    if (element) {
+      // Disparar el evento click en ese elemento
+      element.dispatchEvent(clickEvent);
+      console.log(`Click simulado en (${x}, ${y}) sobre`, element);
+    } else {
+      console.log('No se encontró elemento en la posición para el clic.');
+    }
+  };
 </script>
 
 
