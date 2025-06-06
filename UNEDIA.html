@@ -154,24 +154,44 @@
 <!-- JS Logic -->
 <script>
   function openClaudia() {
-    const wrapper = document.getElementById('claudia-iframe-wrapper');
-    const iframe = wrapper.querySelector('iframe');
+  const wrapper = document.getElementById('claudia-iframe-wrapper');
+  const iframe = wrapper.querySelector('iframe');
 
-    wrapper.style.display = 'block';
+  wrapper.style.display = 'block';
 
-    // Verifica si ya cargó
-    if (iframe.contentWindow && iframe.dataset.loaded === "true") {
-      iframe.contentWindow.postMessage({ action: 'activateMetahuman' }, '*');
-    } else {
-      // Si es la primera vez, espera que cargue
-      iframe.onload = () => {
-        iframe.dataset.loaded = "true"; // marca como cargado
-        setTimeout(() => {
-          iframe.contentWindow.postMessage({ action: 'activateMetahuman' }, '*');
-        }, 500); // o más si tarda en cargar el humano
-      };
-    }
-  }
+  iframe.onload = () => {
+    // Esperamos un poco para asegurar que el contenido del iframe cargó
+    setTimeout(() => {
+      try {
+        const iframeDoc = iframe.contentWindow.document;
+
+        // 🧠 OPCIÓN 1: Simular clic sobre un botón con ID
+        const targetButton = iframeDoc.querySelector('claudia-iframe-wrapper');
+        if (targetButton) {
+          targetButton.click();
+        } else {
+          console.warn("No se encontró el botón dentro del iframe");
+        }
+
+        // 🧠 OPCIÓN 2: Simular clic por coordenadas (fallback)
+        const event = new MouseEvent('click', {
+          view: iframe.contentWindow,
+          bubbles: true,
+          cancelable: true
+        });
+
+        const targetElement = iframeDoc.elementFromPoint(100, 200); // <-- Ajusta las coordenadas
+        if (targetElement) {
+          targetElement.dispatchEvent(event);
+        }
+
+      } catch (e) {
+        console.error("Error accediendo al contenido del iframe:", e);
+      }
+    }, 1000); // Espera 1s tras carga
+  };
+}
+
 
   function closeClaudia() {
     document.getElementById('claudia-iframe-wrapper').style.display = 'none';
