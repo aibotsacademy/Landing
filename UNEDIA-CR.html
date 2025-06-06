@@ -126,24 +126,28 @@
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
     <script>
-window.addEventListener("message", (event) => {
-  if (event.data.action === "clickAt") {
-    const { x, y } = event.data;
-    const el = document.elementFromPoint(x, y);
-    if (el) {
-      el.dispatchEvent(new MouseEvent("click", {
-        bubbles: true,
-        cancelable: true,
-        clientX: x,
-        clientY: y
-      }));
-      console.log("✅ Click simulado en", x, y, "sobre", el);
-    } else {
-      console.warn("⚠️ No se encontró ningún elemento en esas coordenadas");
-    }
-  }
-});
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      // Coordenadas para click en la esquina inferior izquierda, por ejemplo (20, window.innerHeight - 20)
+      const x = 20;
+      const y = window.innerHeight - 20;
+
+      const target = document.elementFromPoint(x, y);
+      if (target) {
+        target.dispatchEvent(new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          clientX: x,
+          clientY: y
+        }));
+        console.log(`Click automático simulado en (${x}, ${y})`, target);
+      } else {
+        console.warn(`No se encontró elemento para hacer click en (${x}, ${y})`);
+      }
+    }, 1000); // espera 1 segundo para asegurar que todo cargó
+  });
 </script>
+
 
 </body>  
 
