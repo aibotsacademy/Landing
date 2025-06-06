@@ -153,29 +153,31 @@
 
 <!-- JS Logic -->
 <script>
-
-function openClaudia() {
-  const wrapper = document.getElementById('claudia-iframe-wrapper');
-  wrapper.style.display = 'block';
-
-  const iframe = wrapper.querySelector('iframe');
-
-  iframe.onload = () => {
-    // Give it a small delay to allow script loading
-    setTimeout(() => {
-      iframe.contentWindow.postMessage({ action: 'activateMetahuman' }, '*');
-    }, 1000);
-  };
-}
-
   function openClaudia() {
-    document.getElementById('claudia-iframe-wrapper').style.display = 'block';
+    const wrapper = document.getElementById('claudia-iframe-wrapper');
+    const iframe = wrapper.querySelector('iframe');
+
+    wrapper.style.display = 'block';
+
+    // Verifica si ya cargó
+    if (iframe.contentWindow && iframe.dataset.loaded === "true") {
+      iframe.contentWindow.postMessage({ action: 'activateMetahuman' }, '*');
+    } else {
+      // Si es la primera vez, espera que cargue
+      iframe.onload = () => {
+        iframe.dataset.loaded = "true"; // marca como cargado
+        setTimeout(() => {
+          iframe.contentWindow.postMessage({ action: 'activateMetahuman' }, '*');
+        }, 500); // o más si tarda en cargar el humano
+      };
+    }
   }
 
   function closeClaudia() {
     document.getElementById('claudia-iframe-wrapper').style.display = 'none';
   }
 </script>
+
 
 
     <!-- Spinner Start -->
@@ -291,6 +293,20 @@ function openClaudia() {
 
     <!-- Template Javascript -->
     <script src="js/main.js"></script>
+
+    <script>
+  window.addEventListener("message", function(event) {
+    if (event.data.action === "activateMetahuman") {
+      // Aquí llamas la función que inicia al humano digital
+      if (typeof activateDigitalHuman === "function") {
+        activateDigitalHuman();
+      } else {
+        console.warn("No existe activateDigitalHuman()");
+      }
+    }
+  });
+</script>
+
 </body>  
 
 </html>
