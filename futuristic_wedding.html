@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            background: #0a0a0a;
+            color: #fff;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Envelope Section */
+        #envelope-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            transition: opacity 0.8s ease;
+        }
+
+        #envelope-section.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .envelope-container {
+            position: relative;
+            cursor: pointer;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .envelope {
+            width: 300px;
+            height: 200px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .envelope:hover {
+            transform: scale(1.05);
+            filter: drop-shadow(0 0 30px rgba(212, 175, 55, 0.6));
+        }
+
+        .envelope-back {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #f5e6e8 0%, #faf9f6 100%);
+            border: 2px solid #d4af37;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to bottom, #f5e6e8 0%, #faf9f6 100%);
+            border: 2px solid #d4af37;
+            border-bottom: none;
+            transform-origin: top;
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 8px 8px 0 0;
+        }
+
+        .envelope.opening .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 45%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 60px;
+            background: radial-gradient(circle, #d4af37 0%, #b8941f 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Great Vibes', cursive;
+            font-size: 28px;
+            color: #fff;
+            box-shadow: 0 5px 20px rgba(212, 175, 55, 0.5);
+            z-index: 10;
+        }
+
+        .invitation-text {
+            text-align: center;
+            margin-top: 30px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            color: #d4af37;
+            opacity: 0;
+            animation: fadeInPulse 2s ease 1s forwards;
+        }
+
+        @keyframes fadeInPulse {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+
+        /* Main Content */
+        #main-content {
+            opacity: 0;
+            transition: opacity 1s ease;
+            padding-top: 100vh;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Video Section */
+        .video-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            position: relative;
+        }
+
+        .video-container {
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid #d4af37;
+            box-shadow: 0 30px 90px rgba(212, 175, 55, 0.3);
+            background: #000;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%);
+            pointer-events: none;
+            opacity: 0;
+            animation: overlayFade 2s ease 2s forwards;
+        }
+
+        @keyframes overlayFade {
+            to { opacity: 1; }
+        }
+
+        .couple-names {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .wedding-date {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #d4af37;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            letter-spacing: 3px;
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #d4af37;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.3);
+            border-color: rgba(212, 175, 55, 0.6);
+        }
+
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            border: none;
+            color: #fff;
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+            background: linear-gradient(135deg, #b8941f 0%, #d4af37 100%);
+        }
+
+        /* Form Styles */
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #d4af37;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 15s infinite;
+        }
+
+        @keyframes particle-float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .couple-names { font-size: 2.5rem; }
+            .wedding-date { font-size: 1rem; }
+            .section-title { font-size: 2rem; }
+            .envelope { width: 250px; height: 166px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <!-- Envelope Section -->
+    <div id="envelope-section">
+        <div class="envelope-container" id="envelope-container">
+            <div class="envelope" id="envelope">
+                <div class="envelope-back"></div>
+                <div class="envelope-flap"></div>
+                <div class="wax-seal">S&A</div>
+            </div>
+            <div class="invitation-text">Click para abrir tu invitación</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Video Section -->
+        <section class="video-section">
+            <div class="container">
+                <div class="video-container">
+                    <div class="video-wrapper">
+                        <iframe 
+                            src="https://www.youtube.com/embed/qRKd22fUebw?autoplay=1&mute=1&loop=1&playlist=qRKd22fUebw&controls=1&showinfo=0&rel=0&modestbranding=1" 
+                            frameborder="0" 
+                            allow="autoplay; encrypted-media" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="video-overlay">
+                        <div class="couple-names">Sofia & Alessandro</div>
+                        <div class="wedding-date">15 DE JUNIO, 2026</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Welcome Section -->
+        <section>
+            <div class="container">
+                <h2 class="section-title">Celebra Nuestro Amor</h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="glass-card text-center">
+                            <p style="font-size: 1.2rem; line-height: 2;">
+                                Nos complace invitarte a compartir el día más especial de nuestras vidas. 
+                                Únete a nosotros en las hermosas islas de Grecia mientras celebramos 
+                                nuestro amor y comenzamos esta nueva aventura juntos.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Details -->
+        <section style="background: rgba(212, 175, 55, 0.05);">
+            <div class="container">
+                <h2 class="section-title">Detalles del Evento</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="glass-card text-center">
+                            <div class="icon-box">📅</div>
+                            <h4 style="color: #d4af37; margin-bottom: 15px;">Fecha</h4>
+                            <p>15 de Junio, 2026<br>5:00 PM</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card text-center">
+                            <div class="icon-box">⛪</div>
+                            <h4 style="color: #d4af37; margin-bottom: 15px;">Ceremonia</h4>
+                            <p>Iglesia de Oia<br>Santorini, Grecia</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card text-center">
+                            <div class="icon-box">🥂</div>
+                            <h4 style="color: #d4af37; margin-bottom: 15px;">Recepción</h4>
+                            <p>Sunset Terrace<br>Vista al Mar Egeo</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP Section -->
+        <section>
+            <div class="container">
+                <h2 class="section-title">Confirma tu Asistencia</h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="glass-card">
+                            <form id="rsvp-form">
+                                <div class="mb-4">
+                                    <input type="text" class="form-control" placeholder="Nombre Completo" required>
+                                </div>
+                                <div class="mb-4">
+                                    <input type="email" class="form-control" placeholder="Email" required>
+                                </div>
+                                <div class="mb-4">
+                                    <select class="form-control" required>
+                                        <option value="">Número de Invitados</option>
+                                        <option value="1">1 Persona</option>
+                                        <option value="2">2 Personas</option>
+                                        <option value="3">3 Personas</option>
+                                        <option value="4">4+ Personas</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <textarea class="form-control" rows="4" placeholder="Restricciones Dietéticas o Mensaje"></textarea>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-custom">CONFIRMAR ASISTENCIA</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="background: rgba(0, 0, 0, 0.5); padding: 40px 0; text-align: center;">
+            <div class="container">
+                <p style="color: #d4af37; font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 10px;">
+                    Con amor, Sofia & Alessandro
+                </p>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
+                    Para preguntas, contacta: wedding@sofialessandro.com
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Three.js Background
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const geometry = new THREE.BufferGeometry();
+        const vertices = [];
+        for (let i = 0; i < 1000; i++) {
+            vertices.push(
+                Math.random() * 2000 - 1000,
+                Math.random() * 2000 - 1000,
+                Math.random() * 2000 - 1000
+            );
+        }
+        geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+        const material = new THREE.PointsMaterial({ color: 0xd4af37, size: 2 });
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
+
+        camera.position.z = 500;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            particles.rotation.x += 0.0005;
+            particles.rotation.y += 0.0005;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Envelope Opening
+        const envelopeContainer = document.getElementById('envelope-container');
+        const envelope = document.getElementById('envelope');
+        const envelopeSection = document.getElementById('envelope-section');
+        const mainContent = document.getElementById('main-content');
+
+        envelopeContainer.addEventListener('click', () => {
+            envelope.classList.add('opening');
+            
+            setTimeout(() => {
+                envelopeSection.classList.add('hidden');
+                mainContent.classList.add('visible');
+                document.body.style.overflow = 'auto';
+            }, 1500);
+        });
+
+        // Form Submission
+        document.getElementById('rsvp-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('¡Gracias por confirmar tu asistencia! Te enviaremos más detalles pronto.');
+            e.target.reset();
+        });
+
+        // Scroll Animations
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(50px)';
+            card.style.transition = 'all 0.8s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
