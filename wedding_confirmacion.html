@@ -509,6 +509,121 @@
             letter-spacing: 2px;
         }
 
+        /* (512 a 625) INICIO AUDIO */
+                /* Music Player Styles */
+        .music-player {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .music-control {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            font-size: 1.5rem;
+        }
+
+        .music-control:hover {
+            transform: scale(1.1) translateY(-3px);
+            box-shadow: 0 12px 35px rgba(212, 175, 55, 0.6);
+        }
+
+        .music-control.playing {
+            animation: musicPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes musicPulse {
+            0%, 100% { 
+                box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+            }
+            50% { 
+                box-shadow: 0 8px 40px rgba(212, 175, 55, 0.8), 0 0 60px rgba(212, 175, 55, 0.4);
+            }
+        }
+
+        .music-info {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #d4af37;
+            font-size: 0.9rem;
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        .music-player:hover .music-info {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 10px 15px;
+            border-radius: 30px;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            opacity: 0;
+            transform: translateX(20px);
+            transition: all 0.3s ease;
+        }
+
+        .music-player:hover .volume-control {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .volume-slider {
+            width: 80px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 14px;
+            height: 14px;
+            background: #d4af37;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        .volume-slider::-moz-range-thumb {
+            width: 14px;
+            height: 14px;
+            background: #d4af37;
+            border-radius: 50%;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+        }
+
+        /* (512 a 625) FIN AUDIO */
+        
         /* Form Styles */
         .form-control {
             background: rgba(255, 255, 255, 0.05);
@@ -579,6 +694,22 @@
 </head>
 <body>
     <div id="canvas-container"></div>
+
+
+      <!-- Music Player INICIO -->
+    <div class="music-player">
+        <div class="music-control" id="music-toggle">
+            <span id="music-icon">🎵</span>
+        </div>
+        <div class="music-info">
+            <span id="music-status">Música de Fondo</span>
+        </div>
+        <div class="volume-control">
+            <span style="font-size: 1.2rem;">🔊</span>
+            <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="50">
+        </div>
+    </div>
+      <!-- Music Player FIN -->
 
     <!-- Envelope Section -->
     <div id="envelope-section">
@@ -1156,6 +1287,59 @@
         // Update countdown every second
         updateCountdown();
         setInterval(updateCountdown, 1000);
+        
+        // Background Music Control (1290 - 1338)
+        const audio = document.getElementById('background-music');
+        const musicToggle = document.getElementById('music-toggle');
+        const musicIcon = document.getElementById('music-icon');
+        const musicStatus = document.getElementById('music-status');
+        const volumeSlider = document.getElementById('volume-slider');
+
+        let isPlaying = false;
+
+        // Set initial volume
+        audio.volume = 0.5;
+
+        // Toggle play/pause
+        musicToggle.addEventListener('click', () => {
+            if (isPlaying) {
+                audio.pause();
+                musicIcon.textContent = '🎵';
+                musicStatus.textContent = 'Música Pausada';
+                musicToggle.classList.remove('playing');
+                isPlaying = false;
+            } else {
+                audio.play().catch(e => {
+                    console.log('Autoplay prevented:', e);
+                    musicStatus.textContent = 'Click para reproducir';
+                });
+                musicIcon.textContent = '⏸️';
+                musicStatus.textContent = 'Reproduciendo...';
+                musicToggle.classList.add('playing');
+                isPlaying = true;
+            }
+        });
+
+        // Volume control
+        volumeSlider.addEventListener('input', (e) => {
+            audio.volume = e.target.value / 100;
+        });
+
+        // Auto-play attempt (may be blocked by browser)
+        window.addEventListener('load', () => {
+            audio.play().then(() => {
+                isPlaying = true;
+                musicIcon.textContent = '⏸️';
+                musicStatus.textContent = 'Reproduciendo...';
+                musicToggle.classList.add('playing');
+            }).catch(() => {
+                // Autoplay was prevented
+                musicStatus.textContent = 'Click para música';
+            });
+        }); 
+
+// Background Music Control (1290 - 1338)
+        
 
         // Scroll Animations
         const observerOptions = {
