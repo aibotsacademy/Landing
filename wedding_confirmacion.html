@@ -1289,56 +1289,65 @@
         setInterval(updateCountdown, 1000);
         
         // Background Music Control (1290 - 1338)
-        const audio = document.getElementById('background-music');
-        const musicToggle = document.getElementById('music-toggle');
-        const musicIcon = document.getElementById('music-icon');
-        const musicStatus = document.getElementById('music-status');
-        const volumeSlider = document.getElementById('volume-slider');
+       // Background Music Control - Wrapped in DOMContentLoaded
+document.addEventListener('DOMContentLoaded', () => {
+    const audio = document.getElementById('background-music');
+    const musicToggle = document.getElementById('music-toggle');
+    const musicIcon = document.getElementById('music-icon');
+    const musicStatus = document.getElementById('music-status');
+    const volumeSlider = document.getElementById('volume-slider');
 
-        let isPlaying = false;
+    // Verificar que los elementos existen
+    if (!audio || !musicToggle || !musicIcon || !musicStatus || !volumeSlider) {
+        console.error('Music player elements not found');
+        return;
+    }
 
-        // Set initial volume
-        audio.volume = 0.5;
+    let isPlaying = false;
 
-        // Toggle play/pause
-        musicToggle.addEventListener('click', () => {
-            if (isPlaying) {
-                audio.pause();
-                musicIcon.textContent = '🎵';
-                musicStatus.textContent = 'Música Pausada';
-                musicToggle.classList.remove('playing');
-                isPlaying = false;
-            } else {
-                audio.play().catch(e => {
-                    console.log('Autoplay prevented:', e);
-                    musicStatus.textContent = 'Click para reproducir';
-                });
-                musicIcon.textContent = '⏸️';
-                musicStatus.textContent = 'Reproduciendo...';
-                musicToggle.classList.add('playing');
-                isPlaying = true;
-            }
-        });
+    // Set initial volume
+    audio.volume = 0.5;
 
-        // Volume control
-        volumeSlider.addEventListener('input', (e) => {
-            audio.volume = e.target.value / 100;
-        });
-
-        // Auto-play attempt (may be blocked by browser)
-        window.addEventListener('load', () => {
-            audio.play().then(() => {
-                isPlaying = true;
-                musicIcon.textContent = '⏸️';
-                musicStatus.textContent = 'Reproduciendo...';
-                musicToggle.classList.add('playing');
-            }).catch(() => {
-                // Autoplay was prevented
-                musicStatus.textContent = 'Click para música';
+    // Toggle play/pause
+    musicToggle.addEventListener('click', () => {
+        if (isPlaying) {
+            audio.pause();
+            musicIcon.textContent = '🎵';
+            musicStatus.textContent = 'Música Pausada';
+            musicToggle.classList.remove('playing');
+            isPlaying = false;
+        } else {
+            audio.play().catch(e => {
+                console.log('Autoplay prevented:', e);
+                musicStatus.textContent = 'Click para reproducir';
             });
-        }); 
+            musicIcon.textContent = '⏸️';
+            musicStatus.textContent = 'Reproduciendo...';
+            musicToggle.classList.add('playing');
+            isPlaying = true;
+        }
+    });
 
-// Background Music Control (1290 - 1338)
+    // Volume control
+    volumeSlider.addEventListener('input', (e) => {
+        audio.volume = e.target.value / 100;
+    });
+
+    // Auto-play attempt (may be blocked by browser)
+    setTimeout(() => {
+        audio.play().then(() => {
+            isPlaying = true;
+            musicIcon.textContent = '⏸️';
+            musicStatus.textContent = 'Reproduciendo...';
+            musicToggle.classList.add('playing');
+        }).catch(() => {
+            // Autoplay was prevented
+            musicStatus.textContent = 'Click para música';
+        });
+    }, 1000); // Wait 1 second after page load
+});
+
+// Background Music Control (1290 - 1348)
         
 
         // Scroll Animations
