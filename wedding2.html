@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wedding Invitation</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            background: #0a0a0a;
+            color: #fff;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* Envelope Section */
+        #envelope-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            background: radial-gradient(circle at 50% 50%, #0a0a1a 0%, #000000 100%);
+            transition: opacity 0.8s ease;
+            overflow: hidden;
+        }
+
+        #envelope-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.05) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        #envelope-section.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .envelope-container {
+            position: relative;
+            cursor: pointer;
+            animation: float 4s ease-in-out infinite;
+            z-index: 10;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(2deg); }
+        }
+
+        .envelope {
+            width: 400px;
+            height: 280px;
+            position: relative;
+            transition: all 0.5s ease;
+            perspective: 1000px;
+        }
+
+        .envelope:hover {
+            transform: scale(1.08) rotateY(5deg);
+            filter: drop-shadow(0 0 50px rgba(212, 175, 55, 0.8)) drop-shadow(0 0 100px rgba(212, 175, 55, 0.4));
+        }
+
+        .envelope-back {
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1a1520 0%, #2d1b2e 50%, #1a1520 100%);
+            border: 3px solid #d4af37;
+            border-radius: 12px;
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.8),
+                inset 0 0 60px rgba(212, 175, 55, 0.1),
+                0 0 100px rgba(212, 175, 55, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .envelope-back::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(212, 175, 55, 0.1) 50%,
+                transparent 70%
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            background: linear-gradient(to bottom, #2d1b2e 0%, #1a1520 100%);
+            border: 3px solid #d4af37;
+            border-bottom: none;
+            transform-origin: top;
+            transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px 12px 0 0;
+            box-shadow: inset 0 0 40px rgba(212, 175, 55, 0.15);
+            z-index: 5;
+        }
+
+        .envelope.opening .envelope-flap {
+            transform: rotateX(-180deg);
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 48%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            background: 
+                radial-gradient(circle at 30% 30%, #ffd700 0%, #d4af37 40%, #8b7355 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-family: 'Great Vibes', cursive;
+            font-size: 40px;
+            color: #1a1520;
+            font-weight: 700;
+            box-shadow: 
+                0 8px 30px rgba(212, 175, 55, 0.8),
+                inset 0 -5px 20px rgba(0, 0, 0, 0.4),
+                inset 0 5px 20px rgba(255, 255, 255, 0.3);
+            z-index: 10;
+            border: 3px solid rgba(139, 115, 85, 0.5);
+            animation: sealGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes sealGlow {
+            0%, 100% { 
+                box-shadow: 
+                    0 8px 30px rgba(212, 175, 55, 0.8),
+                    0 0 40px rgba(212, 175, 55, 0.6),
+                    inset 0 -5px 20px rgba(0, 0, 0, 0.4),
+                    inset 0 5px 20px rgba(255, 255, 255, 0.3);
+            }
+            50% { 
+                box-shadow: 
+                    0 8px 40px rgba(212, 175, 55, 1),
+                    0 0 80px rgba(212, 175, 55, 0.8),
+                    inset 0 -5px 20px rgba(0, 0, 0, 0.4),
+                    inset 0 5px 20px rgba(255, 255, 255, 0.3);
+            }
+        }
+
+        .wax-seal::before {
+            content: '💍';
+            position: absolute;
+            top: -8px;
+            font-size: 24px;
+            animation: ringRotate 4s linear infinite;
+        }
+
+        @keyframes ringRotate {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.1); }
+        }
+
+        .wax-seal-texture {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: 
+                radial-gradient(circle at 20% 20%, transparent 20%, rgba(0,0,0,0.1) 21%, transparent 22%),
+                radial-gradient(circle at 80% 30%, transparent 15%, rgba(0,0,0,0.1) 16%, transparent 17%),
+                radial-gradient(circle at 40% 70%, transparent 18%, rgba(0,0,0,0.1) 19%, transparent 20%);
+        }
+
+        .envelope-corners {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .corner {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border: 2px solid #d4af37;
+            opacity: 0.6;
+        }
+
+        .corner-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; border-radius: 12px 0 0 0; }
+        .corner-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; border-radius: 0 12px 0 0; }
+        .corner-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; border-radius: 0 0 0 12px; }
+        .corner-br { bottom: 10px; right: 10px; border-left: none; border-top: none; border-radius: 0 0 12px 0; }
+
+        .invitation-text {
+            text-align: center;
+            margin-top: 50px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            color: #d4af37;
+            opacity: 0;
+            animation: fadeInPulse 2s ease 1s forwards;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+            letter-spacing: 2px;
+        }
+
+        @keyframes fadeInPulse {
+            0% { opacity: 0; transform: scale(0.9) translateY(20px); }
+            100% { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            color: #d4af37;
+            font-size: 20px;
+            opacity: 0;
+            animation: floatHeart 8s ease-in-out infinite;
+        }
+
+        .heart:nth-child(1) { left: 10%; animation-delay: 0s; }
+        .heart:nth-child(2) { left: 30%; animation-delay: 2s; }
+        .heart:nth-child(3) { left: 50%; animation-delay: 4s; }
+        .heart:nth-child(4) { left: 70%; animation-delay: 1s; }
+        .heart:nth-child(5) { left: 90%; animation-delay: 3s; }
+
+        @keyframes floatHeart {
+            0% { bottom: -10%; opacity: 0; transform: translateX(0) rotate(0deg); }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { bottom: 110%; opacity: 0; transform: translateX(50px) rotate(360deg); }
+        }
+
+        /* Main Content */
+        #main-content {
+            opacity: 0;
+            transition: opacity 1s ease;
+        }
+
+        #main-content.visible {
+            opacity: 1;
+        }
+
+        /* Video Section */
+        .video-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            position: relative;
+        }
+
+        .video-container {
+            max-width: 1200px;
+            width: 100%;
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid #d4af37;
+            box-shadow: 0 30px 90px rgba(212, 175, 55, 0.3);
+            background: #000;
+        }
+
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+        }
+
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.1) 50%, rgba(0,0,0,0.3) 100%);
+            pointer-events: none;
+            opacity: 0;
+            animation: overlayFade 2s ease 2s forwards;
+        }
+
+        @keyframes overlayFade {
+            to { opacity: 1; }
+        }
+
+        .couple-names {
+            font-family: 'Great Vibes', cursive;
+            font-size: 4rem;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 0 40px rgba(212, 175, 55, 0.5);
+            margin-bottom: 20px;
+        }
+
+        .wedding-date {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: #d4af37;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+            letter-spacing: 3px;
+        }
+
+        /* Sections */
+        section {
+            padding: 100px 0;
+            position: relative;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #d4af37;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 50px rgba(212, 175, 55, 0.3);
+            border-color: rgba(212, 175, 55, 0.6);
+        }
+
+        .icon-box {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-custom {
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            border: none;
+            color: #fff;
+            padding: 15px 50px;
+            font-size: 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .btn-custom:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.5);
+            background: linear-gradient(135deg, #b8941f 0%, #d4af37 100%);
+        }
+
+        /* Timeline Styles */
+        .timeline-year {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            color: #d4af37;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .timeline-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .timeline-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .timeline-card:hover::before {
+            left: 100%;
+        }
+
+        /* Countdown Styles */
+        .countdown-container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(212, 175, 55, 0.5);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(212, 175, 55, 0.3);
+        }
+
+        .countdown-display {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .countdown-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 100px;
+        }
+
+        .countdown-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #d4af37;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.8);
+            line-height: 1;
+            margin-bottom: 10px;
+        }
+
+        .countdown-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Form Styles */
+        .form-control {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: #fff;
+            padding: 15px;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+            color: #fff;
+        }
+
+        .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Particles */
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: #d4af37;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particle-float 15s infinite;
+        }
+
+        @keyframes particle-float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) translateX(100px); opacity: 0; }
+        }
+
+        @media (max-width: 768px) {
+            .couple-names { font-size: 2.5rem; }
+            .wedding-date { font-size: 1rem; }
+            .section-title { font-size: 2rem; }
+            .envelope { 
+                width: 320px; 
+                height: 224px; 
+            }
+            .wax-seal {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+            .wax-seal::before {
+                font-size: 20px;
+                top: -6px;
+            }
+            .countdown-number {
+                font-size: 2.5rem;
+            }
+            .countdown-item {
+                min-width: 70px;
+            }
+            .countdown-display {
+                gap: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <!-- Envelope Section -->
+    <div id="envelope-section">
+        <div class="floating-hearts">
+            <div class="heart">💕</div>
+            <div class="heart">💖</div>
+            <div class="heart">💗</div>
+            <div class="heart">💝</div>
+            <div class="heart">💕</div>
+        </div>
+        <div class="envelope-container" id="envelope-container">
+            <div class="envelope" id="envelope">
+                <div class="envelope-back">
+                    <div class="envelope-corners">
+                        <div class="corner corner-tl"></div>
+                        <div class="corner corner-tr"></div>
+                        <div class="corner corner-bl"></div>
+                        <div class="corner corner-br"></div>
+                    </div>
+                </div>
+                <div class="envelope-flap"></div>
+                <div class="wax-seal">
+                    <div class="wax-seal-texture"></div>
+                    J&L
+                </div>
+            </div>
+            <div class="invitation-text">✨ Click para abrir tu invitación ✨</div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="main-content">
+        <!-- Video Section -->
+        <section class="video-section">
+            <div class="container">
+                <div class="video-container">
+                    <div class="video-wrapper">
+                        <iframe 
+                            src="https://www.youtube.com/embed/WEvjViPHftg?si=hwtgBBAnFQx5IQbT&autoplay=1&mute=1&loop=1&playlist=WEvjViPHftg&controls=1&showinfo=0&rel=0&modestbranding=1" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            referrerpolicy="strict-origin-when-cross-origin" 
+                            allowfullscreen>
+                        </iframe>
+                    </div>
+                    <div class="video-overlay">
+                        <div class="couple-names">Jenireé & Leandro</div>
+                        <div class="wedding-date">6 DE OCTUBRE, 2026</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Welcome Section -->
+        <section>
+            <div class="container">
+                <h2 class="section-title">Celebra Nuestro Amor</h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="glass-card text-center">
+                            <p style="font-size: 1.2rem; line-height: 2;">
+                                Nos complace invitarte a compartir el día más especial de nuestras vidas. 
+                                Únete a nosotros en las hermosas islas de Grecia mientras celebramos 
+                                nuestro amor y comenzamos esta nueva aventura juntos.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Event Details -->
+        <section style="background: rgba(212, 175, 55, 0.05);">
+            <div class="container">
+                <h2 class="section-title">Detalles del Evento</h2>
+                <div class="row g-4">
+                    <div class="col-md-4">
+                        <div class="glass-card text-center">
+                            <div class="icon-box">📅</div>
+                            <h4 style="color: #d4af37; margin-bottom: 15px;">Fecha</h4>
+                            <p>6 de Octubre, 2026<br>5:00 PM</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card text-center">
+                            <div class="icon-box">⛪</div>
+                            <h4 style="color: #d4af37; margin-bottom: 15px;">Ceremonia</h4>
+                            <p>Island Riviera<br>Athens, Greece</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card text-center">
+                            <div class="icon-box">🥂</div>
+                            <h4 style="color: #d4af37; margin-bottom: 15px;">Recepción</h4>
+                            <p>Sunset Terrace<br>Vista al Mar Egeo</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card text-center">
+                            <div class="icon-box">👔</div>
+                            <h4 style="color: #d4af37; margin-bottom: 15px;">Código de Vestimenta</h4>
+                            <p style="font-weight: 600;">Black Tie</p>
+                            <p style="font-size: 0.9rem; margin-top: 10px;">Colores claros bienvenidos<br>
+                            <span style="color: #ff6b6b;">❌ Prohibido: Rojo y Blanco</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Our Story Section -->
+        <section style="background: rgba(212, 175, 55, 0.05);">
+            <div class="container">
+                <h2 class="section-title">Nuestra Historia</h2>
+                <div class="timeline">
+                    <div class="row g-5">
+                        <div class="col-lg-6">
+                            <div class="glass-card timeline-card">
+                                <div class="timeline-year">2022</div>
+                                <h4 style="color: #d4af37; margin-bottom: 15px;">Primer Encuentro</h4>
+                                <p>Nos conocimos en el concierto de Roockie's. Fue una noche mágica donde nuestros caminos se cruzaron por primera vez.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="glass-card timeline-card">
+                                <div class="timeline-year">2023</div>
+                                <h4 style="color: #d4af37; margin-bottom: 15px;">Primer Viaje</h4>
+                                <p>Nuestra primera aventura a Cartagena. Supimos que aquí es donde nuestra historia daría un giro completo.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="glass-card timeline-card">
+                                <div class="timeline-year">2024</div>
+                                <h4 style="color: #d4af37; margin-bottom: 15px;">Viajando por el Mundo</h4>
+                                <p>Viajamos juntos por todo el planeta, reuniones, eventos y placer. Cada destino nos unió más.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="glass-card timeline-card">
+                                <div class="timeline-year">2025</div>
+                                <h4 style="color: #d4af37; margin-bottom: 15px;">La Propuesta</h4>
+                                <p>Viaje a Egipto y los sueños se hicieron realidad. En la tierra de los faraones, prometimos nuestro amor eterno.</p>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="glass-card timeline-card" style="text-align: center; border: 2px solid #d4af37;">
+                                <div class="timeline-year" style="font-size: 2.5rem;">2026</div>
+                                <h4 style="color: #d4af37; margin-bottom: 15px; font-size: 1.8rem;">Nuestra Boda</h4>
+                                <p style="font-size: 1.2rem;">Ahora te invitamos a ser parte de nuestra mayor aventura, nuestra boda.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Travel & Accommodations Section -->
+        <section>
+            <div class="container">
+                <h2 class="section-title">Viaje & Alojamiento</h2>
+                
+                <!-- Getting There -->
+                <div class="mb-5">
+                    <h3 style="color: #d4af37; text-align: center; margin-bottom: 40px; font-family: 'Playfair Display', serif;">✈️ Cómo Llegar</h3>
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="glass-card">
+                                <div class="icon-box" style="width: 60px; height: 60px; font-size: 1.5rem;">🇨🇷</div>
+                                <h5 style="color: #d4af37; margin-bottom: 20px;">Desde Costa Rica</h5>
+                                <ul style="list-style: none; padding: 0; line-height: 2;">
+                                    <li>✈️ Iberia</li>
+                                    <li>✈️ Air Canada</li>
+                                    <li>✈️ Swiss International Airlines</li>
+                                    <li>✈️ Air France</li>
+                                    <li>✈️ Y otras aerolíneas</li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="glass-card">
+                                <div class="icon-box" style="width: 60px; height: 60px; font-size: 1.5rem;">🇦🇼</div>
+                                <h5 style="color: #d4af37; margin-bottom: 20px;">Desde Aruba</h5>
+                                <ul style="list-style: none; padding: 0; line-height: 2;">
+                                    <li>✈️ KLM</li>
+                                    <li>✈️ American Airlines</li>
+                                    <li>✈️ Delta</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hotels -->
+                <div class="mb-5">
+                    <h3 style="color: #d4af37; text-align: center; margin-bottom: 40px; font-family: 'Playfair Display', serif;">🏨 Hoteles & Airbnbs</h3>
+                    <div class="row justify-content-center">
+                        <div class="col-lg-8">
+                            <div class="glass-card text-center">
+                                <div class="icon-box">🏛️</div>
+                                <h5 style="color: #d4af37; margin-bottom: 20px;">Centro de Atenas</h5>
+                                <p style="font-size: 1.1rem; line-height: 1.8;">
+                                    Recomendamos hospedarse en el centro de Atenas, cerca del Partenón y la Acrópolis. 
+                                    <strong style="color: #d4af37;">Es simplemente mágico.</strong>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Things to Do -->
+                <div>
+                    <h3 style="color: #d4af37; text-align: center; margin-bottom: 40px; font-family: 'Playfair Display', serif;">🗺️ Cosas para Hacer</h3>
+                    <div class="row g-4">
+                        <div class="col-md-3 col-sm-6">
+                            <div class="glass-card text-center" style="padding: 30px 20px;">
+                                <div style="font-size: 3rem; margin-bottom: 15px;">🏛️</div>
+                                <h6 style="color: #d4af37;">Partenón</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="glass-card text-center" style="padding: 30px 20px;">
+                                <div style="font-size: 3rem; margin-bottom: 15px;">🏛️</div>
+                                <h6 style="color: #d4af37;">Acrópolis</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="glass-card text-center" style="padding: 30px 20px;">
+                                <div style="font-size: 3rem; margin-bottom: 15px;">🏝️</div>
+                                <h6 style="color: #d4af37;">Tours a Islas</h6>
+                            </div>
+                        </div>
+                        <div class="col-md-3 col-sm-6">
+                            <div class="glass-card text-center" style="padding: 30px 20px;">
+                                <div style="font-size: 3rem; margin-bottom: 15px;">🍽️</div>
+                                <h6 style="color: #d4af37;">Plaka</h6>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Registry Section -->
+        <section style="background: rgba(212, 175, 55, 0.05);">
+            <div class="container">
+                <h2 class="section-title">Lista de Regalos</h2>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="glass-card text-center">
+                            <div class="icon-box">🎁</div>
+                            <p style="font-size: 1.2rem; line-height: 2; margin-bottom: 30px;">
+                                Tu presencia en nuestra boda es el mejor regalo. Sin embargo, si deseas honrarnos con un presente, 
+                                hemos registrado nuestros deseos en las siguientes ubicaciones.
+                            </p>
+                            <div class="d-flex gap-3 justify-content-center flex-wrap">
+                                <button class="btn btn-custom" style="padding: 12px 35px; font-size: 1rem;">Ver Registros</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- RSVP Section -->
+        <section>
+            <div class="container">
+                <h2 class="section-title">Confirma tu Asistencia</h2>
+                <div class="row justify-content-center mb-4">
+                    <div class="col-lg-8">
+                        <div class="countdown-container">
+                            <p style="color: #d4af37; font-size: 1.2rem; margin-bottom: 20px; text-align: center;">
+                                ⏰ Fecha límite para confirmar
+                            </p>
+                            <div id="countdown" class="countdown-display">
+                                <div class="countdown-item">
+                                    <span class="countdown-number" id="days">00</span>
+                                    <span class="countdown-label">Días</span>
+                                </div>
+                                <div class="countdown-item">
+                                    <span class="countdown-number" id="hours">00</span>
+                                    <span class="countdown-label">Horas</span>
+                                </div>
+                                <div class="countdown-item">
+                                    <span class="countdown-number" id="minutes">00</span>
+                                    <span class="countdown-label">Minutos</span>
+                                </div>
+                                <div class="countdown-item">
+                                    <span class="countdown-number" id="seconds">00</span>
+                                    <span class="countdown-label">Segundos</span>
+                                </div>
+                            </div>
+                            <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.9rem; margin-top: 15px; text-align: center;">
+                                Hasta el 30 de Junio, 2026 a las 11:59 PM
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <div class="glass-card">
+                            <form id="rsvp-form">
+                                <div class="mb-4">
+                                    <input type="text" class="form-control" placeholder="Nombre Completo" required>
+                                </div>
+                                <div class="mb-4">
+                                    <input type="email" class="form-control" placeholder="Email" required>
+                                </div>
+                                <div class="mb-4">
+                                    <select class="form-control" required>
+                                        <option value="">Número de Invitados</option>
+                                        <option value="1">1 Persona</option>
+                                        <option value="2">2 Personas</option>
+                                        <option value="3">3 Personas</option>
+                                        <option value="4">4+ Personas</option>
+                                    </select>
+                                </div>
+                                <div class="mb-4">
+                                    <textarea class="form-control" rows="4" placeholder="Restricciones Dietéticas o Mensaje"></textarea>
+                                </div>
+                                <div class="text-center">
+                                    <button type="submit" class="btn btn-custom">CONFIRMAR ASISTENCIA</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer style="background: rgba(0, 0, 0, 0.5); padding: 40px 0; text-align: center;">
+            <div class="container">
+                <p style="color: #d4af37; font-family: 'Playfair Display', serif; font-size: 1.2rem; margin-bottom: 10px;">
+                    Con amor, Jenireé & Leandro
+                </p>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
+                    Para preguntas, contacta: wedding@jenireeleandro.com
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Three.js Universe Background with Stars
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000814); // Deep space blue-black
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Create stars
+        const starGeometry = new THREE.BufferGeometry();
+        const starVertices = [];
+        const starSizes = [];
+        const starColors = [];
+        
+        for (let i = 0; i < 3000; i++) {
+            starVertices.push(
+                Math.random() * 2000 - 1000,
+                Math.random() * 2000 - 1000,
+                Math.random() * 2000 - 1000
+            );
+            
+            // Random star sizes
+            starSizes.push(Math.random() * 3 + 0.5);
+            
+            // Star colors (white to golden)
+            const colorChoice = Math.random();
+            if (colorChoice > 0.7) {
+                // Golden stars (suns)
+                starColors.push(1, 0.84, 0); // Gold
+            } else if (colorChoice > 0.4) {
+                // White stars
+                starColors.push(1, 1, 1);
+            } else {
+                // Slightly blue-white stars
+                starColors.push(0.8, 0.9, 1);
+            }
+        }
+        
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        starGeometry.setAttribute('size', new THREE.Float32BufferAttribute(starSizes, 1));
+        starGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+        
+        const starMaterial = new THREE.PointsMaterial({
+            size: 2,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.9,
+            sizeAttenuation: true,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        // Add some larger glowing suns
+        const sunGeometry = new THREE.BufferGeometry();
+        const sunVertices = [];
+        
+        for (let i = 0; i < 50; i++) {
+            sunVertices.push(
+                Math.random() * 1500 - 750,
+                Math.random() * 1500 - 750,
+                Math.random() * 1500 - 750
+            );
+        }
+        
+        sunGeometry.setAttribute('position', new THREE.Float32BufferAttribute(sunVertices, 3));
+        
+        const sunMaterial = new THREE.PointsMaterial({
+            color: 0xd4af37,
+            size: 8,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending,
+            map: createGlowTexture()
+        });
+        
+        const suns = new THREE.Points(sunGeometry, sunMaterial);
+        scene.add(suns);
+
+        // Create glow texture for suns
+        function createGlowTexture() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 32;
+            canvas.height = 32;
+            const ctx = canvas.getContext('2d');
+            const gradient = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+            gradient.addColorStop(0, 'rgba(255,255,255,1)');
+            gradient.addColorStop(0.2, 'rgba(255,220,100,0.8)');
+            gradient.addColorStop(0.5, 'rgba(212,175,55,0.5)');
+            gradient.addColorStop(1, 'rgba(212,175,55,0)');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 32, 32);
+            const texture = new THREE.Texture(canvas);
+            texture.needsUpdate = true;
+            return texture;
+        }
+
+        camera.position.z = 500;
+
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.001;
+
+            // Slow rotation of stars
+            stars.rotation.y += 0.0002;
+            stars.rotation.x += 0.0001;
+
+            // Gentle rotation of suns
+            suns.rotation.y -= 0.0003;
+            suns.rotation.x += 0.00015;
+
+            // Twinkling effect
+            const sizes = stars.geometry.attributes.size.array;
+            for (let i = 0; i < sizes.length; i++) {
+                sizes[i] = Math.abs(Math.sin(time * 2 + i) * 2) + 0.5;
+            }
+            stars.geometry.attributes.size.needsUpdate = true;
+
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Envelope Opening
+        const envelopeContainer = document.getElementById('envelope-container');
+        const envelope = document.getElementById('envelope');
+        const envelopeSection = document.getElementById('envelope-section');
+        const mainContent = document.getElementById('main-content');
+
+        envelopeContainer.addEventListener('click', () => {
+            envelope.classList.add('opening');
+            
+            setTimeout(() => {
+                envelopeSection.classList.add('hidden');
+                mainContent.classList.add('visible');
+                document.body.style.overflow = 'auto';
+                
+                // Scroll to top to show video immediately
+                window.scrollTo({ top: 0, behavior: 'instant' });
+            }, 1500);
+        });
+
+        // Form Submission
+        document.getElementById('rsvp-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('¡Gracias por confirmar tu asistencia! Te enviaremos más detalles pronto.');
+            e.target.reset();
+        });
+
+        // Countdown Timer
+        function updateCountdown() {
+            const deadline = new Date('June 30, 2026 23:59:59').getTime();
+            const now = new Date().getTime();
+            const distance = deadline - now;
+
+            if (distance < 0) {
+                document.getElementById('countdown').innerHTML = '<p style="color: #d4af37; font-size: 1.5rem;">¡El plazo ha expirado!</p>';
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        // Update countdown every second
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+
+        // Scroll Animations
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(50px)';
+            card.style.transition = 'all 0.8s ease';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>
