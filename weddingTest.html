@@ -1430,13 +1430,22 @@
             const btnLoading = document.getElementById('btn-loading');
             const formMessage = document.getElementById('form-message');
             
-            // Obtener datos del formulario
+            // Obtener datos del formulario ANTIGUO FUNCIONANDO NUEVO (1441 A 1448)
+            //const formData = {
+                //name: document.getElementById('name').value,
+                //email: document.getElementById('email').value,
+                //guests: document.getElementById('guests').value,
+                //message: document.getElementById('message').value || 'Sin mensaje'
+            // };
+
             const formData = {
-                name: document.getElementById('name').value,
-                email: document.getElementById('email').value,
-                guests: document.getElementById('guests').value,
-                message: document.getElementById('message').value || 'Sin mensaje'
-            };
+    name: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    marital_status: document.getElementById('marital_status').value,
+    guests: document.getElementById('guests').value,
+    activities: activities.length ? activities.join(', ') : 'Ninguna',
+    message: document.getElementById('message').value || 'Sin mensaje'
+};
             
             // Mostrar estado de carga
             submitBtn.disabled = true;
