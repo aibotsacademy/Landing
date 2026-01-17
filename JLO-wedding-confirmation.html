@@ -1343,13 +1343,11 @@
             
             try {
                 const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(formData)
-                });
+                      method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(formData)
+});
+
                 
                 // Mostrar mensaje de éxito
                 formMessage.innerHTML = '<p style="color: #90ee90; font-size: 1.1rem;">✓ ¡Gracias por confirmar tu asistencia! Te enviaremos más detalles pronto.</p>';
