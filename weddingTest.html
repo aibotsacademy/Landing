@@ -1430,7 +1430,7 @@
             const btnLoading = document.getElementById('btn-loading');
             const formMessage = document.getElementById('form-message');
             
-            // Obtener datos del formulario ANTIGUO FUNCIONANDO NUEVO (1441 A 1448)
+            // Obtener datos del formulario ANTIGUO FUNCIONANDO NUEVO (1441 A 1460)
             //const formData = {
                 //name: document.getElementById('name').value,
                 //email: document.getElementById('email').value,
@@ -1438,14 +1438,27 @@
                 //message: document.getElementById('message').value || 'Sin mensaje'
             // };
 
-            const formData = {
-    name: document.getElementById('name').value,
-    email: document.getElementById('email').value,
-    marital_status: document.getElementById('marital_status').value,
-    guests: document.getElementById('guests').value,
-    activities: activities.length ? activities.join(', ') : 'Ninguna',
-    message: document.getElementById('message').value || 'Sin mensaje'
+// Obtener datos del formulario (robusto)
+const maritalEl = document.getElementById('marital_status');
+const activities = [];
+
+const athensEl = document.getElementById('activity_athens');
+const yachtEl  = document.getElementById('activity_yacht');
+const dinnerEl = document.getElementById('activity_dinner');
+
+if (athensEl && athensEl.checked) activities.push(athensEl.value);
+if (yachtEl && yachtEl.checked)   activities.push(yachtEl.value);
+if (dinnerEl && dinnerEl.checked) activities.push(dinnerEl.value);
+
+const formData = {
+  name: document.getElementById('name').value,
+  email: document.getElementById('email').value,
+  marital_status: maritalEl ? maritalEl.value : '',           // ✅
+  guests: document.getElementById('guests').value,
+  activities: activities.length ? activities.join(', ') : 'Ninguna', // ✅
+  message: document.getElementById('message').value || 'Sin mensaje'
 };
+
             
             // Mostrar estado de carga
             submitBtn.disabled = true;
