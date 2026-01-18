@@ -889,7 +889,7 @@
                     body: JSON.stringify(userData)
                 });
 
-                
+                 
                 // Esperar un momento para asegurar que se guardó
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
@@ -902,38 +902,23 @@
                 window.location.href = 'Winder-Perfiles.html';
                 
             } catch (error) {
-                
-                // Con mode: 'no-cors' no podemos leer la respuesta, pero si no hay error significa que se envió
-                // Esperar un momento para simular el guardado
-                await new Promise(resolve => setTimeout(resolve, 1500));
-                
-                btn.innerHTML = '✓ ¡Guardado!';
-                
-                setTimeout(function() {
-                    alert('¡Datos guardados exitosamente! 🎉\n\nPróximamente: Sección de matching con otros invitados.');
-                    // Aquí continuará la siguiente sección
-                }, 500);
-                
-            } catch (error) {
                 console.error('Error:', error);
                 btn.disabled = false;
                 btn.innerHTML = originalText;
                 
-                // Mostrar mensaje de error
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'error-message animate__animated animate__shakeX';
-                errorDiv.innerHTML = '⚠️ Hubo un problema al guardar. Por favor, verifica la URL del script e intenta de nuevo.';
-                document.getElementById('confirmationSection').insertBefore(
-                    errorDiv, 
-                    document.getElementById('confirmationSection').firstChild
+                showCustomAlert(
+                    '⚠️ Error al guardar',
+                    'Hubo un problema al guardar tus datos.\n\n' +
+                    'Posibles causas:\n' +
+                    '• URL del script incorrecta\n' +
+                    '• Permisos no configurados\n' +
+                    '• Conexión a internet\n\n' +
+                    'Por favor, intenta de nuevo.',
+                    'error'
                 );
-                
-                setTimeout(function() {
-                    errorDiv.remove();
-                }, 5000);
             }
         }
-
+        
         function showCustomAlert(title, message, type) {
             const modal = document.createElement('div');
             modal.className = 'modal animate__animated animate__fadeIn';
