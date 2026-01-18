@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Winder - Wedding Tinder</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <title>Winder - Wedding Matches</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -14,545 +13,549 @@
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
             padding: 20px;
         }
 
-        .winder-container {
-            max-width: 450px;
-            width: 100%;
+        .app {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 30px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+            min-height: 600px;
         }
 
-        .logo {
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            padding: 30px;
             text-align: center;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .header p {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .question-section {
+            padding: 40px 30px;
+            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .progress-container {
             margin-bottom: 30px;
         }
 
-        .logo h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            color: white;
-            text-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            margin: 0;
-        }
-
-        .logo-subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-
-        .card-stack {
-            position: relative;
-            width: 100%;
-            height: 600px;
-        }
-
-        .guest-card {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: white;
-            border-radius: 25px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
             overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        .guest-card.swiping-left {
-            transform: translateX(-150%) rotate(-15deg);
-            opacity: 0;
-        }
-
-        .guest-card.swiping-right {
-            transform: translateX(150%) rotate(15deg);
-            opacity: 0;
-        }
-
-        .card-image {
-            width: 100%;
-            height: 400px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 120px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .card-image::before {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 100px;
-            background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
-        }
-
-        .card-info {
-            padding: 30px;
-            position: relative;
-        }
-
-        .guest-name {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #333;
             margin-bottom: 10px;
         }
 
-        .guest-details {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.8;
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #f093fb 0%, #f5576c 100%);
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px rgba(245, 87, 108, 0.5);
         }
 
-        .guest-detail-item {
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .question-card {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+        }
+
+        .question-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .question-subtitle {
+            color: #666;
+            margin-bottom: 25px;
+            font-size: 0.95em;
+        }
+
+        .input-group input[type="text"],
+        .input-group input[type="number"] {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1.1em;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 4px rgba(245, 87, 108, 0.1);
+            transform: scale(1.02);
+        }
+
+        .radio-options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .radio-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
             align-items: center;
-            margin-bottom: 8px;
+            gap: 15px;
         }
 
-        .guest-detail-item span:first-child {
-            font-weight: 600;
-            min-width: 120px;
-            color: #667eea;
+        .radio-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .action-buttons {
+        .radio-item input[type="radio"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #f5576c;
+        }
+
+        .radio-item.selected {
+            background: linear-gradient(135deg, #f093fb20 0%, #f5576c20 100%);
+            border-color: #f5576c;
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.2);
+        }
+
+        .checkbox-options {
+            display: grid;
+            gap: 12px;
+        }
+
+        .checkbox-item {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.3s;
             display: flex;
-            justify-content: center;
-            gap: 20px;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .checkbox-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .checkbox-item input[type="checkbox"] {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #f5576c;
+        }
+
+        .checkbox-item.selected {
+            background: linear-gradient(135deg, #f093fb20 0%, #f5576c20 100%);
+            border-color: #f5576c;
+            box-shadow: 0 5px 15px rgba(245, 87, 108, 0.2);
+        }
+
+        .checkbox-label {
+            flex: 1;
+            font-size: 1.05em;
+            color: #333;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .checkbox-emoji {
+            font-size: 1.3em;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
             margin-top: 30px;
         }
 
-        .action-btn {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
+        .btn {
+            flex: 1;
+            padding: 15px;
             border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
+            border-radius: 15px;
+            font-size: 1.1em;
+            font-weight: 700;
             cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .action-btn:hover {
-            transform: scale(1.1);
-        }
-
-        .action-btn:active {
-            transform: scale(0.95);
-        }
-
-        .btn-view {
-            background: #667eea;
-            color: white;
-        }
-
-        .btn-view:hover {
-            box-shadow: 0 8px 30px rgba(102, 126, 234, 0.5);
-        }
-
-        .btn-match {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            color: white;
-            width: 80px;
-            height: 80px;
-            font-size: 2rem;
-        }
-
-        .btn-match:hover {
-            box-shadow: 0 8px 30px rgba(245, 87, 108, 0.5);
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-next {
-            background: #64b5f6;
-            color: white;
-        }
-
-        .btn-next:hover {
-            box-shadow: 0 8px 30px rgba(100, 181, 246, 0.5);
-        }
-
-        .no-guests {
-            text-align: center;
-            color: white;
-            padding: 50px 20px;
-        }
-
-        .no-guests h2 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-
-        .stats {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 20px;
-            color: white;
-            font-size: 0.9rem;
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            display: block;
-        }
-
-        /* Modal */
-        .modal-content {
-            border-radius: 20px;
-        }
-
-        .modal-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .loading {
-            text-align: center;
-            color: white;
-            padding: 50px;
-        }
-
-        .loading-spinner {
-            width: 50px;
-            height: 50px;
-            border: 4px solid rgba(255, 255, 255, 0.3);
-            border-top-color: white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 20px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-left: 10px;
-        }
-
-        .badge-match {
             background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
             color: white;
+            box-shadow: 0 4px 15px rgba(245, 87, 108, 0.4);
+        }
+
+        .btn-next:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 87, 108, 0.6);
+        }
+
+        .btn-next:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-back {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            flex: 0.5;
+        }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="winder-container">
-        <div class="logo">
-            <h1>💍 Winder</h1>
-            <p class="logo-subtitle">Conoce a los invitados de la boda</p>
-        </div>
-
-        <div id="loading" class="loading">
-            <div class="loading-spinner"></div>
-            <p>Cargando invitados...</p>
-        </div>
-
-        <div id="app" style="display: none;">
-            <div class="card-stack" id="cardStack">
-                <!-- Cards will be inserted here -->
+    <div class="container">
+        <div class="app animate__animated animate__fadeIn">
+            <div class="header">
+                <h1 class="animate__animated animate__bounceIn">💕 Winder</h1>
+                <p>Conecta con otros invitados de la boda</p>
             </div>
 
-            <div class="action-buttons">
-                <button class="action-btn btn-view" id="btnView" title="Ver Detalles">
-                    👁️
-                </button>
-                <button class="action-btn btn-match" id="btnMatch" title="Match!">
-                    💖
-                </button>
-                <button class="action-btn btn-next" id="btnNext" title="Siguiente">
-                    ➡️
-                </button>
-            </div>
+            <div id="questionnaireSection" class="question-section">
+                <div class="progress-container">
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-text">
+                        <span id="currentQuestion">1</span> de <span id="totalQuestions">5</span>
+                    </div>
+                </div>
 
-            <div class="stats">
-                <div class="stat-item">
-                    <span class="stat-number" id="totalGuests">0</span>
-                    <span>Total</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="matchedGuests">0</span>
-                    <span>Matches</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-number" id="remainingGuests">0</span>
-                    <span>Restantes</span>
-                </div>
-            </div>
-        </div>
-
-        <div id="noGuests" class="no-guests" style="display: none;">
-            <h2>🎉 ¡Sin más invitados!</h2>
-            <p>Has revisado todos los invitados confirmados.</p>
-            <button class="btn btn-light mt-3" onclick="location.reload()">Reiniciar</button>
-        </div>
-    </div>
-
-    <!-- Modal para Ver Detalles -->
-    <div class="modal fade" id="detailsModal" tabindex="-1">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title">Detalles del Invitado</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                </div>
-                <div class="modal-body" id="modalBody">
-                    <!-- Details will be inserted here -->
-                </div>
+                <div id="questionContainer"></div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/js/bootstrap.bundle.min.js"></script>
     <script>
-        // CONFIGURACIÓN - Reemplaza con tu URL de Google Sheets publicado como CSV
-        const SHEET_URL = 'TU_URL_DE_GOOGLE_SHEETS_CSV_AQUI';
-        
-        // O usa datos de prueba si no tienes el Sheet configurado
-        const USE_DEMO_DATA = true;
-
-        const DEMO_GUESTS = [
+        const questions = [
             {
-                name: "Ana García",
-                email: "ana@email.com",
-                maritalStatus: "Soltera",
-                guests: "Solo yo",
-                guestName: "N/A",
-                activities: "Explorando Atenas, Tour en Yate",
-                message: "¡Muy emocionada!",
-                confirmation: "WED-ABC123"
+                id: 'name',
+                title: '¿Cómo te llamas?',
+                subtitle: 'Así te conocerán los demás invitados',
+                type: 'text',
+                placeholder: 'Tu nombre real o ficticio',
+                required: true
             },
             {
-                name: "Carlos López",
-                email: "carlos@email.com",
-                maritalStatus: "Casado",
-                guests: "1 Acompañante",
-                guestName: "María López",
-                activities: "Cena Elegante",
-                message: "Sin mensaje",
-                confirmation: "WED-DEF456"
+                id: 'age',
+                title: '¿Cuál es tu edad?',
+                subtitle: 'Solo para encontrar personas en tu rango',
+                type: 'number',
+                placeholder: 'Ej: 28',
+                required: true
             },
             {
-                name: "Sofia Martínez",
-                email: "sofia@email.com",
-                maritalStatus: "En una relación",
-                guests: "2 Acompañantes",
-                guestName: "N/A",
-                activities: "Explorando Atenas",
-                message: "¡No puedo esperar!",
-                confirmation: "WED-GHI789"
+                id: 'interest',
+                title: 'Me interesa conocer...',
+                subtitle: 'Sé honesto, aquí todos somos libres 🌈',
+                type: 'radio',
+                options: [
+                    { value: 'M', label: 'Mujeres', emoji: '👩' },
+                    { value: 'H', label: 'Hombres', emoji: '👨' },
+                    { value: 'Bi', label: 'Ambos (Bi)', emoji: '💖' },
+                    { value: 'Curious', label: 'Curiosos', emoji: '👀' },
+                    { value: '@', label: 'Todos sin etiquetas', emoji: '🌟' }
+                ],
+                required: true
+            },
+            {
+                id: 'hobbies',
+                title: '¿Qué te gusta hacer?',
+                subtitle: 'Selecciona todos los que quieras',
+                type: 'checkbox',
+                options: [
+                    { value: 'viajar', label: 'Viajar y explorar', emoji: '✈️' },
+                    { value: 'comer', label: 'Comer rico (foodie)', emoji: '🍕' },
+                    { value: 'escalar', label: 'Deportes extremos', emoji: '🧗' },
+                    { value: 'spa', label: 'Spa y relax', emoji: '💆' },
+                    { value: 'fiesta', label: 'Fiestas y bailar', emoji: '🎉' },
+                    { value: 'netflix', label: 'Netflix y series', emoji: '📺' },
+                    { value: 'gym', label: 'Gym y fitness', emoji: '💪' },
+                    { value: 'arte', label: 'Arte y cultura', emoji: '🎨' },
+                    { value: 'tech', label: 'Tecnología', emoji: '💻' },
+                    { value: 'cocina', label: 'Cocinar', emoji: '👨‍🍳' }
+                ],
+                required: true
+            },
+            {
+                id: 'music',
+                title: '¿Qué música te mueve?',
+                subtitle: 'La música dice mucho de ti',
+                type: 'radio',
+                options: [
+                    { value: 'Reggaeton', label: 'Reggaeton', emoji: '🔥' },
+                    { value: 'Rock', label: 'Rock', emoji: '🎸' },
+                    { value: 'Pop', label: 'Pop', emoji: '🎤' },
+                    { value: 'Electrónica', label: 'Electrónica', emoji: '🎧' },
+                    { value: 'Indie', label: 'Indie', emoji: '🎵' },
+                    { value: 'Latina', label: 'Latina/Salsa', emoji: '💃' },
+                    { value: 'Todo', label: 'De todo un poco', emoji: '🎶' }
+                ],
+                required: true
             }
         ];
 
-        let guests = [];
-        let currentIndex = 0;
-        let matches = [];
+        let currentQuestionIndex = 0;
+        let userData = {};
 
-        // Cargar invitados
-        async function loadGuests() {
-            try {
-                if (USE_DEMO_DATA) {
-                    guests = [...DEMO_GUESTS];
-                } else {
-                    // Aquí cargarías desde Google Sheets CSV
-                    const response = await fetch(SHEET_URL);
-                    const csv = await response.text();
-                    guests = parseCSV(csv);
-                }
-
-                if (guests.length === 0) {
-                    showNoGuests();
-                    return;
-                }
-
-                renderCard();
-                updateStats();
-                showApp();
-            } catch (error) {
-                console.error('Error cargando invitados:', error);
-                alert('Error al cargar invitados');
-            }
-        }
-
-        function parseCSV(csv) {
-            // Simple CSV parser
-            const lines = csv.split('\n').slice(1); // Skip header
-            return lines.filter(line => line.trim()).map(line => {
-                const parts = line.split(',');
-                return {
-                    name: parts[2],
-                    email: parts[3],
-                    maritalStatus: parts[4],
-                    guests: parts[5],
-                    guestName: parts[6],
-                    activities: parts[7],
-                    message: parts[8],
-                    confirmation: parts[1]
-                };
-            });
-        }
-
-        function getInitials(name) {
-            return name.split(' ').map(n => n[0]).join('').toUpperCase();
-        }
-
-        function getRandomGradient() {
-            const gradients = [
-                'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
-                'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)',
-                'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)',
-                'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'
-            ];
-            return gradients[Math.floor(Math.random() * gradients.length)];
-        }
-
-        function renderCard() {
-            if (currentIndex >= guests.length) {
-                showNoGuests();
-                return;
-            }
-
-            const guest = guests[currentIndex];
-            const cardStack = document.getElementById('cardStack');
+        function showQuestion(index) {
+            const question = questions[index];
+            const container = document.getElementById('questionContainer');
             
-            const isMatched = matches.includes(guest.confirmation);
-            
-            cardStack.innerHTML = `
-                <div class="guest-card" id="currentCard">
-                    <div class="card-image" style="background: ${getRandomGradient()}">
-                        <div style="font-size: 120px;">${getInitials(guest.name)}</div>
-                    </div>
-                    <div class="card-info">
-                        <h2 class="guest-name">
-                            ${guest.name}
-                            ${isMatched ? '<span class="badge badge-match">MATCH!</span>' : ''}
-                        </h2>
-                        <div class="guest-details">
-                            <div class="guest-detail-item">
-                                <span>Estado Civil:</span>
-                                <span>${guest.maritalStatus}</span>
-                            </div>
-                            <div class="guest-detail-item">
-                                <span>Invitados:</span>
-                                <span>${guest.guests}</span>
-                            </div>
-                            ${guest.guestName !== 'N/A' ? `
-                            <div class="guest-detail-item">
-                                <span>Acompañante:</span>
-                                <span>${guest.guestName}</span>
-                            </div>
-                            ` : ''}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        function showDetails() {
-            const guest = guests[currentIndex];
-            const modalBody = document.getElementById('modalBody');
-            
-            modalBody.innerHTML = `
-                <div style="line-height: 2;">
-                    <p><strong>Nombre:</strong> ${guest.name}</p>
-                    <p><strong>Email:</strong> ${guest.email}</p>
-                    <p><strong>Estado Civil:</strong> ${guest.maritalStatus}</p>
-                    <p><strong>Invitados:</strong> ${guest.guests}</p>
-                    ${guest.guestName !== 'N/A' ? `<p><strong>Acompañante:</strong> ${guest.guestName}</p>` : ''}
-                    <p><strong>Actividades:</strong> ${guest.activities}</p>
-                    <p><strong>Mensaje:</strong> ${guest.message}</p>
-                    <p><strong>Confirmación:</strong> <code>${guest.confirmation}</code></p>
-                </div>
-            `;
-            
-            const modal = new bootstrap.Modal(document.getElementById('detailsModal'));
-            modal.show();
-        }
-
-        function handleMatch() {
-            const guest = guests[currentIndex];
-            
-            if (!matches.includes(guest.confirmation)) {
-                matches.push(guest.confirmation);
-                
-                const card = document.getElementById('currentCard');
-                card.classList.add('swiping-right');
-                
-                setTimeout(() => {
-                    currentIndex++;
-                    renderCard();
-                    updateStats();
-                }, 300);
-            }
-        }
-
-        function handleNext() {
-            const card = document.getElementById('currentCard');
-            card.classList.add('swiping-left');
+            container.style.animation = 'slideOut 0.3s ease';
             
             setTimeout(() => {
-                currentIndex++;
-                renderCard();
-                updateStats();
+                let html = '<div class="question-card">';
+                html += '<h2 class="question-title">' + question.title + '</h2>';
+                html += '<p class="question-subtitle">' + question.subtitle + '</p>';
+
+                if (question.type === 'text' || question.type === 'number') {
+                    const value = userData[question.id] || '';
+                    html += '<div class="input-group">';
+                    html += '<input type="' + question.type + '" id="' + question.id + '" ';
+                    html += 'placeholder="' + question.placeholder + '" value="' + value + '"';
+                    if (question.type === 'number') {
+                        html += ' min="18" max="99"';
+                    }
+                    html += '>';
+                    html += '</div>';
+                }
+                else if (question.type === 'radio') {
+                    html += '<div class="radio-options">';
+                    question.options.forEach(function(opt) {
+                        const checked = userData[question.id] === opt.value ? 'checked' : '';
+                        const selected = userData[question.id] === opt.value ? 'selected' : '';
+                        html += '<label class="radio-item ' + selected + '">';
+                        html += '<input type="radio" name="' + question.id + '" value="' + opt.value + '" ' + checked + '>';
+                        html += '<span class="checkbox-label">';
+                        html += '<span class="checkbox-emoji">' + opt.emoji + '</span>';
+                        html += opt.label;
+                        html += '</span></label>';
+                    });
+                    html += '</div>';
+                }
+                else if (question.type === 'checkbox') {
+                    html += '<div class="checkbox-options">';
+                    question.options.forEach(function(opt) {
+                        const checked = userData[question.id] && userData[question.id].includes(opt.value) ? 'checked' : '';
+                        const selected = userData[question.id] && userData[question.id].includes(opt.value) ? 'selected' : '';
+                        html += '<label class="checkbox-item ' + selected + '">';
+                        html += '<input type="checkbox" name="' + question.id + '" value="' + opt.value + '" ' + checked + '>';
+                        html += '<span class="checkbox-label">';
+                        html += '<span class="checkbox-emoji">' + opt.emoji + '</span>';
+                        html += opt.label;
+                        html += '</span></label>';
+                    });
+                    html += '</div>';
+                }
+
+                html += '<div class="button-group">';
+                if (index > 0) {
+                    html += '<button class="btn btn-back" onclick="previousQuestion()">← Atrás</button>';
+                }
+                const btnText = index === questions.length - 1 ? 'Continuar →' : 'Siguiente →';
+                html += '<button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">' + btnText + '</button>';
+                html += '</div></div>';
+
+                container.innerHTML = html;
+                container.style.animation = 'slideIn 0.5s ease';
+
+                updateProgress();
+                attachEventListeners();
+                validateCurrentQuestion();
             }, 300);
         }
 
-        function updateStats() {
-            document.getElementById('totalGuests').textContent = guests.length;
-            document.getElementById('matchedGuests').textContent = matches.length;
-            document.getElementById('remainingGuests').textContent = guests.length - currentIndex;
+        function attachEventListeners() {
+            const question = questions[currentQuestionIndex];
+            
+            if (question.type === 'radio') {
+                const radios = document.querySelectorAll('input[type="radio"]');
+                radios.forEach(function(radio) {
+                    radio.addEventListener('change', function(e) {
+                        const items = document.querySelectorAll('.radio-item');
+                        items.forEach(function(item) {
+                            item.classList.remove('selected');
+                        });
+                        e.target.closest('.radio-item').classList.add('selected');
+                        validateCurrentQuestion();
+                    });
+                });
+            }
+            
+            if (question.type === 'checkbox') {
+                const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+                checkboxes.forEach(function(checkbox) {
+                    checkbox.addEventListener('change', function(e) {
+                        if (e.target.checked) {
+                            e.target.closest('.checkbox-item').classList.add('selected');
+                        } else {
+                            e.target.closest('.checkbox-item').classList.remove('selected');
+                        }
+                        validateCurrentQuestion();
+                    });
+                });
+            }
+
+            if (question.type === 'text' || question.type === 'number') {
+                const input = document.getElementById(question.id);
+                input.addEventListener('input', validateCurrentQuestion);
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        if (!document.getElementById('nextBtn').disabled) {
+                            nextQuestion();
+                        }
+                    }
+                });
+            }
         }
 
-        function showApp() {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('app').style.display = 'block';
+        function validateCurrentQuestion() {
+            const question = questions[currentQuestionIndex];
+            const nextBtn = document.getElementById('nextBtn');
+            let isValid = false;
+
+            if (question.type === 'text' || question.type === 'number') {
+                const input = document.getElementById(question.id);
+                isValid = input && input.value.trim() !== '';
+            }
+            else if (question.type === 'radio') {
+                isValid = document.querySelector('input[name="' + question.id + '"]:checked') !== null;
+            }
+            else if (question.type === 'checkbox') {
+                isValid = document.querySelectorAll('input[name="' + question.id + '"]:checked').length > 0;
+            }
+
+            if (nextBtn) {
+                nextBtn.disabled = !isValid;
+            }
         }
 
-        function showNoGuests() {
-            document.getElementById('loading').style.display = 'none';
-            document.getElementById('app').style.display = 'none';
-            document.getElementById('noGuests').style.display = 'block';
+        function saveCurrentAnswer() {
+            const question = questions[currentQuestionIndex];
+            
+            if (question.type === 'text' || question.type === 'number') {
+                const input = document.getElementById(question.id);
+                if (input) userData[question.id] = input.value.trim();
+            }
+            else if (question.type === 'radio') {
+                const selected = document.querySelector('input[name="' + question.id + '"]:checked');
+                if (selected) userData[question.id] = selected.value;
+            }
+            else if (question.type === 'checkbox') {
+                const selected = document.querySelectorAll('input[name="' + question.id + '"]:checked');
+                userData[question.id] = Array.from(selected).map(function(cb) { return cb.value; });
+            }
         }
 
-        // Event Listeners
-        document.getElementById('btnView').addEventListener('click', showDetails);
-        document.getElementById('btnMatch').addEventListener('click', handleMatch);
-        document.getElementById('btnNext').addEventListener('click', handleNext);
+        function nextQuestion() {
+            saveCurrentAnswer();
+            
+            if (currentQuestionIndex < questions.length - 1) {
+                currentQuestionIndex++;
+                showQuestion(currentQuestionIndex);
+            } else {
+                // Aquí continuará con más preguntas en la siguiente parte
+                alert('¡Perfecto! Continuaremos agregando más preguntas...');
+            }
+        }
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'ArrowLeft') handleNext();
-            if (e.key === 'ArrowRight') handleMatch();
-            if (e.key === ' ') showDetails();
-        });
+        function previousQuestion() {
+            saveCurrentAnswer();
+            
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion(currentQuestionIndex);
+            }
+        }
 
-        // Initialize
-        loadGuests();
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            document.getElementById('totalQuestions').textContent = questions.length;
+        }
+
+        // Iniciar con la primera pregunta
+        showQuestion(0);
     </script>
 </body>
 </html>
