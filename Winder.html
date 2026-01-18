@@ -442,26 +442,34 @@
 
     <script>
         const questions = [
-            {
-                id: 'name',
-                title: '¿Cómo te llamas?',
-                subtitle: 'Así te conocerán los demás invitados',
-                type: 'text',
-                placeholder: 'Tu nombre completo',
+
+             {
+                id: 'looking',
+                title: '¿Qué buscas en Winder?',
+                subtitle: 'Sé claro en tus intenciones',
+                type: 'radio',
+                options: [
+                    { value: 'friends', label: 'Hacer amigos cool', emoji: '🤝' },
+                    { value: 'network', label: 'Networking profesional', emoji: '💼' },
+                    { value: 'fun', label: 'Diversión y risas', emoji: '😄' },
+                    { value: 'romance', label: 'Quién sabe... romance', emoji: '💘' },
+                    { value: 'all', label: 'Abierto a todo', emoji: '✨' }
+                ],
                 required: true
             },
+         
             {
                 id: 'age',
                 title: '¿Cuál es tu edad?',
                 subtitle: 'Solo para encontrar personas en tu rango',
                 type: 'number',
-                placeholder: 'Ej: 28',
+                placeholder: 'Ej: 38',
                 required: true
             },
             {
                 id: 'interest',
                 title: 'Me interesa conocer...',
-                subtitle: 'Sé honesto, aquí todos somos libres 🌈',
+                subtitle: 'Sé honesto, aquí todos somos libres',
                 type: 'radio',
                 options: [
                     { value: 'M', label: 'Mujeres', emoji: '👩' },
@@ -532,20 +540,8 @@
                 ],
                 required: true
             },
-            {
-                id: 'looking',
-                title: '¿Qué buscas en Winder?',
-                subtitle: 'Sé claro en tus intenciones',
-                type: 'radio',
-                options: [
-                    { value: 'friends', label: 'Hacer amigos cool', emoji: '🤝' },
-                    { value: 'network', label: 'Networking profesional', emoji: '💼' },
-                    { value: 'fun', label: 'Diversión y risas', emoji: '😄' },
-                    { value: 'romance', label: 'Quién sabe... romance', emoji: '💘' },
-                    { value: 'all', label: 'Abierto a todo', emoji: '✨' }
-                ],
-                required: true
-            },
+
+            
             {
                 id: 'about',
                 title: 'Cuéntanos algo interesante',
@@ -554,6 +550,16 @@
                 placeholder: 'Ej: Viví en 3 países, hablo 4 idiomas, cocino como chef...',
                 required: true
             },
+
+   {
+                id: 'name',
+                title: 'Elige Cómo te llamas',
+                subtitle: 'Así te conocerán los demás invitados',
+                type: 'text',
+                placeholder: 'Tu nombre real o ficticio',
+                required: true
+            },
+            
             {
                 id: 'consent',
                 title: 'Términos y condiciones',
