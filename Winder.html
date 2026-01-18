@@ -888,6 +888,20 @@
                     },
                     body: JSON.stringify(userData)
                 });
+
+                
+                // Esperar un momento para asegurar que se guardó
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                btn.innerHTML = '✓ ¡Guardado! Redirigiendo...';
+                
+                // Esperar un poco más antes de redirigir
+                await new Promise(resolve => setTimeout(resolve, 800));
+                
+                // Redirigir a la página de perfiles
+                window.location.href = 'Winder-Perfiles.html';
+                
+            } catch (error) {
                 
                 // Con mode: 'no-cors' no podemos leer la respuesta, pero si no hay error significa que se envió
                 // Esperar un momento para simular el guardado
