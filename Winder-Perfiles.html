@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Winder - Descubre Perfiles</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 420px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 20px 20px 0 0;
+            padding: 20px;
+            text-align: center;
+            color: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .user-info {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 20px;
+            gap: 10px;
+        }
+
+        .stat-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .card-container {
+            background: white;
+            padding: 20px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .profile-card {
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .card-image {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(0,0,0,0.3) 100%);
+        }
+
+        .card-initial {
+            font-size: 120px;
+            color: white;
+            font-weight: 700;
+            z-index: 1;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .compatibility-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            color: #f5576c;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.1em;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+        }
+
+        .card-info {
+            padding: 25px;
+        }
+
+        .card-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .card-age-profession {
+            color: #666;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .card-detail {
+            margin-bottom: 12px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .card-detail strong {
+            color: #f5576c;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb20 0%, #f5576c20 100%);
+            border: 1px solid #f5576c;
+            color: #f5576c;
+            padding: 4px 10px;
+            border-radius: 15px;
+            margin: 3px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            background: white;
+            padding: 20px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 1em;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-view {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-match {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(67, 233, 123, 0.4);
+        }
+
+        .btn-next {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(250, 112, 154, 0.4);
+        }
+
+        .action-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .action-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 400px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .modal-close {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .no-more-profiles {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .no-more-profiles h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .no-more-profiles p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.6;
+        }
+
+        .matches-section {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .matches-title {
+            color: #333;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .match-item {
+            background: linear-gradient(135deg, #f093fb10 0%, #f5576c10 100%);
+            padding: 15px;
+            border-radius: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .match-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .match-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .match-info {
+            flex: 1;
+        }
+
+        .match-name {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 3px;
+        }
+
+        .match-compatibility {
+            font-size: 0.85em;
+            color: #f5576c;
+            font-weight: 600;
+        }
+
+        .swipe-hint {
+            position: absolute;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 0.9em;
+            opacity: 0.7;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 0.3; }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header animate__animated animate__fadeInDown">
+            <h1>💕 Winder</h1>
+            <div class="user-info" id="userInfo">Cargando...</div>
+        </div>
+
+        <div class="stats animate__animated animate__fadeIn">
+            <div class="stat-item">
+                <div class="stat-number" id="viewedCount">0</div>
+                <div class="stat-label">Vistos</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="matchCount">0</div>
+                <div class="stat-label">Matches</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number" id="remainingCount">0</div>
+                <div class="stat-label">Restantes</div>
+            </div>
+        </div>
+
+        <div class="card-container" id="cardContainer">
+            <!-- Las tarjetas se generarán aquí -->
+        </div>
+
+        <div class="matches-section" id="matchesSection" style="display: none;">
+            <h3 class="matches-title">💫 Tus Matches</h3>
+            <div id="matchesList"></div>
+        </div>
+    </div>
+
+    <script>
+        // IMPORTANTE: Usar la misma URL del registro
+        const GOOGLE_SCRIPT_URL = 'TU_URL_DE_GOOGLE_APPS_SCRIPT_AQUI';
+        
+        let userData = {};
+        let guests = [];
+        let currentIndex = 0;
+        let viewedCount = 0;
+        let matchCount = 0;
+        let matches = [];
+
+        // Cargar datos del usuario desde localStorage
+        function loadUserData() {
+            const savedData = localStorage.getItem('winderUserData');
+            if (savedData) {
+                userData = JSON.parse(savedData);
+                document.getElementById('userInfo').textContent = 
+                    `Hola ${userData.name} 👋`;
+            } else {
+                // Si no hay datos, redirigir al registro
+                alert('No se encontraron datos de usuario. Serás redirigido al registro.');
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Datos de ejemplo de invitados
+        function loadGuests() {
+            guests = [
+                {
+                    name: "Ana García",
+                    age: 28,
+                    profession: "Diseñadora Gráfica",
+                    interest: "@",
+                    hobbies: ["arte", "spa", "viajar"],
+                    passions: ["fotografía", "moda"],
+                    music: "Indie",
+                    looking: "friends",
+                    about: "Amante de los atardeceres y el café. Me encanta capturar momentos únicos."
+                },
+                {
+                    name: "Carlos Ruiz",
+                    age: 32,
+                    profession: "Ingeniero de Software",
+                    interest: "M",
+                    hobbies: ["tech", "gym", "cocina"],
+                    passions: ["emprendimiento", "música"],
+                    music: "Rock",
+                    looking: "network",
+                    about: "Siempre buscando el siguiente desafío. Apasionado por la tecnología."
+                },
+                {
+                    name: "María López",
+                    age: 26,
+                    profession: "Psicóloga",
+                    interest: "@",
+                    hobbies: ["netflix", "spa", "fiesta"],
+                    passions: ["literatura", "música"],
+                    music: "Pop",
+                    looking: "friends",
+                    about: "La vida es una danza constante. Me encanta ayudar a las personas."
+                },
+                {
+                    name: "Diego Martín",
+                    age: 30,
+                    profession: "Chef",
+                    interest: "M",
+                    hobbies: ["comer", "cocina", "viajar"],
+                    passions: ["gastronomía", "aventura"],
+                    music: "Latina",
+                    looking: "all",
+                    about: "La comida es mi lenguaje del amor. Siempre experimentando."
+                },
+                {
+                    name: "Laura Sánchez",
+                    age: 27,
+                    profession: "Arquitecta",
+                    interest: "H",
+                    hobbies: ["arte", "escalar", "viajar"],
+                    passions: ["fotografía", "aventura"],
+                    music: "Electrónica",
+                    looking: "fun",
+                    about: "Construyendo sueños, uno a la vez. Amante de la naturaleza."
+                },
+                {
+                    name: "Javier Torres",
+                    age: 35,
+                    profession: "Fotógrafo",
+                    interest: "@",
+                    hobbies: ["fotografía", "viajar", "fiesta"],
+                    passions: ["aventura", "música"],
+                    music: "Todo",
+                    looking: "friends",
+                    about: "Capturando momentos únicos alrededor del mundo."
+                },
+                {
+                    name: "Sofía Ramírez",
+                    age: 29,
+                    profession: "Abogada",
+                    interest: "H",
+                    hobbies: ["netflix", "gym", "comer"],
+                    passions: ["literatura", "emprendimiento"],
+                    music: "Pop",
+                    looking: "network",
+                    about: "Defendiendo lo que importa. Runner y amante del buen vino."
+                },
+                {
+                    name: "Pablo Moreno",
+                    age: 31,
+                    profession: "Músico",
+                    interest: "M",
+                    hobbies: ["música", "fiesta", "arte"],
+                    passions: ["música", "fotografía"],
+                    music: "Rock",
+                    looking: "all",
+                    about: "La música es mi vida. Compositor y guitarrista."
+                }
+            ];
+
+            // Ordenar por compatibilidad
+            guests.sort((a, b) => calculateCompatibility(b) - calculateCompatibility(a));
+            updateStats();
+            showCurrentCard();
+        }
+
+        function calculateCompatibility(guest) {
+            let score = 0;
+
+            // Compatibilidad por edad
+            const ageDiff = Math.abs(userData.age - guest.age);
+            if (ageDiff <= 5) score += 30;
+            else if (ageDiff <= 10) score += 15;
+
+            // Hobbies en común
+            const userHobbies = userData.hobbies || [];
+            const commonHobbies = userHobbies.filter(h =>
+                guest.hobbies.some(gh => gh.includes(h) || h.includes(gh))
+            ).length;
+            score += commonHobbies * 20;
+
+            // Pasiones en común
+            const userPassions = userData.passions || [];
+            const commonPassions = userPassions.filter(p =>
+                guest.passions.some(gp => gp.includes(p) || p.includes(gp))
+            ).length;
+            score += commonPassions * 25;
+
+            // Mismo objetivo
+            if (userData.looking === guest.looking || userData.looking === 'all' || guest.looking === 'all') {
+                score += 10;
+            }
+
+            // Música similar
+            if (userData.music === guest.music || guest.music === 'Todo' || userData.music === 'Todo') {
+                score += 15;
+            }
+
+            return Math.min(score, 100);
+        }
+
+        function showCurrentCard() {
+            const container = document.getElementById('cardContainer');
+
+            if (currentIndex >= guests.length) {
+                showNoMoreProfiles();
+                return;
+            }
+
+            const guest = guests[currentIndex];
+            const compatibility = calculateCompatibility(guest);
+            const initial = guest.name.charAt(0);
+
+            container.innerHTML = `
+                <div class="profile-card animate__animated animate__zoomIn">
+                    <div class="card-image">
+                        <div class="card-initial">${initial}</div>
+                        <div class="compatibility-badge">✨ ${compatibility}%</div>
+                    </div>
+                    <div class="card-info">
+                        <div class="card-name">${guest.name}</div>
+                        <div class="card-age-profession">${guest.age} años • ${guest.profession}</div>
+                        
+                        <div class="card-detail">
+                            <strong>Hobbies:</strong><br>
+                            ${guest.hobbies.map(h => `<span class="badge">${h}</span>`).join('')}
+                        </div>
+                        
+                        <div class="card-detail">
+                            <strong>Pasiones:</strong><br>
+                            ${guest.passions.map(p => `<span class="badge">${p}</span>`).join('')}
+                        </div>
+                        
+                        <div class="card-detail">
+                            <strong>Música:</strong> ${guest.music}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="actions">
+                    <button class="action-btn btn-view" onclick="viewProfile()">
+                        👁️ Ver
+                    </button>
+                    <button class="action-btn btn-match" onclick="makeMatch()">
+                        💕 Match
+                    </button>
+                    <button class="action-btn btn-next" onclick="nextProfile()">
+                        ➡️ Next
+                    </button>
+                </div>
+            `;
+        }
+
+        function viewProfile() {
+            const guest = guests[currentIndex];
+            const lookingLabels = {
+                'friends': 'Hacer amigos cool',
+                'network': 'Networking profesional',
+                'fun': 'Diversión y risas',
+                'romance': 'Quién sabe... romance',
+                'all': 'Abierto a todo'
+            };
+
+            const modal = document.createElement('div');
+            modal.className = 'modal animate__animated animate__fadeIn';
+            modal.innerHTML = `
+                <div class="modal-content animate__animated animate__zoomIn">
+                    <h3>${guest.name}</h3>
+                    <p style="color: #666; margin-bottom: 15px;">${guest.age} años • ${guest.profession}</p>
+                    
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <p style="margin-bottom: 10px;"><strong style="color: #f5576c;">Sobre mí:</strong></p>
+                        <p style="color: #666;">${guest.about}</p>
+                    </div>
+                    
+                    <div style="text-align: left; margin-bottom: 15px;">
+                        <p style="margin-bottom: 10px;"><strong style="color: #f5576c;">Buscando:</strong></p>
+                        <p style="color: #666;">${lookingLabels[guest.looking]}</p>
+                    </div>
+                    
+                    <button class="modal-close" onclick="this.closest('.modal').remove()">
+                        Cerrar
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+
+            viewedCount++;
+            updateStats();
+        }
+
+        function makeMatch() {
+            const guest = guests[currentIndex];
+            const compatibility = calculateCompatibility(guest);
+            
+            matches.push({ ...guest, compatibility });
+            matchCount++;
+            
+            // Mostrar sección de matches
+            const matchesSection = document.getElementById('matchesSection');
+            matchesSection.style.display = 'block';
+            
+            // Agregar a la lista
+            const matchesList = document.getElementById('matchesList');
+            const matchItem = document.createElement('div');
+            matchItem.className = 'match-item animate__animated animate__bounceIn';
+            matchItem.innerHTML = `
+                <div class="match-avatar">${guest.name.charAt(0)}</div>
+                <div class="match-info">
+                    <div class="match-name">${guest.name}</div>
+                    <div class="match-compatibility">${compatibility}% compatible</div>
+                </div>
+            `;
+            matchItem.onclick = () => showMatchDetail(guest, compatibility);
+            matchesList.insertBefore(matchItem, matchesList.firstChild);
+            
+            // Animación de éxito
+            showSuccessAnimation();
+            
+            // Pasar al siguiente
+            setTimeout(nextProfile, 800);
+        }
+
+        function showSuccessAnimation() {
+            const heart = document.createElement('div');
+            heart.innerHTML = '💕';
+            heart.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                font-size: 100px;
+                z-index: 9999;
+                animation: heartPop 0.8s ease-out;
+                pointer-events: none;
+            `;
+            
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes heartPop {
+                    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                    50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+                    100% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(heart);
+            
+            setTimeout(() => heart.remove(), 800);
+        }
+
+        function showMatchDetail(guest, compatibility) {
+            const modal = document.createElement('div');
+            modal.className = 'modal animate__animated animate__fadeIn';
+            modal.innerHTML = `
+                <div class="modal-content animate__animated animate__zoomIn">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="width: 80px; height: 80px; margin: 0 auto 15px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5em; font-weight: 700;">${guest.name.charAt(0)}</div>
+                        <h3>${guest.name}</h3>
+                        <p style="color: #f5576c; font-weight: 600;">✨ ${compatibility}% compatible</p>
+                    </p>
+                    <div style="text-align: left; margin: 15px 0;">
+                        <p style="color: #666; line-height: 1.6;">${guest.about}</p>
+                    </div>
+                    <button class="modal-close" onclick="this.closest('.modal').remove()">
+                        Cerrar
+                    </button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function nextProfile() {
+            currentIndex++;
+            viewedCount++;
+            updateStats();
+            showCurrentCard();
+        }
+
+        function showNoMoreProfiles() {
+            const container = document.getElementById('cardContainer');
+            container.innerHTML = `
+                <div class="no-more-profiles animate__animated animate__fadeIn">
+                    <div class="empty-state-icon">🎉</div>
+                    <h2>¡Has visto todos los perfiles!</h2>
+                    <p>Has explorado todos los invitados disponibles.</p>
+                    <p style="font-weight: 600; color: #f5576c;">
+                        ${matchCount > 0 
+                            ? `¡Felicidades! Hiciste ${matchCount} match${matchCount > 1 ? 'es' : ''}. Revisa tu lista abajo.`
+                            : 'No hiciste ningún match. ¡Vuelve a intentarlo!'
+                        }
+                    </p>
+                    <button class="modal-close" onclick="location.reload()">
+                        Volver a empezar
+                    </button>
+                </div>
+            `;
+        }
+
+        function updateStats() {
+            document.getElementById('viewedCount').textContent = viewedCount;
+            document.getElementById('matchCount').textContent = matchCount;
+            document.getElementById('remainingCount').textContent = Math.max(0, guests.length - currentIndex);
+        }
+
+        // Inicializar
+        loadUserData();
+        loadGuests();
+    </script>
+</body>
+</html>
