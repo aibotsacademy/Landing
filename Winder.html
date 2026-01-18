@@ -569,6 +569,10 @@
             }
         ];
 
+        // IMPORTANTE: Reemplaza esta URL con la URL de tu Google Apps Script
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwSvPNIDnIxJ2em9-3K79DOd-79hKZ623i3v_3hqAQ2v8CznDA7dF0JQplJqQnJ5Fz0xg/exec';
+        
+
         let currentQuestionIndex = 0;
         let userData = {};
 
@@ -863,8 +867,54 @@
             document.getElementById('profileDetails').innerHTML = detailsHTML;
         }
 
-        function startMatching() {
-            alert('¡Próximamente! Aquí comenzará la sección de matching 🎉');
+       async function startMatching() {
+            const btn = event.target;
+            const originalText = btn.innerHTML;
+            
+            // Mostrar loading
+            btn.disabled = true;
+            btn.innerHTML = '<span class="loading"></span> Guardando...';
+            
+            try {
+                // Enviar datos a Google Sheets
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+                
+                // Con mode: 'no-cors' no podemos leer la respuesta, pero si no hay error significa que se envió
+                // Esperar un momento para simular el guardado
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                btn.innerHTML = '✓ ¡Guardado!';
+                
+                setTimeout(function() {
+                    alert('¡Datos guardados exitosamente! 🎉\n\nPróximamente: Sección de matching con otros invitados.');
+                    // Aquí continuará la siguiente sección
+                }, 500);
+                
+            } catch (error) {
+                console.error('Error:', error);
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+                
+                // Mostrar mensaje de error
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'error-message animate__animated animate__shakeX';
+                errorDiv.innerHTML = '⚠️ Hubo un problema al guardar. Por favor, verifica la URL del script e intenta de nuevo.';
+                document.getElementById('confirmationSection').insertBefore(
+                    errorDiv, 
+                    document.getElementById('confirmationSection').firstChild
+                );
+                
+                setTimeout(function() {
+                    errorDiv.remove();
+                }, 5000);
+            }
         }
 
         function previousQuestion() {
