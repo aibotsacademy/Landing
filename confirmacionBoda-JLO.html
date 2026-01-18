@@ -1548,6 +1548,34 @@
                 // Crear resumen de confirmación
                 const activitiesList = activities.length > 0 ? activities.join(', ') : 'Ninguna';
                 const guestInfo = formData.guests === 'Solo yo' ? 'Solo yo' : formData.guests === '1' ? `1 Acompañante: ${formData.guest_name}` : formData.guests;
+
+// Verificar si es soltero, complicado u otro para mostrar enlace a Winder
+                const showWinderLink = ['Soltero/a', 'Complicado', 'Otro'].includes(formData.marital_status);
+                
+                const winderSection = showWinderLink ? `
+                    <div style="margin-top: 25px; padding: 20px; background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(212, 175, 55, 0.05)); border-radius: 12px; border: 2px solid rgba(212, 175, 55, 0.4);">
+                        <p style="color: #d4af37; margin: 0 0 15px 0; font-size: 1.2rem;">
+                            💕 <strong>¡Sorpresa especial para ti!</strong>
+                        </p>
+                        <p style="color: rgba(255, 255, 255, 0.9); margin: 0 0 15px 0; line-height: 1.6;">
+                            Como invitado/a soltero/a, tenemos algo especial preparado para ti. 
+                            Conoce a otros invitados de la boda en nuestra plataforma exclusiva:
+                        </p>
+                        <div style="text-align: center;">
+                            <a href="Winder.html" 
+                               target="_blank"
+                               style="display: inline-block; background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%); color: white; padding: 15px 40px; border-radius: 50px; text-decoration: none; font-weight: 600; letter-spacing: 1px; box-shadow: 0 10px 30px rgba(212, 175, 55, 0.4); transition: all 0.3s ease;"
+                               onmouseover="this.style.transform='translateY(-3px)'; this.style.boxShadow='0 15px 40px rgba(212, 175, 55, 0.6)';"
+                               onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px rgba(212, 175, 55, 0.4)';">
+                                💑 ACCEDER A WINDER
+                            </a>
+                        </div>
+                        <p style="color: rgba(255, 255, 255, 0.6); margin: 15px 0 0 0; font-size: 0.85rem; text-align: center;">
+                            Winder: Donde el amor en las bodas se encuentra. ✨
+                        </p>
+                    </div>
+                ` : '';
+
                 
                 const confirmationHTML = `
                     <div style="background: rgba(212, 175, 55, 0.1); border: 2px solid #d4af37; border-radius: 15px; padding: 30px; margin-top: 20px;">
