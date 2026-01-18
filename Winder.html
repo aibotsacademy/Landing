@@ -876,6 +876,9 @@
             btn.innerHTML = '<span class="loading"></span> Guardando...';
             
             try {
+                // Guardar datos en localStorage para usarlos en la siguiente página
+                localStorage.setItem('winderUserData', JSON.stringify(userData));
+                
                 // Enviar datos a Google Sheets
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
@@ -915,6 +918,27 @@
                     errorDiv.remove();
                 }, 5000);
             }
+        }
+
+        function showCustomAlert(title, message, type) {
+            const modal = document.createElement('div');
+            modal.className = 'modal animate__animated animate__fadeIn';
+            
+            const icon = type === 'success' ? '🎉' : '⚠️';
+            const color = type === 'success' ? '#43e97b' : '#ff4444';
+            
+            modal.innerHTML = `
+                <div class="modal-content animate__animated animate__zoomIn" style="max-width: 500px;">
+                    <div style="font-size: 4em; margin-bottom: 20px;">${icon}</div>
+                    <h3 style="color: ${color}; margin-bottom: 15px;">${title}</h3>
+                    <p style="white-space: pre-line; color: #666; line-height: 1.8; margin-bottom: 25px;">${message}</p>
+                    <button class="btn btn-next" onclick="this.closest('.modal').remove()" style="width: 100%;">
+                        Entendido
+                    </button>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
         }
 
         function previousQuestion() {
