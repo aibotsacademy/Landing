@@ -278,6 +278,116 @@
         .hidden {
             display: none;
         }
+
+        .textarea-group textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 15px;
+            font-size: 1em;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+            transition: all 0.3s;
+        }
+
+        .textarea-group textarea:focus {
+            outline: none;
+            border-color: #f5576c;
+            box-shadow: 0 0 0 4px rgba(245, 87, 108, 0.1);
+        }
+
+        .consent-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #ffe6f0 100%);
+            border: 2px solid #f5576c;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .consent-box h4 {
+            color: #f5576c;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .consent-box p {
+            color: #666;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .profile-confirmation {
+            padding: 40px 30px;
+            text-align: center;
+        }
+
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+            font-weight: 700;
+            margin: 0 auto 20px;
+        }
+
+        .profile-name {
+            font-size: 1.8em;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .profile-detail {
+            text-align: left;
+            padding: 12px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+        .profile-detail strong {
+            color: #f5576c;
+            font-weight: 600;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #f093fb20 0%, #f5576c20 100%);
+            border: 1px solid #f5576c;
+            color: #f5576c;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 3px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .success-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+            animation: bounce 1s;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
     </style>
 </head>
 <body>
@@ -294,11 +404,27 @@
                         <div class="progress-fill" id="progressFill" style="width: 0%"></div>
                     </div>
                     <div class="progress-text">
-                        <span id="currentQuestion">1</span> de <span id="totalQuestions">5</span>
+                        <span id="currentQuestion">1</span> de <span id="totalQuestions">10</span>
                     </div>
                 </div>
 
                 <div id="questionContainer"></div>
+            </div>
+
+            <div id="confirmationSection" class="profile-confirmation hidden">
+                <div class="success-icon">✨</div>
+                <h2 style="color: #333; margin-bottom: 30px;">¡Tu perfil está listo!</h2>
+                
+                <div class="profile-card animate__animated animate__fadeIn">
+                    <div class="profile-avatar" id="profileAvatar">?</div>
+                    <div class="profile-name" id="profileName"></div>
+                    
+                    <div id="profileDetails"></div>
+                </div>
+
+                <button class="btn btn-next" onclick="startMatching()" style="width: 100%; margin-top: 20px;">
+                    ¡Comenzar a conectar! 🚀
+                </button>
             </div>
         </div>
     </div>
@@ -310,7 +436,7 @@
                 title: '¿Cómo te llamas?',
                 subtitle: 'Así te conocerán los demás invitados',
                 type: 'text',
-                placeholder: 'Tu nombre real o ficticio',
+                placeholder: 'Tu nombre completo',
                 required: true
             },
             {
@@ -330,7 +456,7 @@
                     { value: 'M', label: 'Mujeres', emoji: '👩' },
                     { value: 'H', label: 'Hombres', emoji: '👨' },
                     { value: 'Bi', label: 'Ambos (Bi)', emoji: '💖' },
-                    { value: 'Curious', label: 'Curiosos', emoji: '👀' },
+                    { value: 'Curious', label: 'Curiosos y abiertos', emoji: '🔥' },
                     { value: '@', label: 'Todos sin etiquetas', emoji: '🌟' }
                 ],
                 required: true
@@ -368,6 +494,60 @@
                     { value: 'Latina', label: 'Latina/Salsa', emoji: '💃' },
                     { value: 'Todo', label: 'De todo un poco', emoji: '🎶' }
                 ],
+                required: true
+            },
+            {
+                id: 'profession',
+                title: '¿A qué te dedicas?',
+                subtitle: 'Tu profesión o pasión principal',
+                type: 'text',
+                placeholder: 'Ej: Diseñador, Chef, Emprendedor...',
+                required: true
+            },
+            {
+                id: 'passions',
+                title: '¿Qué te apasiona?',
+                subtitle: 'Selecciona tus pasiones',
+                type: 'checkbox',
+                options: [
+                    { value: 'aventura', label: 'Aventura', emoji: '🏔️' },
+                    { value: 'gastronomía', label: 'Gastronomía', emoji: '🍷' },
+                    { value: 'moda', label: 'Moda', emoji: '👗' },
+                    { value: 'animales', label: 'Animales', emoji: '🐶' },
+                    { value: 'fotografía', label: 'Fotografía', emoji: '📸' },
+                    { value: 'música', label: 'Música', emoji: '🎵' },
+                    { value: 'emprendimiento', label: 'Emprendimiento', emoji: '🚀' },
+                    { value: 'literatura', label: 'Literatura', emoji: '📚' }
+                ],
+                required: true
+            },
+            {
+                id: 'looking',
+                title: '¿Qué buscas en Winder?',
+                subtitle: 'Sé claro en tus intenciones',
+                type: 'radio',
+                options: [
+                    { value: 'friends', label: 'Hacer amigos cool', emoji: '🤝' },
+                    { value: 'network', label: 'Networking profesional', emoji: '💼' },
+                    { value: 'fun', label: 'Diversión y risas', emoji: '😄' },
+                    { value: 'romance', label: 'Quién sabe... romance', emoji: '💘' },
+                    { value: 'all', label: 'Abierto a todo', emoji: '✨' }
+                ],
+                required: true
+            },
+            {
+                id: 'about',
+                title: 'Cuéntanos algo interesante',
+                subtitle: 'Tu momento de brillar ✨',
+                type: 'textarea',
+                placeholder: 'Ej: Viví en 3 países, hablo 4 idiomas, cocino como chef...',
+                required: true
+            },
+            {
+                id: 'consent',
+                title: 'Términos y condiciones',
+                subtitle: 'Lee y acepta para continuar',
+                type: 'consent',
                 required: true
             }
         ];
@@ -425,12 +605,44 @@
                     });
                     html += '</div>';
                 }
+                else if (question.type === 'textarea') {
+                    const value = userData[question.id] || '';
+                    html += '<div class="textarea-group">';
+                    html += '<textarea id="' + question.id + '" placeholder="' + question.placeholder + '">' + value + '</textarea>';
+                    html += '</div>';
+                }
+                else if (question.type === 'consent') {
+                    html += '<div class="consent-box">';
+                    html += '<h4>📋 Términos de Uso</h4>';
+                    html += '<p>Al usar Winder aceptas compartir tu información con otros invitados de la boda para facilitar conexiones y matches. Tu privacidad es importante y solo se compartirá lo que incluiste en tu perfil.</p>';
+                    html += '</div>';
+                    html += '<div class="checkbox-options">';
+                    
+                    const termsChecked = userData.terms ? 'checked' : '';
+                    const termsSelected = userData.terms ? 'selected' : '';
+                    html += '<label class="checkbox-item ' + termsSelected + '">';
+                    html += '<input type="checkbox" id="terms" ' + termsChecked + '>';
+                    html += '<span class="checkbox-label">';
+                    html += '<span class="checkbox-emoji">✅</span>';
+                    html += 'Acepto los términos y condiciones';
+                    html += '</span></label>';
+                    
+                    const consentChecked = userData.consent ? 'checked' : '';
+                    const consentSelected = userData.consent ? 'selected' : '';
+                    html += '<label class="checkbox-item ' + consentSelected + '">';
+                    html += '<input type="checkbox" id="privacyConsent" ' + consentChecked + '>';
+                    html += '<span class="checkbox-label">';
+                    html += '<span class="checkbox-emoji">🔒</span>';
+                    html += 'Autorizo compartir mi información';
+                    html += '</span></label>';
+                    html += '</div>';
+                }
 
                 html += '<div class="button-group">';
                 if (index > 0) {
                     html += '<button class="btn btn-back" onclick="previousQuestion()">← Atrás</button>';
                 }
-                const btnText = index === questions.length - 1 ? 'Continuar →' : 'Siguiente →';
+                const btnText = index === questions.length - 1 ? 'Finalizar ✓' : 'Siguiente →';
                 html += '<button class="btn btn-next" id="nextBtn" onclick="nextQuestion()">' + btnText + '</button>';
                 html += '</div></div>';
 
@@ -486,6 +698,36 @@
                     }
                 });
             }
+
+            if (question.type === 'textarea') {
+                const textarea = document.getElementById(question.id);
+                textarea.addEventListener('input', validateCurrentQuestion);
+            }
+
+            if (question.type === 'consent') {
+                const terms = document.getElementById('terms');
+                const consent = document.getElementById('privacyConsent');
+                if (terms) {
+                    terms.addEventListener('change', function(e) {
+                        if (e.target.checked) {
+                            e.target.closest('.checkbox-item').classList.add('selected');
+                        } else {
+                            e.target.closest('.checkbox-item').classList.remove('selected');
+                        }
+                        validateCurrentQuestion();
+                    });
+                }
+                if (consent) {
+                    consent.addEventListener('change', function(e) {
+                        if (e.target.checked) {
+                            e.target.closest('.checkbox-item').classList.add('selected');
+                        } else {
+                            e.target.closest('.checkbox-item').classList.remove('selected');
+                        }
+                        validateCurrentQuestion();
+                    });
+                }
+            }
         }
 
         function validateCurrentQuestion() {
@@ -493,7 +735,7 @@
             const nextBtn = document.getElementById('nextBtn');
             let isValid = false;
 
-            if (question.type === 'text' || question.type === 'number') {
+            if (question.type === 'text' || question.type === 'number' || question.type === 'textarea') {
                 const input = document.getElementById(question.id);
                 isValid = input && input.value.trim() !== '';
             }
@@ -502,6 +744,11 @@
             }
             else if (question.type === 'checkbox') {
                 isValid = document.querySelectorAll('input[name="' + question.id + '"]:checked').length > 0;
+            }
+            else if (question.type === 'consent') {
+                const terms = document.getElementById('terms');
+                const consent = document.getElementById('privacyConsent');
+                isValid = terms && terms.checked && consent && consent.checked;
             }
 
             if (nextBtn) {
@@ -512,7 +759,7 @@
         function saveCurrentAnswer() {
             const question = questions[currentQuestionIndex];
             
-            if (question.type === 'text' || question.type === 'number') {
+            if (question.type === 'text' || question.type === 'number' || question.type === 'textarea') {
                 const input = document.getElementById(question.id);
                 if (input) userData[question.id] = input.value.trim();
             }
@@ -524,6 +771,12 @@
                 const selected = document.querySelectorAll('input[name="' + question.id + '"]:checked');
                 userData[question.id] = Array.from(selected).map(function(cb) { return cb.value; });
             }
+            else if (question.type === 'consent') {
+                const terms = document.getElementById('terms');
+                const consent = document.getElementById('privacyConsent');
+                userData.terms = terms ? terms.checked : false;
+                userData.consent = consent ? consent.checked : false;
+            }
         }
 
         function nextQuestion() {
@@ -533,9 +786,68 @@
                 currentQuestionIndex++;
                 showQuestion(currentQuestionIndex);
             } else {
-                // Aquí continuará con más preguntas en la siguiente parte
-                alert('¡Perfecto! Continuaremos agregando más preguntas...');
+                showConfirmation();
             }
+        }
+
+        function showConfirmation() {
+            document.getElementById('questionnaireSection').classList.add('hidden');
+            document.getElementById('confirmationSection').classList.remove('hidden');
+            
+            // Mostrar avatar con inicial
+            const initial = userData.name ? userData.name.charAt(0).toUpperCase() : '?';
+            document.getElementById('profileAvatar').textContent = initial;
+            document.getElementById('profileName').textContent = userData.name || 'Usuario';
+            
+            // Construir detalles del perfil
+            let detailsHTML = '';
+            
+            detailsHTML += '<div class="profile-detail"><strong>Edad:</strong> ' + userData.age + ' años</div>';
+            detailsHTML += '<div class="profile-detail"><strong>Profesión:</strong> ' + userData.profession + '</div>';
+            
+            const interestLabels = {
+                'M': 'Mujeres 👩',
+                'H': 'Hombres 👨',
+                'Bi': 'Ambos (Bi) 💖',
+                'Curious': 'Curiosos y abiertos 🔥',
+                '@': 'Todos sin etiquetas 🌟'
+            };
+            detailsHTML += '<div class="profile-detail"><strong>Interés:</strong> ' + (interestLabels[userData.interest] || userData.interest) + '</div>';
+            
+            if (userData.hobbies && userData.hobbies.length > 0) {
+                detailsHTML += '<div class="profile-detail"><strong>Hobbies:</strong><br>';
+                userData.hobbies.forEach(function(hobby) {
+                    detailsHTML += '<span class="badge">' + hobby + '</span>';
+                });
+                detailsHTML += '</div>';
+            }
+            
+            if (userData.passions && userData.passions.length > 0) {
+                detailsHTML += '<div class="profile-detail"><strong>Pasiones:</strong><br>';
+                userData.passions.forEach(function(passion) {
+                    detailsHTML += '<span class="badge">' + passion + '</span>';
+                });
+                detailsHTML += '</div>';
+            }
+            
+            detailsHTML += '<div class="profile-detail"><strong>Música:</strong> ' + userData.music + '</div>';
+            
+            const lookingLabels = {
+                'friends': 'Hacer amigos cool 🤝',
+                'network': 'Networking profesional 💼',
+                'fun': 'Diversión y risas 😄',
+                'romance': 'Quién sabe... romance 💘',
+                'all': 'Abierto a todo ✨'
+            };
+            detailsHTML += '<div class="profile-detail"><strong>Buscando:</strong> ' + (lookingLabels[userData.looking] || userData.looking) + '</div>';
+            
+            detailsHTML += '<div class="profile-detail"><strong>Sobre mí:</strong> ' + userData.about + '</div>';
+            
+            document.getElementById('profileDetails').innerHTML = detailsHTML;
+        }
+
+        function startMatching() {
+            alert('¡Próximamente! Aquí comenzará la sección de matching 🎉');
         }
 
         function previousQuestion() {
