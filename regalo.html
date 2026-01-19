@@ -928,25 +928,30 @@
             }
         }
 
-        const slider = document.getElementById('amountSlider');
-        const amountDisplay = document.getElementById('slider-amount');
-        const nameSection = document.getElementById('name-section');
+        // Initialize slider after DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const slider = document.getElementById('amountSlider');
+            const amountDisplay = document.getElementById('slider-amount');
+            const nameSection = document.getElementById('name-section');
 
-        slider.addEventListener('input', function() {
-            const value = this.value;
-            amountDisplay.textContent = `€${value}`;
-            
-            const percentage = ((value - this.min) / (this.max - this.min)) * 100;
-            this.style.background = `linear-gradient(to right, rgba(212, 175, 55, 0.6) 0%, rgba(212, 175, 55, 0.6) ${percentage}%, rgba(212, 175, 55, 0.1) ${percentage}%, rgba(212, 175, 55, 0.1) 100%)`;
-        });
+            if (slider && amountDisplay && nameSection) {
+                slider.addEventListener('input', function() {
+                    const value = this.value;
+                    amountDisplay.textContent = `€${value}`;
+                    
+                    const percentage = ((value - this.min) / (this.max - this.min)) * 100;
+                    this.style.background = `linear-gradient(to right, rgba(212, 175, 55, 0.6) 0%, rgba(212, 175, 55, 0.6) ${percentage}%, rgba(212, 175, 55, 0.1) ${percentage}%, rgba(212, 175, 55, 0.1) 100%)`;
+                });
 
-        slider.addEventListener('change', function() {
-            if (!sliderInteracted) {
-                sliderInteracted = true;
-                setTimeout(() => {
-                    nameSection.classList.add('visible');
-                    document.getElementById('contributor-name').focus();
-                }, 300);
+                slider.addEventListener('change', function() {
+                    if (!sliderInteracted) {
+                        sliderInteracted = true;
+                        setTimeout(() => {
+                            nameSection.classList.add('visible');
+                            document.getElementById('contributor-name').focus();
+                        }, 300);
+                    }
+                });
             }
         });
 
