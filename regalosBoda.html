@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regalos - Boda del Futuro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-size: 4em;
+            color: white;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 8px;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: rgba(255,255,255,0.9);
+            font-weight: 300;
+        }
+
+        .gifts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .gift-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+
+        .gift-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .gift-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+        }
+
+        .gift-title {
+            font-size: 1.8em;
+            color: white;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .gift-description {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .slider-container {
+            margin: 25px 0;
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .current-value {
+            font-size: 2em;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .max-value {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9em;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            position: relative;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 1);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+            border-radius: 5px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            box-shadow: 0 0 15px rgba(79, 172, 254, 0.6);
+        }
+
+        .gift-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+            margin-top: 20px;
+        }
+
+        .gift-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(79, 172, 254, 0.6);
+        }
+
+        .gift-button:active {
+            transform: translateY(-1px);
+        }
+
+        .total-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px 35px;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            z-index: 1000;
+            animation: slideInRight 0.8s ease-out;
+        }
+
+        .total-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .total-amount {
+            font-size: 2.5em;
+            color: #4facfe;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(79, 172, 254, 0.8);
+        }
+
+        .confirm-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .confirm-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.5);
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+                letter-spacing: 4px;
+            }
+
+            .gifts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .total-container {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <header>
+            <h1>REGALOS</h1>
+            <p class="subtitle">Contribuye a crear momentos inolvidables en nuestra boda del futuro</p>
+        </header>
+
+        <div class="gifts-grid">
+            <div class="gift-card" style="animation-delay: 0.1s;">
+                <span class="gift-icon">📸</span>
+                <h3 class="gift-title">Fotógrafo Profesional</h3>
+                <p class="gift-description">Captura cada momento mágico de nuestro día especial con fotografía de alta calidad y edición artística.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-photo">0</span></span>
+                        <span class="max-value">Máx: €2,500</span>
+                    </div>
+                    <input type="range" min="0" max="2500" value="0" class="slider" id="slider-photo">
+                </div>
+                <button class="gift-button" onclick="addGift('Fotógrafo Profesional', 'slider-photo')">Agregar Regalo</button>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.2s;">
+                <span class="gift-icon">✈️</span>
+                <h3 class="gift-title">Vuelos Luna de Miel</h3>
+                <p class="gift-description">Ayúdanos a volar hacia nuestro destino soñado para comenzar nuestra vida juntos.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-flight">0</span></span>
+                        <span class="max-value">Máx: €5,000</span>
+                    </div>
+                    <input type="range" min="0" max="5000" value="0" class="slider" id="slider-flight">
+                </div>
+                <button class="gift-button" onclick="addGift('Vuelos Luna de Miel', 'slider-flight')">Agregar Regalo</button>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.3s;">
+                <span class="gift-icon">🎻</span>
+                <h3 class="gift-title">Cuarteto de Cuerdas</h3>
+                <p class="gift-description">Música en vivo de ensueño para acompañar la ceremonia y crear una atmósfera única.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-violin">0</span></span>
+                        <span class="max-value">Máx: €1,800</span>
+                    </div>
+                    <input type="range" min="0" max="1800" value="0" class="slider" id="slider-violin">
+                </div>
+                <button class="gift-button" onclick="addGift('Cuarteto de Cuerdas', 'slider-violin')">Agregar Regalo</button>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.4s;">
+                <span class="gift-icon">🎆</span>
+                <h3 class="gift-title">Show de Fuegos Artificiales</h3>
+                <p class="gift-description">Un espectáculo pirotécnico sincronizado que iluminará el cielo en nuestro momento especial.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-fireworks">0</span></span>
+                        <span class="max-value">Máx: €3,500</span>
+                    </div>
+                    <input type="range" min="0" max="3500" value="0" class="slider" id="slider-fireworks">
+                </div>
+                <button class="gift-button" onclick="addGift('Show de Fuegos Artificiales', 'slider-fireworks')">Agregar Regalo</button>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.5s;">
+                <span class="gift-icon">⛵</span>
+                <h3 class="gift-title">Tour en Yate Privado</h3>
+                <p class="gift-description">Una experiencia exclusiva navegando por aguas cristalinas durante nuestra luna de miel.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-yacht">0</span></span>
+                        <span class="max-value">Máx: €4,200</span>
+                    </div>
+                    <input type="range" min="0" max="4200" value="0" class="slider" id="slider-yacht">
+                </div>
+                <button class="gift-button" onclick="addGift('Tour en Yate Privado', 'slider-yacht')">Agregar Regalo</button>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.6s;">
+                <span class="gift-icon">🎬</span>
+                <h3 class="gift-title">Videógrafo con Drone</h3>
+                <p class="gift-description">Filmación cinematográfica en 4K con tomas aéreas espectaculares de nuestra celebración.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-video">0</span></span>
+                        <span class="max-value">Máx: €3,000</span>
+                    </div>
+                    <input type="range" min="0" max="3000" value="0" class="slider" id="slider-video">
+                </div>
+                <button class="gift-button" onclick="addGift('Videógrafo con Drone', 'slider-video')">Agregar Regalo</button>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.7s;">
+                <span class="gift-icon">🎪</span>
+                <h3 class="gift-title">Show de Luces LED</h3>
+                <p class="gift-description">Espectáculo de bailarines con trajes LED que transformarán la pista en un show futurista.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-led">0</span></span>
+                        <span class="max-value">Máx: €2,200</span>
+                    </div>
+                    <input type="range" min="0" max="2200" value="0" class="slider" id="slider-led">
+                </div>
+                <button class="gift-button" onclick="addGift('Show de Luces LED', 'slider-led')">Agregar Regalo</button>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.8s;">
+                <span class="gift-icon">🍾</span>
+                <h3 class="gift-title">Cava Premium Reserva</h3>
+                <p class="gift-description">Selección exclusiva de champagne y vinos de autor para brindar con nuestros invitados.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-champagne">0</span></span>
+                        <span class="max-value">Máx: €1,500</span>
+                    </div>
+                    <input type="range" min="0" max="1500" value="0" class="slider" id="slider-champagne">
+                </div>
+                <button class="gift-button" onclick="addGift('Cava Premium Reserva', 'slider-champagne')">Agregar Regalo</button>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.9s;">
+                <span class="gift-icon">🎨</span>
+                <h3 class="gift-title">Artista en Vivo</h3>
+                <p class="gift-description">Pintor que creará una obra de arte en tiempo real capturando la esencia de nuestra boda.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-artist">0</span></span>
+                        <span class="max-value">Máx: €1,200</span>
+                    </div>
+                    <input type="range" min="0" max="1200" value="0" class="slider" id="slider-artist">
+                </div>
+                <button class="gift-button" onclick="addGift('Artista en Vivo', 'slider-artist')">Agregar Regalo</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="total-container">
+        <div class="total-label">Total de Contribuciones</div>
+        <div class="total-amount">€<span id="total-amount">0</span></div>
+        <button class="confirm-button" onclick="confirmGifts()">Confirmar Regalos</button>
+    </div>
+
+    <script>
+        // Crear estrellas en el fondo
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Configurar sliders
+        const sliders = ['photo', 'flight', 'violin', 'fireworks', 'yacht', 'video', 'led', 'champagne', 'artist'];
+        
+        sliders.forEach(id => {
+            const slider = document.getElementById(`slider-${id}`);
+            const valueDisplay = document.getElementById(`value-${id}`);
+            
+            slider.addEventListener('input', function() {
+                valueDisplay.textContent = parseInt(this.value).toLocaleString();
+            });
+        });
+
+        // Sistema de regalos
+        let gifts = {};
+
+        function addGift(name, sliderId) {
+            const slider = document.getElementById(sliderId);
+            const value = parseInt(slider.value);
+            
+            if (value === 0) {
+                alert('Por favor, selecciona una cantidad antes de agregar el regalo.');
+                return;
+            }
+            
+            gifts[name] = value;
+            updateTotal();
+            
+            // Animación de feedback
+            const button = event.target;
+            const originalText = button.textContent;
+            button.textContent = '✓ Agregado!';
+            button.style.background = 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.background = 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)';
+            }, 1500);
+        }
+
+        function updateTotal() {
+            const total = Object.values(gifts).reduce((sum, val) => sum + val, 0);
+            document.getElementById('total-amount').textContent = total.toLocaleString();
+        }
+
+        function confirmGifts() {
+            if (Object.keys(gifts).length === 0) {
+                alert('No has seleccionado ningún regalo todavía.');
+                return;
+            }
+            
+            let message = 'Has seleccionado los siguientes regalos:\n\n';
+            for (const [name, value] of Object.entries(gifts)) {
+                message += `${name}: €${value.toLocaleString()}\n`;
+            }
+            message += `\nTotal: €${Object.values(gifts).reduce((sum, val) => sum + val, 0).toLocaleString()}`;
+            message += '\n\n¡Gracias por tu generosa contribución! 💝';
+            
+            alert(message);
+        }
+    </script>
+</body>
+</html>
