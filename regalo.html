@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Regalos 🎁 | Jeniréé & Leandro</title>
+    
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Montserrat:wght@300;400;600&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #0a0a0a;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        #canvas-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        .hero-section {
+            min-height: 60vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 100px 20px 60px 20px;
+            position: relative;
+        }
+
+        .hero-title {
+            font-family: 'Great Vibes', cursive;
+            font-size: 5rem;
+            color: #d4af37;
+            text-shadow: 0 0 30px rgba(212, 175, 55, 0.8);
+            margin-bottom: 20px;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 30px rgba(212, 175, 55, 0.8); }
+            50% { text-shadow: 0 0 50px rgba(212, 175, 55, 1), 0 0 80px rgba(212, 175, 55, 0.6); }
+        }
+
+        .hero-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: rgba(255, 255, 255, 0.9);
+            max-width: 800px;
+            margin: 0 auto 30px;
+            line-height: 1.8;
+        }
+
+        .futuristic-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.05));
+            border: 2px solid #d4af37;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(212, 175, 55, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(212, 175, 55, 0.6); }
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 60px;
+            color: #d4af37;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.5);
+        }
+
+        .gift-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            border-radius: 25px;
+            padding: 40px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gift-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .gift-card:hover::before {
+            opacity: 1;
+        }
+
+        .gift-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: rgba(212, 175, 55, 0.7);
+            box-shadow: 0 25px 60px rgba(212, 175, 55, 0.4);
+        }
+
+        .gift-icon {
+            font-size: 4rem;
+            text-align: center;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.5));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .gift-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            color: #d4af37;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .gift-description {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+        }
+
+        .price-tag {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d4af37;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .progress-container {
+            margin: 20px 0;
+        }
+
+        .progress {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #d4af37 0%, #ffd700 100%);
+            transition: width 0.6s ease;
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.6);
+        }
+
+        .funding-info {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .btn-gift {
+            background: linear-gradient(135deg, #d4af37 0%, #b8941f 100%);
+            border: none;
+            color: #fff;
+            padding: 15px 40px;
+            font-size: 1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .btn-gift:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.6);
+            background: linear-gradient(135deg, #ffd700 0%, #d4af37 100%);
+        }
+
+        .btn-gift:disabled {
+            background: rgba(100, 100, 100, 0.5);
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .badge-funded {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+            color: #fff;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.4);
+        }
+
+        .special-tier {
+            border: 3px solid #ffd700;
+            background: rgba(255, 215, 0, 0.05);
+        }
+
+        .special-tier .gift-title::after {
+            content: ' ⭐';
+        }
+
+        .crypto-address {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: monospace;
+            font-size: 0.85rem;
+            word-break: break-all;
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .copy-btn {
+            background: rgba(212, 175, 55, 0.2);
+            border: 1px solid #d4af37;
+            color: #d4af37;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin-top: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: rgba(212, 175, 55, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(10px);
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, rgba(10, 10, 10, 0.95) 0%, rgba(20, 20, 20, 0.95) 100%);
+            border: 2px solid #d4af37;
+            margin: 5% auto;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            border-radius: 25px;
+            box-shadow: 0 0 100px rgba(212, 175, 55, 0.5);
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            right: 25px;
+            top: 15px;
+            font-size: 40px;
+            font-weight: bold;
+            color: #d4af37;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close:hover {
+            color: #ffd700;
+            transform: scale(1.2);
+        }
+
+        .contribution-input {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(212, 175, 55, 0.3);
+            color: #fff;
+            padding: 15px 20px;
+            border-radius: 15px;
+            font-size: 1.2rem;
+            width: 100%;
+            margin: 20px 0;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .contribution-input:focus {
+            outline: none;
+            border-color: #d4af37;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.3);
+        }
+
+        .amount-slider-container {
+            margin: 30px 0;
+        }
+
+        .amount-display {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .amount-value {
+            font-size: 3rem;
+            font-weight: 700;
+            color: #d4af37;
+            font-family: 'Playfair Display', serif;
+            text-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+        }
+
+        .amount-label {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .custom-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 12px;
+            border-radius: 10px;
+            background: linear-gradient(to right, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.1) 100%);
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .custom-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 1), 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .custom-slider::-moz-range-thumb {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #d4af37 0%, #ffd700 100%);
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.8), 0 5px 15px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .custom-slider::-moz-range-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(212, 175, 55, 1), 0 8px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .range-markers {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 5px;
+            padding: 0 15px;
+        }
+
+        .range-marker {
+            width: 2px;
+            height: 8px;
+            background: rgba(212, 175, 55, 0.4);
+        }
+
+        .slider-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            position: relative;
+        }
+
+        .slider-labels span {
+            flex: 1;
+            text-align: center;
+            position: relative;
+        }
+
+        .slider-labels span:first-child {
+            text-align: left;
+        }
+
+        .slider-labels span:last-child {
+            text-align: right;
+        }
+
+        .name-input-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .name-input-section.visible {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .hero-title { font-size: 3rem; }
+            .section-title { font-size: 2rem; }
+            .gift-card { padding: 30px 20px; }
+            .slider-labels { font-size: 0.7rem; }
+            .amount-value { font-size: 2.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <div id="canvas-container"></div>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h1 class="hero-title">Registro de Regalos 2.0</h1>
+            <p class="hero-subtitle">
+                Bienvenidos al futuro de los regalos de boda. Olvida las tostadoras y sartenes. 
+                Aquí puedes contribuir a experiencias épicas, momentos mágicos y tecnología de vanguardia.
+            </p>
+            <div class="futuristic-badge">
+                🚀 POWERED BY BLOCKCHAIN & AMOR 💍
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Registry Section -->
+    <section style="padding: 80px 0;">
+        <div class="container">
+            <h2 class="section-title">Experiencias Inolvidables</h2>
+            
+            <div class="row g-4">
+                <!-- Fotógrafo Drone 8K -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card">
+                        <div class="gift-icon">📸</div>
+                        <h3 class="gift-title">Fotógrafo Drone 8K</h3>
+                        <p class="gift-description">
+                            Captura épica con drones de última generación. Tomas aéreas cinematográficas, 
+                            slow-motion en 8K y un video digno de Hollywood.
+                        </p>
+                        <div class="price-tag">
+                            <span class="price">€2,500</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 65%"></div>
+                            </div>
+                            <div class="funding-info">
+                                <span>€1,625 recaudado</span>
+                                <span>65%</span>
+                            </div>
+                        </div>
+                        <button class="btn-gift" onclick="openModal('Fotógrafo Drone 8K', 2500, 1625)">CONTRIBUIR</button>
+                    </div>
+                </div>
+
+                <!-- Fuegos Artificiales Sincronizados -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card special-tier">
+                        <div class="gift-icon">🎆</div>
+                        <h3 class="gift-title">Espectáculo de Fuegos Artificiales</h3>
+                        <p class="gift-description">
+                            Show pirotécnico sincronizado con música. 15 minutos de explosiones de colores 
+                            sobre el mar Egeo. Visible desde Atenas.
+                        </p>
+                        <div class="price-tag">
+                            <span class="price">€5,000</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 32%"></div>
+                            </div>
+                            <div class="funding-info">
+                                <span>€1,600 recaudado</span>
+                                <span>32%</span>
+                            </div>
+                        </div>
+                        <button class="btn-gift" onclick="openModal('Espectáculo de Fuegos Artificiales', 5000, 1600)">CONTRIBUIR</button>
+                    </div>
+                </div>
+
+                <!-- Tour en Yate Privado -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card">
+                        <div class="gift-icon">🛥️</div>
+                        <h3 class="gift-title">Yate Privado Post-Boda</h3>
+                        <p class="gift-description">
+                            3 días navegando las islas griegas en yate de lujo. Chef privado, 
+                            sommelier y capitán incluido. Destino: Santorini & Mykonos.
+                        </p>
+                        <div class="price-tag">
+                            <span class="price">€8,000</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 45%"></div>
+                            </div>
+                            <div class="funding-info">
+                                <span>€3,600 recaudado</span>
+                                <span>45%</span>
+                            </div>
+                        </div>
+                        <button class="btn-gift" onclick="openModal('Yate Privado Post-Boda', 8000, 3600)">CONTRIBUIR</button>
+                    </div>
+                </div>
+
+                <!-- Violinista Clásico -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card">
+                        <div class="badge-funded">✓ FINANCIADO</div>
+                        <div class="gift-icon">🎻</div>
+                        <h3 class="gift-title">Cuarteto de Cuerdas</h3>
+                        <p class="gift-description">
+                            Músicos de la Filarmónica de Atenas interpretando desde Bach hasta 
+                            covers épicos de Coldplay en versión clásica.
+                        </p>
+                        <div class="price-tag">
+                            <span class="price">€1,800</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 100%"></div>
+                            </div>
+                            <div class="funding-info">
+                                <span>€1,800 recaudado</span>
+                                <span>100% ✓</span>
+                            </div>
+                        </div>
+                        <button class="btn-gift" disabled>COMPLETADO</button>
+                    </div>
+                </div>
+
+                <!-- DJ + Luces LED -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card">
+                        <div class="gift-icon">🎧</div>
+                        <h3 class="gift-title">DJ Internacional + Show de Luces</h3>
+                        <p class="gift-description">
+                            DJ de Ibiza con setup profesional. Luces LED inteligentes, 
+                            máquina de humo y hasta rayos láser para la pista de baile.
+                        </p>
+                        <div class="price-tag">
+                            <span class="price">€3,200</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 78%"></div>
+                            </div>
+                            <div class="funding-info">
+                                <span>€2,496 recaudado</span>
+                                <span>78%</span>
+                            </div>
+                        </div>
+                        <button class="btn-gift" onclick="openModal('DJ Internacional + Show de Luces', 3200, 2496)">CONTRIBUIR</button>
+                    </div>
+                </div>
+
+                <!-- Fotomatón Holográfico -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card special-tier">
+                        <div class="gift-icon">📱</div>
+                        <h3 class="gift-title">Fotomatón Holográfico 3D</h3>
+                        <p class="gift-description">
+                            Tecnología de captura 360°. Los invitados salen en cámara lenta, 
+                            con efectos especiales y compartible al instante en redes sociales.
+                        </p>
+                        <div class="price-tag">
+                            <span class="price">€1,500</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 20%"></div>
+                            </div>
+                            <div class="funding-info">
+                                <span>€300 recaudado</span>
+                                <span>20%</span>
+                            </div>
+                        </div>
+                        <button class="btn-gift" onclick="openModal('Fotomatón Holográfico 3D', 1500, 300)">CONTRIBUIR</button>
+                    </div>
+                </div>
+
+                <!-- Helicopter Entrance -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card special-tier">
+                        <div class="gift-icon">🚁</div>
+                        <h3 class="gift-title">Entrada en Helicóptero</h3>
+                        <p class="gift-description">
+                            Los novios llegando al venue en helicóptero. Porque entrar caminando es muy 2020. 
+                            Incluye pétalos de rosa cayendo del cielo.
+                        </p>
+                        <div class="price-tag">
+                            <span class="price">€4,500</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 15%"></div>
+                            </div>
+                            <div class="funding-info">
+                                <span>€675 recaudado</span>
+                                <span>15%</span>
+                            </div>
+                        </div>
+                        <button class="btn-gift" onclick="openModal('Entrada en Helicóptero', 4500, 675)">CONTRIBUIR</button>
+                    </div>
+                </div>
+
+                <!-- Champagne Tower -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card">
+                        <div class="gift-icon">🥂</div>
+                        <h3 class="gift-title">Torre de Champagne de 300 Copas</h3>
+                        <p class="gift-description">
+                            Porque una torre de 50 copas es para aficionados. Vamos por 300 copas 
+                            de Moët & Chandon con efectos de luz LED.
+                        </p>
+                        <div class="price-tag">
+                            <span class="price">€2,800</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 54%"></div>
+                            </div>
+                            <div class="funding-info">
+                                <span>€1,512 recaudado</span>
+                                <span>54%</span>
+                            </div>
+                        </div>
+                        <button class="btn-gift" onclick="openModal('Torre de Champagne', 2800, 1512)">CONTRIBUIR</button>
+                    </div>
+                </div>
+
+                <!-- Live Streaming Professional -->
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card">
+                        <div class="gift-icon">📡</div>
+                        <h3 class="gift-title">Transmisión en Vivo 4K</h3>
+                        <p class="gift-description">
+                            Para los que no pueden venir: streaming profesional con 6 cámaras, 
+                            múltiples ángulos y chat en vivo. Nivel producción Netflix.
+                        </p>
+                        <div class="price-tag">
+                            <span class="price">€1,200</span>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress">
+                                <div class="progress-bar" style="width: 83%"></div>
+                            </div>
+                            <div class="funding-info">
+                                <span>€996 recaudado</span>
+                                <span>83%</span>
+                            </div>
+                        </div>
+                        <button class="btn-gift" onclick="openModal('Transmisión en Vivo 4K', 1200, 996)">CONTRIBUIR</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Alternative Payment Methods -->
+    <section style="background: rgba(212, 175, 55, 0.05); padding: 80px 0;">
+        <div class="container">
+            <h2 class="section-title">Métodos de Pago del Futuro</h2>
+            
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card" style="text-align: center;">
+                        <div class="gift-icon">💳</div>
+                        <h3 class="gift-title">Transferencia Tradicional</h3>
+                        <p class="gift-description">Transferencia bancaria internacional</p>
+                        <div class="crypto-address">
+                            <strong>IBAN:</strong><br>
+                            GR16 0110 1250 0000 1234 5678 901
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('GR16 0110 1250 0000 1234 5678 901')">📋 COPIAR IBAN</button>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card" style="text-align: center;">
+                        <div class="gift-icon">💙</div>
+                        <h3 class="gift-title">PayPal</h3>
+                        <p class="gift-description">Rápido, fácil y seguro</p>
+                        <div class="crypto-address">
+                            <strong>Email PayPal:</strong><br>
+                            wedding@theaihumans.com
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('wedding@theaihumans.com')">📋 COPIAR EMAIL</button>
+                        <a href="https://paypal.me/jenireeleandro" target="_blank" style="display: inline-block; margin-top: 15px; background: #0070ba; color: white; padding: 12px 30px; border-radius: 25px; text-decoration: none; font-weight: 600; transition: all 0.3s ease;">
+                            Abrir PayPal
+                        </a>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="gift-card special-tier" style="text-align: center;">
+                        <div class="gift-icon">₿</div>
+                        <h3 class="gift-title">Bitcoin / Crypto</h3>
+                        <p class="gift-description">Métodos de pago del futuro</p>
+                        <div class="crypto-address">
+                            <strong>BTC Address:</strong><br>
+                            bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh
+                        </div>
+                        <button class="copy-btn" onclick="copyToClipboard('bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh')">📋 COPIAR ADDRESS</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contribution Modal -->
+    <div id="contributionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 style="font-family: 'Playfair Display', serif; color: #d4af37; text-align: center; margin-bottom: 10px;" id="modal-title">
+                Contribuir a Fotógrafo Drone 8K
+            </h2>
+            <p style="text-align: center; color: rgba(255, 255, 255, 0.7); margin-bottom: 30px;" id="modal-subtitle">
+                Meta: €2,500 | Recaudado: €1,625
+            </p>
+
+            <!-- Amount Slider Section -->
+            <div class="amount-slider-container" id="slider-section">
+                <div class="amount-display">
+                    <div class="amount-value" id="slider-amount">€50</div>
+                    <div class="amount-label">Arrastra para seleccionar tu aporte</div>
+                </div>
+                <input type="range" min="10" max="5000" value="50" step="10" class="custom-slider" id="amountSlider">
+                <div class="range-markers">
+                    <span class="range-marker"></span>
+                    <span class="range-marker"></span>
+                    <span class="range-marker"></span>
+                    <span class="range-marker"></span>
+                    <span class="range-marker"></span>
+                    <span class="range-marker"></span>
+                </div>
+                <div class="slider-labels">
+                    <span>€10</span>
+                    <span>€500</span>
+                    <span>€1,000</span>
+                    <span>€2,000</span>
+                    <span>€3,000</span>
+                    <span>€5,000</span>
+                </div>
+            </div>
+
+            <!-- Name Input Section (Hidden initially) -->
+            <div class="name-input-section" id="name-section">
+                <h3 style="color: #d4af37; text-align: center; margin-bottom: 20px; font-family: 'Playfair Display', serif;">
+                    ¡Gracias por tu generosidad! 💛
+                </h3>
+                <input type="text" 
+                       class="contribution-input" 
+                       id="contributor-name" 
+                       placeholder="Tu Nombre Completo"
+                       style="margin-bottom: 20px;">
+                <input type="email" 
+                       class="contribution-input" 
+                       id="contributor-email" 
+                       placeholder="Tu Email (opcional)">
+            </div>
+
+            <button class="btn-gift" id="modal-submit-btn" onclick="handleContribution()">
+                CONFIRMAR APORTE
+            </button>
+
+            <p style="text-align: center; color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; margin-top: 20px;">
+                Serás redirigido a la página de pago después de confirmar
+            </p>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Three.js Universe Background
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x000814);
+        
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        const starGeometry = new THREE.BufferGeometry();
+        const starVertices = [];
+        const starSizes = [];
+        const starColors = [];
+        
+        for (let i = 0; i < 3000; i++) {
+            starVertices.push(
+                Math.random() * 2000 - 1000,
+                Math.random() * 2000 - 1000,
+                Math.random() * 2000 - 1000
+            );
+            starSizes.push(Math.random() * 3 + 0.5);
+            const colorChoice = Math.random();
+            if (colorChoice > 0.7) {
+                starColors.push(1, 0.84, 0);
+            } else if (colorChoice > 0.4) {
+                starColors.push(1, 1, 1);
+            } else {
+                starColors.push(0.8, 0.9, 1);
+            }
+        }
+        
+        starGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starVertices, 3));
+        starGeometry.setAttribute('size', new THREE.Float32BufferAttribute(starSizes, 1));
+        starGeometry.setAttribute('color', new THREE.Float32BufferAttribute(starColors, 3));
+        
+        const starMaterial = new THREE.PointsMaterial({
+            size: 2,
+            vertexColors: true,
+            transparent: true,
+            opacity: 0.9,
+            sizeAttenuation: true,
+            blending: THREE.AdditiveBlending
+        });
+        
+        const stars = new THREE.Points(starGeometry, starMaterial);
+        scene.add(stars);
+
+        camera.position.z = 500;
+
+        let time = 0;
+        function animate() {
+            requestAnimationFrame(animate);
+            time += 0.001;
+            stars.rotation.y += 0.0002;
+            stars.rotation.x += 0.0001;
+            const sizes = stars.geometry.attributes.size.array;
+            for (let i = 0; i < sizes.length; i++) {
+                sizes[i] = Math.abs(Math.sin(time * 2 + i) * 2) + 0.5;
+            }
+            stars.geometry.attributes.size.needsUpdate = true;
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Modal and Contribution Logic
+        let currentGift = {
+            name: '',
+            goal: 0,
+            raised: 0
+        };
+
+        let sliderInteracted = false;
+
+        function openModal(giftName, goal, raised) {
+            currentGift = { name: giftName, goal: goal, raised: raised };
+            document.getElementById('modal-title').textContent = `Contribuir a ${giftName}`;
+            document.getElementById('modal-subtitle').textContent = `Meta: €${goal.toLocaleString()} | Recaudado: €${raised.toLocaleString()}`;
+            document.getElementById('contributionModal').style.display = 'block';
+            
+            sliderInteracted = false;
+            document.getElementById('slider-section').style.display = 'block';
+            document.getElementById('name-section').classList.remove('visible');
+            document.getElementById('contributor-name').value = '';
+            document.getElementById('contributor-email').value = '';
+            document.getElementById('amountSlider').value = 50;
+            document.getElementById('slider-amount').textContent = '€50';
+        }
+
+        function closeModal() {
+            document.getElementById('contributionModal').style.display = 'none';
+        }
+
+        window.onclick = function(event) {
+            const modal = document.getElementById('contributionModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        const slider = document.getElementById('amountSlider');
+        const amountDisplay = document.getElementById('slider-amount');
+        const nameSection = document.getElementById('name-section');
+
+        slider.addEventListener('input', function() {
+            const value = this.value;
+            amountDisplay.textContent = `€${value}`;
+            
+            const percentage = ((value - this.min) / (this.max - this.min)) * 100;
+            this.style.background = `linear-gradient(to right, rgba(212, 175, 55, 0.6) 0%, rgba(212, 175, 55, 0.6) ${percentage}%, rgba(212, 175, 55, 0.1) ${percentage}%, rgba(212, 175, 55, 0.1) 100%)`;
+        });
+
+        slider.addEventListener('change', function() {
+            if (!sliderInteracted) {
+                sliderInteracted = true;
+                setTimeout(() => {
+                    nameSection.classList.add('visible');
+                    document.getElementById('contributor-name').focus();
+                }, 300);
+            }
+        });
+
+        function handleContribution() {
+            const amount = document.getElementById('amountSlider').value;
+            const name = document.getElementById('contributor-name').value.trim();
+            const email = document.getElementById('contributor-email').value.trim();
+
+            if (!sliderInteracted) {
+                alert('Por favor, selecciona un monto deslizando la barra');
+                return;
+            }
+
+            if (!name) {
+                alert('Por favor, ingresa tu nombre completo');
+                document.getElementById('contributor-name').focus();
+                return;
+            }
+
+            const confirmMsg = `¡Gracias ${name}!\n\nVas a contribuir €${amount} para: ${currentGift.name}\n\nSerás redirigido a la página de pago.`;
+
+            if (confirm(confirmMsg)) {
+                console.log({
+                    gift: currentGift.name,
+                    amount: amount,
+                    name: name,
+                    email: email
+                });
+
+                alert(`¡Contribución confirmada! Gracias por tu generosidad, ${name}. 💛`);
+                closeModal();
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('¡Copiado al portapapeles! ✓');
+            }).catch(err => {
+                console.error('Error copying text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
