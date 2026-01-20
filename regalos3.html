@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regalos - Boda del Futuro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 {
+            font-size: 4em;
+            color: white;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 8px;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: rgba(255,255,255,0.9);
+            font-weight: 300;
+        }
+
+        .gifts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+
+        .gift-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.8s ease-out backwards;
+        }
+
+        .gift-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .gift-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            display: block;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.5));
+        }
+
+        .gift-title {
+            font-size: 1.8em;
+            color: white;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .gift-description {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .slider-container {
+            margin: 25px 0;
+        }
+
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .current-value {
+            font-size: 2em;
+            color: #fff;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255,255,255,0.5);
+        }
+
+        .max-value {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9em;
+        }
+
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            position: relative;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+            transition: all 0.3s ease;
+        }
+
+        .slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+            box-shadow: 0 0 30px rgba(102, 126, 234, 1);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+        }
+
+        .gift-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+            margin-top: 20px;
+        }
+
+        .gift-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(79, 172, 254, 0.6);
+        }
+
+        .gift-button:active {
+            transform: translateY(-1px);
+        }
+
+        .contributors-list {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .contributor-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9em;
+        }
+
+        .contributor-name {
+            font-weight: 600;
+        }
+
+        .contributor-amount {
+            color: #4facfe;
+            font-weight: bold;
+        }
+
+        .total-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px 35px;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            z-index: 1000;
+            animation: slideInRight 0.8s ease-out;
+            max-width: 350px;
+        }
+
+        .total-label {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+            margin-bottom: 8px;
+        }
+
+        .total-amount {
+            font-size: 2.5em;
+            color: #4facfe;
+            font-weight: bold;
+            text-shadow: 0 0 20px rgba(79, 172, 254, 0.8);
+            margin-bottom: 15px;
+        }
+
+        .contributors-count {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85em;
+            margin-bottom: 10px;
+        }
+
+        .recent-contributors {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .recent-contributor {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+        }
+
+        .recent-contributor-name {
+            color: white;
+            font-weight: 600;
+        }
+
+        .recent-contributor-gift {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9em;
+        }
+
+        .recent-contributor-amount {
+            color: #4facfe;
+            font-weight: bold;
+            float: right;
+        }
+
+        .confirm-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .confirm-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(245, 87, 108, 0.5);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: slideIn 0.4s ease-out;
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .modal-title {
+            font-size: 2em;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .modal-subtitle {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95em;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: white;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #4facfe;
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .form-input::placeholder {
+            color: rgba(255,255,255,0.5);
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .modal-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .modal-button-cancel {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .modal-button-cancel:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .modal-button-confirm {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .modal-button-confirm:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.5);
+        }
+
+        .success-modal {
+            display: none;
+            position: fixed;
+            z-index: 2001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(5px);
+        }
+
+        .success-content {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            margin: 15% auto;
+            padding: 50px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            animation: bounceIn 0.6s ease-out;
+        }
+
+        .success-icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        .success-title {
+            font-size: 2em;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1em;
+            line-height: 1.6;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounceIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5em;
+                letter-spacing: 4px;
+            }
+
+            .gifts-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .total-container {
+                bottom: 20px;
+                right: 20px;
+                left: 20px;
+                padding: 20px;
+            }
+
+            .modal-content {
+                margin: 20% auto;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="stars" id="stars"></div>
+    
+    <div class="container">
+        <header>
+            <h1>REGALOS</h1>
+            <p class="subtitle">Contribuye a crear momentos inolvidables en nuestra boda del futuro</p>
+        </header>
+
+        <div class="gifts-grid">
+            <div class="gift-card" style="animation-delay: 0.1s;">
+                <span class="gift-icon">📸</span>
+                <h3 class="gift-title">Fotógrafo Profesional</h3>
+                <p class="gift-description">Captura cada momento mágico de nuestro día especial con fotografía de alta calidad y edición artística.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-photo">0</span></span>
+                        <span class="max-value">Máx: €2,500</span>
+                    </div>
+                    <input type="range" min="0" max="2500" value="0" class="slider" id="slider-photo">
+                </div>
+                <button class="gift-button" onclick="openModal('Fotógrafo Profesional', 'slider-photo', '📸')">Agregar Regalo</button>
+                <div class="contributors-list" id="contributors-photo"></div>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.2s;">
+                <span class="gift-icon">💄</span>
+                <h3 class="gift-title">Maquillista y Pelo</h3>
+                <p class="gift-description">Equipo profesional de estilistas para lucir radiantes en nuestro día más especial.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-makeup">0</span></span>
+                        <span class="max-value">Máx: €1,500</span>
+                    </div>
+                    <input type="range" min="0" max="1500" value="0" class="slider" id="slider-makeup">
+                </div>
+                <button class="gift-button" onclick="openModal('Maquillista y Pelo', 'slider-makeup', '💄')">Agregar Regalo</button>
+                <div class="contributors-list" id="contributors-makeup"></div>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.3s;">
+                <span class="gift-icon">🎵</span>
+                <h3 class="gift-title">Música En Vivo</h3>
+                <p class="gift-description">Banda en vivo para amenizar la celebración con música en directo llena de energía.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-music">0</span></span>
+                        <span class="max-value">Máx: €750</span>
+                    </div>
+                    <input type="range" min="0" max="750" value="0" class="slider" id="slider-music">
+                </div>
+                <button class="gift-button" onclick="openModal('Música En Vivo', 'slider-music', '🎵')">Agregar Regalo</button>
+                <div class="contributors-list" id="contributors-music"></div>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.4s;">
+                <span class="gift-icon">🎆</span>
+                <h3 class="gift-title">Show de Fuegos Artificiales</h3>
+                <p class="gift-description">Un espectáculo pirotécnico sincronizado que iluminará el cielo en nuestro momento especial.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-fireworks">0</span></span>
+                        <span class="max-value">Máx: €2,000</span>
+                    </div>
+                    <input type="range" min="0" max="2000" value="0" class="slider" id="slider-fireworks">
+                </div>
+                <button class="gift-button" onclick="openModal('Show de Fuegos Artificiales', 'slider-fireworks', '🎆')">Agregar Regalo</button>
+                <div class="contributors-list" id="contributors-fireworks"></div>
+            </div>
+
+            <div class="gift-card" style="animation-delay: 0.5s;">
+                <span class="gift-icon">💡</span>
+                <h3 class="gift-title">Show Luces LED</h3>
+                <p class="gift-description">Espectáculo de iluminación LED que transformará la pista en un show futurista inolvidable.</p>
+                <div class="slider-container">
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-led">0</span></span>
+                        <span class="max-value">Máx: €1,000</span>
+                    </div>
+                    <input type="range" min="0" max="1000" value="0" class="slider" id="slider-led">
+                </div>
+                <button class="gift-button" onclick="openModal('Show Luces LED', 'slider-led', '💡')">Agregar Regalo</button>
+                <div class="contributors-list" id="contributors-led"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="total-container">
+        <div class="total-label">Total de Contribuciones</div>
+        <div class="total-amount">€<span id="total-amount">0</span></div>
+        <div class="contributors-count"><span id="total-contributors">0</span> contribuidores</div>
+        <div class="recent-contributors" id="recent-contributors"></div>
+        <button class="confirm-button" onclick="confirmGifts()">Ver Todos los Regalos</button>
+    </div>
+
+    <!-- Modal para datos del contribuidor -->
+    <div id="contributorModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="gift-icon" id="modal-icon">🎁</div>
+                <h2 class="modal-title" id="modal-title">Agregar Regalo</h2>
+                <p class="modal-subtitle">Por favor ingresa tus datos</p>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Nombre completo</label>
+                <input type="text" id="contributor-name" class="form-input" placeholder="Ej: María García">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" id="contributor-email" class="form-input" placeholder="Ej: maria@email.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Contribución</label>
+                <div class="current-value" style="font-size: 2.5em; text-align: center;">€<span id="modal-amount">0</span></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-button modal-button-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-button modal-button-confirm" onclick="confirmContribution()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de éxito -->
+    <div id="successModal" class="success-modal">
+        <div class="success-content">
+            <div class="success-icon">🎉</div>
+            <h2 class="success-title">¡Muchas Gracias!</h2>
+            <p class="success-message" id="success-message"></p>
+        </div>
+    </div>
+
+    <script>
+        // Crear estrellas en el fondo
+        const starsContainer = document.getElementById('stars');
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement('div');
+            star.className = 'star';
+            star.style.width = Math.random() * 3 + 'px';
+            star.style.height = star.style.width;
+            star.style.left = Math.random() * 100 + '%';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.animationDelay = Math.random() * 3 + 's';
+            starsContainer.appendChild(star);
+        }
+
+        // Configurar sliders
+        const sliders = ['photo', 'makeup', 'music', 'fireworks', 'led'];
+        
+        sliders.forEach(id => {
+            const slider = document.getElementById(`slider-${id}`);
+            const valueDisplay = document.getElementById(`value-${id}`);
+            
+            slider.addEventListener('input', function() {
+                valueDisplay.textContent = parseInt(this.value).toLocaleString();
+            });
+        });
+
+        // Sistema de regalos y contribuidores
+        let allContributions = [];
+        let currentGift = null;
+        let currentSlider = null;
+        let currentIcon = null;
+
+        function openModal(giftName, sliderId, icon) {
+            const slider = document.getElementById(sliderId);
+            const value = parseInt(slider.value);
+            
+            if (value === 0) {
+                alert('Por favor, selecciona una cantidad antes de agregar el regalo.');
+                return;
+            }
+            
+            currentGift = giftName;
+            currentSlider = sliderId;
+            currentIcon = icon;
+            
+            document.getElementById('modal-icon').textContent = icon;
+            document.getElementById('modal-title').textContent = giftName;
+            document.getElementById('modal-amount').textContent = value.toLocaleString();
+            document.getElementById('contributor-name').value = '';
+            document.getElementById('contributor-email').value = '';
+            document.getElementById('contributorModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('contributorModal').style.display = 'none';
+        }
+
+        function confirmContribution() {
+            const name = document.getElementById('contributor-name').value.trim();
+            const email = document.getElementById('contributor-email').value.trim();
+            const slider = document.getElementById(currentSlider);
+            const amount = parseInt(slider.value);
+            
+            if (!name) {
+                alert('Por favor ingresa tu nombre.');
+                return;
+            }
+            
+            if (!email || !email.includes('@')) {
+                alert('Por favor ingresa un correo electrónico válido.');
+                return;
+            }
+            
+            // Agregar contribución
+            const contribution = {
+                name: name,
+                email: email,
+                gift: currentGift,
+                amount: amount,
+                icon: currentIcon,
+                timestamp: new Date()
+            };
+            
+            allContributions.push(contribution);
+            
+            // Actualizar UI
+            updateGiftContributors(currentSlider, contribution);
+            updateTotalDisplay();
+            
+            // Resetear slider
+            slider.value = 0;
+            document.getElementById(`value-${currentSlider.replace('slider-', '')}`).textContent = '0';
+            
+            // Cerrar modal y mostrar éxito
+            closeModal();
+            showSuccessModal(name, currentGift, amount);
+        }
+
+        function updateGiftContributors(sliderId, contribution) {
+            const giftId = sliderId.replace('slider-', '');
+            const contributorsList = document.getElementById(`contributors-${giftId}`);
+            
+            const contributorItem = document.createElement('div');
+            contributorItem.className = 'contributor-item';
+            contributorItem.innerHTML = `
+                <span class="contributor-name">${contribution.name}</span>
+                <span class="contributor-amount">€${contribution.amount.toLocaleString()}</span>
+            `;
+            
+            contributorsList.appendChild(contributorItem);
+        }
+
+        function updateTotalDisplay() {
+            const total = allContributions.reduce((sum, c) => sum + c.amount, 0);
+            document.getElementById('total-amount').textContent = total.toLocaleString();
+            document.getElementById('total-contributors').textContent = allContributions.length;
+            
+            // Actualizar lista de contribuidores recientes
+            const recentList = document.getElementById('recent-contributors');
+            recentList.innerHTML = '';
+            
+            const recent = [...allContributions].reverse().slice(0, 5);
+            recent.forEach(c => {
+                const item = document.createElement('div');
+                item.className = 'recent-contributor';
+                item.innerHTML = `
+                    <div class="recent-contributor-name">${c.icon} ${c.name}</div>
+                    <div class="recent-contributor-gift">
+                        ${c.gift}
+                        <span class="recent-contributor-amount">€${c.amount.toLocaleString()}</span>
+                    </div>
+                `;
+                recentList.appendChild(item);
+            });
+        }
+
+        function showSuccessModal(name, gift, amount) {
+            const message = `${name}, tu contribución de €${amount.toLocaleString()} para ${gift} ha sido registrada exitosamente. ¡Tu generosidad nos llena de alegría! 💝`;
+            document.getElementById('success-message').textContent = message;
+            document.getElementById('successModal').style.display = 'block';
+            
+            setTimeout(() => {
+                document.getElementById('successModal').style.display = 'none';
+            }, 4000);
+        }
+
+        function confirmGifts() {
+            if (allContributions.length === 0) {
+                alert('No hay contribuciones registradas todavía.');
+                return;
+            }
+            
+            let message = '═══════════════════════════\n';
+            message += '   RESUMEN DE REGALOS\n';
+            message += '═══════════════════════════\n\n';
+            
+            // Agrupar por regalo
+            const giftGroups = {};
+            allContributions.forEach(c => {
+                if (!giftGroups[c.gift]) {
+                    giftGroups[c.gift] = [];
+                }
+                giftGroups[c.gift].push(c);
+            });
+            
+            for (const [gift, contributions] of Object.entries(giftGroups)) {
+                const total = contributions.reduce((sum, c) => sum + c.amount, 0);
+                message += `${contributions[0].icon} ${gift}\n`;
+                message += `
