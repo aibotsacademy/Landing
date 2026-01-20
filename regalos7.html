@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regalos - Boda del Futuro</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        header { text-align: center; margin-bottom: 60px; animation: fadeIn 1s; }
+        h1 {
+            font-size: 4em;
+            color: white;
+            text-shadow: 0 0 20px rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 8px;
+        }
+        .subtitle { font-size: 1.3em; color: rgba(255,255,255,0.9); }
+        .gifts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+        .gift-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.4s;
+        }
+        .gift-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .gift-icon { font-size: 3.5em; margin-bottom: 20px; display: block; }
+        .gift-title { font-size: 1.8em; color: white; margin-bottom: 15px; }
+        .gift-description { color: rgba(255,255,255,0.8); margin-bottom: 25px; line-height: 1.6; }
+        .slider-value {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+        .current-value { font-size: 2em; color: #fff; font-weight: bold; }
+        .max-value { color: rgba(255,255,255,0.6); font-size: 0.9em; }
+        .slider {
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: rgba(255,255,255,0.2);
+            outline: none;
+            cursor: pointer;
+            -webkit-appearance: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 3px solid white;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(102, 126, 234, 0.8);
+        }
+        .slider::-moz-range-thumb {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 3px solid white;
+            cursor: pointer;
+        }
+        .gift-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-top: 20px;
+        }
+        .gift-button:hover { transform: translateY(-3px); }
+        .contributors-list { margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255,255,255,0.2); }
+        .contributor-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9em;
+        }
+        .contributor-amount { color: #4facfe; font-weight: bold; }
+        .total-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 25px 35px;
+            border-radius: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            z-index: 1000;
+            max-width: 350px;
+        }
+        .total-label { color: rgba(255,255,255,0.7); font-size: 0.9em; margin-bottom: 8px; }
+        .total-amount { font-size: 2.5em; color: #4facfe; font-weight: bold; margin-bottom: 15px; }
+        .contributors-count { color: rgba(255,255,255,0.6); font-size: 0.85em; margin-bottom: 10px; }
+        .recent-contributors { max-height: 200px; overflow-y: auto; margin-bottom: 15px; }
+        .recent-contributor {
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            margin-bottom: 8px;
+            font-size: 0.85em;
+        }
+        .recent-contributor-name { color: white; font-weight: 600; }
+        .recent-contributor-amount { color: #4facfe; font-weight: bold; float: right; }
+        .confirm-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 10% auto;
+            padding: 40px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .modal-title { font-size: 2em; color: white; margin-bottom: 10px; text-align: center; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; color: white; margin-bottom: 8px; font-weight: 600; }
+        .form-input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 1em;
+        }
+        .form-input:focus { outline: none; border-color: #4facfe; }
+        .form-input::placeholder { color: rgba(255,255,255,0.5); }
+        .modal-buttons { display: flex; gap: 15px; margin-top: 30px; }
+        .modal-button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .modal-button-cancel { background: rgba(255,255,255,0.2); color: white; }
+        .modal-button-confirm { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white; }
+        .success-modal {
+            display: none;
+            position: fixed;
+            z-index: 2001;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+        }
+        .success-content {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+            margin: 15% auto;
+            padding: 50px;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .success-icon { font-size: 5em; margin-bottom: 20px; }
+        .success-title { font-size: 2em; color: white; margin-bottom: 15px; }
+        .success-message { color: white; font-size: 1.1em; line-height: 1.6; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5em; }
+            .gifts-grid { grid-template-columns: 1fr; }
+            .total-container { bottom: 20px; right: 20px; left: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>REGALOS</h1>
+            <p class="subtitle">Contribuye a crear momentos inolvidables en nuestra boda del futuro</p>
+        </header>
+
+        <div class="gifts-grid" id="gifts-grid"></div>
+    </div>
+
+    <div class="total-container">
+        <div class="total-label">Total de Contribuciones</div>
+        <div class="total-amount">€<span id="total-amount">0</span></div>
+        <div class="contributors-count"><span id="total-contributors">0</span> contribuidores</div>
+        <div class="recent-contributors" id="recent-contributors"></div>
+        <button class="confirm-button" onclick="confirmGifts()">Ver Todos los Regalos</button>
+    </div>
+
+    <div id="contributorModal" class="modal">
+        <div class="modal-content">
+            <div class="gift-icon" id="modal-icon" style="text-align:center; font-size:3em;">🎁</div>
+            <h2 class="modal-title" id="modal-title">Agregar Regalo</h2>
+            <div class="form-group">
+                <label class="form-label">Nombre completo</label>
+                <input type="text" id="contributor-name" class="form-input" placeholder="Ej: María García">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Correo electrónico</label>
+                <input type="email" id="contributor-email" class="form-input" placeholder="Ej: maria@email.com">
+            </div>
+            <div class="form-group">
+                <div class="current-value" style="text-align: center;">€<span id="modal-amount">0</span></div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-button modal-button-cancel" onclick="closeModal()">Cancelar</button>
+                <button class="modal-button modal-button-confirm" onclick="confirmContribution()">Confirmar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="successModal" class="success-modal">
+        <div class="success-content">
+            <div class="success-icon">🎉</div>
+            <h2 class="success-title">¡Muchas Gracias!</h2>
+            <p class="success-message" id="success-message"></p>
+        </div>
+    </div>
+
+    <script>
+        const gifts = [
+            {id: 'photo', icon: '📸', title: 'Fotógrafo Profesional', desc: 'Captura cada momento mágico con fotografía de alta calidad.', max: 2500},
+            {id: 'makeup', icon: '💄', title: 'Maquillista y Pelo', desc: 'Equipo profesional de estilistas para lucir radiantes.', max: 1500},
+            {id: 'music', icon: '🎵', title: 'Música En Vivo', desc: 'Banda en vivo para amenizar la celebración.', max: 750},
+            {id: 'fireworks', icon: '🎆', title: 'Show de Fuegos Artificiales', desc: 'Espectáculo pirotécnico sincronizado.', max: 2000},
+            {id: 'led', icon: '💡', title: 'Show Luces LED', desc: 'Iluminación LED futurista.', max: 1000}
+        ];
+
+        let allContributions = [];
+        let currentGift = null;
+        let currentSlider = null;
+        let currentIcon = null;
+
+        // Renderizar tarjetas de regalos
+        const grid = document.getElementById('gifts-grid');
+        gifts.forEach(gift => {
+            grid.innerHTML += `
+                <div class="gift-card">
+                    <span class="gift-icon">${gift.icon}</span>
+                    <h3 class="gift-title">${gift.title}</h3>
+                    <p class="gift-description">${gift.desc}</p>
+                    <div class="slider-value">
+                        <span class="current-value">€<span id="value-${gift.id}">0</span></span>
+                        <span class="max-value">Máx: €${gift.max.toLocaleString()}</span>
+                    </div>
+                    <input type="range" min="0" max="${gift.max}" value="0" class="slider" id="slider-${gift.id}">
+                    <button class="gift-button" onclick="openModal('${gift.title}', 'slider-${gift.id}', '${gift.icon}')">Agregar Regalo</button>
+                    <div class="contributors-list" id="contributors-${gift.id}"></div>
+                </div>
+            `;
+        });
+
+        // Configurar sliders
+        document.querySelectorAll('.slider').forEach(slider => {
+            slider.addEventListener('input', function() {
+                const id = this.id.replace('slider-', '');
+                document.getElementById('value-' + id).textContent = parseInt(this.value).toLocaleString();
+            });
+        });
+
+        function openModal(giftName, sliderId, icon) {
+            const slider = document.getElementById(sliderId);
+            const value = parseInt(slider.value);
+            if (value === 0) { alert('Selecciona una cantidad.'); return; }
+            currentGift = giftName;
+            currentSlider = sliderId;
+            currentIcon = icon;
+            document.getElementById('modal-icon').textContent = icon;
+            document.getElementById('modal-title').textContent = giftName;
+            document.getElementById('modal-amount').textContent = value.toLocaleString();
+            document.getElementById('contributor-name').value = '';
+            document.getElementById('contributor-email').value = '';
+            document.getElementById('contributorModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('contributorModal').style.display = 'none';
+        }
+
+        function confirmContribution() {
+            const name = document.getElementById('contributor-name').value.trim();
+            const email = document.getElementById('contributor-email').value.trim();
+            const slider = document.getElementById(currentSlider);
+            const amount = parseInt(slider.value);
+            if (!name) { alert('Ingresa tu nombre.'); return; }
+            if (!email || !email.includes('@')) { alert('Ingresa un correo válido.'); return; }
+            
+            allContributions.push({ name, email, gift: currentGift, amount, icon: currentIcon, timestamp: new Date() });
+            
+            const giftId = currentSlider.replace('slider-', '');
+            const list = document.getElementById('contributors-' + giftId);
+            list.innerHTML += `<div class="contributor-item"><span>${name}</span><span class="contributor-amount">€${amount.toLocaleString()}</span></div>`;
+            
+            updateTotal();
+            slider.value = 0;
+            document.getElementById('value-' + giftId).textContent = '0';
+            closeModal();
+            showSuccess(name, currentGift, amount);
+        }
+
+        function updateTotal() {
+            const total = allContributions.reduce((s, c) => s + c.amount, 0);
+            document.getElementById('total-amount').textContent = total.toLocaleString();
+            document.getElementById('total-contributors').textContent = allContributions.length;
+            const recent = document.getElementById('recent-contributors');
+            recent.innerHTML = '';
+            [...allContributions].reverse().slice(0, 5).forEach(c => {
+                recent.innerHTML += `<div class="recent-contributor"><div class="recent-contributor-name">${c.icon} ${c.name}</div><div>${c.gift} <span class="recent-contributor-amount">€${c.amount.toLocaleString()}</span></div></div>`;
+            });
+        }
+
+        function showSuccess(name, gift, amount) {
+            document.getElementById('success-message').textContent = `${name}, tu contribución de €${amount.toLocaleString()} para ${gift} ha sido registrada. ¡Gracias! 💝`;
+            document.getElementById('successModal').style.display = 'block';
+            setTimeout(() => { document.getElementById('successModal').style.display = 'none'; }, 4000);
+        }
+
+        function confirmGifts() {
+            if (!allContributions.length) { alert('No hay contribuciones.'); return; }
+            let msg = '═══════════════════════════\n   RESUMEN DE REGALOS\n═══════════════════════════\n\n';
+            const groups = {};
+            allContributions.forEach(c => {
+                if (!groups[c.gift]) groups[c.gift] = [];
+                groups[c.gift].push(c);
+            });
+            for (const [gift, contribs] of Object.entries(groups)) {
+                const tot = contribs.reduce((s, c) => s + c.amount, 0);
+                msg += `${contribs[0].icon} ${gift}\n   Total: €${tot.toLocaleString()}\n`;
+                contribs.forEach(c => { msg += `   • ${c.name}: €${c.amount.toLocaleString()}\n`; });
+                msg += '\n';
+            }
+            const grand = allContributions.reduce((s, c) => s + c.amount, 0);
+            msg += `═══════════════════════════\nTOTAL: €${grand.toLocaleString()}\n${allContributions.length} contribuidores\n═══════════════════════════`;
+            alert(msg);
+        }
+
+        window.onclick = e => {
+            if (e.target.id === 'contributorModal') closeModal();
+            if (e.target.id === 'successModal') e.target.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
