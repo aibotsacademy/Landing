@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Regalos - Boda del Futuro</title>
+    <title>Regalos de Boda Jeniréé & Leandro</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -247,6 +247,19 @@
                 <input type="email" id="contributor-email" class="form-input" placeholder="Ej: maria@email.com">
             </div>
             <div class="form-group">
+                <label class="form-label">¿Deseas ser nombrado públicamente?</label>
+                <div style="display: flex; gap: 15px; margin-top: 10px;">
+                    <label style="display: flex; align-items: center; cursor: pointer; color: white;">
+                        <input type="radio" name="anonymous" value="no" checked style="margin-right: 8px; cursor: pointer;">
+                        Sí, con mi nombre
+                    </label>
+                    <label style="display: flex; align-items: center; cursor: pointer; color: white;">
+                        <input type="radio" name="anonymous" value="yes" style="margin-right: 8px; cursor: pointer;">
+                        Anónimo
+                    </label>
+                </div>
+            </div>
+            <div class="form-group">
                 <div class="current-value" style="text-align: center;">€<span id="modal-amount">0</span></div>
             </div>
             <div class="modal-buttons">
@@ -261,6 +274,16 @@
             <div class="success-icon">🎉</div>
             <h2 class="success-title">¡Muchas Gracias!</h2>
             <p class="success-message" id="success-message"></p>
+            <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.2); border-radius: 15px; text-align: left;">
+                <h3 style="color: white; font-size: 1.3em; margin-bottom: 15px; text-align: center;">💳 Información de Pago</h3>
+                <div style="color: white; line-height: 2;">
+                    <p><strong>IBAN:</strong> CR12345678901234567890</p>
+                    <p><strong>SINPE Móvil:</strong> 8888-8888</p>
+                    <p><strong>PayPal:</strong> regalos@bodafutura.com</p>
+                    <p><strong>Crypto (USDT):</strong> 0x1234...5678</p>
+                </div>
+            </div>
+            <button onclick="document.getElementById('successModal').style.display='none'" style="margin-top: 20px; padding: 12px 30px; background: white; color: #11998e; border: none; border-radius: 50px; font-weight: bold; cursor: pointer;">Cerrar</button>
         </div>
     </div>
 
@@ -327,22 +350,24 @@
         function confirmContribution() {
             const name = document.getElementById('contributor-name').value.trim();
             const email = document.getElementById('contributor-email').value.trim();
+            const isAnonymous = document.querySelector('input[name="anonymous"]:checked').value === 'yes';
             const slider = document.getElementById(currentSlider);
             const amount = parseInt(slider.value);
             if (!name) { alert('Ingresa tu nombre.'); return; }
             if (!email || !email.includes('@')) { alert('Ingresa un correo válido.'); return; }
             
-            allContributions.push({ name, email, gift: currentGift, amount, icon: currentIcon, timestamp: new Date() });
+            const displayName = isAnonymous ? 'Anónimo' : name;
+            allContributions.push({ name: displayName, email, gift: currentGift, amount, icon: currentIcon, timestamp: new Date() });
             
             const giftId = currentSlider.replace('slider-', '');
             const list = document.getElementById('contributors-' + giftId);
-            list.innerHTML += `<div class="contributor-item"><span>${name}</span><span class="contributor-amount">€${amount.toLocaleString()}</span></div>`;
+            list.innerHTML += `<div class="contributor-item"><span>${displayName}</span><span class="contributor-amount">€${amount.toLocaleString()}</span></div>`;
             
             updateTotal();
             slider.value = 0;
             document.getElementById('value-' + giftId).textContent = '0';
             closeModal();
-            showSuccess(name, currentGift, amount);
+            showSuccess(displayName, currentGift, amount);
         }
 
         function updateTotal() {
@@ -357,9 +382,8 @@
         }
 
         function showSuccess(name, gift, amount) {
-            document.getElementById('success-message').textContent = `${name}, tu contribución de €${amount.toLocaleString()} para ${gift} ha sido registrada. ¡Gracias! 💝`;
+            document.getElementById('success-message').textContent = `${name}, tu contribución de €${amount.toLocaleString()} para ${gift} ha sido registrada exitosamente. ¡Tu generosidad nos llena de alegría! 💝`;
             document.getElementById('successModal').style.display = 'block';
-            setTimeout(() => { document.getElementById('successModal').style.display = 'none'; }, 4000);
         }
 
         function confirmGifts() {
