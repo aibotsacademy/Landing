@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animación de Avión con Scroll</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to bottom, #87CEEB 0%, #E0F6FF 50%, #90EE90 100%);
+            min-height: 300vh;
+            position: relative;
+        }
+
+        .content {
+            padding: 50px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.8);
+            padding: 30px;
+            margin: 50px 0;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        p {
+            line-height: 1.6;
+            color: #34495e;
+            margin-bottom: 15px;
+        }
+
+        /* Línea vertical */
+        .flight-path {
+            position: fixed;
+            right: 100px;
+            top: 0;
+            width: 3px;
+            height: 100vh;
+            background: linear-gradient(to bottom, 
+                rgba(52, 152, 219, 0.3) 0%, 
+                rgba(52, 152, 219, 0.6) 50%, 
+                rgba(52, 152, 219, 0.3) 100%);
+            z-index: 1000;
+        }
+
+        /* Avión */
+        .airplane {
+            position: fixed;
+            right: 100px;
+            font-size: 50px;
+            transform: translateX(50%);
+            z-index: 1001;
+            transition: transform 0.3s ease-out;
+            filter: drop-shadow(2px 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .airplane.going-down {
+            transform: translateX(50%) rotate(0deg);
+        }
+
+        .airplane.going-up {
+            transform: translateX(50%) rotate(180deg);
+        }
+
+        /* Nubes decorativas */
+        .cloud {
+            position: fixed;
+            font-size: 40px;
+            opacity: 0.6;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .cloud-1 {
+            top: 15%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .cloud-2 {
+            top: 40%;
+            right: 15%;
+            animation-delay: 5s;
+        }
+
+        .cloud-3 {
+            top: 70%;
+            left: 20%;
+            animation-delay: 10s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-20px);
+            }
+        }
+
+        .instructions {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            z-index: 999;
+        }
+
+        .instructions p {
+            margin: 0;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <!-- Línea de vuelo -->
+    <div class="flight-path"></div>
+
+    <!-- Avión -->
+    <div class="airplane going-down">✈️</div>
+
+    <!-- Nubes decorativas -->
+    <div class="cloud cloud-1">☁️</div>
+    <div class="cloud cloud-2">☁️</div>
+    <div class="cloud cloud-3">☁️</div>
+
+    <!-- Contenido para hacer scroll -->
+    <div class="content">
+        <div class="section">
+            <h1>🛫 Animación de Avión con Scroll</h1>
+            <p>¡Bienvenido! Esta página demuestra una animación interactiva de un avión que responde a tu scroll.</p>
+            <p>El avión se mueve a lo largo de una línea vertical central y cambia su dirección según scrolleas.</p>
+        </div>
+
+        <div class="section">
+            <h1>📜 Scroll hacia abajo</h1>
+            <p>Cuando haces scroll hacia abajo, el avión desciende siguiendo la línea central.</p>
+            <p>El emoji mantiene su orientación hacia abajo indicando la dirección del movimiento.</p>
+        </div>
+
+        <div class="section">
+            <h1>🔄 Cambia de dirección</h1>
+            <p>Intenta cambiar la dirección del scroll rápidamente y observa cómo el avión responde.</p>
+            <p>La transición es suave y natural, simulando un vuelo real.</p>
+        </div>
+
+        <div class="section">
+            <h1>📜 Scroll hacia arriba</h1>
+            <p>Cuando haces scroll hacia arriba, el avión se gira 180 grados.</p>
+            <p>Ahora el avión apunta hacia arriba mientras asciende por la línea.</p>
+        </div>
+
+        <div class="section">
+            <h1>🎨 Diseño</h1>
+            <p>El fondo simula el cielo con un degradado de azul a verde.</p>
+            <p>Las nubes flotantes añaden un toque decorativo al ambiente.</p>
+        </div>
+
+        <div class="section">
+            <h1>💡 Tecnología</h1>
+            <p>Esta animación está creada con HTML, CSS y JavaScript puro.</p>
+            <p>Utiliza eventos de scroll y CSS transitions para lograr movimientos suaves.</p>
+        </div>
+
+        <div class="section">
+            <h1>🎯 Final del recorrido</h1>
+            <p>¡Has llegado al final! Prueba scrollear hacia arriba y hacia abajo varias veces.</p>
+            <p>Observa cómo el avión siempre mantiene la dirección correcta del movimiento.</p>
+        </div>
+    </div>
+
+    <!-- Instrucciones -->
+    <div class="instructions">
+        <p>⬇️ Scroll para mover el avión ⬆️</p>
+    </div>
+
+    <script>
+        const airplane = document.querySelector('.airplane');
+        let lastScrollTop = 0;
+        let ticking = false;
+
+        // Función para actualizar la posición del avión
+        function updateAirplanePosition() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight;
+            
+            // Calcular el porcentaje de scroll (0 a 1)
+            const scrollPercent = scrollTop / (documentHeight - windowHeight);
+            
+            // Calcular la posición vertical del avión (con margen)
+            const minPosition = 50; // píxeles desde arriba
+            const maxPosition = windowHeight - 100; // píxeles desde arriba
+            const airplaneTop = minPosition + (scrollPercent * (maxPosition - minPosition));
+            
+            // Aplicar la posición
+            airplane.style.top = airplaneTop + 'px';
+            
+            // Determinar dirección del scroll
+            if (scrollTop > lastScrollTop) {
+                // Scrolling hacia abajo
+                airplane.classList.remove('going-up');
+                airplane.classList.add('going-down');
+            } else if (scrollTop < lastScrollTop) {
+                // Scrolling hacia arriba
+                airplane.classList.remove('going-down');
+                airplane.classList.add('going-up');
+            }
+            
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop;
+            ticking = false;
+        }
+
+        // Optimización con requestAnimationFrame
+        function requestTick() {
+            if (!ticking) {
+                window.requestAnimationFrame(updateAirplanePosition);
+                ticking = true;
+            }
+        }
+
+        // Event listener para el scroll
+        window.addEventListener('scroll', requestTick, { passive: true });
+
+        // Inicializar posición al cargar
+        updateAirplanePosition();
+    </script>
+</body>
+</html>
