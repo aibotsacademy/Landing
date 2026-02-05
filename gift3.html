@@ -179,16 +179,14 @@
         }
         .contributor-amount { color: #4facfe; font-weight: bold; }
         .total-container {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
             background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(10px);
             padding: 25px 35px;
             border-radius: 20px;
             border: 2px solid rgba(255,255,255,0.3);
-            z-index: 1000;
-            max-width: 350px;
+            margin: 0 auto 40px auto;
+            max-width: 600px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
         .total-label { color: rgba(255,255,255,0.7); font-size: 0.9em; margin-bottom: 8px; }
         .total-amount { font-size: 2.5em; color: #4facfe; font-weight: bold; margin-bottom: 15px; }
@@ -289,7 +287,11 @@
         @media (max-width: 768px) {
             h1 { font-size: 2.5em; }
             .gifts-grid { grid-template-columns: 1fr; }
-            .total-container { bottom: 20px; right: 20px; left: 20px; }
+            .total-container { 
+                max-width: 100%;
+                padding: 20px;
+            }
+            .total-amount { font-size: 2em; }
         }
     </style>
 
@@ -309,15 +311,15 @@
             <p class="subtitle">Contribuye a crear momentos inolvidables en nuestra boda</p>
         </header>
 
-        <div class="gifts-grid" id="gifts-grid"></div>
-    </div>
+        <div class="total-container">
+            <div class="total-label">Total de Contribuciones</div>
+            <div class="total-amount">$<span id="total-amount">0</span></div>
+            <div class="contributors-count"><span id="total-contributors">0</span> contribuidores</div>
+            <div class="recent-contributors" id="recent-contributors"></div>
+            <button class="confirm-button" onclick="confirmGifts()">Ver Todos los Regalos</button>
+        </div>
 
-    <div class="total-container">
-        <div class="total-label">Total de Contribuciones</div>
-        <div class="total-amount">$<span id="total-amount">0</span></div>
-        <div class="contributors-count"><span id="total-contributors">0</span> contribuidores</div>
-        <div class="recent-contributors" id="recent-contributors"></div>
-        <button class="confirm-button" onclick="confirmGifts()">Ver Todos los Regalos</button>
+        <div class="gifts-grid" id="gifts-grid"></div>
     </div>
 
     <div id="contributorModal" class="modal">
