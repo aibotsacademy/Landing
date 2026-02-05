@@ -340,15 +340,15 @@
         const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyANUBuARp9V1kfwda-mUNhiu_P9zcKCvGVShA3xUzGNS8tCkV1afaJViB_XrbQF_TZhg/exec';
 
         const gifts = [
+            {id: 'safari', icon: '🦁', title: 'Cena bajo Elephant Rock', desc: 'Cena romántica en el desierto.', max: 1000, completed: true, donor: 'Priscilla Y Jairo Varela', donorMessage: 'Gracias por ayudarnos a construir nuestra boda y nuestra luna de miel soñada. 💕 Jenireé & Leandro ✨💍'},
+            {id: 'music', icon: '🎵', title: 'Música En Vivo', desc: 'Banda en vivo para amenizar la celebración.', max: 2000, completed: true, donor: 'JT', donorMessage: 'Gracias por hacer que nuestra boda suene increíble, haciendo de este día algo aún más inolvidable. 🎉 Jenireé & Leandro  🎶'},
             {id: 'photo', icon: '📸', title: 'Fotógrafo Profesional', desc: 'Captura cada momento mágico con fotografía de alta calidad.', max: 1500, completed: false},
-            {id: 'makeup', icon: '💄', title: 'Maquillista y Pelo', desc: 'Equipo profesional de estilistas para lucir radiantes.', max: 1500, completed: true, donor: 'J&P', donorMessage: 'Con todo nuestro amor y emoción por este día tan especial. Que luzcan radiantes en cada momento. 💕'},
-            {id: 'music', icon: '🎵', title: 'Música En Vivo', desc: 'Banda en vivo para amenizar la celebración.', max: 2000, completed: true, donor: 'JT', donorMessage: 'Que la música llene de alegría su celebración. ¡Felicidades por este nuevo capítulo! 🎶'},
+            {id: 'makeup', icon: '💄', title: 'Maquillista y Pelo', desc: 'Equipo profesional de estilistas para lucir radiantes.', max: 1500, completed: false},
             {id: 'fireworks', icon: '🎆', title: 'Show de Fuegos Artificiales', desc: 'Espectáculo pirotécnico sincronizado.', max: 3000, completed: false},
             {id: 'led', icon: '🚁', title: 'Show Drones LED', desc: 'Iluminación LED futurista.', max: 5000, completed: false},
             {id: 'miles', icon: '✈️', title: 'Millas Aéreas', desc: 'Millas y más millas para su luna de miel.', max: 1000, completed: false},
             {id: 'shark', icon: '🦈', title: 'Buceo con Tiburones', desc: 'Una inmersión extrema inolvidable.', max: 3000, completed: false},
             {id: 'skydiving', icon: '🪂', title: 'Skydiving en Dubái', desc: 'Caída libre con vistas a Palm Jumeirah.', max: 2000, completed: false},
-            {id: 'safari', icon: '🦁', title: 'Cena bajo Elephant Rock', desc: 'Cena romántica en el desierto.', max: 1000, completed: false},
             {id: 'balloon', icon: '🚁', title: 'Tour en Helicóptero', desc: 'Burj Khalifa, The Palm y skyline.', max: 1500, completed: false}
         ];
 
@@ -369,7 +369,7 @@
                 <div class="donor-message">
                     <div class="donor-message-header">
                         <span>💌</span>
-                        <span>Mensaje de ${gift.donor}:</span>
+                        <span>Mensaje para ${gift.donor}:</span>
                     </div>
                     <div class="donor-message-text">"${gift.donorMessage}"</div>
                 </div>
