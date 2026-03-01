@@ -1,0 +1,977 @@
+﻿<!DOCTYPE html>
+        <html>
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link href=https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400;1,500;1,700&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=Oswald:wght@200;300;400;500;600;700&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap rel="stylesheet">
+<link href=https://fonts.googleapis.com/css2?family=Sora:wght@100;200;300;400;500;600;700;800&display=swap rel="stylesheet">
+                <style>* { box-sizing: border-box; } body {margin: 0;}#sw-canvas{background-size:260px;--canvas-width:1488px;max-width:100%;margin:auto;padding-left:0px ;padding-right:0px ;padding-top:0px ;padding-bottom:0px ;background-repeat:no-repeat;background-position:center;background-color:#ffffff;--is-updated-canvas-width:true;undefined:1;}.deselected.gjs-selected{position:initial;}.deselected.gjs-selected::after{display:none;}html{box-sizing:border-box;scroll-behavior:smooth;}*, ::before, ::after{box-sizing:inherit;}.sw-row{display:flex;flex-wrap:wrap;}.sw-col{flex-basis:0px;flex-grow:1;max-width:100%;}.sw-col-sm{position:relative;width:100%;}.ListStyle li{list-style-position:initial;list-style-image:initial;list-style-type:none;}.ListStyle li table td input{width:100%;}a[image-label]{position:relative;}a[image-label]::after{content:'[' attr(image-label) ']';position:absolute;left:50%;top:50%;transform:translate(-50%, -50%);font-size:10px;font-weight:600;color:rgb(34, 34, 34);font-family:"Open Sans", sans-serif;width:90%;text-align:center;white-space-collapse:collapse;text-wrap-mode:nowrap;overflow-x:hidden;overflow-y:hidden;text-overflow:ellipsis;}.default-image-tag-bg a, .default-image-tag-bg img{height:inherit !important;width:100% !important;}.default-image-tag-bg img{background-color:rgb(217, 234, 255) !important;vertical-align:middle;}.editor-remove-col-disabled .editor-remove-col-text{color:rgb(189, 189, 189);pointer-events:none;}.form{position:relative;min-height:143px;overflow-x:auto;overflow-y:auto;}.text-div p{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#i8rff{flex-wrap:none;max-width:100%;padding-top:20px ;margin-left:auto;margin-right:auto;}#i157h{background-size:1440px;border-color:#828282;text-align:center;width:100%;margin:auto;padding-top:20px ;padding-bottom:0px ;padding-left:5px ;padding-right:5px ;undefined:1;border-style:none ;}#iwj2i{text-shadow:none;padding-top:0px ;padding-bottom:0px ;display:flex;}#im78k{background-size:590px;flex:1;display:flex;flex-direction:column;justify-content:center;padding-top:0px ;padding-bottom:0px ;padding-left:0px ;padding-right:0px ;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;undefined:1;border-color:#828282;border-style:none ;}#ikegj{text-shadow:none;max-width:1202px;margin:auto;}#ikny7{padding-top:0px ;padding-bottom:0px ;display:flex;}#itbip{background-size:710px;flex:1;display:flex;flex-direction:column;justify-content:center;padding-top:0px ;padding-bottom:0px ;padding-left:0px ;padding-right:60px ;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;undefined:1;border-color:#828282;border-style:none ;}#i9pf3{max-width:1440px;}#i17oo{display:flex;flex-direction:column;justify-content:center;}#i7jwm{display:initial;text-align:center;}#inafy{height:360px;width:590px;max-width:100%;text-shadow:none;justify-content:center;display:inline-flex;align-items:center;}#i2iwd{display:inline-block;pointer-events:none;}#iao7f{background-size:100%;display:inline-block;pointer-events:none;border-color:#828282;max-width:100%;cursor:initial;undefined:100%;object-fit:contain;width:253.44827586206895px !important;height:360;opacity:1;border-style:none ;}#iufqc{flex-wrap:none;max-width:100%;margin-top:30px;margin-bottom:30px;margin-left:auto;margin-right:auto;}#iqxzs{background-size:1440px;border-color:#828282;text-align:center;width:100%;margin:auto;padding-top:5px ;padding-bottom:5px ;padding-left:5px ;padding-right:5px ;undefined:1;border-style:none ;}#iahx9s{text-shadow:none;padding-top:0px ;padding-bottom:0px ;display:flex;}#ixgv61{background-size:590px;flex:1;display:flex;flex-direction:column;justify-content:start;padding-top:0px ;padding-bottom:0px ;padding-left:0px ;padding-right:0px ;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;undefined:1;border-color:#828282;border-style:none ;}#ijc1d{text-shadow:none;max-width:1202px;margin:auto;}#ix43j{padding-top:0px ;padding-bottom:0px ;display:flex;}#izaew{background-size:100%;flex:1;display:flex;flex-direction:column;justify-content:start;padding-top:0px ;padding-bottom:0px ;padding-left:0px ;padding-right:0px ;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;undefined:1;border-color:#828282;border-style:none ;}#idbji{text-shadow:none;padding-top:0px ;padding-bottom:0px ;display:flex;}#ig2mm{background-size:110px;flex:1;display:flex;flex-direction:column;justify-content:start;padding-top:0px ;padding-bottom:0px ;padding-left:0px ;padding-right:0px ;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;undefined:1;border-color:#828282;border-style:none ;}#ir0xz1{flex-wrap:none;max-width:100%;margin-left:auto;margin-right:auto;}#i8lgd5{background-size:1440px;border-color:#828282;text-align:center;width:100%;margin:auto;padding-top:5px ;padding-bottom:30px ;padding-left:15px ;padding-right:15px ;background-color:#f7f8f9;undefined:1;border-style:none ;}p{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;padding-top:0px;padding-right:0px;padding-bottom:0px;padding-left:0px;}.form-title{display:flex;align-items:center;justify-content:center;}.form-title div{word-break:break-all;overflow-wrap:break-word;}.video-caption p{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;display:-webkit-box;-webkit-line-clamp:unset;-webkit-box-orient:vertical;overflow-x:hidden;overflow-y:hidden;}.play-icon-wrapper svg{height:100%;width:100%;pointer-events:none;}.video-embed .video-add-url{top:50% !important;}#ibzynj{max-width:1440px;}#i6eqpq{display:flex;flex-direction:column;justify-content:center;}#ikvshx{display:initial;text-align:left;}#igvv28{height:40px;width:170px;max-width:100%;text-shadow:none;justify-content:center;display:inline-flex;align-items:center;}#issz4n{display:inline-block;pointer-events:none;}#iwhynd{background-size:100%;display:inline-block;pointer-events:none;border-color:#828282;max-width:100%;cursor:initial;undefined:100%;object-fit:contain;opacity:1;border-style:none ;}#i4bjqd{max-width:1440px;}#im8vlp{display:flex;flex-direction:column;justify-content:center;}#i3hkjs{display:initial;text-align:left;}#il7sty{height:40px;width:200px;max-width:100%;text-shadow:none;justify-content:center;display:inline-flex;align-items:center;}#in3jcg{display:inline-block;pointer-events:none;}#ip21rt{background-size:100%;display:inline-block;pointer-events:none;border-color:#828282;max-width:100%;cursor:initial;undefined:100%;object-fit:contain;width:200px !important;height:35.29411764705882;opacity:1;border-style:none ;}#iru338{justify-content:center;}#ityc0u{display:block;padding-top:14px ;padding-right:12px ;padding-bottom:14px ;padding-left:12px ;color:#202124;}#i22djy{cursor:auto;}#iwiugh{display:block;padding-top:14px ;padding-right:12px ;padding-bottom:14px ;padding-left:4px ;color:#202124;}#i3689n{opacity:100%;padding:3px;font-size:26px;line-height:1;color:#202124;text-align:left;font-family:Arial, Helvetica, sans-serif;cursor:text;min-height:26px;font-weight:bold;}#itarq6{cursor:auto;}#i8c738{cursor:auto;}#if92g4{text-align:left;}#iqatk3{display:inline-block;}#invown{background-color:#000000;box-sizing:border-box;text-decoration:none;border-radius:5px;display:block;width:100%;padding-top:12px ;padding-bottom:12px ;padding-left:20px ;padding-right:20px ;color:#FFF;border:0;border-color:#828282;font-size:16px;font-family:"Open Sans", sans-serif;vertical-align:middle;word-break:break-all;text-align:center;cursor:text;border-top-width:0px ;border-right-width:0px ;border-bottom-width:0px ;border-left-width:0px ;}.text-div a{text-underline-offset:1px;text-decoration-skip-ink:none;}#in14p8{max-width:1400px;padding-top:5px;padding-right:0px;padding-bottom:5px;padding-left:0px;}#iknh2c{display:flex;flex-direction:column;justify-content:center;padding:0;}#inp1cd{background-size:650px;display:initial;text-align:left;padding-top:5px ;padding-bottom:5px ;undefined:1;border-color:#828282;border-style:none ;}#iva9wp{display:inline-block;}#i57kxr{background-color:#000000;border-width:0;border-style:solid;box-sizing:border-box;text-decoration:none;border-radius:5px;display:block;width:100%;padding-top:15px ;padding-bottom:15px ;padding-left:20px ;padding-right:20px ;color:#FFF;border-color:#828282;font-size:16px;font-family:'Open Sans', sans-serif;vertical-align:middle;word-break:break-word;text-align:center;cursor:pointer;}#i57kxr:hover{background-color:#4a4a4a;color:#FFF;border-color:#828282;}#ij06zj{max-width:1400px;padding-top:5px;padding-right:0px;padding-bottom:5px;padding-left:0px;}#i10zz3{display:flex;flex-direction:column;justify-content:center;padding:0px;}#ikvcum{background-size:160px;display:initial;text-align:right;justify-content:start;undefined:1;border-color:#828282;border-style:none ;}#iwwdal{display:inline-block;}#iere8u{background-color:#000;border-style:solid;box-sizing:border-box;text-decoration:none;border-radius:5px;display:block;width:100%;padding-top:15px ;padding-bottom:15px ;padding-left:20px ;padding-right:20px ;color:#FFF;border-color:#828282;font-size:16px;font-family:'Open Sans', sans-serif;vertical-align:middle;word-break:break-word;text-align:center;cursor:pointer;border-width:0px;}#iere8u:hover{background-color:#4a4a4a;color:#FFF;border-color:#828282;}.customHtml-wrapper.text-div a{color:rgb(0, 0, 255);text-decoration-line:none;text-decoration-thickness:initial;text-decoration-style:initial;text-decoration-color:initial;}.customHtml-wrapper img{max-width:100%;}.empty-section{min-height:54px;}#invown:hover{background-color:#4a4a4a;color:#FFF;border-color:#828282;}.no_stack .sw-col-sm-0-5{flex-grow:0;flex-shrink:0;flex-basis:4.16667%;max-width:4.16667%;}.no_stack .sw-col-sm-1{flex-grow:0;flex-shrink:0;flex-basis:8.33333%;max-width:8.33333%;}.no_stack .sw-col-sm-1-5{flex-grow:0;flex-shrink:0;flex-basis:12.5%;max-width:12.5%;}.no_stack .sw-col-sm-2{flex-grow:0;flex-shrink:0;flex-basis:16.6667%;max-width:16.6667%;}.no_stack .sw-col-sm-2-5{flex-grow:0;flex-shrink:0;flex-basis:20.8333%;max-width:20.8333%;}.no_stack .sw-col-sm-3{flex-grow:0;flex-shrink:0;flex-basis:25%;max-width:25%;}.no_stack .sw-col-sm-3-5{flex-grow:0;flex-shrink:0;flex-basis:29.1667%;max-width:29.1667%;}.no_stack .sw-col-sm-4{flex-grow:0;flex-shrink:0;flex-basis:33.3333%;max-width:33.3333%;}.no_stack .sw-col-sm-4-5{flex-grow:0;flex-shrink:0;flex-basis:37.5%;max-width:37.5%;}.no_stack .sw-col-sm-5{flex-grow:0;flex-shrink:0;flex-basis:41.6667%;max-width:41.6667%;}.no_stack .sw-col-sm-5-5{flex-grow:0;flex-shrink:0;flex-basis:45.8333%;max-width:45.8333%;}.no_stack .sw-col-sm-6{flex-grow:0;flex-shrink:0;flex-basis:50%;max-width:50%;}.no_stack .sw-col-sm-6-5{flex-grow:0;flex-shrink:0;flex-basis:54.1667%;max-width:54.1667%;}.no_stack .sw-col-sm-7{flex-grow:0;flex-shrink:0;flex-basis:58.3333%;max-width:58.3333%;}.no_stack .sw-col-sm-7-5{flex-grow:0;flex-shrink:0;flex-basis:62.5%;max-width:62.5%;}.no_stack .sw-col-sm-8{flex-grow:0;flex-shrink:0;flex-basis:66.6667%;max-width:66.6667%;}.no_stack .sw-col-sm-8-5{flex-grow:0;flex-shrink:0;flex-basis:70.8333%;max-width:70.8333%;}.no_stack .sw-col-sm-9{flex-grow:0;flex-shrink:0;flex-basis:75%;max-width:75%;}.no_stack .sw-col-sm-9-5{flex-grow:0;flex-shrink:0;flex-basis:79.1667%;max-width:79.1667%;}.no_stack .sw-col-sm-10{flex-grow:0;flex-shrink:0;flex-basis:83.3333%;max-width:83.3333%;}.no_stack .sw-col-sm-10-5{flex-grow:0;flex-shrink:0;flex-basis:87.5%;max-width:87.5%;}.no_stack .sw-col-sm-11{flex-grow:0;flex-shrink:0;flex-basis:91.6667%;max-width:91.6667%;}.no_stack .sw-col-sm-11-5{flex-grow:0;flex-shrink:0;flex-basis:95.8333%;max-width:95.8333%;}.no_stack .sw-col-sm-12{flex-grow:0;flex-shrink:0;flex-basis:100%;max-width:100%;}.no_stack .editor-parent-td{height:100%;}.sw-row.section-child-wrapper{width:100%;}.accordion-element-icon svg{height:100%;width:100%;pointer-events:none;}.wcs-visibility-center > .sw-row{justify-content:center;}.sw-carousel-prev svg, .sw-carousel-next svg{height:100% !important;width:100% !important;}.sw-carousel-indicator svg{height:100% !important;width:100% !important;}.sw-carousel-container[data-caption="hide"] .sw-carousel-caption{display:none;}.iframe-popup-close svg{height:12px;}.sw-tab-container[tab-position="horizontal"] .sw-tab-button:not(:last-child){border-right-width:0px !important;}.sw-tab-container[tab-position="horizontal"] .sw-tab-button{border-bottom-width:0px !important;}.sw-tab-container[tab-position="horizontal"]{flex-direction:column;}.sw-tab-container[tab-position="vertical"]{align-items:normal;}.sw-tab-container[tab-position="vertical"] .sw-tabs-wrapper{flex-direction:column;}.sw-tab-container[tab-position="vertical"] .sw-tab-button:not(:last-child){border-bottom-width:0px;border-bottom-style:initial;border-bottom-color:initial;}.sw-tab-container[tab-position="vertical"] .sw-tab-button{border-right-width:0px;border-right-style:initial;border-right-color:initial;max-width:200px;min-width:200px;text-wrap-mode:initial;text-wrap-style:initial;overflow-x:initial;overflow-y:initial;text-overflow:initial;text-align:left;}.sw-tab-container[tab-position="vertical"] .sw-tab-content-container{width:calc(100% - 200px);}.sw-tab-container[tab-position="vertical"] .sw-tab-content-container .image-wrapper, .sw-tab-container[tab-position="vertical"] .sw-tab-content-container .video-component{max-width:100% !important;}#ivbwhh{flex-wrap:none;max-width:100%;padding-bottom:0px ;margin-left:auto;margin-right:auto;padding-left:0px ;}#igfqpc{background-size:1440px;border-color:#828282;border-style:none ;text-align:center;width:100%;margin:auto;undefined:#000000;padding-top:15px ;padding-bottom:15px ;box-shadow:0px 2px 25px 0px rgba(0, 0, 0, 0.14);}#id0py8{text-shadow:none;max-width:1200px;margin:auto;}#ik9lze{padding:0;display:flex;}#id7umj{background-size:1440px;flex:1;display:flex;flex-direction:column;justify-content:center;padding:0;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;border-width:0;border-color:#65abf0;border-radius:0;undefined:1;border-style:none ;border-top-style:none ;border-right-style:none ;border-bottom-style:none ;border-left-style:none ;}#i1vexn{text-shadow:none;padding:0;border-width:0;border-radius:0;border-style:none;display:flex;}#inj78l{background-size:600px;flex:1;display:flex;flex-direction:column;justify-content:center;padding:0;border-width:0;border-color:#65abf0;border-radius:0;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;undefined:1;border-style:none ;border-top-style:none ;border-right-style:none ;border-bottom-style:none ;border-left-style:none ;}#igdrv3{text-shadow:none;padding:0;border-width:0;border-radius:0;border-style:none;display:flex;}#ii68n1{background-size:360px;flex:1;display:flex;flex-direction:column;justify-content:center;padding:0;border-width:0;border-color:#65abf0;border-radius:0;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;undefined:1;border-style:none ;border-top-style:none ;border-right-style:none ;border-bottom-style:none ;border-left-style:none ;}#i8i788{border-collapse:collapse;border-spacing:0;max-width:1400px;}#i6xa5b{background-size:710px;display:block;padding-top:0px ;padding-bottom:10px ;padding-left:0px ;padding-right:0px ;color:#5f6368;undefined:1;border-color:#828282;border-style:none ;overflow:hidden;}#igikst{display:block;padding-top:0px ;padding-bottom:30px ;padding-left:0px ;padding-right:0px ;color:#5f6368;}#idy4vu{display:block;opacity:100%;margin:0;padding:3px;font-size:16px;line-height:1.6;color:#5f6368;text-align:left;font-family:Arial, Helvetica, sans-serif;min-height:26px;word-break:break-word;}#ilv5zk{border-collapse:collapse;border-spacing:0;max-width:1400px;}#ixyu3t{display:block;padding-top:0px ;padding-bottom:0px ;padding-left:0px ;padding-right:0px ;color:#3B4759;}#iarh9o{display:block;padding-top:0px ;padding-bottom:0px ;padding-left:0px ;padding-right:0px ;color:#3b4759;}#i6kofx{display:block;opacity:100%;margin:0;padding:3px;font-size:14px;line-height:1.7142857142857142;color:#3b4759;text-align:right;font-family:Arial, Helvetica, sans-serif;cursor:text;min-height:26px;}#i9qffg{text-shadow:none;padding:0;border-width:0;border-radius:0;border-style:none;display:flex;}#iush9d{background-size:480px;flex:1;display:flex;flex-direction:column;justify-content:end;padding:0;border-width:0;border-color:#65abf0;border-radius:0;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;border-style:none ;undefined:1;border-top-style:none ;border-right-style:none ;border-bottom-style:none ;border-left-style:none ;}#ia6u0i{text-shadow:none;max-width:1202px;margin:auto;}#i2z88b{padding-top:0px ;padding-bottom:0px ;display:flex;}#izqhv6{background-size:960px;flex:1;display:flex;flex-direction:column;justify-content:start;padding-top:0px ;padding-bottom:0px ;padding-left:0px ;padding-right:0px ;margin:0;margin-top:0.1px;margin-bottom:0.1px;max-width:100%;undefined:1;border-color:#828282;border-style:none ;}#iwxwni{border-collapse:collapse;border-spacing:0;max-width:1400px;}#il44fw{background-size:930px;display:block;padding-top:0px ;padding-bottom:10px ;padding-left:0px ;padding-right:0px ;color:#3b4759;undefined:1;border-color:#828282;border-style:none ;overflow:hidden;}#ip9lae{display:block;padding-top:0px ;padding-bottom:10px ;padding-left:0px ;padding-right:0px ;color:#3b4759;}#icg4lu{display:block;opacity:100%;margin:0;padding:3px;font-size:14px;line-height:1.5;color:#3b4759;text-align:left;font-family:Arial, Helvetica, sans-serif;min-height:26px;word-break:break-word;border-color:#828282;}#i9w6di{border-collapse:collapse;border-spacing:0;max-width:1400px;}#it1dmx{background-size:610px;display:block;padding-top:0px ;padding-bottom:10px ;padding-left:0px ;padding-right:0px ;color:#3b4759;undefined:1;border-color:#828282;overflow:hidden;}#ioaf2r{display:block;padding-top:0px ;padding-bottom:10px ;padding-left:0px ;padding-right:0px ;color:#3b4759;}#ieycnq{display:block;opacity:100%;margin:0;padding:3px;font-size:14px;line-height:1.5;color:#3b4759;text-align:left;font-family:Arial, Helvetica, sans-serif;min-height:26px;word-break:break-word;}#istz6x{display:block;opacity:100%;margin:0;padding:3px;font-size:36px;line-height:1.2;color:#202124;text-align:left;font-family:Arial, Helvetica, sans-serif;min-height:26px;word-break:break-word;font-weight:bold;border-color:#828282;}#ihaopp{display:block;padding-top:0px ;padding-bottom:20px ;padding-left:0px ;padding-right:0px ;color:#202124;border-color:#828282;}#id8agf{display:block;padding-top:0px ;padding-bottom:0px ;padding-left:0px ;padding-right:0px ;color:#202124;border-color:#828282;}#imiebi{border-collapse:collapse;border-spacing:0;max-width:1400px;}#imi1bx{display:block;opacity:100%;margin:0;padding:3px;font-size:16px;line-height:1.6;color:#5f6368;text-align:left;font-family:Arial, Helvetica, sans-serif;min-height:26px;word-break:break-word;}#ifk3us{display:block;padding-top:0px ;padding-bottom:30px ;padding-left:0px ;padding-right:0px ;color:#5f6368;}#im5ydg{background-size:710px;display:block;padding-top:0px ;padding-bottom:10px ;padding-left:0px ;padding-right:0px ;color:#5f6368;undefined:1;border-color:#828282;border-style:none ;overflow:hidden;}#iefa02{border-collapse:collapse;border-spacing:0;max-width:1400px;}@media (min-width: 576px){.sw-col-sm{flex-basis:0px;flex-grow:1;max-width:100%;}.sw-col-sm-1{flex-grow:0;flex-shrink:0;flex-basis:8.33333%;max-width:8.33333%;}.sw-col-sm-4{flex-grow:0;flex-shrink:0;flex-basis:33.3333%;max-width:33.3333%;}.sw-col-sm-5{flex-grow:0;flex-shrink:0;flex-basis:41.6667%;max-width:41.6667%;}.sw-col-sm-6{flex-grow:0;flex-shrink:0;flex-basis:50%;max-width:50%;}.sw-col-sm-8{flex-grow:0;flex-shrink:0;flex-basis:66.6667%;max-width:66.6667%;}.sw-col-sm-3-5{flex-grow:0;flex-shrink:0;flex-basis:29.1667%;max-width:29.1667%;}.sw-col-sm-5-5{flex-grow:0;flex-shrink:0;flex-basis:45.8333%;max-width:45.8333%;}.sw-col-sm-6-5{flex-grow:0;flex-shrink:0;flex-basis:54.1667%;max-width:54.1667%;}}@media (max-width: 800px){#iao7f{width:197.1264367816092px !important;height:280;object-fit:contain;}#inafy{height:280px !important;width:590px !important;}#itbip{padding-right:20px !important;}#ip21rt{width:200px !important;height:25.613660618996796;object-fit:contain;}#il7sty{width:200px !important;}#i157h{padding-top:20px !important;padding-left:15px !important;padding-right:15px !important;padding-bottom:20px !important;}#i8rff{padding-top:20px !important;}#idy4vu{font-size:14px !important;}#i7jwm{text-align:center !important;}#im78k{justify-content:start !important;}#istz6x{font-size:24px !important;}#imi1bx{font-size:14px !important;}}@media only screen and (max-width: 480px){.column{width:100% !important;display:block !important;}.editor-img-res{display:block !important;}.editor-img-res .video-component{width:100% !important;display:block !important;height:250px !important;}.editor-img-res .image-wrapper{width:100% !important;display:block !important;height:auto !important;}.editor-img-res .image-wrapper a{width:100% !important;}.editor-img-res img{width:100% !important;height:auto !important;}.reverse_stack > .sw-row{flex-direction:column-reverse;flex-wrap:nowrap;display:flex !important;}.editor-img-res .sw-carousel-container{width:100% !important;display:flex !important;height:auto !important;}.sw-tab-container[tab-position="vertical"] .sw-tab-button{max-width:100px;min-width:100px;}.sw-tab-container[tab-position="vertical"] .sw-tab-content-container{width:calc(100% - 100px);}}@media (max-width: 480px){#ikvshx{text-align:center !important;padding-bottom:8px !important;}#i3hkjs{text-align:center !important;}#iere8u{border-style:solid;}#ikvcum{text-align:center !important;}#itbip{padding-right:0px !important;padding-top:20px !important;}.editor-img-res #inafy{height:auto !important;width:100% !important;}.editor-img-res  #iao7f{width:100% !important;height:auto !important;}.editor-img-res  #inafy{width:100% !important;height:auto !important;}#i6kofx{text-align:center !important;font-size:12px !important;}#inp1cd{padding-top:0px !important;padding-bottom:0px !important;}#i57kxr{border-style:solid;padding-top:13px !important;}#ieycnq{text-align:center !important;font-size:12px !important;}#icg4lu{text-align:center !important;font-size:12px !important;}#istz6x{font-size:20px !important;}#igikst{padding-bottom:0px !important;}#ip21rt{width:170px !important;height:30;object-fit:contain;}#il7sty{width:170px !important;}#ifk3us{padding-bottom:0px !important;}#i157h{padding-left:10px !important;padding-right:10px !important;}#iqxzs{padding-left:10px !important;padding-right:10px !important;}#it1dmx{padding-bottom:0px !important;}#ioaf2r{padding-bottom:0px !important;}}</style>
+                <style>
+                    @media only screen and (min-width: 769px) {
+                        .hide-desktop {
+                            display: none !important;
+                        }
+                    }
+
+                    @media only screen and (max-width: 768px) and (min-width: 481px) {
+                        .hide-tablet {
+                            display: none !important;
+                        }
+                    }
+                    @media only screen and (max-width: 480px) {
+                        .hide-mobile {
+                            display: none !important;
+                        }
+                    }
+                </style>
+            <style data-form-css-styles="true">.form {
+    padding: 0px;
+}
+.form-wrapper {
+    box-shadow: 0px 0px 5px rgb(51 51 51 / 25%);
+    padding: 20px 21px;
+    border-radius: 8px;
+    font-family: sans-serif !important;
+}
+.form-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.form-title div {
+    word-break: break-all;
+    word-wrap: break-word;
+}
+.form-wrapper input[type='Radio'] {
+    margin: 2px 4px;
+    padding: 3px 0;
+}
+.form-wrapper input[type='CheckBox'] {
+    margin: 2px 4px;
+    padding: 3px 0;
+}
+.form-element > table,
+.form-element > form > table {
+    width: 100%;
+}
+div.form-element {
+    position: relative;
+    min-height: 200px;
+    overflow-x: auto;
+    overflow-y: auto;
+    background: #ffffff;
+    margin: 10px auto;
+    font-size: 14px;
+}
+
+.normal_text {
+    display: block;
+}
+.normal_small_text {
+    font-size: 12px;
+}
+.normal_bold_text {
+    font-family: 'DM Sans', sans-serif;
+    font-style: normal;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.3;
+    color: #5f6368;
+}
+span.normal_error_text {
+    color: #d93025 !important;
+}
+.required-fields {
+    text-align: left;
+}
+.form-button {
+    padding: 5px;
+}
+.FormTextBox,
+.FormTextBoxFocus {
+    height: 36px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #5f6368;
+    padding: 0 15px;
+    margin: 5px 0 5px 0;
+    box-sizing: border-box;
+}
+.FormAreaCodeBox,
+.FormAreaCodeBoxFocus {
+    height: 36px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #5f6368;
+    padding: 0 15px;
+    margin: 5px 0 5px 0;
+    box-sizing: border-box;
+}
+.FormPhoneBox,
+.FormPhoneBoxFocus {
+    height: 36px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #5f6368;
+    padding: 0 15px;
+    margin: 5px 0 5px 0;
+    box-sizing: border-box;
+}
+.FormTextAreaBox,
+.FormTextAreaBoxFocus {
+    height: 36px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #5f6368;
+    padding: 0 15px;
+    overflow: auto;
+    margin: 5px 0 5px 0;
+    box-sizing: border-box;
+}
+.FormSelectBox,
+.FormSelectBoxFocus {
+    height: 36px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #5f6368;
+    padding: 0 15px 0 5px;
+    margin: 5px 0 5px 0;
+    box-sizing: border-box;
+}
+.TextInput2,
+.FormTextBox,
+.FormTextBoxFocus,
+.FormNumberBox,
+.FormNumberFocus,
+.FormDateBox,
+.FormDateFocus,
+input[type='text'].requiredField,
+input[type='email'].requiredField,
+input[type='tel'].requiredField,
+input.requiredField {
+    height: 36px;
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #5f6368;
+    padding: 8px 15px;
+    margin: 5px 0 5px 0;
+    box-sizing: border-box;
+}
+
+.FormTextAreaBox {
+    height: 100px;
+}
+
+.FormMultiSelectBox,
+.FormMultiSelectBoxFocus {
+    width: 100%;
+    background: #ffffff;
+    border: 1px solid #dadce0;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #5f6368;
+    margin: 5px 0 5px 0;
+}
+
+.FormMultiSelectBox option,
+.FormMultiSelectBoxFocus option {
+    padding: 5px 15px;
+    outline: none;
+}
+.form-element > table td {
+    padding-bottom: 10px;
+}
+.form-element > table table {
+    padding: 5px 0;
+}
+
+.form-element .FormFileBox {
+    width: 100%;
+    padding: 10px 0 0 0;
+    color: #5f6368;
+}
+.list_row_bg1 {
+    padding: 10px 0;
+}
+
+.list_row_bg1 .normal_text {
+    font-size: 12px;
+    word-break: break-all;
+}
+.list_row_bg1 .list_row_bg2 > td:first-child {
+    min-width: 50px;
+}
+</style><style>.google_bar {
+  width: 100%;
+  height: 12px;
+  display: block;
+  background-image: linear-gradient(90deg,#ea4335,#ea4335 30%,#4285f4 0,#4285f4 70%,#34a853 0,#34a853 80%,#fbbc04 0,#fbbc04);
+  background-repeat: no-repeat;
+    background-size: 100% !important;
+overflow:hidden;
+}</style></head>
+            <body id="sw-canvas"><div id="ivbwhh" class="editor-parent-column sw-row"><div section-count="3" id="igfqpc" auto-width="auto" fit-screen="none" data-border-style="none" section-width-desktop="1440" width="1440" toggle="checked" class="sw-col"><div id="id0py8" class="sw-row"><div id="ik9lze" class="column sw-col-sm editor_table_td sw-col-sm-3-5"><div is-column="true" align="center" data-border-style="none" id="id7umj" fit-screen="none" section-width-desktop="1440" class="editor-parent-td"><div drag-type="image" id="ibzynj" class="sw-row deselected"><div id="i6eqpq" class="sw-col"><div id="ikvshx"><div auto-width="auto" id="igvv28" section-width-desktop="1440" class="image-wrapper"><a target="_blank" id="issz4n" class="disabled-link"><img data-checked="unchecked" src="https://content.structuredweb.com/sw/swchannel/images/MarketingAssets/166586/logo.png" align="middle" fit-screen="none" width="40" height="40" id="iwhynd" section-width-desktop="1440" data-border-style="none" title="Company Logo" data-at="9221" src-fallback="https://assets.structuredweb.com/common/tag-merged-no-image.png"></a></div></div></div></div>                        
+                                    
+                            </div></div><div id="i1vexn" class="column sw-col-sm editor_table_td sw-col-sm-5"><div is-column="true" align="center" data-border-style="none" id="inj78l" fit-screen="none" section-width-desktop="1440" class="editor-parent-td"><div drag-type="image" id="i4bjqd" class="sw-row deselected"><div id="im8vlp" class="sw-col"><div id="i3hkjs"><div auto-width="auto" id="il7sty" section-width-desktop="1440" class="image-wrapper"><a target="_blank" id="in3jcg" class="disabled-link"><img data-checked="unchecked" src="https://assets.structuredweb.com/213d8a19a2/lockup_GoogleCloud_FullColor_rgb_544x96px%204-efb6aae1-7eec-44fa-af01-b0df58541def.png" align="middle" fit-screen="none" width="170" height="30" id="ip21rt" section-width-desktop="1440" data-border-style="none"></a></div></div></div></div> 
+                    </div></div><div id="igdrv3" class="column sw-col-sm editor_table_td sw-col-sm-3-5"><div is-column="true" align="center" data-border-style="none" id="ii68n1" fit-screen="none" section-width-desktop="1440" class="editor-parent-td"><div drag-type="button" role="presentation" id="ij06zj" draggable class="sw-row deselected"><div id="i10zz3" class="sw-col"><div id="ikvcum" fit-screen="none" data-border-style="none" section-width-desktop="1440"><div auto-width="auto" id="iwwdal"><a custom-type="button" id="iere8u" custom-target="_scrollTo" href="#i22djy" data-campaign-ide=""><span style="font-family:Arial;"><span style="font-size:16px;">Get the report</span></span></a></div></div></div></div> 
+                    </div></div></div></div></div><div id="i8rff" class="editor-parent-column sw-row"><div section-count="2" id="i157h" auto-width="auto" fit-screen="none" width="1440" section-width-desktop="1440" data-border-style="none" class="sw-col reverse_stack"><div id="ikegj" class="sw-row"><div id="ikny7" class="column sw-col-sm editor_table_td sw-col-sm-6-5"><div is-column="true" id="itbip" fit-screen="none" align="center" data-border-style="none" section-width-desktop="1440" class="editor-parent-td"><div drag-type="text" data-reactroot="" draggable id="imiebi" class="sw-row deselected"><div fit-screen="none" id="id8agf" class="sw-col"><div id="ihaopp"><div id="istz6x" class="text-div"><p>Five AI agent trends to watch in 2026.</p></div></div></div></div><div drag-type="text" data-reactroot="" id="i8i788" draggable class="sw-row deselected"><div id="i6xa5b" fit-screen="none" data-border-style="none" section-width-desktop="1440" class="sw-col"><div id="igikst"><div id="idy4vu" class="text-div"><p>New data reveals the strategic bets of over 3,466 global executives, synthesized with insights from Google AI experts, defining the agent-driven transformation for 2026.</p></div></div></div></div><div drag-type="button" role="presentation" id="in14p8" draggable class="sw-row deselected"><div id="iknh2c" class="sw-col"><div id="inp1cd" fit-screen="none" data-border-style="none" section-width-desktop="1440"><div auto-width="auto" id="iva9wp"><a custom-type="button" id="i57kxr" custom-target="_scrollTo" href="#i22djy" data-campaign-ide=""><span style="font-family:Arial;"><span style="font-size:16px;">Get the report</span></span></a></div></div></div></div>                        
+                                    
+                            </div></div><div id="iwj2i" class="column sw-col-sm editor_table_td sw-col-sm-5-5"><div is-column="true" align="center" id="im78k" fit-screen="none" data-border-style="none" section-width-desktop="1440" class="editor-parent-td"><div drag-type="image" id="i9pf3" class="sw-row"><div id="i17oo" class="sw-col"><div id="i7jwm" class="editor-img-res"><div auto-width="auto" id="inafy" class="image-wrapper"><a target="_blank" id="i2iwd" class="disabled-link"><img data-checked="unchecked" src="https://assets.structuredweb.com/213d8a19a2/Email%20and%20Landing%20Page%20Thumbnail%20%28Flexible%29%402x-b932adf0-e7aa-4571-8ccd-d65c583c78ef.png" align="middle" id="iao7f" fit-screen="none" width="253.44827586206895" height="360" section-width-desktop="1440" data-border-style="none"></a></div></div></div></div> 
+                    </div></div></div></div></div><div id="iufqc" class="editor-parent-column sw-row"><div section-count="3" id="iqxzs" auto-width="auto" fit-screen="none" width="1440" data-border-style="none" section-width-desktop="1440" class="sw-col"><div id="ijc1d" class="sw-row"><div id="ix43j" class="column sw-col-sm editor_table_td sw-col-sm-6"><div is-column="true" id="izaew" fit-screen="none" align="center" data-border-style="none" section-width-desktop="1440" class="editor-parent-td"><div drag-type="text" data-reactroot="" draggable id="iefa02" class="sw-row"><div fit-screen="none" data-border-style="none" section-width-desktop="1440" id="im5ydg" class="sw-col"><div id="ifk3us"><div id="imi1bx" class="text-div"><p>The era of simple prompts is over. We're witnessing the Agent Leap—where AI orchestrates complex, end-to-end workflows semi-autonomously. For enterprises struggling with speed-to-value, this is the defining opportunity of 2026.</p><p><br></p><p>Download the report to explore:</p><ul><li><strong>From tasks to systems:</strong> It’s not just about one-off prompts. It’s about "digital assembly lines" that run entire workflows.</li><li><strong>Practical uses:</strong> Real examples of how agents improve customer service, code quality, and threat detection.</li><li><strong>The human part:</strong> Why teaching your team is the only way this actually works.</li></ul></div></div></div></div></div></div><div id="idbji" class="column sw-col-sm editor_table_td sw-col-sm-1"><div is-column="true" id="ig2mm" fit-screen="none" align="center" data-border-style="none" class="hide-desktop editor-parent-td empty-section hide-tablet hide-mobile"></div></div><div id="iahx9s" class="column sw-col-sm editor_table_td sw-col-sm-5"><div is-column="true" align="center" id="ixgv61" fit-screen="none" data-border-style="none" section-width-desktop="1440" class="editor-parent-td"><div role="presentation" drag-type="form" data-reactroot="" id="iru338" draggable class="sw-row"><div id="ityc0u" class="sw-col"><div custom-type="form" id="i22djy" class="form-wrapper"><div id="iwiugh" class="form-title"><div custom-type="formTitleText" id="i3689n" class="text-div"><p>Get the report</p></div></div><div id="itarq6" class="form"><div id="i8c738" class="form-element">
+        <form
+            name="myForm"
+            enctype="multipart/form-data"
+            action="http://www.googlecloud.atworkweb.com/sw/swchannel/Registration/internet/RegistrationSubmit.cfm?SWSESSIONID=F158A637B796149DB1306CFF90D8572D"
+            method="post">
+        
+    <table border="0" cellpadding="3">
+
+        
+
+        
+        <input type="Hidden" name="ProductCCID" value="">
+        <input type="Hidden" name="ProductMasterID" value="">
+        <input type="Hidden" name="CustomPageID" value="">
+        <input type="Hidden" name="ReferDisplayName" value="">
+
+        
+                    <tr valign="TOP">
+                        <td nowrap>
+                            <span class="normal_bold_text">
+                            Business name<span class="normal_error_text">*</span>
+                            </span>
+                        
+                            </td>
+                            <td>
+                        
+                            <span class="normal_text">
+                            
+                                <input
+                                    type="Text"
+                                    size="30"
+                                    class="FormTextBox"
+                                    onfocus="this.className='FormTextBoxFocus';"
+                                    onblur="this.className='FormTextBox';"
+                                    name="companyname"
+                                    value="">
+                            
+                            </span>
+                        </td>
+                    </tr>
+                
+                    <tr valign="TOP">
+                        <td nowrap>
+                            <span class="normal_bold_text">
+                            First name<span class="normal_error_text">*</span>
+                            </span>
+                        
+                            </td>
+                            <td>
+                        
+                            <span class="normal_text">
+                            
+                                <input
+                                    type="Text"
+                                    size="30"
+                                    class="FormTextBox"
+                                    onfocus="this.className='FormTextBoxFocus';"
+                                    onblur="this.className='FormTextBox';"
+                                    name="firstname"
+                                    value="">
+                            
+                            </span>
+                        </td>
+                    </tr>
+                
+                    <tr valign="TOP">
+                        <td nowrap>
+                            <span class="normal_bold_text">
+                            Last name<span class="normal_error_text">*</span>
+                            </span>
+                        
+                            </td>
+                            <td>
+                        
+                            <span class="normal_text">
+                            
+                                <input
+                                    type="Text"
+                                    size="30"
+                                    class="FormTextBox"
+                                    onfocus="this.className='FormTextBoxFocus';"
+                                    onblur="this.className='FormTextBox';"
+                                    name="lastname"
+                                    value="">
+                            
+                            </span>
+                        </td>
+                    </tr>
+                
+                    <tr valign="TOP">
+                        <td nowrap>
+                            <span class="normal_bold_text">
+                            Business phone<span class="normal_error_text">*</span>
+                            </span>
+                        
+                            </td>
+                            <td>
+                        
+                            <span class="normal_text">
+                            
+                                                <input
+                                                    size="30"
+                                                    name="phone"
+                                                    value=""
+                                                    class="FormPhoneBox"
+                                                    onfocus="this.className='FormPhoneBoxFocus';"
+                                                    onblur="this.className='FormPhoneBox';"
+                                                    maxlength="30">
+                                            
+                            </span>
+                        </td>
+                    </tr>
+                
+                    <tr valign="TOP">
+                        <td nowrap>
+                            <span class="normal_bold_text">
+                            Email address<span class="normal_error_text">*</span>
+                            </span>
+                        
+                            </td>
+                            <td>
+                        
+                            <span class="normal_text">
+                            
+                                <input
+                                    type="Email"
+                                    size="30"
+                                    class="FormTextBox"
+                                    onfocus="this.className='FormTextBoxFocus';"
+                                    onblur="this.className='FormTextBox';"
+                                    name="email"
+                                    value="">
+                            
+                            </span>
+                        </td>
+                    </tr>
+                
+
+                    <tr valign="TOP">
+                        <td nowrap>
+                            <span class="normal_bold_text">
+                            Country<span class="normal_error_text">*</span>
+                            </span>
+                        
+                            </td>
+                            <td>
+                        
+                        <select
+                                id="countryCombo"
+                                class="FormSelectBox"
+                                onchange="UpdateProvinces('http&#x3a;&#x2f;&#x2f;www.googlecloud.atworkweb.com&#x2f;sw&#x2f;swchannel&#x2f;Registration&#x2f;internet&#x2f;GetProvincesForCountry.cfm&#x3f;SWSESSIONID&#x3d;F158A637B796149DB1306CFF90D8572D&amp;CountryId&#x3d;'+ this.value);"
+                                onfocus="this.className='FormSelectBoxFocus';"
+                                onblur="this.className='FormSelectBox';"
+                                name="countryid">
+
+                                
+
+                                <option value="5" >Afghanistan 
+
+                                <option value="249" >Aland Islands 
+
+                                <option value="6" >Albania 
+
+                                <option value="7" >Algeria 
+
+                                <option value="8" >American Samoa 
+
+                                <option value="9" >Andorra 
+
+                                <option value="10" >Angola 
+
+                                <option value="11" >Anguilla 
+
+                                <option value="12" >Antarctica 
+
+                                <option value="13" >Antigua And Barbuda 
+
+                                <option value="14" >Argentina 
+
+                                <option value="15" >Armenia 
+
+                                <option value="16" >Aruba 
+
+                                <option value="4" >Australia 
+
+                                <option value="17" >Austria 
+
+                                <option value="18" >Azerbaijan 
+
+                                <option value="19" >Bahamas 
+
+                                <option value="20" >Bahrain 
+
+                                <option value="21" >Bangladesh 
+
+                                <option value="22" >Barbados 
+
+                                <option value="23" >Belarus 
+
+                                <option value="24" >Belgium 
+
+                                <option value="25" >Belize 
+
+                                <option value="26" >Benin 
+
+                                <option value="27" >Bermuda 
+
+                                <option value="28" >Bhutan 
+
+                                <option value="29" >Bolivia 
+
+                                <option value="248" >Bonaire 
+
+                                <option value="30" >Bosnia And Herzegowina 
+
+                                <option value="31" >Botswana 
+
+                                <option value="32" >Bouvet Island 
+
+                                <option value="33" >Brazil 
+
+                                <option value="34" >British Indian Ocean Territory 
+
+                                <option value="35" >Brunei Darussalam 
+
+                                <option value="36" >Bulgaria 
+
+                                <option value="37" >Burkina Faso 
+
+                                <option value="38" >Burundi 
+
+                                <option value="39" >Cambodia 
+
+                                <option value="40" >Cameroon 
+
+                                <option value="2" >Canada 
+
+                                <option value="255" >Canary Island 
+
+                                <option value="41" >Cape Verde 
+
+                                <option value="42" >Catalonia 
+
+                                <option value="43" >Cayman Islands 
+
+                                <option value="44" >Central African Republic 
+
+                                <option value="45" >Chad 
+
+                                <option value="46" >Chile 
+
+                                <option value="47" >China 
+
+                                <option value="48" >Christmas Island 
+
+                                <option value="49" >Cocos &#x28;Keeling&#x29; Islands 
+
+                                <option value="50" >Colombia 
+
+                                <option value="51" >Comoros 
+
+                                <option value="52" >Congo 
+
+                                <option value="53" >Cook Islands 
+
+                                <option value="54" selected>Costa Rica 
+
+                                <option value="55" >Cote D&#x27;Ivoire 
+
+                                <option value="56" >Croatia 
+
+                                <option value="57" >Cuba 
+
+                                <option value="246" >Curacao 
+
+                                <option value="58" >Cyprus 
+
+                                <option value="59" >Czech Republic 
+
+                                <option value="245" >Dem. Rep. Congo 
+
+                                <option value="60" >Denmark 
+
+                                <option value="61" >Djibouti 
+
+                                <option value="62" >Dominica 
+
+                                <option value="63" >Dominican Republic 
+
+                                <option value="64" >East Timor 
+
+                                <option value="65" >Ecuador 
+
+                                <option value="66" >Egypt 
+
+                                <option value="67" >El Salvador 
+
+                                <option value="68" >Equatorial Guinea 
+
+                                <option value="69" >Eritrea 
+
+                                <option value="70" >Estonia 
+
+                                <option value="71" >Ethiopia 
+
+                                <option value="72" >Falkland Islands 
+
+                                <option value="73" >Faroe Islands 
+
+                                <option value="74" >Fiji 
+
+                                <option value="75" >Finland 
+
+                                <option value="76" >France 
+
+                                <option value="78" >French Guiana 
+
+                                <option value="79" >French Polynesia 
+
+                                <option value="80" >French Southern Territories 
+
+                                <option value="81" >Gabon 
+
+                                <option value="82" >Gambia 
+
+                                <option value="83" >Georgia 
+
+                                <option value="84" >Germany 
+
+                                <option value="85" >Ghana 
+
+                                <option value="86" >Gibraltar 
+
+                                <option value="87" >Greece 
+
+                                <option value="88" >Greenland 
+
+                                <option value="89" >Grenada 
+
+                                <option value="90" >Guadeloupe 
+
+                                <option value="91" >Guam 
+
+                                <option value="92" >Guatemala 
+
+                                <option value="250" >Guernsey 
+
+                                <option value="93" >Guinea 
+
+                                <option value="94" >Guinea-Bissau 
+
+                                <option value="95" >Guyana 
+
+                                <option value="96" >Haiti 
+
+                                <option value="97" >Heard And McDonald Islands 
+
+                                <option value="98" >Honduras 
+
+                                <option value="99" >Hong Kong 
+
+                                <option value="100" >Hungary 
+
+                                <option value="101" >Iceland 
+
+                                <option value="102" >India 
+
+                                <option value="103" >Indonesia 
+
+                                <option value="104" >Iran 
+
+                                <option value="105" >Iraq 
+
+                                <option value="106" >Ireland 
+
+                                <option value="251" >Isle of Man 
+
+                                <option value="107" >Israel 
+
+                                <option value="108" >Italy 
+
+                                <option value="109" >Jamaica 
+
+                                <option value="110" >Japan 
+
+                                <option value="244" >Jersey 
+
+                                <option value="111" >Jordan 
+
+                                <option value="112" >Kazakhstan 
+
+                                <option value="113" >Kenya 
+
+                                <option value="114" >Kiribati 
+
+                                <option value="256" >Kosovo 
+
+                                <option value="115" >Kuwait 
+
+                                <option value="116" >Kyrgyzstan 
+
+                                <option value="117" >Lao People&#x27;s Republic 
+
+                                <option value="118" >Latvia 
+
+                                <option value="119" >Lebanon 
+
+                                <option value="120" >Lesotho 
+
+                                <option value="121" >Liberia 
+
+                                <option value="122" >Libya 
+
+                                <option value="123" >Liechtenstein 
+
+                                <option value="124" >Lithuania 
+
+                                <option value="125" >Luxembourg 
+
+                                <option value="126" >Macau 
+
+                                <option value="127" >Macedonia 
+
+                                <option value="128" >Madagascar 
+
+                                <option value="129" >Malawi 
+
+                                <option value="130" >Malaysia 
+
+                                <option value="131" >Maldives 
+
+                                <option value="132" >Mali 
+
+                                <option value="133" >Malta 
+
+                                <option value="134" >Marshall Islands 
+
+                                <option value="135" >Martinique 
+
+                                <option value="136" >Mauritania 
+
+                                <option value="137" >Mauritius 
+
+                                <option value="138" >Mayotte 
+
+                                <option value="139" >Mexico 
+
+                                <option value="140" >Micronesia 
+
+                                <option value="141" >Moldova 
+
+                                <option value="142" >Monaco 
+
+                                <option value="143" >Mongolia 
+
+                                <option value="254" >Montenegro 
+
+                                <option value="144" >Montserrat 
+
+                                <option value="145" >Morocco 
+
+                                <option value="146" >Mozambique 
+
+                                <option value="147" >Myanmar 
+
+                                <option value="148" >Namibia 
+
+                                <option value="149" >Nauru 
+
+                                <option value="150" >Nepal 
+
+                                <option value="151" >Netherlands 
+
+                                <option value="152" >Netherlands Antilles 
+
+                                <option value="153" >New Caledonia 
+
+                                <option value="154" >New Zealand 
+
+                                <option value="155" >Nicaragua 
+
+                                <option value="156" >Niger 
+
+                                <option value="157" >Nigeria 
+
+                                <option value="158" >Niue 
+
+                                <option value="159" >Norfolk Island 
+
+                                <option value="160" >North Korea 
+
+                                <option value="161" >Northern Mariana Islands 
+
+                                <option value="162" >Norway 
+
+                                <option value="163" >Oman 
+
+                                <option value="241" >Other-Not Shown 
+
+                                <option value="164" >Pakistan 
+
+                                <option value="165" >Palau 
+
+                                <option value="252" >Palestine 
+
+                                <option value="166" >Panama 
+
+                                <option value="167" >Papua New Guinea 
+
+                                <option value="168" >Paraguay 
+
+                                <option value="169" >Peru 
+
+                                <option value="170" >Philippines 
+
+                                <option value="171" >Pitcairn 
+
+                                <option value="172" >Poland 
+
+                                <option value="173" >Portugal 
+
+                                <option value="174" >Puerto Rico 
+
+                                <option value="175" >Qatar 
+
+                                <option value="176" >Reunion 
+
+                                <option value="177" >Romania 
+
+                                <option value="178" >Russia 
+
+                                <option value="179" >Rwanda 
+
+                                <option value="180" >Saint Kitts And Nevis 
+
+                                <option value="181" >Saint Lucia 
+
+                                <option value="182" >Saint Vincent And The Grenadines 
+
+                                <option value="183" >Samoa 
+
+                                <option value="184" >San Marino 
+
+                                <option value="185" >Sao Tome And Principe 
+
+                                <option value="186" >Saudi Arabia 
+
+                                <option value="187" >Senegal 
+
+                                <option value="188" >Serbia &amp; Montenegro 
+
+                                <option value="189" >Seychelles 
+
+                                <option value="190" >Sierra Leone 
+
+                                <option value="191" >Singapore 
+
+                                <option value="247" >Sint Maarten 
+
+                                <option value="192" >Slovakia 
+
+                                <option value="193" >Slovenia 
+
+                                <option value="194" >Solomon Islands 
+
+                                <option value="195" >Somalia 
+
+                                <option value="196" >South Africa 
+
+                                <option value="197" >South Georgia&#x2f;Sandwich Islands 
+
+                                <option value="198" >South Korea 
+
+                                <option value="253" >South Sudan 
+
+                                <option value="199" >Spain 
+
+                                <option value="200" >Sri Lanka 
+
+                                <option value="243" >St Barthelemy 
+
+                                <option value="201" >St Helena 
+
+                                <option value="242" >St Martin 
+
+                                <option value="202" >St Pierre and Miquelon 
+
+                                <option value="203" >Sudan 
+
+                                <option value="204" >Suriname 
+
+                                <option value="205" >Svalbard And Jan Mayen Islands 
+
+                                <option value="206" >Swaziland 
+
+                                <option value="207" >Sweden 
+
+                                <option value="208" >Switzerland 
+
+                                <option value="209" >Syrian Arab Republic 
+
+                                <option value="210" >Taiwan 
+
+                                <option value="211" >Tajikistan 
+
+                                <option value="212" >Tanzania 
+
+                                <option value="213" >Thailand 
+
+                                <option value="214" >Togo 
+
+                                <option value="215" >Tokelau 
+
+                                <option value="216" >Tonga 
+
+                                <option value="217" >Trinidad And Tobago 
+
+                                <option value="218" >Tunisia 
+
+                                <option value="219" >Turkey 
+
+                                <option value="220" >Turkmenistan 
+
+                                <option value="221" >Turks And Caicos Islands 
+
+                                <option value="222" >Tuvalu 
+
+                                <option value="223" >Uganda 
+
+                                <option value="224" >Ukraine 
+
+                                <option value="225" >United Arab Emirates 
+
+                                <option value="3" >United Kingdom 
+
+                                <option value="1" >United States 
+
+                                <option value="226" >United States Minor Outlying Islands 
+
+                                <option value="227" >Uruguay 
+
+                                <option value="228" >Uzbekistan 
+
+                                <option value="229" >Vanuatu 
+
+                                <option value="230" >Vatican City State 
+
+                                <option value="231" >Venezuela 
+
+                                <option value="232" >Vietnam 
+
+                                <option value="233" >Virgin Islands &#x28;British&#x29; 
+
+                                <option value="234" >Virgin Islands &#x28;U.S.&#x29; 
+
+                                <option value="235" >Wallis And Futuna Islands 
+
+                                <option value="236" >Western Sahara 
+
+                                <option value="237" >Yemen 
+
+                                <option value="238" >Zaire 
+
+                                <option value="239" >Zambia 
+
+                                <option value="240" >Zimbabwe 
+                            </select>
+                        </td>
+                    </tr>
+                
+                    <tr valign="TOP">
+                        <td nowrap>
+                            <span class="normal_bold_text">
+                            Job title<span class="normal_error_text">*</span>
+                            </span>
+                        
+                            </td>
+                            <td>
+                        
+                            <span class="normal_text">
+                            
+                                <input
+                                    type="Text"
+                                    size="30"
+                                    class="FormTextBox"
+                                    onfocus="this.className='FormTextBoxFocus';"
+                                    onblur="this.className='FormTextBox';"
+                                    name="title"
+                                    value="">
+                            
+                            </span>
+                        </td>
+                    </tr>
+                
+                    <table><tr><td>
+                    <span class="normal_small_text">
+                    <span class="normal_error_text">*</span>Required Fields
+                    </span>
+                    </td></tr></table>
+                
+            </td>
+            
+        </tr>
+        
+    </table>
+    </form>
+    </div></div><div id="if92g4" class="form-button"><div auto-width="auto" id="iqatk3" class="form-btn-submit"><a custom-type="formSubmitButton" target="_blank" id="invown"><span style="font-size:16px;"><span style="font-family:Arial;">Submit</span></span></a></div></div></div></div></div> 
+                    </div></div></div></div></div><div id="ir0xz1" class="editor-parent-column sw-row"><div section-count="2" id="i8lgd5" auto-width="auto" fit-screen="none" width="1440" data-border-style="none" section-width-desktop="1440" class="sw-col"><div id="ia6u0i" class="sw-row"><div id="i2z88b" class="column sw-col-sm editor_table_td sw-col-sm-8"><div is-column="true" align="center" id="izqhv6" fit-screen="none" data-border-style="none" section-width-desktop="1440" class="editor-parent-td"><div drag-type="text" data-reactroot="" id="iwxwni" draggable class="sw-row"><div id="il44fw" fit-screen="none" data-border-style="none" section-width-desktop="1440" class="sw-col"><div id="ip9lae"><div id="icg4lu" class="text-div"><p>© Copyright <span class="at-highlight" contenteditable="false" data-at="CURRENT_YEAR" data-gjs-type="current-year-span" id="iyf2qb" style="box-sizing: border-box;">2026</span>. All Rights Reserved.</p></div></div></div></div><div drag-type="text" data-reactroot="" id="i9w6di" draggable class="sw-row deselected"><div id="it1dmx" fit-screen="none" class="sw-col"><div id="ioaf2r"><div id="ieycnq" class="text-div"><p><span>​​​​​​​<span class="at-highlight" contenteditable="false" data-at="9241">San Jose</span></span>&nbsp;|&nbsp;<span><span class="at-highlight" contenteditable="false" data-at="9243">Santa Ana</span></span>,&nbsp;<span><span class="at-highlight" contenteditable="false" data-at="9245">San Jose</span></span>&nbsp;<span><span class="at-highlight" contenteditable="false" data-at="9261"></span></span>&nbsp;<span><span class="at-highlight" contenteditable="false" data-at="9244">Costa Rica</span>​​​​​​​</span></p></div></div></div></div></div></div><div id="i9qffg" class="column sw-col-sm editor_table_td sw-col-sm-4"><div is-column="true" align="center" data-border-style="none" id="iush9d" fit-screen="none" section-width-desktop="1440" class="editor-parent-td"><div drag-type="text" id="ilv5zk" draggable class="sw-row deselected"><div id="ixyu3t" fit-screen="none" class="sw-col"><div id="iarh9o"><div id="i6kofx" href="https://[Website Address]" data-campaign-ide="Uqii4ai5DdbHlCs4GSV0vQ2" class="text-div"><p><span style="color:#5f6368;"><span class="at-highlight" contenteditable="false" data-at="9222">AI Humans</span>​​​​​​​&nbsp;|&nbsp;<a data-at="9225" data-campaign-ide="GG_yDzYd7v7HniEwIK_iLA2" style="text-decoration:none;" target="_blank"><u style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;">Privacy</span></span></span></span></span> </span></u></a>| <a data-at="9225" data-campaign-ide="UI6xzqazp_IwU-lUGw9aIw2" style="text-decoration:none;" target="_blank"><u style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;"><span style="color: #3b4759;">Terms</span></span></span></span></span></span></span></u></a></span></p></div></div></div></div> 
+                    </div></div></div></div></div>
+                <script
+                    id="self-video-id"
+                    src=https://filestorage.structuredweb.com/common/page-editor/videoLoadScript.js
+
+                >
+                </script>
+                <script
+                    id="self-accordion-id"
+                    src=https://filestorage.structuredweb.com/common/page-editor/accordionLoadScript.js
+                ></script>
+                <script
+                    id="self-carousel-id"
+                    src=https://filestorage.structuredweb.com/common/page-editor/carouselLoadScript.js
+                ></script>
+                <script
+                    id="self-tab-id"
+                    src=https://filestorage.structuredweb.com/common/page-editor/tabLoadScript.js
+                ></script>
+            </body>
+        
+        </html>
