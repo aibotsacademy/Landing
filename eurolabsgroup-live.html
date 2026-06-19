@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Euro Lab Group · Centro de Control IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --porcelain:#F7F4EE;
+    --paper:#FFFFFF;
+    --navy:#0B2A4A;
+    --navy-deep:#081D34;
+    --navy-light:#14406B;
+    --steel:#4A6FA1;
+    --gold:#B68D40;
+    --gold-light:#D9B872;
+    --gold-soft:#F1E4C8;
+    --ink:#1C2430;
+    --muted:#707A89;
+    --sage:#5C8A6E;
+    --sage-bg:#E8F0EA;
+    --terracotta:#C0613A;
+    --terracotta-bg:#F6E7DF;
+    --amber-bg:#F7EEDD;
+    --line:#E4DFD3;
+    --radius:14px;
+    --shadow-soft: 0 1px 2px rgba(11,42,74,0.04), 0 8px 24px -12px rgba(11,42,74,0.12);
+    --shadow-lift: 0 4px 8px rgba(11,42,74,0.06), 0 24px 48px -20px rgba(11,42,74,0.22);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Inter', sans-serif;
+    background:var(--porcelain);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.35;
+    pointer-events:none;
+    z-index:0;
+    mask-image: radial-gradient(circle at 20% 0%, black, transparent 70%);
+  }
+  .serif{ font-family:'Fraunces', serif; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+
+  /* ===== Layout ===== */
+  .app{ display:flex; min-height:100vh; position:relative; z-index:1; }
+
+  /* ===== Sidebar ===== */
+  .sidebar{
+    width:264px; flex-shrink:0;
+    background:linear-gradient(180deg, var(--navy) 0%, var(--navy-deep) 100%);
+    color:#EAF1F8;
+    display:flex; flex-direction:column;
+    position:sticky; top:0; height:100vh;
+    padding:28px 20px;
+  }
+  .brand{ display:flex; align-items:center; gap:12px; margin-bottom:6px; padding:0 4px;}
+  .brand-mark{
+    width:38px; height:38px; border-radius:9px;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-weight:600; font-size:17px; color:var(--navy-deep);
+    flex-shrink:0;
+  }
+  .brand-name{ font-family:'Fraunces', serif; font-size:16.5px; font-weight:600; letter-spacing:0.2px; line-height:1.2;}
+  .brand-sub{ font-size:10.5px; color:var(--gold-light); letter-spacing:1.6px; text-transform:uppercase; margin-top:2px;}
+
+  .ai-pill{
+    margin:18px 4px 24px; padding:8px 12px;
+    border:1px solid rgba(217,184,114,0.35);
+    border-radius:30px;
+    display:flex; align-items:center; gap:8px;
+    font-size:11.5px; color:var(--gold-light); letter-spacing:0.4px;
+  }
+  .ai-pulse{ width:7px; height:7px; border-radius:50%; background:#7CD9A8; box-shadow:0 0 0 0 rgba(124,217,168,0.6); animation:pulse 2s infinite; flex-shrink:0;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(124,217,168,0.55);}
+    70%{box-shadow:0 0 0 7px rgba(124,217,168,0);}
+    100%{box-shadow:0 0 0 0 rgba(124,217,168,0);}
+  }
+
+  .nav-label{ font-size:10px; letter-spacing:1.8px; text-transform:uppercase; color:rgba(234,241,248,0.4); margin:18px 8px 8px;}
+  nav.primary{ display:flex; flex-direction:column; gap:2px; }
+  .nav-item{
+    display:flex; align-items:center; gap:11px;
+    padding:10px 12px; border-radius:9px;
+    color:rgba(234,241,248,0.78);
+    font-size:13.6px; font-weight:500;
+    cursor:pointer; text-decoration:none;
+    transition:background 0.15s ease, color 0.15s ease;
+    position:relative;
+  }
+  .nav-item svg{ width:17px; height:17px; flex-shrink:0; opacity:0.85;}
+  .nav-item:hover{ background:rgba(255,255,255,0.06); color:#fff;}
+  .nav-item.active{ background:rgba(217,184,114,0.14); color:#fff; }
+  .nav-item.active::before{
+    content:""; position:absolute; left:-20px; top:8px; bottom:8px; width:3px;
+    background:var(--gold-light); border-radius:0 4px 4px 0;
+  }
+  .nav-badge{
+    margin-left:auto; font-size:10px; font-family:'IBM Plex Mono', monospace;
+    background:rgba(192,97,58,0.25); color:#F0B79A; padding:1px 7px; border-radius:20px;
+  }
+
+  .sidebar-promo{
+    margin-top:auto; padding:16px; border-radius:12px;
+    background:linear-gradient(160deg, rgba(217,184,114,0.16), rgba(217,184,114,0.04));
+    border:1px solid rgba(217,184,114,0.25);
+  }
+  .sidebar-promo .eyebrow{ font-size:10px; letter-spacing:1.6px; color:var(--gold-light); text-transform:uppercase; margin-bottom:6px;}
+  .sidebar-promo p{ font-size:12px; color:rgba(234,241,248,0.75); line-height:1.5; margin-bottom:10px;}
+  .sidebar-promo button{
+    width:100%; padding:8px; border:none; border-radius:8px;
+    background:var(--gold-light); color:var(--navy-deep); font-weight:700; font-size:12px;
+    cursor:pointer; transition:filter 0.15s;
+  }
+  .sidebar-promo button:hover{ filter:brightness(1.07); }
+
+  /* ===== Main ===== */
+  .main{ flex:1; min-width:0; }
+
+  .topbar{
+    position:sticky; top:0; z-index:5;
+    display:flex; align-items:center; gap:18px;
+    padding:16px 36px; background:rgba(247,244,238,0.86);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .search-box{
+    flex:1; max-width:420px; display:flex; align-items:center; gap:9px;
+    background:var(--paper); border:1px solid var(--line); border-radius:10px;
+    padding:9px 14px; color:var(--muted); font-size:13px;
+  }
+  .search-box svg{ width:15px; height:15px; flex-shrink:0; opacity:0.6;}
+  .search-box input{ border:none; outline:none; background:transparent; font-size:13px; width:100%; font-family:inherit; color:var(--ink);}
+  .topbar-right{ margin-left:auto; display:flex; align-items:center; gap:18px; }
+  .icon-btn{
+    width:36px; height:36px; border-radius:9px; border:1px solid var(--line);
+    background:var(--paper); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; position:relative; color:var(--navy);
+  }
+  .icon-btn svg{ width:16px; height:16px; }
+  .icon-dot{ position:absolute; top:7px; right:7px; width:6px; height:6px; border-radius:50%; background:var(--terracotta); border:1.5px solid var(--paper);}
+  .user-chip{ display:flex; align-items:center; gap:10px; padding-left:14px; border-left:1px solid var(--line);}
+  .avatar{ width:34px; height:34px; border-radius:50%; background:linear-gradient(135deg, var(--navy-light), var(--navy)); color:var(--gold-light); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:13px; font-weight:600;}
+  .user-name{ font-size:13px; font-weight:600; line-height:1.2;}
+  .user-role{ font-size:11px; color:var(--muted);}
+
+  .content{ padding:32px 36px 80px; max-width:1480px; }
+
+  /* ===== Hero ===== */
+  .hero{
+    display:flex; justify-content:space-between; align-items:flex-end; gap:24px;
+    margin-bottom:22px; flex-wrap:wrap;
+  }
+  .hero h1{ font-family:'Fraunces', serif; font-weight:600; font-size:30px; letter-spacing:-0.3px; color:var(--navy);}
+  .hero p.lead{ color:var(--muted); font-size:14px; margin-top:6px; max-width:480px;}
+  .date-tag{ font-size:12px; color:var(--muted); font-family:'IBM Plex Mono', monospace; }
+
+  .insight-ticker{
+    margin-bottom:26px; padding:14px 20px; border-radius:12px;
+    background:linear-gradient(95deg, var(--navy) 0%, var(--navy-light) 100%);
+    color:#fff; display:flex; align-items:center; gap:14px;
+    box-shadow:var(--shadow-soft);
+    overflow:hidden;
+  }
+  .insight-icon{
+    width:30px; height:30px; border-radius:8px; background:rgba(217,184,114,0.22);
+    display:flex; align-items:center; justify-content:center; flex-shrink:0; color:var(--gold-light);
+  }
+  .insight-icon svg{ width:16px; height:16px;}
+  .insight-text{ font-size:13.5px; color:rgba(255,255,255,0.92); flex:1;}
+  .insight-text b{ color:var(--gold-light); font-weight:600;}
+  .insight-tag{
+    flex-shrink:0; font-size:10px; letter-spacing:1.2px; text-transform:uppercase;
+    background:rgba(124,217,168,0.18); color:#9BE6BD; padding:4px 10px; border-radius:20px; font-weight:600;
+  }
+
+  /* ===== KPI Grid ===== */
+  .kpi-grid{ display:grid; grid-template-columns:repeat(4, 1fr); gap:18px; margin-bottom:30px; }
+  .kpi-card{
+    background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+    padding:20px; box-shadow:var(--shadow-soft); position:relative; overflow:hidden;
+  }
+  .kpi-card::after{
+    content:""; position:absolute; top:0; right:0; width:70px; height:70px;
+    background:radial-gradient(circle, rgba(182,141,64,0.08), transparent 70%);
+  }
+  .kpi-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;}
+  .kpi-icon{ width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center;}
+  .kpi-icon svg{ width:17px; height:17px;}
+  .kpi-icon.gold{ background:var(--gold-soft); color:var(--gold);}
+  .kpi-icon.navy{ background:#E5ECF3; color:var(--navy);}
+  .kpi-icon.sage{ background:var(--sage-bg); color:var(--sage);}
+  .kpi-icon.terra{ background:var(--terracotta-bg); color:var(--terracotta);}
+  .kpi-trend{ font-size:11px; font-weight:700; padding:3px 8px; border-radius:20px; }
+  .kpi-trend.up{ color:var(--sage); background:var(--sage-bg);}
+  .kpi-trend.warn{ color:var(--terracotta); background:var(--terracotta-bg);}
+  .kpi-label{ font-size:12.5px; color:var(--muted); margin-bottom:5px;}
+  .kpi-value{ font-family:'Fraunces', serif; font-size:26px; font-weight:600; color:var(--navy); letter-spacing:-0.3px;}
+  .kpi-sub{ font-size:11.5px; color:var(--muted); margin-top:6px;}
+
+  /* ===== Section shell ===== */
+  .section{ margin-bottom:34px; scroll-margin-top:90px; }
+  .section-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; flex-wrap:wrap; gap:10px;}
+  .eyebrow-label{
+    display:inline-flex; align-items:center; gap:8px;
+    font-size:10.5px; letter-spacing:2px; text-transform:uppercase; color:var(--gold);
+    font-weight:700; margin-bottom:6px;
+  }
+  .eyebrow-label::before{ content:""; width:16px; height:1px; background:var(--gold);}
+  .section-head h2{ font-family:'Fraunces', serif; font-size:21px; font-weight:600; color:var(--navy);}
+  .section-head p{ font-size:12.5px; color:var(--muted); margin-top:4px;}
+  .link-btn{
+    font-size:12.5px; font-weight:600; color:var(--navy); text-decoration:none;
+    display:flex; align-items:center; gap:6px; padding:8px 14px; border:1px solid var(--line);
+    border-radius:8px; background:var(--paper); cursor:pointer;
+  }
+  .link-btn:hover{ border-color:var(--gold); color:var(--gold);}
+  .link-btn svg{ width:13px; height:13px;}
+
+  .panel{ background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-soft); }
+
+  /* ===== Two column: chart + AI assistant ===== */
+  .two-col{ display:grid; grid-template-columns:1.6fr 1fr; gap:18px; align-items:stretch; }
+  .chart-card{ padding:24px; }
+  .chart-head{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;}
+  .chart-figure{ font-family:'Fraunces', serif; font-size:24px; color:var(--navy); font-weight:600;}
+  .legend{ display:flex; gap:16px; margin-top:10px; }
+  .legend span{ display:flex; align-items:center; gap:6px; font-size:11.5px; color:var(--muted);}
+  .legend i{ width:9px; height:9px; border-radius:2px; display:inline-block;}
+
+  .ai-panel{ display:flex; flex-direction:column; padding:0; overflow:hidden; }
+  .ai-panel-head{
+    padding:18px 20px; background:linear-gradient(120deg, var(--navy), var(--navy-light));
+    color:#fff; display:flex; align-items:center; gap:10px;
+  }
+  .ai-panel-head .ai-orb{
+    width:30px; height:30px; border-radius:50%; background:radial-gradient(circle at 30% 30%, var(--gold-light), var(--gold) 70%);
+    flex-shrink:0;
+  }
+  .ai-panel-head strong{ font-size:13.5px; font-weight:600;}
+  .ai-panel-head small{ display:block; font-size:11px; color:rgba(255,255,255,0.65); margin-top:1px;}
+  .ai-chat{ flex:1; padding:18px 20px; display:flex; flex-direction:column; gap:12px; min-height:200px;}
+  .bubble{ max-width:90%; padding:10px 13px; border-radius:11px; font-size:12.8px; line-height:1.5;}
+  .bubble.bot{ background:#EFF3F8; color:var(--ink); align-self:flex-start; border-top-left-radius:3px;}
+  .bubble.user{ background:var(--navy); color:#fff; align-self:flex-end; border-top-right-radius:3px;}
+  .chip-row{ display:flex; flex-wrap:wrap; gap:7px; padding:0 20px 14px;}
+  .chip{
+    font-size:11.5px; padding:6px 11px; border-radius:20px; border:1px solid var(--line);
+    background:var(--paper); color:var(--navy); cursor:pointer; transition:all 0.15s;
+  }
+  .chip:hover{ border-color:var(--gold); background:var(--gold-soft); }
+  .ai-input-row{ display:flex; gap:8px; padding:14px 16px; border-top:1px solid var(--line);}
+  .ai-input-row input{
+    flex:1; border:1px solid var(--line); border-radius:9px; padding:10px 13px;
+    font-size:12.8px; font-family:inherit; outline:none;
+  }
+  .ai-input-row input:focus{ border-color:var(--gold); }
+  .ai-input-row button{
+    width:38px; height:38px; border-radius:9px; border:none; background:var(--navy); color:var(--gold-light);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0;
+  }
+  .ai-input-row button svg{ width:15px; height:15px;}
+
+  /* ===== Inventory table ===== */
+  .table-card{ padding:0; overflow:hidden;}
+  table{ width:100%; border-collapse:collapse; }
+  thead th{
+    text-align:left; font-size:10.5px; letter-spacing:0.8px; text-transform:uppercase;
+    color:var(--muted); padding:14px 20px; border-bottom:1px solid var(--line); font-weight:600;
+    background:#FBFAF7;
+  }
+  tbody td{ padding:14px 20px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:middle;}
+  tbody tr:last-child td{ border-bottom:none;}
+  tbody tr:hover{ background:#FCFBF8;}
+  .prod-name{ font-weight:600; color:var(--navy);}
+  .prod-meta{ font-size:11px; color:var(--muted); margin-top:1px;}
+  .sku{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--muted);}
+  .stock-bar-wrap{ width:90px; height:6px; border-radius:4px; background:#EDEAE2; overflow:hidden;}
+  .stock-bar{ height:100%; border-radius:4px; }
+  .pill{ font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:20px; letter-spacing:0.3px; display:inline-block;}
+  .pill.optimo{ background:var(--sage-bg); color:var(--sage);}
+  .pill.bajo{ background:var(--amber-bg); color:var(--gold);}
+  .pill.critico{ background:var(--terracotta-bg); color:var(--terracotta);}
+  .vial-tag{
+    font-family:'IBM Plex Mono', monospace; font-size:10px; letter-spacing:0.5px;
+    border:1px solid var(--gold-light); color:var(--gold); padding:2px 7px; border-radius:4px; background:var(--gold-soft);
+  }
+
+  /* ===== Pedidos kanban ===== */
+  .kanban{ display:grid; grid-template-columns:repeat(4,1fr); gap:16px; }
+  .kanban-col{ background:#FBFAF7; border:1px solid var(--line); border-radius:var(--radius); padding:14px; min-height:120px;}
+  .kanban-col-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; padding:0 2px;}
+  .kanban-col-head h4{ font-size:12.5px; font-weight:700; color:var(--navy); letter-spacing:0.2px;}
+  .kanban-count{ font-size:11px; font-family:'IBM Plex Mono', monospace; background:#fff; border:1px solid var(--line); padding:1px 8px; border-radius:10px; color:var(--muted);}
+  .order-card{
+    background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px;
+    margin-bottom:10px; box-shadow:var(--shadow-soft); cursor:pointer; transition:transform 0.15s;
+  }
+  .order-card:hover{ transform:translateY(-2px); border-color:var(--gold-light);}
+  .order-card:last-child{ margin-bottom:0;}
+  .order-id{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--muted); margin-bottom:5px;}
+  .order-clinic{ font-size:12.8px; font-weight:600; color:var(--ink); margin-bottom:4px;}
+  .order-items{ font-size:11.3px; color:var(--muted); margin-bottom:8px; line-height:1.4;}
+  .order-foot{ display:flex; justify-content:space-between; align-items:center;}
+  .order-value{ font-family:'IBM Plex Mono', monospace; font-size:12px; font-weight:600; color:var(--navy);}
+  .order-date{ font-size:10.5px; color:var(--muted);}
+
+  /* ===== Clinics + invoices split ===== */
+  .split{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:18px; align-items:start;}
+  .clinic-row{ display:flex; align-items:center; gap:12px; padding:13px 20px; border-bottom:1px solid var(--line);}
+  .clinic-row:last-child{ border-bottom:none;}
+  .clinic-avatar{
+    width:36px; height:36px; border-radius:9px; background:#E5ECF3; color:var(--navy);
+    display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-weight:600; font-size:13px; flex-shrink:0;
+  }
+  .clinic-info{ flex:1; min-width:0;}
+  .clinic-name{ font-size:13px; font-weight:600; color:var(--ink);}
+  .clinic-meta{ font-size:11px; color:var(--muted); margin-top:1px;}
+  .clinic-value{ text-align:right; flex-shrink:0;}
+  .clinic-amount{ font-family:'IBM Plex Mono', monospace; font-size:12.5px; font-weight:600; color:var(--navy);}
+  .status-dot{ display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:600; margin-top:2px;}
+  .status-dot::before{ content:""; width:6px; height:6px; border-radius:50%;}
+  .status-dot.vip::before{ background:var(--gold);}
+  .status-dot.vip{ color:var(--gold);}
+  .status-dot.activa::before{ background:var(--sage);}
+  .status-dot.activa{ color:var(--sage);}
+  .status-dot.riesgo::before{ background:var(--terracotta);}
+  .status-dot.riesgo{ color:var(--terracotta);}
+
+  .invoice-row{ display:flex; align-items:center; gap:12px; padding:13px 20px; border-bottom:1px solid var(--line);}
+  .invoice-row:last-child{ border-bottom:none;}
+  .invoice-id{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; color:var(--muted); width:70px; flex-shrink:0;}
+  .invoice-info{ flex:1; min-width:0;}
+  .invoice-clinic{ font-size:12.8px; font-weight:600; color:var(--ink);}
+  .invoice-due{ font-size:11px; color:var(--muted); margin-top:1px;}
+  .invoice-amount{ font-family:'IBM Plex Mono', monospace; font-size:12.5px; font-weight:600; color:var(--navy); text-align:right; margin-right:10px;}
+
+  /* ===== Accounting summary ===== */
+  .acct-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-bottom:18px;}
+  .acct-card{ padding:18px; }
+  .acct-label{ font-size:11.5px; color:var(--muted); margin-bottom:6px;}
+  .acct-value{ font-family:'IBM Plex Mono', monospace; font-size:19px; font-weight:600; color:var(--navy);}
+  .acct-value.pos{ color:var(--sage); }
+  .acct-value.neg{ color:var(--terracotta); }
+
+  /* ===== Modules / features grid ===== */
+  .feat-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  .feat-card{ padding:22px; }
+  .feat-icon{ width:38px; height:38px; border-radius:10px; background:var(--gold-soft); color:var(--gold); display:flex; align-items:center; justify-content:center; margin-bottom:14px;}
+  .feat-icon svg{ width:19px; height:19px;}
+  .feat-card h3{ font-family:'Fraunces', serif; font-size:16px; font-weight:600; color:var(--navy); margin-bottom:8px;}
+  .feat-card p{ font-size:12.6px; color:var(--muted); line-height:1.55;}
+
+  footer{
+    margin-top:50px; padding:26px 36px; border-top:1px solid var(--line);
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+  }
+  footer .f-left{ font-size:11.5px; color:var(--muted);}
+  footer .f-right{ font-size:11px; color:var(--muted); display:flex; gap:18px; align-items:center;}
+  .compliance-tag{
+    display:inline-flex; align-items:center; gap:6px; font-size:10.5px; color:var(--steel);
+    border:1px solid var(--line); padding:4px 10px; border-radius:20px;
+  }
+
+  @media (max-width: 1180px){
+    .two-col, .split{ grid-template-columns:1fr; }
+    .kanban{ grid-template-columns:repeat(2,1fr); }
+    .acct-grid, .feat-grid{ grid-template-columns:repeat(2,1fr); }
+    .kpi-grid{ grid-template-columns:repeat(2,1fr); }
+  }
+  @media (max-width: 860px){
+    .sidebar{ display:none; }
+    .content{ padding:24px 18px 60px; }
+    .topbar{ padding:14px 18px; }
+    .kanban{ grid-template-columns:1fr; }
+    .acct-grid, .feat-grid, .kpi-grid{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">EL</div>
+      <div>
+        <div class="brand-name">Euro Lab Group</div>
+        <div class="brand-sub">Centro de Control</div>
+      </div>
+    </div>
+
+    <div class="ai-pill"><span class="ai-pulse"></span> Motor de IA activo</div>
+
+    <div class="nav-label">Operación</div>
+    <nav class="primary">
+      <a class="nav-item active" data-target="dashboard">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
+        Panel General
+      </a>
+      <a class="nav-item" data-target="pedidos">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 7v10l9 4 9-4V7"/><path d="M12 11v10"/></svg>
+        Pedidos <span class="nav-badge">37</span>
+      </a>
+      <a class="nav-item" data-target="inventario">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+        Inventario
+      </a>
+      <a class="nav-item" data-target="clinicas">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.6-9.7-9.1C.6 8.5 2 4.8 5.6 4.2c2-.3 3.7.7 4.4 2.2.7-1.5 2.4-2.5 4.4-2.2 3.6.6 5 4.3 3.3 7.7C19 16.4 12 21 12 21Z"/></svg>
+        Clínicas
+      </a>
+    </nav>
+
+    <div class="nav-label">Finanzas</div>
+    <nav class="primary">
+      <a class="nav-item" data-target="facturacion">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+        Facturación
+      </a>
+      <a class="nav-item" data-target="contabilidad">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg>
+        Contabilidad
+      </a>
+      <a class="nav-item" data-target="reportes">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3"/></svg>
+        Reportes IA
+      </a>
+    </nav>
+
+    <div class="nav-label">Plataforma</div>
+    <nav class="primary">
+      <a class="nav-item" data-target="asistente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg>
+        Asistente IA
+      </a>
+      <a class="nav-item" data-target="proveedores">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+        Proveedores
+      </a>
+      <a class="nav-item">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 13a7.97 7.97 0 0 0 0-2l2-1.6-2-3.4-2.4 1a8 8 0 0 0-1.7-1L15 3h-6l-.3 2.6a8 8 0 0 0-1.7 1l-2.4-1-2 3.4L4.6 11a7.97 7.97 0 0 0 0 2l-2 1.6 2 3.4 2.4-1a8 8 0 0 0 1.7 1L9 21h6l.3-2.6a8 8 0 0 0 1.7-1l2.4 1 2-3.4-2-1.6Z"/></svg>
+        Configuración
+      </a>
+    </nav>
+
+    <div class="sidebar-promo">
+      <div class="eyebrow">Automatización IA</div>
+      <p>Deja que la IA concilie facturas, prediga demanda y vigile lotes por vencer mientras tu equipo atiende clínicas.</p>
+      <button onclick="document.getElementById('asistente').scrollIntoView({behavior:'smooth'})">Abrir asistente</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="text" placeholder="Buscar clínica, factura, lote o producto…">
+      </div>
+      <div class="topbar-right">
+        <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="icon-dot"></span></div>
+        <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+        <div class="user-chip">
+          <div class="avatar">MV</div>
+          <div>
+            <div class="user-name">María Vargas</div>
+            <div class="user-role">Gerencia de Operaciones</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- HERO -->
+      <section id="dashboard" class="section">
+        <div class="hero">
+          <div>
+            <h1>Buenos días, María.</h1>
+            <p class="lead">Esto es lo que tu operación de distribución necesita hoy.</p>
+          </div>
+          <div class="date-tag">Viernes, 19 de junio 2026 · Última sincronización hace 3 min</div>
+        </div>
+
+        <div class="insight-ticker" id="ticker">
+          <div class="insight-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="M2 17l10 5 10-5M2 12l10 5 10-5"/></svg></div>
+          <div class="insight-text" id="ticker-text"><b>IA · Demanda</b> — La rotación de Xeomin en Clínica Bellevue subió 18% en dos semanas. Sugerimos reabastecer antes del 24 de junio.</div>
+          <div class="insight-tag">Acción sugerida</div>
+        </div>
+
+        <!-- KPIs -->
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon gold"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <div class="kpi-trend up">↑ 12.4%</div>
+            </div>
+            <div class="kpi-label">Ingresos del mes</div>
+            <div class="kpi-value" data-count="184920" data-prefix="$">$0</div>
+            <div class="kpi-sub">vs. $164,560 mes anterior</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon navy"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></div>
+              <div class="kpi-trend warn">18 facturas</div>
+            </div>
+            <div class="kpi-label">Pendiente de cobro</div>
+            <div class="kpi-value" data-count="42310" data-prefix="$">$0</div>
+            <div class="kpi-sub">3 facturas vencen esta semana</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon sage"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 7v10l9 4 9-4V7"/></svg></div>
+              <div class="kpi-trend up">+5</div>
+            </div>
+            <div class="kpi-label">Pedidos activos</div>
+            <div class="kpi-value" data-count="37">0</div>
+            <div class="kpi-sub">12 en preparación · 9 en tránsito</div>
+          </div>
+
+          <div class="kpi-card">
+            <div class="kpi-top">
+              <div class="kpi-icon terra"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+              <div class="kpi-trend warn">Atención</div>
+            </div>
+            <div class="kpi-label">Alertas de inventario</div>
+            <div class="kpi-value" data-count="6">0</div>
+            <div class="kpi-sub">3 lotes vencen en menos de 30 días</div>
+          </div>
+        </div>
+
+        <!-- Chart + AI -->
+        <div class="two-col">
+          <div class="panel chart-card">
+            <div class="chart-head">
+              <div>
+                <div class="eyebrow-label">Flujo de ingresos</div>
+                <div class="chart-figure">$184,920 <span style="font-size:13px;color:var(--sage);font-family:'Inter';font-weight:600;">↑ 12.4%</span></div>
+              </div>
+              <div class="legend">
+                <span><i style="background:var(--navy)"></i> Ingresos</span>
+                <span><i style="background:var(--gold-light)"></i> Cobranza IA</span>
+              </div>
+            </div>
+            <svg viewBox="0 0 600 200" style="width:100%;height:200px;margin-top:10px;" preserveAspectRatio="none">
+              <defs>
+                <linearGradient id="navyFill" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stop-color="#0B2A4A" stop-opacity="0.18"/>
+                  <stop offset="100%" stop-color="#0B2A4A" stop-opacity="0"/>
+                </linearGradient>
+              </defs>
+              <g stroke="#E4DFD3" stroke-width="1">
+                <line x1="0" y1="20" x2="600" y2="20"/>
+                <line x1="0" y1="70" x2="600" y2="70"/>
+                <line x1="0" y1="120" x2="600" y2="120"/>
+                <line x1="0" y1="170" x2="600" y2="170"/>
+              </g>
+              <path d="M0,150 L75,135 L150,140 L225,110 L300,118 L375,90 L450,75 L525,55 L600,40 L600,200 L0,200 Z" fill="url(#navyFill)"/>
+              <path d="M0,150 L75,135 L150,140 L225,110 L300,118 L375,90 L450,75 L525,55 L600,40" fill="none" stroke="#0B2A4A" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M0,168 L75,160 L150,158 L225,142 L300,138 L375,120 L450,108 L525,92 L600,78" fill="none" stroke="#D9B872" stroke-width="2.5" stroke-dasharray="5 4" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="600" cy="40" r="4.5" fill="#0B2A4A"/>
+            </svg>
+            <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:10.5px;color:var(--muted);font-family:'IBM Plex Mono', monospace;">
+              <span>Ene</span><span>Feb</span><span>Mar</span><span>Abr</span><span>May</span><span>Jun</span>
+            </div>
+          </div>
+
+          <div class="panel ai-panel" id="asistente">
+            <div class="ai-panel-head">
+              <div class="ai-orb"></div>
+              <div>
+                <strong>Asistente Euro Lab IA</strong>
+                <small>Entrenado con tu histórico de ventas e inventario</small>
+              </div>
+            </div>
+            <div class="ai-chat" id="aiChat">
+              <div class="bubble bot">Detecté <b>3 clínicas con riesgo de cancelación</b> este mes por baja frecuencia de pedidos. ¿Quieres ver el detalle?</div>
+              <div class="bubble user">Sí, muéstrame también el reabastecimiento sugerido de Belotero.</div>
+              <div class="bubble bot">Listo. Clínica Dermavida, Piel Real y Centro Aurea bajaron su frecuencia 40%. Sugiero campaña de reactivación + 30 unidades adicionales de Belotero Balance para la próxima semana.</div>
+            </div>
+            <div class="chip-row">
+              <div class="chip" onclick="aiQuickReply(this)">Predecir demanda</div>
+              <div class="chip" onclick="aiQuickReply(this)">Detectar anomalías</div>
+              <div class="chip" onclick="aiQuickReply(this)">Generar reporte</div>
+            </div>
+            <form class="ai-input-row" id="aiForm">
+              <input type="text" id="aiInput" placeholder="Pregunta sobre ventas, inventario o clínicas…" autocomplete="off">
+              <button type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></svg></button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- INVENTARIO -->
+      <section id="inventario" class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow-label">Control por lote</div>
+            <h2>Inventario y trazabilidad</h2>
+            <p>Seguimiento de lote, caducidad y nivel de stock para cada producto inyectable y equipo.</p>
+          </div>
+          <button class="link-btn">Ver inventario completo <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+
+        <div class="panel table-card">
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th><th>SKU / Lote</th><th>Caducidad</th><th>Stock</th><th>Estado</th><th>Clínica preferente</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><div class="prod-name">Xeomin 100U</div><div class="prod-meta">Neurotoxina · Merz</div></td>
+                <td class="sku">SKU-XE100 <span class="vial-tag">L-2291</span></td>
+                <td class="sku">02 jul 2026</td>
+                <td><div class="stock-bar-wrap"><div class="stock-bar" style="width:18%;background:var(--terracotta);"></div></div></td>
+                <td><span class="pill critico">Crítico</span></td>
+                <td>Clínica Bellevue</td>
+              </tr>
+              <tr>
+                <td><div class="prod-name">Radiesse 1.5ml</div><div class="prod-meta">Relleno · Merz</div></td>
+                <td class="sku">SKU-RD150 <span class="vial-tag">L-4417</span></td>
+                <td class="sku">14 oct 2026</td>
+                <td><div class="stock-bar-wrap"><div class="stock-bar" style="width:62%;background:var(--sage);"></div></div></td>
+                <td><span class="pill optimo">Óptimo</span></td>
+                <td>Centro Aurea</td>
+              </tr>
+              <tr>
+                <td><div class="prod-name">Belotero Balance</div><div class="prod-meta">Ácido hialurónico · Merz</div></td>
+                <td class="sku">SKU-BB100 <span class="vial-tag">L-3309</span></td>
+                <td class="sku">29 jun 2026</td>
+                <td><div class="stock-bar-wrap"><div class="stock-bar" style="width:34%;background:var(--gold);"></div></div></td>
+                <td><span class="pill bajo">Bajo</span></td>
+                <td>Dermavida</td>
+              </tr>
+              <tr>
+                <td><div class="prod-name">Belotero Volume</div><div class="prod-meta">Ácido hialurónico · Merz</div></td>
+                <td class="sku">SKU-BV200 <span class="vial-tag">L-5102</span></td>
+                <td class="sku">21 nov 2026</td>
+                <td><div class="stock-bar-wrap"><div class="stock-bar" style="width:74%;background:var(--sage);"></div></div></td>
+                <td><span class="pill optimo">Óptimo</span></td>
+                <td>Piel Real</td>
+              </tr>
+              <tr>
+                <td><div class="prod-name">Ultherapy DeepSEE</div><div class="prod-meta">Cartucho 4.5mm · Merz Aesthetics</div></td>
+                <td class="sku">SKU-ULT45 <span class="vial-tag">L-1188</span></td>
+                <td class="sku">05 ago 2026</td>
+                <td><div class="stock-bar-wrap"><div class="stock-bar" style="width:46%;background:var(--gold);"></div></div></td>
+                <td><span class="pill bajo">Bajo</span></td>
+                <td>Clínica Bellevue</td>
+              </tr>
+              <tr>
+                <td><div class="prod-name">Sistema Ultherapy</div><div class="prod-meta">Equipo médico · transductor incluido</div></td>
+                <td class="sku">EQ-ULTSYS <span class="vial-tag">SN-008842</span></td>
+                <td class="sku">— (equipo)</td>
+                <td><div class="stock-bar-wrap"><div class="stock-bar" style="width:90%;background:var(--sage);"></div></div></td>
+                <td><span class="pill optimo">Óptimo</span></td>
+                <td>Stock central</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PEDIDOS -->
+      <section id="pedidos" class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow-label">Pipeline en vivo</div>
+            <h2>Pedidos de clínicas</h2>
+            <p>Desde la recepción del pedido hasta la entrega, con estado sincronizado en tiempo real.</p>
+          </div>
+          <button class="link-btn">Registrar pedido manual</button>
+        </div>
+
+        <div class="kanban">
+          <div class="kanban-col">
+            <div class="kanban-col-head"><h4>Recibido</h4><span class="kanban-count">9</span></div>
+            <div class="order-card">
+              <div class="order-id">#EL-3381</div>
+              <div class="order-clinic">Dermavida Estética</div>
+              <div class="order-items">2x Xeomin 100U, 1x Belotero Balance</div>
+              <div class="order-foot"><span class="order-value">$1,420</span><span class="order-date">Hoy, 9:14</span></div>
+            </div>
+            <div class="order-card">
+              <div class="order-id">#EL-3382</div>
+              <div class="order-clinic">Centro Aurea</div>
+              <div class="order-items">1x Radiesse 1.5ml</div>
+              <div class="order-foot"><span class="order-value">$390</span><span class="order-date">Hoy, 10:02</span></div>
+            </div>
+          </div>
+
+          <div class="kanban-col">
+            <div class="kanban-col-head"><h4>En preparación</h4><span class="kanban-count">12</span></div>
+            <div class="order-card">
+              <div class="order-id">#EL-3375</div>
+              <div class="order-clinic">Clínica Bellevue</div>
+              <div class="order-items">4x Xeomin 100U</div>
+              <div class="order-foot"><span class="order-value">$2,860</span><span class="order-date">Ayer</span></div>
+            </div>
+            <div class="order-card">
+              <div class="order-id">#EL-3376</div>
+              <div class="order-clinic">Piel Real</div>
+              <div class="order-items">2x Belotero Volume, 1x DeepSEE 4.5mm</div>
+              <div class="order-foot"><span class="order-value">$1,975</span><span class="order-date">Ayer</span></div>
+            </div>
+          </div>
+
+          <div class="kanban-col">
+            <div class="kanban-col-head"><h4>En tránsito</h4><span class="kanban-count">9</span></div>
+            <div class="order-card">
+              <div class="order-id">#EL-3360</div>
+              <div class="order-clinic">Clínica Bellevue</div>
+              <div class="order-items">Sistema Ultherapy + 2 cartuchos</div>
+              <div class="order-foot"><span class="order-value">$8,420</span><span class="order-date">17 jun</span></div>
+            </div>
+          </div>
+
+          <div class="kanban-col">
+            <div class="kanban-col-head"><h4>Entregado</h4><span class="kanban-count">16</span></div>
+            <div class="order-card">
+              <div class="order-id">#EL-3340</div>
+              <div class="order-clinic">Dermavida Estética</div>
+              <div class="order-items">3x Radiesse 1.5ml</div>
+              <div class="order-foot"><span class="order-value">$1,170</span><span class="order-date">12 jun</span></div>
+            </div>
+            <div class="order-card">
+              <div class="order-id">#EL-3338</div>
+              <div class="order-clinic">Centro Aurea</div>
+              <div class="order-items">2x Belotero Balance</div>
+              <div class="order-foot"><span class="order-value">$980</span><span class="order-date">11 jun</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CLINICAS + FACTURACION -->
+      <section id="clinicas" class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow-label">Relación comercial</div>
+            <h2>Clínicas y facturación</h2>
+            <p>Historial de compra, salud de la relación y estado de cobro en un mismo lugar.</p>
+          </div>
+        </div>
+
+        <div class="split">
+          <div class="panel" id="clinicas-table">
+            <div style="padding:16px 20px 4px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;">Clínicas activas</div>
+            <div class="clinic-row">
+              <div class="clinic-avatar">CB</div>
+              <div class="clinic-info">
+                <div class="clinic-name">Clínica Bellevue</div>
+                <div class="clinic-meta">Última compra: hace 2 días · Pedido mensual</div>
+              </div>
+              <div class="clinic-value"><div class="clinic-amount">$38,400 / año</div><div class="status-dot vip">Cliente VIP</div></div>
+            </div>
+            <div class="clinic-row">
+              <div class="clinic-avatar">CA</div>
+              <div class="clinic-info">
+                <div class="clinic-name">Centro Aurea</div>
+                <div class="clinic-meta">Última compra: hace 5 días · Pedido quincenal</div>
+              </div>
+              <div class="clinic-value"><div class="clinic-amount">$24,120 / año</div><div class="status-dot activa">Activa</div></div>
+            </div>
+            <div class="clinic-row">
+              <div class="clinic-avatar">DV</div>
+              <div class="clinic-info">
+                <div class="clinic-name">Dermavida Estética</div>
+                <div class="clinic-meta">Última compra: hace 19 días · Frecuencia bajó 40%</div>
+              </div>
+              <div class="clinic-value"><div class="clinic-amount">$11,860 / año</div><div class="status-dot riesgo">En riesgo</div></div>
+            </div>
+            <div class="clinic-row">
+              <div class="clinic-avatar">PR</div>
+              <div class="clinic-info">
+                <div class="clinic-name">Piel Real</div>
+                <div class="clinic-meta">Última compra: hace 21 días · Frecuencia bajó 35%</div>
+              </div>
+              <div class="clinic-value"><div class="clinic-amount">$9,340 / año</div><div class="status-dot riesgo">En riesgo</div></div>
+            </div>
+            <div class="clinic-row">
+              <div class="clinic-avatar">SM</div>
+              <div class="clinic-info">
+                <div class="clinic-name">Skin Medical Group</div>
+                <div class="clinic-meta">Última compra: hoy · Cliente nuevo</div>
+              </div>
+              <div class="clinic-value"><div class="clinic-amount">$2,100 / año</div><div class="status-dot activa">Activa</div></div>
+            </div>
+          </div>
+
+          <div class="panel" id="facturacion">
+            <div style="padding:16px 20px 4px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;">Facturas recientes</span>
+              <span class="vial-tag">Generadas por IA</span>
+            </div>
+            <div class="invoice-row">
+              <div class="invoice-id">#F-9921</div>
+              <div class="invoice-info"><div class="invoice-clinic">Clínica Bellevue</div><div class="invoice-due">Vence 22 jun 2026</div></div>
+              <div class="invoice-amount">$2,860</div>
+              <span class="pill bajo">Pendiente</span>
+            </div>
+            <div class="invoice-row">
+              <div class="invoice-id">#F-9920</div>
+              <div class="invoice-info"><div class="invoice-clinic">Dermavida Estética</div><div class="invoice-due">Venció 15 jun 2026</div></div>
+              <div class="invoice-amount">$1,420</div>
+              <span class="pill critico">Vencida</span>
+            </div>
+            <div class="invoice-row">
+              <div class="invoice-id">#F-9918</div>
+              <div class="invoice-info"><div class="invoice-clinic">Centro Aurea</div><div class="invoice-due">Pagada 14 jun 2026</div></div>
+              <div class="invoice-amount">$980</div>
+              <span class="pill optimo">Pagada</span>
+            </div>
+            <div class="invoice-row">
+              <div class="invoice-id">#F-9915</div>
+              <div class="invoice-info"><div class="invoice-clinic">Piel Real</div><div class="invoice-due">Pagada 11 jun 2026</div></div>
+              <div class="invoice-amount">$1,975</div>
+              <span class="pill optimo">Pagada</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- CONTABILIDAD -->
+      <section id="contabilidad" class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow-label">Cierre automático</div>
+            <h2>Contabilidad</h2>
+            <p>Conciliación, flujo de caja e impuestos calculados automáticamente cada noche.</p>
+          </div>
+          <button class="link-btn">Exportar estado financiero</button>
+        </div>
+
+        <div class="acct-grid">
+          <div class="panel acct-card">
+            <div class="acct-label">Ingresos del trimestre</div>
+            <div class="acct-value pos">$521,340</div>
+          </div>
+          <div class="panel acct-card">
+            <div class="acct-label">Egresos del trimestre</div>
+            <div class="acct-value neg">$348,910</div>
+          </div>
+          <div class="panel acct-card">
+            <div class="acct-label">Utilidad neta</div>
+            <div class="acct-value pos">$172,430</div>
+          </div>
+          <div class="panel acct-card">
+            <div class="acct-label">Cuentas por cobrar</div>
+            <div class="acct-value">$42,310</div>
+          </div>
+        </div>
+
+        <div class="panel chart-card">
+          <div class="chart-head">
+            <div>
+              <div class="eyebrow-label">Conciliación bancaria</div>
+              <div class="chart-figure">98.4% conciliado automáticamente</div>
+            </div>
+            <div class="legend"><span><i style="background:var(--sage)"></i> Conciliado por IA</span><span><i style="background:var(--terracotta)"></i> Revisión manual</span></div>
+          </div>
+          <div style="display:flex;height:14px;border-radius:8px;overflow:hidden;margin-top:14px;">
+            <div style="width:98.4%;background:var(--sage);"></div>
+            <div style="width:1.6%;background:var(--terracotta);"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- FUNCIONALIDADES -->
+      <section id="reportes" class="section">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow-label">Plataforma completa</div>
+            <h2>Todo lo que automatiza Euro Lab IA</h2>
+            <p>Cada módulo trabaja en conjunto para que la distribución funcione sin fricción.</p>
+          </div>
+        </div>
+
+        <div class="feat-grid">
+          <div class="panel feat-card">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="2.5" width="16" height="19" rx="2"/><path d="M8 7h8M8 11h8M8 15h5"/></svg></div>
+            <h3>Facturación automatizada</h3>
+            <p>Generación de facturas al confirmar el pedido, recordatorios de cobro y conciliación de pagos sin intervención manual.</p>
+          </div>
+          <div class="panel feat-card">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg></div>
+            <h3>Contabilidad en tiempo real</h3>
+            <p>Cierre contable diario, flujo de caja proyectado e impuestos calculados automáticamente para cada periodo.</p>
+          </div>
+          <div class="panel feat-card">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8 12 3 3 8l9 5 9-5Z"/><path d="M3 8v8l9 5 9-5V8"/></svg></div>
+            <h3>Inventario por lote y caducidad</h3>
+            <p>Trazabilidad completa de cada vial, alertas de stock crítico y vencimiento anticipado de productos inyectables.</p>
+          </div>
+          <div class="panel feat-card">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-7-4.6-9.7-9.1C.6 8.5 2 4.8 5.6 4.2c2-.3 3.7.7 4.4 2.2.7-1.5 2.4-2.5 4.4-2.2 3.6.6 5 4.3 3.3 7.7C19 16.4 12 21 12 21Z"/></svg></div>
+            <h3>Seguimiento de clínicas</h3>
+            <p>Historial de compra, frecuencia de pedido y puntuación de salud de la relación para anticipar bajas o ascensos a VIP.</p>
+          </div>
+          <div class="panel feat-card">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 7v10l9 4 9-4V7"/></svg></div>
+            <h3>Recepción y pipeline de pedidos</h3>
+            <p>Pedidos entrantes de clínicas organizados en un flujo claro: recibido, en preparación, en tránsito y entregado.</p>
+          </div>
+          <div class="panel feat-card">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg></div>
+            <h3>Inteligencia predictiva</h3>
+            <p>Predicción de demanda por producto y clínica, detección de anomalías en pagos y recomendaciones de reabastecimiento.</p>
+          </div>
+          <div class="panel feat-card">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
+            <h3 id="proveedores">Gestión de proveedores</h3>
+            <p>Órdenes de compra a fabricantes, tiempos de entrega y control de costos de adquisición en un solo lugar.</p>
+          </div>
+          <div class="panel feat-card">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg></div>
+            <h3>Cumplimiento regulatorio</h3>
+            <p>Documentación sanitaria, certificados de lote y trazabilidad lista para auditoría en cualquier momento.</p>
+          </div>
+          <div class="panel feat-card">
+            <div class="feat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3"/></svg></div>
+            <h3>Reportes ejecutivos</h3>
+            <p>Tableros financieros y operativos generados automáticamente, listos para junta directiva o inversionistas.</p>
+          </div>
+        </div>
+      </section>
+
+    </div>
+
+    <footer>
+      <div class="f-left">© 2026 Euro Lab Group · Plataforma de Operaciones IA</div>
+      <div class="f-right">
+        <span class="compliance-tag"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg> Trazabilidad sanitaria activa</span>
+        <span>Soporte 24/7</span>
+        <span>v2.4.1</span>
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  // Sidebar active state on click + smooth scroll
+  document.querySelectorAll('.nav-item[data-target]').forEach(item=>{
+    item.addEventListener('click', e=>{
+      document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));
+      item.classList.add('active');
+      const target = document.getElementById(item.dataset.target);
+      if(target){ target.scrollIntoView({behavior:'smooth', block:'start'}); }
+    });
+  });
+
+  // KPI count-up animation
+  function animateCount(el){
+    const target = parseFloat(el.dataset.count);
+    const prefix = el.dataset.prefix || '';
+    const duration = 1100;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min((now-start)/duration, 1);
+      const eased = 1 - Math.pow(1-p, 3);
+      const val = Math.round(target * eased);
+      el.textContent = prefix + val.toLocaleString('en-US');
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  const kpiObserver = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        animateCount(entry.target);
+        kpiObserver.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.4});
+  document.querySelectorAll('.kpi-value[data-count]').forEach(el=>kpiObserver.observe(el));
+
+  // Rotating AI insight ticker
+  const insights = [
+    {tag:'IA · Demanda', tone:'#9BE6BD', label:'Acción sugerida', text:'<b>IA · Demanda</b> — La rotación de Xeomin en Clínica Bellevue subió 18% en dos semanas. Sugerimos reabastecer antes del 24 de junio.'},
+    {tag:'IA · Cobranza', tone:'#F0B79A', label:'Riesgo de pago', text:'<b>IA · Cobranza</b> — La factura #F-9920 de Dermavida Estética lleva 4 días vencida. Se envió un recordatorio automático.'},
+    {tag:'IA · Inventario', tone:'#F0B79A', label:'Caducidad próxima', text:'<b>IA · Inventario</b> — 3 lotes de Belotero Balance caducan en menos de 30 días. Se sugiere promoción dirigida a clínicas activas.'},
+    {tag:'IA · Clínicas', tone:'#F0B79A', label:'Riesgo de baja', text:'<b>IA · Clínicas</b> — Piel Real y Dermavida bajaron su frecuencia de pedido 35-40%. Se recomienda contacto comercial esta semana.'}
+  ];
+  let tickerIndex = 0;
+  setInterval(()=>{
+    tickerIndex = (tickerIndex+1) % insights.length;
+    const t = insights[tickerIndex];
+    const textEl = document.getElementById('ticker-text');
+    const tagEl = document.querySelector('.insight-tag');
+    textEl.style.opacity = 0;
+    setTimeout(()=>{
+      textEl.innerHTML = t.text;
+      tagEl.textContent = t.label;
+      textEl.style.opacity = 1;
+    }, 250);
+  }, 6000);
+  document.getElementById('ticker-text').style.transition = 'opacity 0.25s ease';
+
+  // AI assistant demo interactions
+  const aiChat = document.getElementById('aiChat');
+  const aiForm = document.getElementById('aiForm');
+  const aiInput = document.getElementById('aiInput');
+
+  function appendBubble(text, who){
+    const div = document.createElement('div');
+    div.className = 'bubble ' + who;
+    div.textContent = text;
+    aiChat.appendChild(div);
+    aiChat.scrollTop = aiChat.scrollHeight;
+  }
+
+  const canned = {
+    'Predecir demanda': 'Con base en los últimos 90 días, espero un alza del 14% en Radiesse para julio, impulsada por Centro Aurea y Skin Medical Group.',
+    'Detectar anomalías': 'Encontré un pago duplicado de $390 en Centro Aurea el 12 de junio. Recomiendo verificar antes de aplicar el reembolso.',
+    'Generar reporte': 'Generando el reporte ejecutivo del mes con ingresos, inventario crítico y clínicas en riesgo. Estará listo en tu correo en unos segundos.'
+  };
+
+  function aiQuickReply(chip){
+    const label = chip.textContent;
+    appendBubble(label, 'user');
+    setTimeout(()=> appendBubble(canned[label] || 'Trabajando en tu solicitud…', 'bot'), 500);
+  }
+
+  aiForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    const val = aiInput.value.trim();
+    if(!val) return;
+    appendBubble(val, 'user');
+    aiInput.value = '';
+    setTimeout(()=> appendBubble('Estoy revisando tus datos de ventas, inventario y clínicas para responder con precisión sobre esto.', 'bot'), 600);
+  });
+
+  // Scroll-spy for sidebar active state
+  const sections = document.querySelectorAll('.section[id]');
+  const spyObserver = new IntersectionObserver(entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        const id = entry.target.id;
+        document.querySelectorAll('.nav-item[data-target]').forEach(item=>{
+          item.classList.toggle('active', item.dataset.target === id);
+        });
+      }
+    });
+  }, {rootMargin:'-30% 0px -60% 0px'});
+  sections.forEach(s=>spyObserver.observe(s));
+</script>
+
+</body>
+</html>
