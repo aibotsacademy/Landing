@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATH · Boarding Pass · Boda en Grecia</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy-deep:#081B33;
+    --navy-mid:#10233F;
+    --navy-soft:#173F67;
+    --amber:#F2B84C;
+    --amber-dim:#C98F2A;
+    --aegean:#1C7FB8;
+    --santorini:#D98A9C;
+    --paper:#FBF6EC;
+    --paper-dim:#F0E8D6;
+    --ink:#12283F;
+    --ink-soft:#4B5D70;
+    --line:#274565;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--navy-deep);
+    color:var(--paper);
+    font-family:'Inter',sans-serif;
+    overflow-x:hidden;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *,*::before,*::after{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .serif{font-family:'Playfair Display',serif;}
+
+  /* ============ FIXED PLANE ============ */
+  #plane-track{
+    position:fixed;
+    top:0; right:18px;
+    width:60px; height:100vh;
+    pointer-events:none;
+    z-index:500;
+  }
+  #plane{
+    position:absolute;
+    left:0; top:60px;
+    font-size:30px;
+    transform:rotate(90deg);
+    transition:top .12s linear, transform .5s cubic-bezier(.4,0,.2,1);
+    filter:drop-shadow(0 4px 10px rgba(0,0,0,.4));
+  }
+  #plane.banking{ transform:rotate(180deg); }
+  #plane::after{
+    content:"";
+    position:absolute;
+    left:50%; top:-70px;
+    width:1px; height:60px;
+    background:linear-gradient(to bottom, transparent, rgba(255,255,255,.35));
+    transform:translateX(-50%);
+  }
+  @media (max-width:640px){
+    #plane-track{ right:8px; width:36px; }
+    #plane{ font-size:20px; }
+  }
+
+  /* ============ SCROLL PROGRESS RUNWAY ============ */
+  #runway{
+    position:fixed; left:0; top:0; height:3px; width:0%;
+    background:linear-gradient(90deg,var(--amber),var(--santorini));
+    z-index:600;
+    transition:width .1s linear;
+  }
+
+  section{ position:relative; padding:0 20px; }
+  .wrap{ max-width:760px; margin:0 auto; }
+
+  /* ============ HERO ============ */
+  .hero{
+    min-height:100vh;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center;
+    position:relative;
+    overflow:hidden;
+    background:#061530;
+    padding-top:70px; padding-bottom:70px;
+  }
+  .hero-video{
+    position:absolute; inset:0; z-index:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    opacity:.5;
+  }
+  .hero-overlay{
+    position:absolute; inset:0; z-index:1;
+    background:
+      radial-gradient(ellipse at 20% 10%, rgba(28,127,184,.4), transparent 55%),
+      radial-gradient(ellipse at 85% 85%, rgba(217,138,156,.28), transparent 50%),
+      linear-gradient(180deg, rgba(6,21,48,.75) 0%, rgba(11,30,58,.72) 55%, rgba(15,42,74,.85) 100%);
+  }
+  .hero-content{ position:relative; z-index:2; display:flex; flex-direction:column; align-items:center; }
+  .stars{
+    position:absolute; inset:0; overflow:hidden; opacity:.55; pointer-events:none; z-index:1;
+  }
+  .stars span{
+    position:absolute; width:2px; height:2px; background:#fff; border-radius:50%;
+    animation:tw 3.5s ease-in-out infinite;
+  }
+  @keyframes tw{ 0%,100%{opacity:.15;} 50%{opacity:.9;} }
+
+  .eyebrow-badge{
+    display:inline-flex; align-items:center; gap:8px;
+    border:1px solid rgba(242,184,76,.5);
+    background:rgba(242,184,76,.08);
+    color:var(--amber);
+    padding:7px 16px; border-radius:3px;
+    font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    margin-bottom:30px;
+  }
+
+  /* Split-flap board */
+  .flapboard{
+    display:flex; flex-wrap:wrap; justify-content:center; gap:6px;
+    margin:0 auto 22px;
+  }
+  .flap{
+    position:relative;
+    width:38px; height:52px;
+    background:var(--navy-mid);
+    border:1px solid var(--line);
+    border-radius:4px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:600; font-size:28px;
+    color:var(--amber);
+    overflow:hidden;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.3), 0 3px 8px rgba(0,0,0,.35);
+  }
+  .flap::before{
+    content:"";
+    position:absolute; left:0; right:0; top:50%;
+    height:1px; background:rgba(0,0,0,.55);
+  }
+  .flap.flipping{ animation:flipchar .09s linear; }
+  @keyframes flipchar{ 0%{transform:rotateX(0deg);} 50%{transform:rotateX(90deg);} 100%{transform:rotateX(0deg);} }
+  @media (max-width:640px){
+    .flap{ width:26px; height:38px; font-size:19px; border-radius:3px; }
+    .flapboard{ gap:4px; }
+  }
+
+  .hero h1{
+    font-family:'Playfair Display',serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:clamp(30px,5.5vw,52px);
+    line-height:1.15;
+    margin:6px 0 18px;
+    color:#fff;
+  }
+  .hero p{
+    font-size:15px; line-height:1.7; color:#C9D8E7;
+    max-width:440px; margin:0 auto;
+  }
+  .scroll-cue{
+    margin-top:52px;
+    font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    color:#8FA5BC;
+    display:flex; flex-direction:column; align-items:center; gap:10px;
+  }
+  .scroll-cue .chevrons span{
+    display:block; width:9px; height:9px;
+    border-right:2px solid var(--amber); border-bottom:2px solid var(--amber);
+    transform:rotate(45deg);
+    animation:bounce 1.6s ease-in-out infinite;
+    margin:-3px 0;
+  }
+  .scroll-cue .chevrons span:nth-child(2){ animation-delay:.15s; }
+  .scroll-cue .chevrons span:nth-child(3){ animation-delay:.3s; }
+  @keyframes bounce{ 0%,100%{opacity:.25;} 50%{opacity:1;} }
+
+  /* ============ DEPARTURE STRIP (flight summary) ============ */
+  .strip-wrap{ padding:80px 20px; background:var(--navy-deep); }
+  .strip{
+    background:var(--navy-mid);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:0;
+    overflow:hidden;
+    box-shadow:0 20px 50px rgba(0,0,0,.4);
+  }
+  .strip-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 22px;
+    border-bottom:1px dashed var(--line);
+    font-size:11px; letter-spacing:2px; text-transform:uppercase; color:#8FA5BC;
+  }
+  .strip-head .live{ color:var(--amber); display:flex; align-items:center; gap:7px; }
+  .live .dot{ width:6px; height:6px; border-radius:50%; background:var(--amber); animation:blink 1.4s infinite; }
+  @keyframes blink{ 0%,100%{opacity:1;} 50%{opacity:.2;} }
+
+  .strip-row{
+    display:grid;
+    grid-template-columns:1.6fr 1fr 1fr 1fr;
+    padding:22px;
+    gap:14px;
+  }
+  .strip-cell .label{ font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#7690A9; margin-bottom:6px; }
+  .strip-cell .value{ font-family:'IBM Plex Mono',monospace; font-size:16px; color:#fff; font-weight:600; }
+  .strip-cell .value.small{ font-size:13px; }
+  .status-tag{
+    display:inline-block; margin-top:6px;
+    padding:3px 9px; border-radius:3px;
+    background:rgba(242,184,76,.15); color:var(--amber);
+    font-size:11px; letter-spacing:1.5px; font-weight:600;
+  }
+  @media (max-width:640px){
+    .strip-row{ grid-template-columns:1fr 1fr; }
+  }
+
+  /* ============ SECTION HEADERS ============ */
+  .sec-eyebrow{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px; letter-spacing:3px; text-transform:uppercase;
+    color:var(--amber); margin-bottom:12px;
+  }
+  .sec-title{
+    font-family:'Playfair Display',serif; font-weight:600;
+    font-size:clamp(24px,4vw,34px); color:#fff; margin:0 0 14px;
+  }
+  .sec-sub{ color:#9DB2C7; font-size:15px; line-height:1.7; max-width:520px; }
+
+  .reveal{ opacity:0; transform:translateY(26px); transition:opacity .7s ease, transform .7s ease; }
+  .reveal.in{ opacity:1; transform:translateY(0); }
+
+  /* ============ DOCUMENT CONTROL ============ */
+  .doc-section{ padding:90px 20px; background:linear-gradient(180deg,var(--navy-deep),#0C2038); }
+  .doc-card{
+    background:var(--navy-mid);
+    border:1px solid var(--line);
+    border-left:4px solid var(--santorini);
+    border-radius:8px;
+    padding:30px 28px;
+    margin-top:26px;
+  }
+  .doc-item{ display:flex; gap:16px; padding:14px 0; border-bottom:1px solid rgba(255,255,255,.06); }
+  .doc-item:last-of-type{ border-bottom:none; }
+  .doc-num{
+    font-family:'IBM Plex Mono',monospace; font-weight:700; color:var(--navy-deep);
+    background:var(--amber); width:28px; height:28px; min-width:28px;
+    border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px;
+  }
+  .doc-item p{ margin:0; color:#C9D8E7; font-size:14.5px; line-height:1.6; }
+  .doc-note{
+    margin-top:20px; padding:14px 16px; border-radius:6px;
+    background:rgba(217,138,156,.1); border:1px solid rgba(217,138,156,.3);
+    color:#F0D3DA; font-size:13px; line-height:1.6;
+  }
+
+  /* ============ DEPARTURE BOARD — ACTIVITIES ============ */
+  .board-section{ padding:90px 20px; background:#0C2038; }
+  .gate-board{ margin-top:30px; border:1px solid var(--line); border-radius:10px; overflow:hidden; }
+  .gate-board-head{
+    display:grid; grid-template-columns:1.3fr 1.6fr 1fr .9fr;
+    padding:12px 20px;
+    background:var(--navy-deep);
+    font-size:10px; letter-spacing:2px; text-transform:uppercase; color:#7690A9;
+    border-bottom:1px solid var(--line);
+  }
+  .gate-row{
+    display:grid; grid-template-columns:1.3fr 1.6fr 1fr .9fr;
+    align-items:center;
+    padding:18px 20px;
+    border-bottom:1px solid var(--line);
+    background:var(--navy-mid);
+    gap:10px;
+  }
+  .gate-row:last-child{ border-bottom:none; }
+  .gate-row .flight-code{ font-family:'IBM Plex Mono',monospace; color:var(--amber); font-weight:600; font-size:14px; }
+  .gate-row .dest{ color:#fff; font-weight:600; font-size:14.5px; }
+  .gate-row .meta{ color:#8FA5BC; font-size:12px; margin-top:4px; line-height:1.6;}
+  .gate-row .price{ font-family:'IBM Plex Mono',monospace; color:var(--amber); font-size:14px; }
+  .gate-row .badge{
+    justify-self:start;
+    font-size:10.5px; letter-spacing:1px; padding:4px 9px; border-radius:3px;
+    background:rgba(28,127,184,.18); color:#7FC4EA; font-weight:600;
+    white-space:nowrap;
+  }
+  .gate-row .badge.limited{ background:rgba(217,138,156,.18); color:var(--santorini); }
+  .activity-incl{ color:#8FA5BC; font-size:12.5px; margin-top:10px; grid-column:1 / -1; line-height:1.9; }
+  .activity-incl b{ color:#C9D8E7; }
+  @media (max-width:700px){
+    .gate-board-head{ display:none; }
+    .gate-row{ grid-template-columns:1fr 1fr; }
+    .gate-row .price, .gate-row .badge{ justify-self:end; }
+  }
+
+  /* ============ BOARDING PASS ============ */
+  .pass-section{ padding:100px 20px 60px; background:linear-gradient(180deg,#0C2038,#081B33); }
+  .pass-layout{ display:grid; grid-template-columns:1fr 1fr; gap:34px; margin-top:34px; align-items:start; }
+  @media (max-width:820px){ .pass-layout{ grid-template-columns:1fr; } }
+
+  .form-card{
+    background:var(--navy-mid); border:1px solid var(--line); border-radius:10px; padding:26px;
+  }
+  .field{ margin-bottom:18px; }
+  .field label{
+    display:block; font-size:11px; letter-spacing:1.5px; text-transform:uppercase;
+    color:#8FA5BC; margin-bottom:8px;
+  }
+  .field input[type=text]{
+    width:100%; padding:12px 14px; border-radius:6px;
+    background:var(--navy-deep); border:1px solid var(--line); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:14px; outline:none;
+    transition:border-color .2s;
+  }
+  .field input[type=text]:focus{ border-color:var(--amber); }
+  .field input[type=text]::placeholder{ color:#516781; }
+  .field select.field-select{
+    width:100%; padding:12px 14px; border-radius:6px;
+    background:var(--navy-deep); border:1px solid var(--line); color:#fff;
+    font-family:'IBM Plex Mono',monospace; font-size:13.5px; outline:none;
+    transition:border-color .2s; appearance:none; -webkit-appearance:none;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6'><path d='M0 0l5 6 5-6z' fill='%23F2B84C'/></svg>");
+    background-repeat:no-repeat; background-position:right 14px center;
+  }
+  .field select.field-select:focus{ border-color:var(--amber); }
+  .field select.field-select option{ background:var(--navy-deep); color:#fff; }
+
+  .check-row{
+    display:flex; align-items:flex-start; gap:12px;
+    padding:12px 0; border-top:1px solid rgba(255,255,255,.06);
+    cursor:pointer;
+  }
+  .check-row:first-of-type{ border-top:none; }
+  .check-row input{ margin-top:3px; accent-color:var(--amber); width:16px; height:16px; }
+  .check-row .ct-title{ color:#fff; font-size:13.5px; font-weight:600; }
+  .check-row .ct-meta{ color:#8FA5BC; font-size:12px; margin-top:2px; }
+
+  /* Boarding pass visual */
+  @keyframes floatCard{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(-7px); } }
+  @keyframes bpShimmer{ 0%{ background-position:-200% center; } 100%{ background-position:200% center; } }
+  @keyframes valFlash{ 0%{ background:rgba(242,184,76,.6); } 100%{ background:rgba(242,184,76,0); } }
+  @keyframes stampIn{
+    0%{ transform:rotate(-14deg) scale(0); opacity:0; }
+    55%{ transform:rotate(-14deg) scale(1.18); opacity:1; }
+    100%{ transform:rotate(-14deg) scale(1); opacity:1; }
+  }
+  @keyframes issuedIn{ 0%{ opacity:0; transform:translateY(10px); } 100%{ opacity:1; transform:translateY(0); } }
+  @keyframes qrPop{ 0%{ opacity:0; transform:scale(.7) rotate(-6deg); } 70%{ opacity:1; transform:scale(1.06) rotate(1deg); } 100%{ opacity:1; transform:scale(1) rotate(0); } }
+
+  .boarding-pass{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:12px;
+    position:relative;
+    box-shadow:0 25px 60px rgba(0,0,0,.45);
+    overflow:hidden;
+    animation:floatCard 5.5s ease-in-out infinite;
+  }
+  .bp-main{ padding:24px 24px 20px; position:relative; }
+  .bp-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .bp-airline{ font-family:'Playfair Display',serif; font-style:italic; font-weight:600; font-size:20px; }
+  .bp-airline .bp-airline-name{
+    background-image:linear-gradient(90deg, var(--ink) 0%, var(--amber-dim) 35%, var(--ink) 55%, var(--aegean) 75%, var(--ink) 100%);
+    background-size:200% auto;
+    background-clip:text; -webkit-background-clip:text; color:transparent; -webkit-text-fill-color:transparent;
+    animation:bpShimmer 6s linear infinite;
+  }
+  .bp-airline span{ display:block; font-family:'IBM Plex Mono',monospace; font-style:normal; font-size:9px; letter-spacing:2px; color:var(--ink-soft); margin-top:2px; }
+  .bp-class{ font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:1.5px; background:var(--ink); color:var(--paper); padding:5px 10px; border-radius:3px; transition:background .3s, color .3s; }
+  .bp-class.issued-tag{ background:var(--amber); color:var(--navy-deep); animation:qrPop .5s ease; }
+
+  .bp-stamp{
+    position:absolute; top:16px; right:-4px;
+    padding:6px 13px; border:3px double var(--aegean); border-radius:5px;
+    color:var(--aegean); font-family:'IBM Plex Mono',monospace; font-weight:700;
+    font-size:11px; letter-spacing:2px; white-space:nowrap;
+    transform:rotate(-14deg) scale(0); opacity:0; pointer-events:none;
+  }
+  .bp-stamp.show{ animation:stampIn .55s cubic-bezier(.34,1.56,.64,1) forwards; }
+
+  .val-pulse{ animation:valFlash .7s ease; border-radius:3px; }
+
+  .bp-route{ display:flex; align-items:center; gap:14px; margin:22px 0 18px; }
+  .bp-route .city{ font-family:'IBM Plex Mono',monospace; font-weight:700; font-size:26px; }
+  .bp-route .airplane-ico{ color:var(--aegean); font-size:18px; transform:rotate(90deg); }
+  .bp-route .sub{ font-size:10px; color:var(--ink-soft); letter-spacing:1px; }
+
+  .bp-passengers{ display:flex; flex-direction:column; gap:12px; margin-top:4px; }
+  .bp-pax{ padding:10px 12px; background:rgba(18,40,63,.05); border:1px solid rgba(18,40,63,.12); border-radius:6px; }
+  .bp-pax .g-label{ font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px; }
+  .bp-pax .g-val{ font-family:'IBM Plex Mono',monospace; font-size:13.5px; font-weight:600; }
+  .bp-pax .g-val.tiny{ font-size:11.5px; word-break:break-word; }
+
+  .bp-grid{ display:grid; grid-template-columns:repeat(2,1fr); gap:14px 10px; margin-top:18px; }
+  .bp-grid .g-label{ font-size:9px; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink-soft); margin-bottom:4px; }
+  .bp-grid .g-val{ font-family:'IBM Plex Mono',monospace; font-size:13.5px; font-weight:600; }
+  .bp-grid .g-val.tiny{ font-size:11.5px; }
+
+  .bp-perf{
+    position:relative;
+    border-top:2px dashed #C9BFA6;
+    margin-top:20px;
+  }
+  .bp-perf::before, .bp-perf::after{
+    content:""; position:absolute; top:-11px; width:22px; height:22px; border-radius:50%;
+    background:var(--navy-deep);
+  }
+  .bp-perf::before{ left:-11px; }
+  .bp-perf::after{ right:-11px; }
+
+  .bp-stub{ padding:18px 24px 22px; display:flex; justify-content:space-between; align-items:center; gap:16px; }
+  .bp-stub .stub-txt .g-val{ font-size:16px; }
+  .barcode{ display:flex; align-items:flex-end; gap:2px; height:38px; }
+  .barcode span{ width:2px; background:var(--ink); }
+
+  .pass-note{ text-align:center; margin-top:16px; font-size:12px; color:#8FA5BC; }
+
+  .bp-issued{
+    display:none;
+    margin-top:18px; padding-top:16px; border-top:1px dashed #C9BFA6;
+    align-items:center; justify-content:space-between; gap:14px;
+  }
+  .bp-issued.show{ display:flex; animation:issuedIn .55s ease; }
+  .bp-issued-code .g-val{ font-family:'IBM Plex Mono',monospace; font-size:15px; font-weight:700; letter-spacing:1px; }
+  .bp-qr{ width:88px; height:88px; border-radius:6px; border:1px solid #C9BFA6; opacity:0; }
+  .bp-qr.show{ animation:qrPop .5s ease .1s forwards; }
+
+  .pass-actions{ display:none; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:20px; }
+  .pass-action-btn{ font-family:'Inter',sans-serif; font-size:12px; border-color:var(--aegean); color:#7FC4EA; cursor:pointer; background:none; }
+  .pass-action-btn:hover{ background:rgba(28,127,184,.12); }
+
+  /* ============ SUBMIT ============ */
+  .submit-block{ text-align:center; padding-top:56px; }
+  .submit-block .hint{ margin-top:16px; font-size:12px; color:#7690A9; }
+
+  /* ============ CTA ============ */
+  .cta-block{ text-align:center; padding:60px 20px 100px; }
+  .flap-btn{
+    position:relative;
+    display:inline-block;
+    padding:18px 40px;
+    background:var(--amber);
+    color:var(--navy-deep);
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:700; font-size:13px; letter-spacing:2px; text-transform:uppercase;
+    text-decoration:none;
+    border-radius:4px;
+    box-shadow:0 0 0 rgba(242,184,76,0);
+    animation:glow 2.6s ease-in-out infinite;
+    transition:transform .2s;
+  }
+  .flap-btn:hover{ transform:translateY(-3px); }
+  @keyframes glow{
+    0%,100%{ box-shadow:0 0 0 rgba(242,184,76,0); }
+    50%{ box-shadow:0 0 26px rgba(242,184,76,.55); }
+  }
+  .cta-block .hint{ margin-top:16px; font-size:12px; color:#7690A9; }
+
+  /* ============ GIFTS / DUTY FREE ============ */
+  .duty-section{ padding:40px 20px 100px; }
+  .duty-card{
+    background:var(--navy-mid); border:1px solid var(--line); border-radius:12px;
+    padding:34px 28px; text-align:center;
+  }
+  .duty-card .icon{ font-size:30px; }
+  .duty-card .eyebrow-small{ font-size:10.5px; letter-spacing:2.5px; text-transform:uppercase; color:var(--amber); margin-top:10px; }
+  .duty-card h3{ font-family:'Playfair Display',serif; font-size:22px; margin:8px 0 12px; color:#fff; }
+  .duty-card p{ color:#9DB2C7; font-size:13.5px; line-height:1.7; max-width:420px; margin:0 auto; }
+  .ghost-btn{
+    display:inline-block; margin-top:20px; padding:11px 22px;
+    border:1px solid var(--amber-dim); border-radius:30px; color:var(--amber);
+    font-size:11.5px; letter-spacing:1.5px; text-transform:uppercase; text-decoration:none;
+    transition:background .2s;
+  }
+  .ghost-btn:hover{ background:rgba(242,184,76,.1); }
+
+  /* ============ FOOTER ============ */
+  /* ============ COUNTDOWN ============ */
+  .countdown-section{ padding:90px 20px 100px; background:linear-gradient(180deg,#081B33,#061530); text-align:center; }
+  .countdown{
+    display:flex; align-items:flex-end; justify-content:center; gap:10px;
+    margin-top:38px; flex-wrap:wrap;
+  }
+  .cd-group{ display:flex; flex-direction:column; align-items:center; gap:10px; }
+  .cd-digits{ display:flex; gap:5px; }
+  .cd-flap{
+    width:46px; height:64px;
+    background:var(--navy-mid);
+    border:1px solid var(--line);
+    border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    font-family:'IBM Plex Mono',monospace;
+    font-weight:700; font-size:32px;
+    color:var(--amber);
+    position:relative;
+    box-shadow:inset 0 0 0 1px rgba(0,0,0,.3), 0 6px 16px rgba(0,0,0,.4);
+  }
+  .cd-flap::before{
+    content:""; position:absolute; left:0; right:0; top:50%; height:1px;
+    background:rgba(0,0,0,.55);
+  }
+  .cd-flap.flipping{ animation:flipchar .3s ease; }
+  .cd-label{ font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:#7690A9; }
+  .cd-sep{ font-family:'IBM Plex Mono',monospace; font-size:28px; color:var(--amber-dim); padding-bottom:26px; }
+  .cd-arrived{
+    display:none;
+    margin-top:30px; font-family:'Playfair Display',serif; font-style:italic; font-size:20px; color:#fff;
+  }
+  @media (max-width:640px){
+    .cd-flap{ width:32px; height:46px; font-size:21px; border-radius:4px; }
+    .cd-sep{ font-size:20px; padding-bottom:16px; }
+    .cd-digits{ gap:3px; }
+    .countdown{ gap:6px; }
+  }
+
+  footer{
+    background:var(--navy-deep);
+    border-top:1px solid var(--line);
+    padding:40px 20px 30px;
+    text-align:center;
+  }
+  #clock{ font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--amber); letter-spacing:1px; }
+  footer .term{ font-size:11px; letter-spacing:3px; text-transform:uppercase; color:#5B7086; margin-top:10px; }
+  footer .fdates{ margin-top:18px; font-family:'IBM Plex Mono',monospace; font-size:11px; color:#7690A9; letter-spacing:2px; }
+</style>
+</head>
+<body>
+
+<div id="runway"></div>
+<div id="plane-track"><div id="plane">✈️</div></div>
+
+<!-- ================= HERO ================= -->
+<section class="hero">
+  <!-- Reemplaza el src por tu propio video (avión despegando, Atenas, atardecer, etc.) -->
+  <video class="hero-video" id="hero-video" autoplay muted loop playsinline
+    poster="https://i.ibb.co/27fVrqyk/JLO2.png">
+    <source src="REEMPLAZA_CON_TU_VIDEO.mp4" type="video/mp4">
+  </video>
+  <div class="hero-overlay"></div>
+  <div class="stars" id="stars"></div>
+
+  <div class="hero-content">
+    <div class="eyebrow-badge mono">✦ Reconfirmación de vuelo</div>
+
+    <div class="flapboard" id="flapboard"></div>
+
+    <h1>Nuestra celebración<br>en Grecia</h1>
+    <p>Tu asistencia ya está confirmada. Solo nos falta embarcar los últimos detalles: tu acompañante y las actividades en Atenas.</p>
+
+    <div class="scroll-cue">
+      <span>Desliza para embarcar</span>
+      <div class="chevrons"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= FLIGHT STRIP ================= -->
+<div class="strip-wrap">
+  <div class="wrap reveal">
+    <div class="strip">
+      <div class="strip-head">
+        <span>Panel de salidas · Terminal Amor</span>
+        <span class="live"><span class="dot"></span>En vivo</span>
+      </div>
+      <div class="strip-row">
+        <div class="strip-cell">
+          <div class="label">Destino</div>
+          <div class="value">ATENAS, GRECIA</div>
+          <div class="status-tag">CONFIRMADO</div>
+        </div>
+        <div class="strip-cell">
+          <div class="label">Fecha</div>
+          <div class="value small">06 OCT 2026</div>
+        </div>
+        <div class="strip-cell">
+          <div class="label">Puerta / Venue</div>
+          <div class="value small">ISLAND RESORT</div>
+        </div>
+        <div class="strip-cell">
+          <div class="label">Vuelo</div>
+          <div class="value small">JLO · 2026</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ================= DOCUMENT CONTROL ================= -->
+<section class="doc-section">
+  <div class="wrap reveal">
+    <div class="sec-eyebrow mono">🛂 Control de documentos</div>
+    <h2 class="sec-title">Antes de embarcar</h2>
+    <p class="sec-sub">El venue exige los datos de cada pasajero y acompañante, tal como aparecen en su documento oficial, para validar el acceso.</p>
+
+    <div class="doc-card">
+      <div class="doc-item">
+        <div class="doc-num">1</div>
+        <p>Nombre completo del participante o acompañante.</p>
+      </div>
+      <div class="doc-item">
+        <div class="doc-num">2</div>
+        <p>Número de identificación o pasaporte vigente.</p>
+      </div>
+      <div class="doc-note">⚠️ Si asistes con acompañante, ambos deben completar su nombre y documento por separado. No podremos emitir el pase de abordar sin los datos completos de cada persona.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DEPARTURE BOARD — ACTIVITIES ================= -->
+<section class="board-section">
+  <div class="wrap reveal">
+    <div class="sec-eyebrow mono">🧳 Itinerario en tierra</div>
+    <h2 class="sec-title">Selecciona tus vuelos de conexión</h2>
+    <p class="sec-sub">Tres experiencias antes de la boda. Confirma en cuáles embarcas para reservar tu espacio.</p>
+
+    <div class="gate-board">
+      <div class="gate-board-head">
+        <span>Vuelo / Destino</span><span>Detalles</span><span>Tarifa</span><span>Estado</span>
+      </div>
+
+      <div class="gate-row">
+        <div>
+          <div class="flight-code">GR-101</div>
+          <div class="dest">🏛️ Explorando Atenas</div>
+        </div>
+        <div class="meta">03 Oct · 10:00 AM<br>Brunch, atardecer y fiesta</div>
+        <div class="price">€175</div>
+        <div class="badge">EMBARQUE ABIERTO</div>
+        <div class="activity-incl"><b>Incluye:</b> transporte · desayuno griego · Estadio Olímpico · Acrópolis y Partenón · atardecer en mirador · fiesta.</div>
+      </div>
+
+      <div class="gate-row">
+        <div>
+          <div class="flight-code">GR-204</div>
+          <div class="dest">🛥️ Tour en Yate</div>
+        </div>
+        <div class="meta">04 Oct · 10:00 AM – 3:00 PM<br>Marina, Piraeus</div>
+        <div class="price">€550</div>
+        <div class="badge">EMBARQUE ABIERTO</div>
+        <div class="activity-incl"><b>Incluye:</b> almuerzo, bebidas y equipo de snorkeling navegando entre islas griegas.</div>
+      </div>
+
+      <div class="gate-row">
+        <div>
+          <div class="flight-code">GR-305</div>
+          <div class="dest">🎭 Cena frente a la Acrópolis</div>
+        </div>
+        <div class="meta">05 Oct · 6:00 PM<br>Hotel Intercontinental, Atenas</div>
+        <div class="price">—</div>
+        <div class="badge limited">ESPACIO LIMITADO</div>
+        <div class="activity-incl"><b>Nota:</b> cena elegante con vista privilegiada de la Acrópolis. Confirmación obligatoria.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BOARDING PASS ================= -->
+<section class="pass-section">
+  <div class="wrap reveal">
+    <div class="sec-eyebrow mono">🎫 Pase de abordar</div>
+    <h2 class="sec-title">Arma tu pase de abordar</h2>
+    <p class="sec-sub">Completa tus datos y mira tu pase actualizarse en tiempo real. Luego continúa en el formulario oficial para dejarlo confirmado.</p>
+
+    <div class="pass-layout">
+      <!-- FORM -->
+      <div class="form-card">
+        <div class="field">
+          <label>Nombre del pasajero</label>
+          <input type="text" id="in-name" placeholder="Como aparece en tu documento" maxlength="26">
+        </div>
+        <div class="field">
+          <label>N.º de identificación / pasaporte</label>
+          <input type="text" id="in-id" placeholder="Ej. 1-2345-6789" maxlength="16">
+        </div>
+
+        <div class="field">
+          <label>¿Desde dónde viajas?</label>
+          <select id="in-origin" class="field-select">
+            <option value="">Selecciona un país…</option>
+            <option value="Costa Rica" data-code="SJO">Costa Rica</option>
+            <option value="Aruba" data-code="AUA">Aruba</option>
+            <option value="Curazao" data-code="CUR">Curazao</option>
+            <option value="Guatemala" data-code="GUA">Guatemala</option>
+            <option value="España" data-code="MAD">España</option>
+            <option value="Holanda" data-code="AMS">Holanda</option>
+            <option value="Colombia" data-code="BOG">Colombia</option>
+            <option value="Estados Unidos" data-code="USA">Estados Unidos</option>
+            <option value="Panamá" data-code="PTY">Panamá</option>
+            <option value="otro" data-code="---">Otro (indicar)</option>
+          </select>
+        </div>
+        <div class="field" id="origin-other-field" style="display:none;">
+          <label>Indica tu país de origen</label>
+          <input type="text" id="in-origin-other" placeholder="Escribe tu país" maxlength="30">
+        </div>
+
+        <label class="check-row" style="border-top:1px solid rgba(255,255,255,.06);">
+          <input type="checkbox" id="has-companion">
+          <div><div class="ct-title">👥 Asisto con acompañante</div><div class="ct-meta">El venue requiere sus datos completos también</div></div>
+        </label>
+
+        <div id="companion-fields" style="display:none;">
+          <div class="field" style="margin-top:16px;">
+            <label>Nombre completo del acompañante</label>
+            <input type="text" id="in-name2" placeholder="Como aparece en su documento" maxlength="26">
+          </div>
+          <div class="field">
+            <label>N.º de identificación / pasaporte del acompañante</label>
+            <input type="text" id="in-id2" placeholder="Ej. 1-2345-6789" maxlength="16">
+          </div>
+        </div>
+
+        <label style="display:block;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#8FA5BC;margin:22px 0 4px;">Selecciona tus vuelos de conexión</label>
+
+        <label class="check-row">
+          <input type="checkbox" class="in-activity" data-code="GR-101">
+          <div><div class="ct-title">🏛️ Explorando Atenas</div><div class="ct-meta">03 Oct · €175</div></div>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" class="in-activity" data-code="GR-204">
+          <div><div class="ct-title">🛥️ Tour en Yate</div><div class="ct-meta">04 Oct · €550</div></div>
+        </label>
+        <label class="check-row">
+          <input type="checkbox" class="in-activity" data-code="GR-305">
+          <div><div class="ct-title">🎭 Cena frente a la Acrópolis</div><div class="ct-meta">05 Oct · espacio limitado</div></div>
+        </label>
+      </div>
+
+      <!-- BOARDING PASS PREVIEW -->
+      <div>
+        <div class="boarding-pass">
+          <div class="bp-main">
+            <div class="bp-stamp" id="bp-stamp">CONFIRMADO ✓</div>
+            <div class="bp-top">
+              <div class="bp-airline"><span class="bp-airline-name">JLO Wedding Air</span><span>PASE DE ABORDAR</span></div>
+              <div class="bp-class" id="bp-class">INVITADO VIP</div>
+            </div>
+
+            <div class="bp-route">
+              <div class="city" id="bp-from">ORG</div>
+              <div class="airplane-ico">✈️</div>
+              <div class="city">ATH</div>
+            </div>
+
+            <div class="bp-passengers" id="bp-passengers">
+              <div class="bp-pax">
+                <div class="g-label">Pasajero 1</div>
+                <div class="g-val tiny" id="bp-name">POR CONFIRMAR</div>
+                <div class="g-label" style="margin-top:8px;">Documento</div>
+                <div class="g-val tiny" id="bp-id">— — —</div>
+              </div>
+            </div>
+
+            <div class="bp-grid">
+              <div><div class="g-label">Fecha</div><div class="g-val tiny">06 OCT 2026</div></div>
+              <div><div class="g-label">Puerta</div><div class="g-val tiny">ISLAND RESORT</div></div>
+              <div><div class="g-label">Embarque</div><div class="g-val tiny">17:00 HRS</div></div>
+              <div><div class="g-label">Conexiones</div><div class="g-val tiny" id="bp-count">0 seleccionadas</div></div>
+              <div style="grid-column:1 / -1;">
+                <div class="g-label">Ubicación</div>
+                <div class="g-val tiny" style="font-weight:500;">
+                  Athens Riviera, Atenas, Grecia ·
+                  <a href="https://www.google.com/maps/place/Island+Resort+Athens+Riviera/@37.8070704,23.7965238,17z/data=!3m1!4b1!4m6!3m5!1s0x14a1f1bcd9b57ca7:0x4a3ccc797a9b416!8m2!3d37.8070704!4d23.7991041!16s%2Fg%2F11rjw2zqdy?entry=ttu&amp;g_ep=EgoyMDI2MDcwOC4wIKXMDSoASAFQAw%3D%3D" target="_blank" style="color:var(--aegean);">ver mapa ↗</a>
+                </div>
+              </div>
+            </div>
+
+            <div class="bp-issued" id="bp-issued">
+              <div class="bp-issued-code">
+                <div class="g-label">Código de confirmación</div>
+                <div class="g-val" id="bp-code">— — — — — —</div>
+              </div>
+              <img id="bp-qr" class="bp-qr" alt="Código QR del pase de abordar" crossorigin="anonymous" src="">
+            </div>
+          </div>
+
+          <div class="bp-perf"></div>
+
+          <div class="bp-stub">
+            <div class="stub-txt">
+              <div class="g-label">Vuelo</div>
+              <div class="g-val">JLO-2026</div>
+            </div>
+            <div class="barcode" id="barcode"></div>
+          </div>
+        </div>
+        <div class="pass-note" id="pass-note">Este pase es una vista previa. Completa tus datos y presiona "Confirmar y enviar" para emitirlo.</div>
+
+        <div class="pass-actions" id="pass-actions">
+          <button type="button" class="ghost-btn pass-action-btn" id="download-btn">📲 Descargar mi pase (imagen)</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="submit-block reveal">
+      <button type="button" class="flap-btn" id="cta-btn">✨ Confirmar y enviar</button>
+      <div class="hint" id="submit-status">Enviaremos tus datos directo a nuestra hoja de control</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= DUTY FREE / GIFTS ================= -->
+<section class="duty-section">
+  <div class="wrap reveal">
+    <div class="duty-card">
+      <div class="icon">🎁</div>
+      <div class="eyebrow-small mono">Sala Duty Free</div>
+      <h3>Un detalle opcional</h3>
+      <p>Tu presencia es nuestro mejor regalo. Para quienes deseen tener un detalle adicional, preparamos un espacio especial.</p>
+      <a href="https://theaihumans.com/regalos" target="_blank" class="ghost-btn">Ver opciones de regalos</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= COUNTDOWN ================= -->
+<section class="countdown-section">
+  <div class="wrap reveal">
+    <div class="sec-eyebrow mono" style="text-align:center;">⏱️ Cuenta regresiva de embarque</div>
+    <h2 class="sec-title" style="text-align:center;">Faltan para despegar hacia Atenas</h2>
+    <p class="sec-sub" style="text-align:center;margin:0 auto;">
+      Calculado con tu hora local (<span id="cd-tz" class="mono">detectando…</span>) hasta el embarque del 06 Oct 2026 · 17:00 hrs, Atenas.
+    </p>
+
+    <div class="countdown" id="countdown">
+      <div class="cd-group"><div class="cd-digits" id="cd-days"></div><div class="cd-label">Días</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-group"><div class="cd-digits" id="cd-hours"></div><div class="cd-label">Horas</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-group"><div class="cd-digits" id="cd-mins"></div><div class="cd-label">Min</div></div>
+      <div class="cd-sep">:</div>
+      <div class="cd-group"><div class="cd-digits" id="cd-secs"></div><div class="cd-label">Seg</div></div>
+    </div>
+
+    <div class="cd-arrived" id="cd-arrived">🇬🇷 ¡El vuelo ya despegó! Nos vemos en Atenas.</div>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer>
+  <div class="serif" style="font-size:22px;font-style:italic;color:#fff;">🇬🇷 Atenas nos espera</div>
+  <div id="clock">--:--:-- ATH</div>
+  <div class="term">Terminal Amor · Puerta Island Resort Athens Riviera</div>
+  <div class="fdates">3 — 6 OCT 2026</div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+// ================= CONFIG =================
+// Pega aquí la URL de tu Web App de Apps Script (Implementar > Nueva implementación > Aplicación web).
+// Recuerda: cada vez que edites el Code.gs debes crear una "Nueva versión" al reimplementar,
+// o los cambios no se reflejarán aunque la URL sea la misma.
+const APPS_SCRIPT_URL = "PEGA_AQUI_TU_URL_DE_APPS_SCRIPT";
+
+// ---------- Split-flap helper ----------
+function buildFlap(container, ch){
+  const d = document.createElement('div');
+  d.className = 'flap';
+  d.textContent = ch === ' ' ? '' : ch;
+  container.appendChild(d);
+  return d;
+}
+
+function flipTo(el, target, delay){
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  let iterations = 0;
+  const maxIter = 6 + Math.floor(Math.random()*5);
+  setTimeout(()=>{
+    const timer = setInterval(()=>{
+      el.classList.add('flipping');
+      if(iterations < maxIter){
+        el.textContent = chars[Math.floor(Math.random()*chars.length)];
+      } else {
+        el.textContent = target === ' ' ? '' : target;
+        clearInterval(timer);
+      }
+      iterations++;
+    }, 65);
+  }, delay);
+}
+
+function buildFlapboard(){
+  const board = document.getElementById('flapboard');
+  const text = "ATENAS";
+  const flaps = [];
+  for(const ch of text){
+    flaps.push(buildFlap(board, ' '));
+  }
+  flaps.forEach((f, i)=> flipTo(f, text[i], i*90 + 300));
+}
+buildFlapboard();
+
+// ---------- Hero video fallback ----------
+(function(){
+  const video = document.getElementById('hero-video');
+  if(!video) return;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(reduceMotion){
+    video.pause();
+    video.style.display = 'none';
+    return;
+  }
+  video.addEventListener('error', ()=>{ video.style.display = 'none'; });
+})();
+
+// ---------- Stars ----------
+(function(){
+  const wrap = document.getElementById('stars');
+  const n = window.innerWidth < 640 ? 35 : 70;
+  for(let i=0;i<n;i++){
+    const s = document.createElement('span');
+    s.style.left = Math.random()*100 + '%';
+    s.style.top = Math.random()*100 + '%';
+    s.style.animationDelay = (Math.random()*3.5) + 's';
+    wrap.appendChild(s);
+  }
+})();
+
+// ---------- Scroll progress + plane ----------
+const plane = document.getElementById('plane');
+const runway = document.getElementById('runway');
+let lastY = window.scrollY;
+
+function onScroll(){
+  const scrollY = window.scrollY;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = maxScroll > 0 ? Math.min(1, scrollY / maxScroll) : 0;
+
+  runway.style.width = (pct*100) + '%';
+
+  const trackHeight = window.innerHeight - 140;
+  plane.style.top = (60 + pct*trackHeight) + 'px';
+
+  if(scrollY > lastY + 1){
+    plane.classList.remove('banking'); // descending, nose down
+  } else if(scrollY < lastY - 1){
+    plane.classList.add('banking'); // climbing back, banks 90°
+  }
+  lastY = scrollY;
+}
+window.addEventListener('scroll', onScroll, {passive:true});
+onScroll();
+
+// ---------- Reveal on scroll ----------
+const revealEls = document.querySelectorAll('.reveal');
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+}, {threshold:0.15});
+revealEls.forEach(el=> io.observe(el));
+
+// ---------- Boarding pass live preview ----------
+const inName = document.getElementById('in-name');
+const inId = document.getElementById('in-id');
+const bpName = document.getElementById('bp-name');
+const bpId = document.getElementById('bp-id');
+const bpCount = document.getElementById('bp-count');
+const checks = document.querySelectorAll('.in-activity');
+
+const inOrigin = document.getElementById('in-origin');
+const originOtherField = document.getElementById('origin-other-field');
+const inOriginOther = document.getElementById('in-origin-other');
+const bpFrom = document.getElementById('bp-from');
+
+const hasCompanion = document.getElementById('has-companion');
+const companionFields = document.getElementById('companion-fields');
+const inName2 = document.getElementById('in-name2');
+const inId2 = document.getElementById('in-id2');
+const bpPassengers = document.getElementById('bp-passengers');
+
+// Pequeño destello ámbar cada vez que un valor del pase cambia — le da vida al pase dinámico.
+function pulse(el){
+  if(!el) return;
+  el.classList.remove('val-pulse');
+  void el.offsetWidth;
+  el.classList.add('val-pulse');
+}
+
+function currentOriginLabel(){
+  if(inOrigin.value === 'otro'){
+    return inOriginOther.value.trim() || 'Origen';
+  }
+  return inOrigin.value || '';
+}
+
+function currentOriginCode(){
+  if(!inOrigin.value) return 'ORG';
+  const opt = inOrigin.options[inOrigin.selectedIndex];
+  return opt.getAttribute('data-code') || 'ORG';
+}
+
+function updateOrigin(){
+  bpFrom.textContent = currentOriginCode();
+  pulse(bpFrom);
+}
+
+inOrigin.addEventListener('change', ()=>{
+  originOtherField.style.display = inOrigin.value === 'otro' ? 'block' : 'none';
+  updateOrigin();
+});
+inOriginOther.addEventListener('input', updateOrigin);
+
+function pax2El(){ return document.getElementById('bp-pax2'); }
+
+function renderPax2(){
+  const existing = pax2El();
+  if(hasCompanion.checked){
+    if(!existing){
+      const div = document.createElement('div');
+      div.className = 'bp-pax';
+      div.id = 'bp-pax2';
+      div.innerHTML =
+        '<div class="g-label">Pasajero 2</div>' +
+        '<div class="g-val tiny" id="bp-name2">POR CONFIRMAR</div>' +
+        '<div class="g-label" style="margin-top:8px;">Documento</div>' +
+        '<div class="g-val tiny" id="bp-id2">— — —</div>';
+      bpPassengers.appendChild(div);
+      pulse(div);
+    }
+    updatePax2();
+  } else if(existing){
+    existing.remove();
+  }
+}
+
+function updatePax2(){
+  const n2 = document.getElementById('bp-name2');
+  const i2 = document.getElementById('bp-id2');
+  if(n2){ n2.textContent = inName2.value.trim() ? inName2.value.toUpperCase() : 'POR CONFIRMAR'; pulse(n2); }
+  if(i2){ i2.textContent = inId2.value.trim() ? inId2.value.toUpperCase() : '— — —'; pulse(i2); }
+}
+
+hasCompanion.addEventListener('change', ()=>{
+  companionFields.style.display = hasCompanion.checked ? 'block' : 'none';
+  renderPax2();
+});
+inName2.addEventListener('input', updatePax2);
+inId2.addEventListener('input', updatePax2);
+
+inName.addEventListener('input', ()=>{
+  bpName.textContent = inName.value.trim() ? inName.value.toUpperCase() : 'POR CONFIRMAR';
+  pulse(bpName);
+});
+inId.addEventListener('input', ()=>{
+  bpId.textContent = inId.value.trim() ? inId.value.toUpperCase() : '— — —';
+  pulse(bpId);
+});
+checks.forEach(c=> c.addEventListener('change', ()=>{
+  const n = document.querySelectorAll('.in-activity:checked').length;
+  bpCount.textContent = n + (n===1 ? ' seleccionada' : ' seleccionadas');
+  pulse(bpCount);
+}));
+
+// ---------- Barcode ----------
+(function(){
+  const bc = document.getElementById('barcode');
+  for(let i=0;i<28;i++){
+    const b = document.createElement('span');
+    b.style.height = (14 + Math.random()*24) + 'px';
+    b.style.width = (Math.random() > 0.7 ? 3 : 2) + 'px';
+    bc.appendChild(b);
+  }
+})();
+
+// ---------- Submit to Google Sheet via Apps Script + issue final pass ----------
+const ctaBtn = document.getElementById('cta-btn');
+const submitStatus = document.getElementById('submit-status');
+const bpIssued = document.getElementById('bp-issued');
+const bpCode = document.getElementById('bp-code');
+const bpQr = document.getElementById('bp-qr');
+const bpClassTag = document.getElementById('bp-class');
+const bpStamp = document.getElementById('bp-stamp');
+const passActions = document.getElementById('pass-actions');
+const passNote = document.getElementById('pass-note');
+let qrReady = false;
+
+function genCode(){
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  let out = 'JLO-';
+  for(let i=0;i<6;i++) out += chars[Math.floor(Math.random()*chars.length)];
+  return out;
+}
+
+function issuePass(payload){
+  bpCode.textContent = payload.code;
+  bpClassTag.textContent = 'EMITIDO';
+  bpClassTag.classList.add('issued-tag');
+
+  const qrLines = [
+    'PASE DE ABORDAR - JLO WEDDING AIR',
+    'Codigo: ' + payload.code,
+    'Pasajero 1: ' + payload.name1 + ' - Doc: ' + payload.id1
+  ];
+  if(payload.name2){
+    qrLines.push('Pasajero 2: ' + payload.name2 + ' - Doc: ' + payload.id2);
+  }
+  qrLines.push('Origen: ' + payload.origin + ' (' + payload.originCode + ')');
+  qrLines.push('Fecha: 06 OCT 2026 - 17:00 hrs');
+  qrLines.push('Venue: Island Resort Athens Riviera');
+  qrLines.push('Direccion: Athens Riviera, Atenas, Grecia');
+  qrLines.push('Mapa: https://www.google.com/maps/place/Island+Resort+Athens+Riviera/@37.8070704,23.7965238,17z');
+  if(payload.activities.length){
+    qrLines.push('Actividades: ' + payload.activities.join(' | '));
+  }
+  const qrText = qrLines.join('\n');
+
+  qrReady = false;
+  bpQr.classList.remove('show');
+  bpQr.onload = ()=>{ qrReady = true; bpQr.classList.add('show'); };
+  bpQr.onerror = ()=>{ qrReady = false; };
+  bpQr.src = 'https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=' + encodeURIComponent(qrText);
+
+  bpIssued.classList.add('show');
+  passActions.style.display = 'flex';
+  passNote.textContent = 'Pase emitido. Guárdalo o descárgalo para mostrarlo en la entrada del venue.';
+
+  bpStamp.classList.remove('show');
+  void bpStamp.offsetWidth;
+  bpStamp.classList.add('show');
+}
+
+ctaBtn.addEventListener('click', async ()=>{
+  const name1 = inName.value.trim();
+  const id1 = inId.value.trim();
+
+  if(!name1 || !id1){
+    submitStatus.textContent = '⚠️ Completa tu nombre y documento antes de enviar.';
+    submitStatus.style.color = '#D98A9C';
+    return;
+  }
+  if(!inOrigin.value || (inOrigin.value === 'otro' && !inOriginOther.value.trim())){
+    submitStatus.textContent = '⚠️ Indica desde qué país viajas.';
+    submitStatus.style.color = '#D98A9C';
+    return;
+  }
+  if(hasCompanion.checked && (!inName2.value.trim() || !inId2.value.trim())){
+    submitStatus.textContent = '⚠️ Completa también el nombre y documento de tu acompañante.';
+    submitStatus.style.color = '#D98A9C';
+    return;
+  }
+
+  const activities = Array.from(document.querySelectorAll('.in-activity:checked'))
+    .map(c => c.closest('.check-row').querySelector('.ct-title').textContent.trim());
+
+  const payload = {
+    code: genCode(),
+    name1: name1,
+    id1: id1,
+    origin: currentOriginLabel(),
+    originCode: currentOriginCode(),
+    name2: hasCompanion.checked ? inName2.value.trim() : '',
+    id2: hasCompanion.checked ? inId2.value.trim() : '',
+    activities: activities
+  };
+
+  ctaBtn.disabled = true;
+  ctaBtn.textContent = 'Enviando…';
+  submitStatus.style.color = '#7690A9';
+  submitStatus.textContent = 'Enviando tus datos…';
+
+  try{
+    if(APPS_SCRIPT_URL && APPS_SCRIPT_URL.indexOf('PEGA_AQUI') === -1){
+      // no-cors: Apps Script no envía cabeceras CORS, así que no podemos leer la
+      // respuesta, pero la solicitud sí llega y el doPost() se ejecuta igual.
+      await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+      });
+    }
+    issuePass(payload);
+    submitStatus.textContent = '✅ ¡Listo! Tu pase fue confirmado y enviado.';
+    submitStatus.style.color = '#F2B84C';
+  }catch(err){
+    submitStatus.textContent = '⚠️ No pudimos enviar los datos. Verifica tu conexión e inténtalo de nuevo.';
+    submitStatus.style.color = '#D98A9C';
+  }finally{
+    ctaBtn.disabled = false;
+    ctaBtn.textContent = '✨ Confirmar y enviar';
+  }
+});
+
+document.getElementById('download-btn').addEventListener('click', ()=>{
+  const passEl = document.querySelector('.boarding-pass');
+  const doCapture = ()=>{
+    html2canvas(passEl, {backgroundColor:'#FBF6EC', scale:2, useCORS:true, allowTaint:false}).then(canvas=>{
+      const link = document.createElement('a');
+      link.download = 'pase-abordar-boda-atenas.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    });
+  };
+  if(bpQr.getAttribute('src') && !qrReady){
+    submitStatus.textContent = 'Cargando el QR, un segundo…';
+    submitStatus.style.color = '#7690A9';
+    const waitForQr = setInterval(()=>{
+      if(qrReady){ clearInterval(waitForQr); doCapture(); }
+    }, 150);
+    setTimeout(()=> clearInterval(waitForQr), 5000);
+  } else {
+    doCapture();
+  }
+});
+
+// ---------- CTA flap-text hover ----------
+(function(){
+  const btn = document.getElementById('cta-btn');
+  const original = btn.textContent;
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let hovering = false;
+  btn.addEventListener('mouseenter', ()=>{
+    hovering = true;
+    let frame = 0;
+    const totalFrames = 10;
+    const iv = setInterval(()=>{
+      if(!hovering && frame > totalFrames){ clearInterval(iv); btn.textContent = original; return; }
+      frame++;
+      if(frame >= totalFrames){ btn.textContent = original; clearInterval(iv); return; }
+      btn.textContent = original.split('').map(c=>{
+        if(c === ' ') return ' ';
+        return Math.random() > 0.55 ? chars[Math.floor(Math.random()*chars.length)] : c;
+      }).join('');
+    }, 45);
+  });
+  btn.addEventListener('mouseleave', ()=>{ hovering = false; btn.textContent = original; });
+})();
+
+// ---------- Countdown to boarding (visitor's local time, JS Date handles the conversion) ----------
+(function(){
+  const WEDDING_BOARDING = new Date("2026-10-06T17:00:00+03:00"); // Atenas, hora de embarque
+
+  function makeDigitGroup(containerId, digitCount){
+    const el = document.getElementById(containerId);
+    const tiles = [];
+    for(let i=0;i<digitCount;i++){
+      const t = document.createElement('div');
+      t.className = 'cd-flap';
+      t.textContent = '0';
+      el.appendChild(t);
+      tiles.push(t);
+    }
+    return tiles;
+  }
+
+  const dayTiles = makeDigitGroup('cd-days', 2);
+  const hourTiles = makeDigitGroup('cd-hours', 2);
+  const minTiles = makeDigitGroup('cd-mins', 2);
+  const secTiles = makeDigitGroup('cd-secs', 2);
+
+  function setGroup(tiles, value, digits){
+    const str = String(Math.max(0, value)).padStart(digits, '0');
+    str.split('').forEach((ch, idx)=>{
+      const tile = tiles[idx];
+      if(tile.textContent !== ch){
+        tile.textContent = ch;
+        tile.classList.remove('flipping');
+        void tile.offsetWidth; // reflow para reiniciar la animación
+        tile.classList.add('flipping');
+      }
+    });
+  }
+
+  const countdownEl = document.getElementById('countdown');
+  const arrivedEl = document.getElementById('cd-arrived');
+
+  function tick(){
+    const now = new Date();
+    const diff = WEDDING_BOARDING - now;
+
+    if(diff <= 0){
+      countdownEl.style.display = 'none';
+      arrivedEl.style.display = 'block';
+      return;
+    }
+
+    const days = Math.floor(diff / (1000*60*60*24));
+    const hours = Math.floor((diff / (1000*60*60)) % 24);
+    const mins = Math.floor((diff / (1000*60)) % 60);
+    const secs = Math.floor((diff / 1000) % 60);
+
+    setGroup(dayTiles, days, 2);
+    setGroup(hourTiles, hours, 2);
+    setGroup(minTiles, mins, 2);
+    setGroup(secTiles, secs, 2);
+  }
+
+  tick();
+  setInterval(tick, 1000);
+
+  const tzEl = document.getElementById('cd-tz');
+  try{
+    tzEl.textContent = Intl.DateTimeFormat().resolvedOptions().timeZone || 'tu zona horaria';
+  }catch(e){
+    tzEl.textContent = 'tu zona horaria';
+  }
+})();
+
+// ---------- Athens live clock ----------
+function updateClock(){
+  const el = document.getElementById('clock');
+  const now = new Date();
+  const opts = { timeZone:'Europe/Athens', hour:'2-digit', minute:'2-digit', second:'2-digit', hour12:false };
+  el.textContent = new Intl.DateTimeFormat('es-CR', opts).format(now) + ' ATH';
+}
+updateClock();
+setInterval(updateClock, 1000);
+</script>
+
+</body>
+</html>
