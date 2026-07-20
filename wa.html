@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Euro Lab Group · Consola de Mensajería IA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --porcelain:#F7F4EE;
+    --paper:#FFFFFF;
+    --navy:#0B2A4A;
+    --navy-deep:#081D34;
+    --navy-light:#14406B;
+    --steel:#4A6FA1;
+    --gold:#B68D40;
+    --gold-light:#D9B872;
+    --gold-soft:#F1E4C8;
+    --ink:#1C2430;
+    --muted:#707A89;
+    --sage:#5C8A6E;
+    --sage-bg:#E8F0EA;
+    --terracotta:#C0613A;
+    --terracotta-bg:#F6E7DF;
+    --amber-bg:#F7EEDD;
+    --line:#E4DFD3;
+    --radius:14px;
+    --shadow-soft: 0 1px 2px rgba(11,42,74,0.04), 0 8px 24px -12px rgba(11,42,74,0.12);
+    --shadow-lift: 0 4px 8px rgba(11,42,74,0.06), 0 24px 48px -20px rgba(11,42,74,0.22);
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html, body{ height:100%; }
+  body{
+    font-family:'Inter', sans-serif;
+    background:var(--porcelain);
+    color:var(--ink);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+    overflow:hidden;
+  }
+  .serif{ font-family:'Fraunces', serif; }
+  .mono{ font-family:'IBM Plex Mono', monospace; }
+  button{ font-family:inherit; }
+  ::-webkit-scrollbar{ width:7px; height:7px; }
+  ::-webkit-scrollbar-thumb{ background:#D9D2C2; border-radius:10px; }
+  ::-webkit-scrollbar-track{ background:transparent; }
+
+  /* ===================== APP SHELL ===================== */
+  .app{ display:flex; height:100vh; }
+
+  /* ---- Rail (icon nav) ---- */
+  .rail{
+    width:76px; flex-shrink:0; background:linear-gradient(180deg, var(--navy), var(--navy-deep));
+    display:flex; flex-direction:column; align-items:center; padding:18px 0; gap:6px;
+  }
+  .rail-mark{
+    width:38px; height:38px; border-radius:10px; margin-bottom:14px;
+    background:linear-gradient(135deg, var(--gold-light), var(--gold));
+    display:flex; align-items:center; justify-content:center;
+    font-family:'Fraunces', serif; font-weight:700; font-size:16px; color:var(--navy-deep);
+  }
+  .rail-item{
+    width:52px; height:52px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:4px; color:rgba(234,241,248,0.55); cursor:pointer; position:relative; transition:all .15s;
+  }
+  .rail-item svg{ width:19px; height:19px; }
+  .rail-item span{ font-size:8.5px; font-weight:600; letter-spacing:0.2px; }
+  .rail-item:hover{ color:#fff; background:rgba(255,255,255,0.06); }
+  .rail-item.active{ color:var(--navy-deep); background:var(--gold-light); }
+  .rail-item .rail-dot{ position:absolute; top:6px; right:10px; width:7px; height:7px; border-radius:50%; background:var(--terracotta); border:1.5px solid var(--navy); }
+  .rail-spacer{ flex:1; }
+  .rail-ai{ width:44px; height:44px; border-radius:50%; background:radial-gradient(circle at 30% 30%, var(--gold-light), var(--gold) 75%); margin-bottom:8px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 3px rgba(217,184,114,0.18); }
+  .rail-ai svg{ width:18px; height:18px; color:var(--navy-deep); }
+
+  /* ---- Main column ---- */
+  .main{ flex:1; min-width:0; display:flex; flex-direction:column; }
+
+  .topbar{
+    flex-shrink:0; display:flex; align-items:center; gap:16px; padding:14px 24px;
+    border-bottom:1px solid var(--line); background:var(--paper);
+  }
+  .topbar h1{ font-family:'Fraunces', serif; font-size:18px; font-weight:600; color:var(--navy); }
+  .topbar .sub{ font-size:11.5px; color:var(--muted); margin-top:1px; }
+  .chan-status{ display:flex; gap:8px; margin-left:6px; }
+  .chan-pill{ display:flex; align-items:center; gap:5px; font-size:10.5px; font-weight:600; padding:5px 10px; border-radius:20px; border:1px solid var(--line); color:var(--muted); }
+  .chan-pill svg{ width:12px; height:12px; }
+  .chan-pill.on{ color:var(--sage); border-color:var(--sage-bg); background:var(--sage-bg); }
+  .chan-pill .dot{ width:6px; height:6px; border-radius:50%; background:var(--sage); }
+  .topbar-right{ margin-left:auto; display:flex; align-items:center; gap:12px; }
+  .btn-gold{ background:var(--navy); color:#fff; border:none; font-size:12.5px; font-weight:700; padding:9px 16px; border-radius:9px; cursor:pointer; transition:background .15s; display:flex; align-items:center; gap:6px; }
+  .btn-gold:hover{ background:var(--navy-light); }
+  .btn-gold svg{ width:14px; height:14px; }
+  .avatar{ width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--navy-light), var(--navy)); color:var(--gold-light); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:12px; font-weight:600; }
+
+  /* KPI strip */
+  .kpi-strip{ display:flex; gap:0; border-bottom:1px solid var(--line); background:var(--paper); flex-shrink:0; }
+  .kpi-mini{ flex:1; padding:12px 22px; border-right:1px solid var(--line); }
+  .kpi-mini:last-child{ border-right:none; }
+  .kpi-mini .l{ font-size:10.5px; color:var(--muted); margin-bottom:3px; }
+  .kpi-mini .v{ font-family:'Fraunces', serif; font-size:19px; font-weight:600; color:var(--navy); }
+  .kpi-mini .v small{ font-family:'Inter'; font-size:11px; font-weight:700; margin-left:5px; }
+  .kpi-mini .v small.up{ color:var(--sage); }
+  .kpi-mini .v small.warn{ color:var(--terracotta); }
+
+  .view{ flex:1; min-height:0; display:none; }
+  .view.active{ display:flex; flex-direction:column; }
+
+  /* ===================== BANDEJA (INBOX) ===================== */
+  .inbox-layout{ flex:1; min-height:0; display:grid; grid-template-columns:300px 1fr 300px; }
+
+  /* Conversation list */
+  .conv-list{ border-right:1px solid var(--line); display:flex; flex-direction:column; min-height:0; background:var(--paper); }
+  .conv-filters{ display:flex; gap:6px; padding:12px 14px; overflow-x:auto; flex-shrink:0; border-bottom:1px solid var(--line); }
+  .conv-filter{ font-size:11px; font-weight:600; color:var(--muted); padding:6px 11px; border-radius:20px; white-space:nowrap; cursor:pointer; border:1px solid var(--line); }
+  .conv-filter.active{ background:var(--gold-soft); color:var(--gold); border-color:transparent; }
+  .conv-search{ margin:10px 14px 4px; display:flex; align-items:center; gap:7px; background:#FBFAF7; border:1px solid var(--line); border-radius:9px; padding:8px 11px; }
+  .conv-search svg{ width:13px; height:13px; color:var(--muted); flex-shrink:0; }
+  .conv-search input{ border:none; outline:none; background:transparent; font-size:12px; width:100%; }
+  .conv-scroll{ flex:1; overflow-y:auto; padding:6px 8px 14px; }
+  .conv-item{ display:flex; gap:10px; padding:10px; border-radius:11px; cursor:pointer; position:relative; margin-bottom:2px; }
+  .conv-item:hover{ background:#FBFAF7; }
+  .conv-item.active{ background:var(--gold-soft); }
+  .conv-avatar-wrap{ position:relative; flex-shrink:0; }
+  .conv-avatar{ width:38px; height:38px; border-radius:50%; background:#E5ECF3; color:var(--navy); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:600; font-size:13px; }
+  .conv-chan-badge{ position:absolute; bottom:-2px; right:-2px; width:15px; height:15px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:2px solid var(--paper); }
+  .conv-chan-badge svg{ width:8px; height:8px; }
+  .conv-chan-badge.wa{ background:#25D366; color:#fff; }
+  .conv-chan-badge.ig{ background:linear-gradient(135deg,#F58529,#DD2A7B,#8134AF); color:#fff; }
+  .conv-chan-badge.fb{ background:#1877F2; color:#fff; }
+  .conv-body{ flex:1; min-width:0; }
+  .conv-top-row{ display:flex; justify-content:space-between; align-items:baseline; gap:6px; }
+  .conv-name{ font-size:12.6px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .conv-time{ font-size:9.5px; color:var(--muted); flex-shrink:0; }
+  .conv-snippet{ font-size:11.3px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-top:2px; max-width:190px; }
+  .conv-bottom-row{ display:flex; align-items:center; gap:6px; margin-top:5px; }
+  .stage-chip{ font-size:9px; font-weight:700; letter-spacing:0.2px; padding:2px 7px; border-radius:20px; text-transform:uppercase; }
+  .stage-chip.nuevo{ background:#E5ECF3; color:var(--navy); }
+  .stage-chip.calificando{ background:var(--amber-bg); color:var(--gold); }
+  .stage-chip.caliente{ background:var(--terracotta-bg); color:var(--terracotta); }
+  .stage-chip.cliente{ background:var(--sage-bg); color:var(--sage); }
+  .stage-chip.riesgo{ background:#FBE2E2; color:#B23A3A; }
+  .unread-badge{ margin-left:auto; min-width:17px; height:17px; padding:0 5px; border-radius:20px; background:var(--navy); color:var(--gold-light); font-size:9.5px; font-weight:700; display:flex; align-items:center; justify-content:center; }
+
+  /* Thread */
+  .thread{ display:flex; flex-direction:column; min-height:0; background:#FBFAF7; }
+  .thread-head{ display:flex; align-items:center; gap:11px; padding:13px 20px; border-bottom:1px solid var(--line); background:var(--paper); flex-shrink:0; }
+  .thread-head-name{ font-size:13.5px; font-weight:700; color:var(--ink); }
+  .thread-head-meta{ font-size:11px; color:var(--muted); display:flex; align-items:center; gap:6px; margin-top:1px; }
+  .thread-actions{ margin-left:auto; display:flex; gap:8px; }
+  .icon-btn-sm{ width:32px; height:32px; border-radius:9px; border:1px solid var(--line); background:var(--paper); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--navy); }
+  .icon-btn-sm svg{ width:14px; height:14px; }
+  .thread-scroll{ flex:1; overflow-y:auto; padding:18px 22px; display:flex; flex-direction:column; gap:10px; }
+  .day-sep{ text-align:center; font-size:10px; color:var(--muted); margin:8px 0; }
+  .day-sep span{ background:#EFEAE0; padding:3px 10px; border-radius:20px; }
+  .msg{ max-width:64%; padding:9px 13px; border-radius:12px; font-size:12.6px; line-height:1.55; position:relative; }
+  .msg.in{ background:var(--paper); border:1px solid var(--line); color:var(--ink); align-self:flex-start; border-top-left-radius:3px; }
+  .msg.out{ background:var(--navy); color:#fff; align-self:flex-end; border-top-right-radius:3px; }
+  .msg.out.ai{ background:linear-gradient(120deg, var(--navy), var(--navy-light)); }
+  .msg-meta{ font-size:9.5px; margin-top:4px; display:flex; align-items:center; gap:5px; opacity:0.75; }
+  .msg-tag{ font-size:8.5px; font-weight:700; text-transform:uppercase; letter-spacing:0.3px; padding:1px 6px; border-radius:8px; background:rgba(217,184,114,0.25); color:var(--gold-light); }
+  .msg.in .msg-tag{ background:var(--gold-soft); color:var(--gold); }
+  .system-note{ align-self:center; font-size:10.5px; color:var(--muted); background:#EFEAE0; padding:5px 12px; border-radius:20px; }
+
+  .ai-suggest-bar{ padding:10px 22px; border-top:1px solid var(--line); background:var(--paper); flex-shrink:0; }
+  .ai-suggest-label{ font-size:10px; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:7px; display:flex; align-items:center; gap:5px; }
+  .ai-suggest-row{ display:flex; gap:8px; overflow-x:auto; padding-bottom:2px; }
+  .ai-suggest-chip{ flex-shrink:0; font-size:11.5px; color:var(--navy); background:var(--gold-soft); border:1px solid transparent; padding:7px 12px; border-radius:20px; cursor:pointer; white-space:nowrap; }
+  .ai-suggest-chip:hover{ border-color:var(--gold); }
+
+  .composer{ display:flex; align-items:center; gap:8px; padding:13px 20px; border-top:1px solid var(--line); background:var(--paper); flex-shrink:0; }
+  .composer-tool{ width:34px; height:34px; border-radius:9px; border:1px solid var(--line); background:var(--paper); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--navy); flex-shrink:0; }
+  .composer-tool svg{ width:15px; height:15px; }
+  .composer input{ flex:1; border:1px solid var(--line); border-radius:22px; padding:10px 16px; font-size:12.8px; outline:none; }
+  .composer input:focus{ border-color:var(--gold); }
+  .composer button.send{ width:38px; height:38px; border-radius:50%; border:none; background:var(--navy); color:var(--gold-light); display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .composer button.send svg{ width:15px; height:15px; }
+
+  /* Contact/lead profile panel */
+  .lead-panel{ border-left:1px solid var(--line); background:var(--paper); overflow-y:auto; padding:20px; }
+  .lp-avatar-block{ text-align:center; margin-bottom:14px; }
+  .lp-avatar{ width:60px; height:60px; border-radius:50%; margin:0 auto 10px; background:linear-gradient(135deg, var(--navy-light), var(--navy)); color:var(--gold-light); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:600; font-size:20px; }
+  .lp-name{ font-size:14.5px; font-weight:700; color:var(--ink); }
+  .lp-role{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .lp-score-wrap{ display:flex; justify-content:center; margin:12px 0; }
+  .lp-score{ width:64px; height:64px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+  .lp-score .n{ font-family:'IBM Plex Mono', monospace; font-weight:700; font-size:17px; }
+  .lp-score .l{ font-size:7.5px; text-transform:uppercase; letter-spacing:0.3px; }
+  .lp-score.hot{ background:var(--terracotta-bg); color:var(--terracotta); }
+  .lp-score.warm{ background:var(--amber-bg); color:var(--gold); }
+  .lp-score.cold{ background:#E5ECF3; color:var(--steel); }
+
+  .lp-tags{ display:flex; flex-wrap:wrap; gap:5px; justify-content:center; margin-bottom:16px; }
+  .lp-tag{ font-size:9.5px; font-weight:700; padding:3px 9px; border-radius:20px; background:#EFEAE0; color:var(--navy); }
+
+  .lp-section{ margin-bottom:18px; }
+  .lp-section-title{ font-size:10px; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); font-weight:700; margin-bottom:9px; display:flex; align-items:center; justify-content:space-between; }
+  .lp-field{ display:flex; justify-content:space-between; font-size:12px; padding:6px 0; border-top:1px solid var(--line); }
+  .lp-field:first-child{ border-top:none; }
+  .lp-field span:first-child{ color:var(--muted); }
+  .lp-field span:last-child{ color:var(--ink); font-weight:600; text-align:right; }
+
+  /* Purchase timeline */
+  .p-timeline{ position:relative; padding-left:18px; }
+  .p-timeline::before{ content:""; position:absolute; left:5px; top:4px; bottom:4px; width:1.5px; background:var(--line); }
+  .p-tl-item{ position:relative; padding-bottom:16px; }
+  .p-tl-item:last-child{ padding-bottom:0; }
+  .p-tl-dot{ position:absolute; left:-18px; top:2px; width:11px; height:11px; border-radius:50%; background:var(--paper); border:2.5px solid var(--line); }
+  .p-tl-item.done .p-tl-dot{ border-color:var(--sage); background:var(--sage); }
+  .p-tl-item.current .p-tl-dot{ border-color:var(--gold); background:var(--gold-light); }
+  .p-tl-title{ font-size:11.8px; font-weight:700; color:var(--ink); }
+  .p-tl-meta{ font-size:10.3px; color:var(--muted); margin-top:1px; }
+
+  .lp-next-action{ background:var(--amber-bg); border-radius:10px; padding:11px 13px; font-size:11.5px; color:var(--ink); }
+  .lp-next-action b{ color:var(--gold); display:block; font-size:9.5px; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:4px; }
+
+  /* ===================== PIPELINE (KANBAN CRM) ===================== */
+  .pipeline-view{ flex:1; min-height:0; overflow-x:auto; padding:20px 24px; display:flex; gap:16px; align-items:flex-start; }
+  .pl-col{ width:250px; flex-shrink:0; background:#FBFAF7; border:1px solid var(--line); border-radius:var(--radius); padding:12px; min-height:200px; }
+  .pl-col-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; padding:0 2px; }
+  .pl-col-dot{ width:8px; height:8px; border-radius:50%; flex-shrink:0; }
+  .pl-col-head h4{ font-size:12px; font-weight:700; color:var(--navy); flex:1; }
+  .pl-col-count{ font-size:10.5px; font-family:'IBM Plex Mono', monospace; color:var(--muted); background:#fff; border:1px solid var(--line); padding:1px 7px; border-radius:10px; }
+  .pl-col-value{ font-size:10px; color:var(--muted); margin:-4px 0 10px 2px; }
+  .pl-card{ background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:11px; margin-bottom:9px; box-shadow:var(--shadow-soft); cursor:pointer; transition:transform .15s; }
+  .pl-card:hover{ transform:translateY(-2px); border-color:var(--gold-light); }
+  .pl-card-top{ display:flex; align-items:center; gap:8px; margin-bottom:7px; }
+  .pl-card-avatar{ width:26px; height:26px; border-radius:50%; background:#E5ECF3; color:var(--navy); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:600; font-size:10.5px; flex-shrink:0; }
+  .pl-card-name{ font-size:12px; font-weight:700; color:var(--ink); flex:1; }
+  .pl-card-score{ font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:700; padding:1px 6px; border-radius:8px; }
+  .pl-card-score.hot{ background:var(--terracotta-bg); color:var(--terracotta); }
+  .pl-card-score.warm{ background:var(--amber-bg); color:var(--gold); }
+  .pl-card-score.cold{ background:#E5ECF3; color:var(--steel); }
+  .pl-card-meta{ font-size:10.3px; color:var(--muted); line-height:1.5; }
+  .pl-card-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:8px; }
+  .pl-card-chan{ display:flex; gap:4px; }
+  .pl-card-chan span{ width:16px; height:16px; border-radius:5px; display:flex; align-items:center; justify-content:center; }
+  .pl-card-chan span svg{ width:9px; height:9px; }
+  .pl-card-chan .wa{ background:#DCF3E4; color:#1F8A4C; }
+  .pl-card-chan .ig{ background:#FCE4EC; color:#C2185B; }
+  .pl-card-value{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; font-weight:700; color:var(--navy); }
+
+  /* ===================== AUTOMATIZACIONES (FLOW BUILDER) ===================== */
+  .automations-view{ flex:1; min-height:0; overflow-y:auto; padding:22px 26px; }
+  .auto-grid{ display:grid; grid-template-columns:1.3fr 1fr; gap:18px; align-items:start; }
+  .panel{ background:var(--paper); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow-soft); }
+  .flow-canvas{ padding:22px; }
+  .flow-title{ font-size:12px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.5px; margin-bottom:16px; }
+  .flow-row{ display:flex; align-items:center; gap:0; margin-bottom:6px; flex-wrap:wrap; }
+  .flow-node{ padding:12px 15px; border-radius:11px; font-size:11.8px; font-weight:600; display:flex; align-items:center; gap:9px; min-width:150px; }
+  .flow-node svg{ width:15px; height:15px; flex-shrink:0; }
+  .flow-node.trigger{ background:var(--navy); color:#fff; }
+  .flow-node.condition{ background:var(--amber-bg); color:var(--gold); border:1px dashed var(--gold-light); }
+  .flow-node.action{ background:var(--sage-bg); color:var(--sage); }
+  .flow-node.wait{ background:#E5ECF3; color:var(--steel); }
+  .flow-arrow{ color:var(--line); font-size:18px; padding:0 10px; flex-shrink:0; }
+  .flow-branch{ display:flex; flex-direction:column; gap:10px; margin-left:34px; padding-left:18px; border-left:2px solid var(--line); margin-top:6px; margin-bottom:10px; }
+
+  .auto-list-row{ display:flex; align-items:center; gap:12px; padding:13px 20px; border-top:1px solid var(--line); }
+  .auto-list-row:first-child{ border-top:none; }
+  .auto-icon{ width:32px; height:32px; border-radius:9px; background:var(--gold-soft); color:var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .auto-icon svg{ width:15px; height:15px; }
+  .auto-text{ flex:1; }
+  .auto-text strong{ font-size:12.3px; color:var(--ink); display:block; }
+  .auto-text span{ font-size:10.5px; color:var(--muted); }
+  .switch{ position:relative; width:36px; height:20px; flex-shrink:0; }
+  .switch input{ opacity:0; width:0; height:0; }
+  .switch-track{ position:absolute; inset:0; background:#D8D2C2; border-radius:20px; cursor:pointer; transition:0.2s; }
+  .switch-track::before{ content:""; position:absolute; width:14px; height:14px; left:3px; top:3px; background:#fff; border-radius:50%; transition:0.2s; }
+  .switch input:checked + .switch-track{ background:var(--sage); }
+  .switch input:checked + .switch-track::before{ transform:translateX(16px); }
+
+  /* ===================== DIFUSIONES (BROADCASTS) ===================== */
+  .broadcast-view{ flex:1; min-height:0; overflow-y:auto; padding:22px 26px; }
+  .bc-grid{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px; }
+  .bc-card{ padding:0; overflow:hidden; }
+  .bc-top{ padding:14px 16px; background:linear-gradient(120deg, var(--navy), var(--navy-light)); color:#fff; display:flex; justify-content:space-between; align-items:flex-start; gap:8px; }
+  .bc-kind{ font-size:9px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; padding:3px 8px; border-radius:20px; background:rgba(217,184,114,0.22); color:var(--gold-light); }
+  .bc-body{ padding:14px 16px; }
+  .bc-body h4{ font-size:13px; font-weight:700; color:var(--navy); margin-bottom:6px; }
+  .bc-body p{ font-size:11.5px; color:var(--muted); line-height:1.5; margin-bottom:10px; }
+  .bc-stats{ display:flex; gap:14px; }
+  .bc-stat{ flex:1; }
+  .bc-stat .l{ font-size:9.5px; color:var(--muted); text-transform:uppercase; }
+  .bc-stat .v{ font-family:'IBM Plex Mono', monospace; font-size:13px; font-weight:700; color:var(--navy); }
+
+  /* ===================== CONTACTOS (TABLE) ===================== */
+  .contacts-view{ flex:1; min-height:0; overflow-y:auto; padding:22px 26px; }
+  .table-card{ padding:0; overflow:hidden; }
+  table{ width:100%; border-collapse:collapse; }
+  thead th{ text-align:left; font-size:10.3px; letter-spacing:0.6px; text-transform:uppercase; color:var(--muted); padding:12px 18px; border-bottom:1px solid var(--line); font-weight:700; background:#FBFAF7; }
+  tbody td{ padding:12px 18px; border-bottom:1px solid var(--line); font-size:12.6px; vertical-align:middle; }
+  tbody tr:last-child td{ border-bottom:none; }
+  tbody tr:hover{ background:#FCFBF8; }
+  .ct-name-cell{ display:flex; align-items:center; gap:10px; }
+  .ct-avatar{ width:30px; height:30px; border-radius:50%; background:#E5ECF3; color:var(--navy); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-weight:600; font-size:11px; flex-shrink:0; }
+  .ct-name{ font-weight:700; color:var(--navy); }
+  .ct-meta{ font-size:10.5px; color:var(--muted); margin-top:1px; }
+
+  /* Modal (new broadcast) */
+  .modal-overlay{ position:fixed; inset:0; background:rgba(8,29,52,0.55); backdrop-filter:blur(3px); display:none; align-items:flex-start; justify-content:center; z-index:100; padding:40px 20px; overflow-y:auto; }
+  .modal-overlay.open{ display:flex; }
+  .modal-box{ background:var(--paper); border-radius:18px; width:100%; max-width:640px; box-shadow:var(--shadow-lift); overflow:hidden; }
+  .modal-head{ padding:18px 24px; background:linear-gradient(120deg, var(--navy), var(--navy-light)); color:#fff; display:flex; justify-content:space-between; align-items:center; }
+  .modal-head h3{ font-family:'Fraunces', serif; font-size:17px; font-weight:600; }
+  .modal-head p{ font-size:11px; color:rgba(255,255,255,0.65); margin-top:3px; }
+  .modal-close{ width:30px; height:30px; border-radius:9px; border:1px solid rgba(255,255,255,0.25); background:rgba(255,255,255,0.08); color:#fff; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0; }
+  .modal-close svg{ width:13px; height:13px; }
+  .modal-body{ padding:20px 24px; max-height:60vh; overflow-y:auto; }
+  .field-grid{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .field{ display:flex; flex-direction:column; gap:5px; margin-bottom:12px; }
+  .field.full{ grid-column:1/-1; }
+  .field label{ font-size:10.5px; font-weight:700; color:var(--navy); text-transform:uppercase; letter-spacing:0.3px; }
+  .field input, .field select, .field textarea{ border:1px solid var(--line); border-radius:9px; padding:9px 12px; font-size:12.5px; font-family:inherit; outline:none; }
+  .field input:focus, .field select:focus, .field textarea:focus{ border-color:var(--gold); }
+  .field textarea{ resize:vertical; min-height:70px; }
+  .modal-foot{ display:flex; justify-content:space-between; padding:15px 24px; border-top:1px solid var(--line); }
+  .btn-ghost{ background:none; border:1px solid var(--line); color:var(--navy); font-size:12px; font-weight:600; padding:9px 16px; border-radius:9px; cursor:pointer; }
+
+  @media (max-width:1200px){
+    .inbox-layout{ grid-template-columns:270px 1fr; }
+    .lead-panel{ display:none; }
+    .bc-grid{ grid-template-columns:1fr 1fr; }
+  }
+  @media (max-width:900px){
+    .rail{ width:60px; }
+    .rail-item span{ display:none; }
+    .kpi-strip{ overflow-x:auto; }
+    .inbox-layout{ grid-template-columns:1fr; }
+    .conv-list{ display:none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ICON RAIL -->
+  <aside class="rail">
+    <div class="rail-mark">EL</div>
+    <div class="rail-item active" data-view="bandeja"><span class="rail-dot"></span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg>
+      <span>Bandeja</span>
+    </div>
+    <div class="rail-item" data-view="pipeline">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h18v4l-7 7v6l-4 2v-8L3 7Z"/></svg>
+      <span>Pipeline</span>
+    </div>
+    <div class="rail-item" data-view="automatizaciones">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.3 6h7.4M18 8.5V15.5M8.3 7.5 15.7 16.5"/></svg>
+      <span>Flujos</span>
+    </div>
+    <div class="rail-item" data-view="difusiones">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11v2a1 1 0 0 0 1 1h3l4 4V6L7 10H4a1 1 0 0 0-1 1Z"/><path d="M16 8a4 4 0 0 1 0 8M19 5a8 8 0 0 1 0 14"/></svg>
+      <span>Difusión</span>
+    </div>
+    <div class="rail-item" data-view="contactos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/><path d="M16.5 4.3a3.5 3.5 0 0 1 0 6.9M20 20c0-3-2-5.5-4.5-6.2"/></svg>
+      <span>Contactos</span>
+    </div>
+    <div class="rail-spacer"></div>
+    <div class="rail-ai" title="Motor de IA activo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg></div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <div class="topbar">
+      <div>
+        <h1 id="viewTitle">Bandeja de entrada</h1>
+        <div class="sub" id="viewSub">Todos los canales conectados en un solo lugar</div>
+      </div>
+      <div class="chan-status">
+        <div class="chan-pill on"><span class="dot"></span> WhatsApp</div>
+        <div class="chan-pill on"><span class="dot"></span> Instagram</div>
+        <div class="chan-pill on"><span class="dot"></span> Facebook</div>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-gold" onclick="openModal('bcModal')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 8a4 4 0 0 1 0 8M19 5a8 8 0 0 1 0 14M3 11v2a1 1 0 0 0 1 1h3l4 4V6L7 10H4a1 1 0 0 0-1 1Z"/></svg>
+          Nueva difusión
+        </button>
+        <div class="avatar">MV</div>
+      </div>
+    </div>
+
+    <div class="kpi-strip">
+      <div class="kpi-mini"><div class="l">Conversaciones abiertas</div><div class="v">38 <small class="warn">7 sin responder</small></div></div>
+      <div class="kpi-mini"><div class="l">Resolución automática IA</div><div class="v">89% <small class="up">↑ 4pp</small></div></div>
+      <div class="kpi-mini"><div class="l">Tiempo de respuesta</div><div class="v">46s <small class="up">↓ 12s</small></div></div>
+      <div class="kpi-mini"><div class="l">Leads calificados hoy</div><div class="v">9 <small class="up">+3</small></div></div>
+      <div class="kpi-mini"><div class="l">Cobros recuperados (mes)</div><div class="v">$8,140 <small class="up">↑ 22%</small></div></div>
+    </div>
+
+    <!-- ===================== BANDEJA ===================== -->
+    <section class="view active" id="view-bandeja">
+      <div class="inbox-layout">
+
+        <!-- Conversation list -->
+        <div class="conv-list">
+          <div class="conv-filters">
+            <div class="conv-filter active" onclick="filterConv(this)">Todos</div>
+            <div class="conv-filter" onclick="filterConv(this)">WhatsApp</div>
+            <div class="conv-filter" onclick="filterConv(this)">Instagram</div>
+            <div class="conv-filter" onclick="filterConv(this)">Sin responder</div>
+            <div class="conv-filter" onclick="filterConv(this)">Cobranza</div>
+          </div>
+          <div class="conv-search">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+            <input type="text" placeholder="Buscar contacto o clínica…">
+          </div>
+          <div class="conv-scroll" id="convScroll">
+
+            <div class="conv-item active" onclick="openConv(this,'dermavida')">
+              <div class="conv-avatar-wrap"><div class="conv-avatar">DV</div><div class="conv-chan-badge wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg></div></div>
+              <div class="conv-body">
+                <div class="conv-top-row"><div class="conv-name">Dermavida Estética</div><div class="conv-time">9:41</div></div>
+                <div class="conv-snippet">Sí, y de una vez recuérdame cuánto debo.</div>
+                <div class="conv-bottom-row"><span class="stage-chip riesgo">En riesgo</span><span class="unread-badge">2</span></div>
+              </div>
+            </div>
+
+            <div class="conv-item" onclick="openConv(this,'vitalis')">
+              <div class="conv-avatar-wrap"><div class="conv-avatar">VS</div><div class="conv-chan-badge ig"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="5"/></svg></div></div>
+              <div class="conv-body">
+                <div class="conv-top-row"><div class="conv-name">Vitalis Skin Clinic</div><div class="conv-time">9:12</div></div>
+                <div class="conv-snippet">¿Nos pueden compartir el catálogo y precios?</div>
+                <div class="conv-bottom-row"><span class="stage-chip caliente">Caliente · lead</span><span class="unread-badge">1</span></div>
+              </div>
+            </div>
+
+            <div class="conv-item" onclick="openConv(this,'bellevue')">
+              <div class="conv-avatar-wrap"><div class="conv-avatar">CB</div><div class="conv-chan-badge wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg></div></div>
+              <div class="conv-body">
+                <div class="conv-top-row"><div class="conv-name">Clínica Bellevue</div><div class="conv-time">Ayer</div></div>
+                <div class="conv-snippet">Perfecto, confirmamos el pedido de 4 Xeomin.</div>
+                <div class="conv-bottom-row"><span class="stage-chip cliente">Cliente VIP</span></div>
+              </div>
+            </div>
+
+            <div class="conv-item" onclick="openConv(this,'renova')">
+              <div class="conv-avatar-wrap"><div class="conv-avatar">RM</div><div class="conv-chan-badge ig"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="5"/></svg></div></div>
+              <div class="conv-body">
+                <div class="conv-top-row"><div class="conv-name">Renova Med Spa</div><div class="conv-time">Ayer</div></div>
+                <div class="conv-snippet">Genial, cuéntenme sobre el kit de bienvenida.</div>
+                <div class="conv-bottom-row"><span class="stage-chip calificando">Calificando</span></div>
+              </div>
+            </div>
+
+            <div class="conv-item" onclick="openConv(this,'aurea')">
+              <div class="conv-avatar-wrap"><div class="conv-avatar">CA</div><div class="conv-chan-badge wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg></div></div>
+              <div class="conv-body">
+                <div class="conv-top-row"><div class="conv-name">Centro Aurea</div><div class="conv-time">Lun</div></div>
+                <div class="conv-snippet">Pago confirmado, gracias por la gestión 🙌</div>
+                <div class="conv-bottom-row"><span class="stage-chip cliente">Cliente activo</span></div>
+              </div>
+            </div>
+
+            <div class="conv-item" onclick="openConv(this,'bruma')">
+              <div class="conv-avatar-wrap"><div class="conv-avatar">BE</div><div class="conv-chan-badge ig"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="5"/></svg></div></div>
+              <div class="conv-body">
+                <div class="conv-top-row"><div class="conv-name">Bruma Estética</div><div class="conv-time">Lun</div></div>
+                <div class="conv-snippet">¿Manejan Belotero también?</div>
+                <div class="conv-bottom-row"><span class="stage-chip nuevo">Nuevo lead</span></div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Thread -->
+        <div class="thread">
+          <div class="thread-head">
+            <div class="conv-avatar" style="width:34px;height:34px;font-size:12px;">DV</div>
+            <div>
+              <div class="thread-head-name">Dermavida Estética</div>
+              <div class="thread-head-meta"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg> WhatsApp Business · +506 8888-1122</div>
+            </div>
+            <div class="thread-actions">
+              <div class="icon-btn-sm" title="Ver perfil"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg></div>
+              <div class="icon-btn-sm" title="Asignar agente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div>
+              <div class="icon-btn-sm" title="Marcar como resuelto"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg></div>
+            </div>
+          </div>
+
+          <div class="thread-scroll" id="threadScroll">
+            <div class="day-sep"><span>Hoy</span></div>
+            <div class="msg in">Hola, soy de Dermavida Estética. ¿Tienen disponible Belotero Balance para esta semana?</div>
+            <div class="msg out ai">¡Hola! Sí, tenemos 14 unidades disponibles del lote L-3309 (vence 29 jun). ¿Deseas que prepare un pedido con tu cantidad habitual de 6 unidades?
+              <div class="msg-meta"><span class="msg-tag">IA</span> 9:38 · respondido en 12s</div>
+            </div>
+            <div class="msg in">Sí, y de una vez recuérdame cuánto debo.
+              <div class="msg-meta">9:40</div>
+            </div>
+            <div class="msg out ai">Tienes la factura #F-9920 por $1,420 vencida desde el 15 de junio. Te comparto el link de pago: pay.eurolab.cr/F-9920. ¿Prefieres transferencia bancaria en su lugar?
+              <div class="msg-meta"><span class="msg-tag">Cobranza IA</span> 9:41 · vinculado a factura #F-9920</div>
+            </div>
+            <div class="system-note">La IA etiquetó esta conversación como "En riesgo" por caída de frecuencia de pedido (-40%)</div>
+          </div>
+
+          <div class="ai-suggest-bar">
+            <div class="ai-suggest-label"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg> Respuestas sugeridas por IA</div>
+            <div class="ai-suggest-row">
+              <div class="ai-suggest-chip" onclick="sendSuggested(this)">Confirmar pedido de 6 unidades</div>
+              <div class="ai-suggest-chip" onclick="sendSuggested(this)">Ofrecer 10% si paga hoy</div>
+              <div class="ai-suggest-chip" onclick="sendSuggested(this)">Enviar comprobante de factura</div>
+              <div class="ai-suggest-chip" onclick="sendSuggested(this)">Escalar a asesor humano</div>
+            </div>
+          </div>
+
+          <form class="composer" id="composerForm">
+            <div class="composer-tool" title="Adjuntar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.4 11.1 12.7 19.7a5 5 0 0 1-7-7l8.1-8.1a3.5 3.5 0 0 1 5 5L10.6 17.7a2 2 0 0 1-2.8-2.8l7.4-7.4"/></svg></div>
+            <div class="composer-tool" title="Plantillas/catálogo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg></div>
+            <input type="text" id="composerInput" placeholder="Escribe un mensaje o usa una sugerencia de la IA…" autocomplete="off">
+            <button class="send" type="submit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2 11 13M22 2l-7 20-4-9-9-4 20-7Z"/></svg></button>
+          </form>
+        </div>
+
+        <!-- Lead / contact profile -->
+        <div class="lead-panel">
+          <div class="lp-avatar-block">
+            <div class="lp-avatar">DV</div>
+            <div class="lp-name">Dermavida Estética</div>
+            <div class="lp-role">Clínica estética · San José, CR</div>
+          </div>
+          <div class="lp-score-wrap">
+            <div class="lp-score warm"><div class="n">68</div><div class="l">Score IA</div></div>
+          </div>
+          <div class="lp-tags">
+            <span class="lp-tag">En riesgo</span>
+            <span class="lp-tag">Cliente desde 2024</span>
+            <span class="lp-tag">Belotero</span>
+          </div>
+
+          <div class="lp-section">
+            <div class="lp-section-title">Datos de contacto</div>
+            <div class="lp-field"><span>Teléfono</span><span>+506 8888-1122</span></div>
+            <div class="lp-field"><span>Canal preferido</span><span>WhatsApp</span></div>
+            <div class="lp-field"><span>Agente asignado</span><span>Sofía Vindas</span></div>
+            <div class="lp-field"><span>Cliente desde</span><span>Mar 2024</span></div>
+          </div>
+
+          <div class="lp-section">
+            <div class="lp-section-title">Trazabilidad de compra</div>
+            <div class="p-timeline">
+              <div class="p-tl-item done"><div class="p-tl-dot"></div><div class="p-tl-title">Primer contacto</div><div class="p-tl-meta">Instagram DM · 14 mar 2024</div></div>
+              <div class="p-tl-item done"><div class="p-tl-dot"></div><div class="p-tl-title">Calificado por IA</div><div class="p-tl-meta">Score 74 · presupuesto confirmado</div></div>
+              <div class="p-tl-item done"><div class="p-tl-dot"></div><div class="p-tl-title">Primer pedido</div><div class="p-tl-meta">#EL-2210 · $980 · 2 abr 2024</div></div>
+              <div class="p-tl-item done"><div class="p-tl-dot"></div><div class="p-tl-title">Cliente recurrente</div><div class="p-tl-meta">7 pedidos · $11,860 acumulado</div></div>
+              <div class="p-tl-item current"><div class="p-tl-dot"></div><div class="p-tl-title">Alerta de riesgo</div><div class="p-tl-meta">Frecuencia -40% · factura #F-9920 vencida</div></div>
+            </div>
+          </div>
+
+          <div class="lp-section">
+            <div class="lp-section-title">Próxima acción</div>
+            <div class="lp-next-action"><b>Sugerido por IA</b>Ofrecer bono de reactivación (20% off Belotero) y confirmar el pago de la factura #F-9920 antes del viernes.</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== PIPELINE ===================== -->
+    <section class="view" id="view-pipeline">
+      <div class="pipeline-view">
+
+        <div class="pl-col">
+          <div class="pl-col-head"><span class="pl-col-dot" style="background:var(--steel);"></span><h4>Nuevo lead</h4><span class="pl-col-count">14</span></div>
+          <div class="pl-col-value">Valor potencial · $28,400</div>
+          <div class="pl-card">
+            <div class="pl-card-top"><div class="pl-card-avatar">BE</div><div class="pl-card-name">Bruma Estética</div><div class="pl-card-score cold">44</div></div>
+            <div class="pl-card-meta">Instagram · preguntó por Belotero<br>Sin registro sanitario identificado aún</div>
+            <div class="pl-card-foot"><div class="pl-card-chan"><span class="ig"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="5"/></svg></span></div><div class="pl-card-value">Heredia, CR</div></div>
+          </div>
+          <div class="pl-card">
+            <div class="pl-card-top"><div class="pl-card-avatar">CL</div><div class="pl-card-name">Clínica Lumé</div><div class="pl-card-score cold">44</div></div>
+            <div class="pl-card-meta">Google Maps · nuevo registro sanitario<br>Sin proveedor identificado</div>
+            <div class="pl-card-foot"><div class="pl-card-chan"><span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg></span></div><div class="pl-card-value">Cartago, CR</div></div>
+          </div>
+        </div>
+
+        <div class="pl-col">
+          <div class="pl-col-head"><span class="pl-col-dot" style="background:var(--gold);"></span><h4>Contactado</h4><span class="pl-col-count">9</span></div>
+          <div class="pl-col-value">Valor potencial · $19,200</div>
+          <div class="pl-card">
+            <div class="pl-card-top"><div class="pl-card-avatar">DP</div><div class="pl-card-name">Dra. Paula Jiménez</div><div class="pl-card-score warm">71</div></div>
+            <div class="pl-card-meta">LinkedIn · nueva certificación toxina botulínica<br>Mensaje de bienvenida enviado</div>
+            <div class="pl-card-foot"><div class="pl-card-chan"><span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg></span></div><div class="pl-card-value">San José, CR</div></div>
+          </div>
+        </div>
+
+        <div class="pl-col">
+          <div class="pl-col-head"><span class="pl-col-dot" style="background:var(--terracotta);"></span><h4>Calificado</h4><span class="pl-col-count">6</span></div>
+          <div class="pl-col-value">Valor potencial · $14,600</div>
+          <div class="pl-card">
+            <div class="pl-card-top"><div class="pl-card-avatar">VS</div><div class="pl-card-name">Vitalis Skin Clinic</div><div class="pl-card-score hot">92</div></div>
+            <div class="pl-card-meta">Anunció apertura de 2do consultorio<br>Presupuesto y volumen confirmados</div>
+            <div class="pl-card-foot"><div class="pl-card-chan"><span class="ig"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="5"/></svg></span></div><div class="pl-card-value">San José, CR</div></div>
+          </div>
+          <div class="pl-card">
+            <div class="pl-card-top"><div class="pl-card-avatar">RM</div><div class="pl-card-name">Renova Med Spa</div><div class="pl-card-score hot">86</div></div>
+            <div class="pl-card-meta">+180 reseñas nuevas en 60 días<br>Solicitó kit de bienvenida</div>
+            <div class="pl-card-foot"><div class="pl-card-chan"><span class="ig"><svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="18" height="18" rx="5"/></svg></span></div><div class="pl-card-value">Escazú, CR</div></div>
+          </div>
+        </div>
+
+        <div class="pl-col">
+          <div class="pl-col-head"><span class="pl-col-dot" style="background:var(--navy);"></span><h4>Cotización enviada</h4><span class="pl-col-count">4</span></div>
+          <div class="pl-col-value">Valor potencial · $9,850</div>
+          <div class="pl-card">
+            <div class="pl-card-top"><div class="pl-card-avatar">SM</div><div class="pl-card-name">Skin Medical Group</div><div class="pl-card-score hot">81</div></div>
+            <div class="pl-card-meta">Catálogo enviado ayer<br>A la espera de confirmación de compra</div>
+            <div class="pl-card-foot"><div class="pl-card-chan"><span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg></span></div><div class="pl-card-value">San José, CR</div></div>
+          </div>
+        </div>
+
+        <div class="pl-col">
+          <div class="pl-col-head"><span class="pl-col-dot" style="background:var(--sage);"></span><h4>Cliente activo</h4><span class="pl-col-count">27</span></div>
+          <div class="pl-col-value">Valor anual · $186,400</div>
+          <div class="pl-card">
+            <div class="pl-card-top"><div class="pl-card-avatar">CB</div><div class="pl-card-name">Clínica Bellevue</div><div class="pl-card-score hot">95</div></div>
+            <div class="pl-card-meta">Cliente VIP · pedido mensual<br>Última compra hace 2 días</div>
+            <div class="pl-card-foot"><div class="pl-card-chan"><span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg></span></div><div class="pl-card-value">$38,400 / año</div></div>
+          </div>
+          <div class="pl-card">
+            <div class="pl-card-top"><div class="pl-card-avatar">CA</div><div class="pl-card-name">Centro Aurea</div><div class="pl-card-score warm">78</div></div>
+            <div class="pl-card-meta">Pedido quincenal<br>Pago confirmado esta semana</div>
+            <div class="pl-card-foot"><div class="pl-card-chan"><span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg></span></div><div class="pl-card-value">$24,120 / año</div></div>
+          </div>
+        </div>
+
+        <div class="pl-col">
+          <div class="pl-col-head"><span class="pl-col-dot" style="background:#B23A3A;"></span><h4>En riesgo</h4><span class="pl-col-count">3</span></div>
+          <div class="pl-col-value">Valor en riesgo · $21,200</div>
+          <div class="pl-card">
+            <div class="pl-card-top"><div class="pl-card-avatar">DV</div><div class="pl-card-name">Dermavida Estética</div><div class="pl-card-score warm">68</div></div>
+            <div class="pl-card-meta">Frecuencia -40% · factura vencida<br>Bono de reactivación sugerido por IA</div>
+            <div class="pl-card-foot"><div class="pl-card-chan"><span class="wa"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg></span></div><div class="pl-card-value">$11,860 / año</div></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== AUTOMATIZACIONES ===================== -->
+    <section class="view" id="view-automatizaciones">
+      <div class="automations-view">
+        <div class="auto-grid">
+
+          <div class="panel flow-canvas">
+            <div class="flow-title">Flujo activo · Calificación y cobranza en WhatsApp</div>
+
+            <div class="flow-row">
+              <div class="flow-node trigger"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg> Mensaje nuevo recibido</div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-node condition"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l2.5 2.5"/></svg> ¿Contacto existente?</div>
+            </div>
+
+            <div class="flow-branch">
+              <div class="flow-row"><div class="flow-node action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg> Sí → cargar historial y factura</div></div>
+              <div class="flow-row"><div class="flow-node action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg> No → iniciar calificación de lead</div></div>
+            </div>
+
+            <div class="flow-row">
+              <div class="flow-node condition"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg> ¿Tiene factura vencida?</div>
+            </div>
+            <div class="flow-branch">
+              <div class="flow-row"><div class="flow-node action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Sí → enviar link de pago + etiquetar "Cobranza"</div></div>
+              <div class="flow-row"><div class="flow-node action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M7 9h10M7 13h6"/></svg> No → responder con catálogo/stock</div></div>
+            </div>
+
+            <div class="flow-row">
+              <div class="flow-node wait"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg> Esperar 24h sin respuesta</div>
+              <span class="flow-arrow">→</span>
+              <div class="flow-node action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg> Escalar a asesor humano</div>
+            </div>
+          </div>
+
+          <div class="panel" style="padding:0;overflow:hidden;">
+            <div style="padding:16px 20px 4px;font-size:12px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:0.6px;">Automatizaciones activas</div>
+            <div class="auto-list-row">
+              <div class="auto-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2Z"/></svg></div>
+              <div class="auto-text"><strong>Respuesta inmediata a mensaje nuevo</strong><span>Todos los canales · responde en menos de 15s</span></div>
+              <label class="switch"><input type="checkbox" checked><span class="switch-track"></span></label>
+            </div>
+            <div class="auto-list-row">
+              <div class="auto-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+              <div class="auto-text"><strong>Recordatorio de cobro automático</strong><span>3 días antes y al vencer la factura</span></div>
+              <label class="switch"><input type="checkbox" checked><span class="switch-track"></span></label>
+            </div>
+            <div class="auto-list-row">
+              <div class="auto-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+              <div class="auto-text"><strong>Detección de leads en comentarios/DMs</strong><span>Instagram y Facebook · palabras clave del sector</span></div>
+              <label class="switch"><input type="checkbox" checked><span class="switch-track"></span></label>
+            </div>
+            <div class="auto-list-row">
+              <div class="auto-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div>
+              <div class="auto-text"><strong>Escalar si el cliente lo solicita</strong><span>O si el monto de la conversación &gt; $5,000</span></div>
+              <label class="switch"><input type="checkbox" checked><span class="switch-track"></span></label>
+            </div>
+            <div class="auto-list-row">
+              <div class="auto-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+              <div class="auto-text"><strong>Bienvenida a cliente nuevo</strong><span>Kit de bienvenida + estado de cuenta inicial</span></div>
+              <label class="switch"><input type="checkbox"><span class="switch-track"></span></label>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== DIFUSIONES ===================== -->
+    <section class="view" id="view-difusiones">
+      <div class="broadcast-view">
+        <div class="bc-grid">
+          <div class="panel bc-card">
+            <div class="bc-top"><div><div style="font-size:13px;font-weight:700;">Reactivación clínicas en riesgo</div><div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:2px;">WhatsApp · 3 destinatarios</div></div><span class="bc-kind">Enviada</span></div>
+            <div class="bc-body">
+              <p>Bono de reactivación 20% off en Belotero, dirigido a clínicas con frecuencia de pedido -35% o más.</p>
+              <div class="bc-stats">
+                <div class="bc-stat"><div class="l">Abiertos</div><div class="v">100%</div></div>
+                <div class="bc-stat"><div class="l">Respondieron</div><div class="v">67%</div></div>
+                <div class="bc-stat"><div class="l">Convirtieron</div><div class="v">33%</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel bc-card">
+            <div class="bc-top"><div><div style="font-size:13px;font-weight:700;">Bienvenida clientes nuevos</div><div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:2px;">WhatsApp + correo · automática</div></div><span class="bc-kind">Activa</span></div>
+            <div class="bc-body">
+              <p>Se dispara automáticamente al confirmarse el primer pedido de una clínica nueva.</p>
+              <div class="bc-stats">
+                <div class="bc-stat"><div class="l">Enviados (mes)</div><div class="v">6</div></div>
+                <div class="bc-stat"><div class="l">Abiertos</div><div class="v">100%</div></div>
+                <div class="bc-stat"><div class="l">2do pedido</div><div class="v">50%</div></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel bc-card">
+            <div class="bc-top"><div><div style="font-size:13px;font-weight:700;">Lote por vencer · Radiesse</div><div style="font-size:10.5px;color:rgba(255,255,255,0.65);margin-top:2px;">WhatsApp · segmento Platino/Diamante</div></div><span class="bc-kind">Programada</span></div>
+            <div class="bc-body">
+              <p>Se enviará el 24 de junio a las 9:00am a clínicas VIP con oferta "compra 3 lleva 4" sobre el lote L-4417.</p>
+              <div class="bc-stats">
+                <div class="bc-stat"><div class="l">Audiencia</div><div class="v">11</div></div>
+                <div class="bc-stat"><div class="l">Canal</div><div class="v">WA</div></div>
+                <div class="bc-stat"><div class="l">Estado</div><div class="v" style="color:var(--gold);">Pendiente</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel table-card">
+          <table>
+            <thead><tr><th>Campaña</th><th>Canal</th><th>Segmento</th><th>Enviados</th><th>Tasa de respuesta</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr><td><b style="color:var(--navy);">Reactivación clínicas en riesgo</b></td><td>WhatsApp</td><td>Frecuencia -35%</td><td class="mono">3</td><td class="mono">67%</td><td><span class="stage-chip cliente">Enviada</span></td></tr>
+              <tr><td><b style="color:var(--navy);">Bienvenida clientes nuevos</b></td><td>WhatsApp + correo</td><td>Cliente nuevo</td><td class="mono">6</td><td class="mono">100%</td><td><span class="stage-chip cliente">Activa</span></td></tr>
+              <tr><td><b style="color:var(--navy);">Lote por vencer · Radiesse</b></td><td>WhatsApp</td><td>Platino / Diamante</td><td class="mono">11</td><td class="mono">—</td><td><span class="stage-chip calificando">Programada</span></td></tr>
+              <tr><td><b style="color:var(--navy);">Prospección Instagram junio</b></td><td>Instagram DM</td><td>Leads score &gt; 70</td><td class="mono">14</td><td class="mono">43%</td><td><span class="stage-chip cliente">Enviada</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== CONTACTOS ===================== -->
+    <section class="view" id="view-contactos">
+      <div class="contacts-view">
+        <div class="panel table-card">
+          <table>
+            <thead><tr><th>Contacto</th><th>Canal</th><th>Etapa</th><th>Score</th><th>Última interacción</th><th>Valor / año</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><div class="ct-name-cell"><div class="ct-avatar">CB</div><div><div class="ct-name">Clínica Bellevue</div><div class="ct-meta">San José, CR</div></div></div></td>
+                <td>WhatsApp</td>
+                <td><span class="stage-chip cliente">Cliente VIP</span></td>
+                <td class="mono">95</td>
+                <td>Hace 2 días</td>
+                <td class="mono">$38,400</td>
+              </tr>
+              <tr>
+                <td><div class="ct-name-cell"><div class="ct-avatar">CA</div><div><div class="ct-name">Centro Aurea</div><div class="ct-meta">San José, CR</div></div></div></td>
+                <td>WhatsApp</td>
+                <td><span class="stage-chip cliente">Cliente activo</span></td>
+                <td class="mono">78</td>
+                <td>Hace 5 días</td>
+                <td class="mono">$24,120</td>
+              </tr>
+              <tr>
+                <td><div class="ct-name-cell"><div class="ct-avatar">DV</div><div><div class="ct-name">Dermavida Estética</div><div class="ct-meta">San José, CR</div></div></div></td>
+                <td>WhatsApp</td>
+                <td><span class="stage-chip riesgo">En riesgo</span></td>
+                <td class="mono">68</td>
+                <td>Hoy</td>
+                <td class="mono">$11,860</td>
+              </tr>
+              <tr>
+                <td><div class="ct-name-cell"><div class="ct-avatar">VS</div><div><div class="ct-name">Vitalis Skin Clinic</div><div class="ct-meta">San José, CR</div></div></div></td>
+                <td>Instagram</td>
+                <td><span class="stage-chip caliente">Lead calificado</span></td>
+                <td class="mono">92</td>
+                <td>Hace 3 horas</td>
+                <td class="mono">—</td>
+              </tr>
+              <tr>
+                <td><div class="ct-name-cell"><div class="ct-avatar">RM</div><div><div class="ct-name">Renova Med Spa</div><div class="ct-meta">Escazú, CR</div></div></div></td>
+                <td>Instagram</td>
+                <td><span class="stage-chip calificando">Calificando</span></td>
+                <td class="mono">86</td>
+                <td>Ayer</td>
+                <td class="mono">—</td>
+              </tr>
+              <tr>
+                <td><div class="ct-name-cell"><div class="ct-avatar">BE</div><div><div class="ct-name">Bruma Estética</div><div class="ct-meta">Heredia, CR</div></div></div></td>
+                <td>Instagram</td>
+                <td><span class="stage-chip nuevo">Nuevo lead</span></td>
+                <td class="mono">44</td>
+                <td>Lun</td>
+                <td class="mono">—</td>
+              </tr>
+              <tr>
+                <td><div class="ct-name-cell"><div class="ct-avatar">CL</div><div><div class="ct-name">Clínica Lumé</div><div class="ct-meta">Cartago, CR</div></div></div></td>
+                <td>Google / WhatsApp</td>
+                <td><span class="stage-chip nuevo">Nuevo lead</span></td>
+                <td class="mono">44</td>
+                <td>Hace 4 días</td>
+                <td class="mono">—</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<!-- MODAL: New broadcast -->
+<div class="modal-overlay" id="bcModal">
+  <div class="modal-box">
+    <div class="modal-head">
+      <div><h3>Nueva difusión</h3><p>Envía un mensaje segmentado por etapa, canal o etiqueta.</p></div>
+      <div class="modal-close" onclick="closeModal('bcModal')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg></div>
+    </div>
+    <div class="modal-body">
+      <div class="field-grid">
+        <div class="field"><label>Canal</label><select><option>WhatsApp Business</option><option>Instagram DM</option><option>WhatsApp + correo</option></select></div>
+        <div class="field"><label>Segmento</label><select><option selected>En riesgo</option><option>Clientes VIP</option><option>Leads score &gt; 70</option><option>Clientes nuevos</option><option>Todos los contactos</option></select></div>
+        <div class="field full"><label>Mensaje</label><textarea placeholder="Escribe el mensaje de la difusión…">Hola {nombre_clinica}, notamos que no has hecho pedidos en un tiempo. Tenemos un bono de reactivación del 20% en tu próxima compra combinada de Belotero. ¿Te gustaría que te preparemos un pedido?</textarea></div>
+        <div class="field"><label>Envío</label><select><option selected>Ahora</option><option>Programar</option></select></div>
+        <div class="field"><label>Audiencia estimada</label><input type="text" value="3 contactos" readonly></div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn-ghost" onclick="closeModal('bcModal')">Cancelar</button>
+      <button class="btn-gold" onclick="sendBroadcast(this)">Enviar difusión</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ===== View switching =====
+  const titles = {
+    bandeja: ['Bandeja de entrada', 'Todos los canales conectados en un solo lugar'],
+    pipeline: ['Pipeline de leads y clientes', 'Del primer contacto a cliente recurrente, en un tablero'],
+    automatizaciones: ['Automatizaciones', 'Flujos de conversación, calificación y cobranza gestionados por IA'],
+    difusiones: ['Difusiones', 'Campañas segmentadas por etapa, etiqueta o canal'],
+    contactos: ['Contactos', 'Todos los prospectos y clientes con su score y valor de compra']
+  };
+  document.querySelectorAll('.rail-item[data-view]').forEach(item=>{
+    item.addEventListener('click', ()=>{
+      document.querySelectorAll('.rail-item').forEach(i=>i.classList.remove('active'));
+      item.classList.add('active');
+      const v = item.dataset.view;
+      document.querySelectorAll('.view').forEach(sec=>sec.classList.remove('active'));
+      document.getElementById('view-'+v).classList.add('active');
+      document.getElementById('viewTitle').textContent = titles[v][0];
+      document.getElementById('viewSub').textContent = titles[v][1];
+    });
+  });
+
+  // ===== Conversation filters =====
+  function filterConv(chip){
+    document.querySelectorAll('.conv-filter').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+  }
+
+  // ===== Open a conversation (demo swap) =====
+  const convData = {
+    dermavida: {
+      name:'Dermavida Estética', phone:'+506 8888-1122', init:'DV', channelLabel:'WhatsApp Business',
+      msgs:[
+        {t:'Hola, soy de Dermavida Estética. ¿Tienen disponible Belotero Balance para esta semana?', w:'in'},
+        {t:'¡Hola! Sí, tenemos 14 unidades disponibles del lote L-3309 (vence 29 jun). ¿Deseas que prepare un pedido con tu cantidad habitual de 6 unidades?', w:'out ai', tag:'IA', time:'9:38 · respondido en 12s'},
+        {t:'Sí, y de una vez recuérdame cuánto debo.', w:'in', time:'9:40'},
+        {t:'Tienes la factura #F-9920 por $1,420 vencida desde el 15 de junio. Te comparto el link de pago: pay.eurolab.cr/F-9920. ¿Prefieres transferencia bancaria en su lugar?', w:'out ai', tag:'Cobranza IA', time:'9:41 · vinculado a factura #F-9920'}
+      ],
+      note:'La IA etiquetó esta conversación como "En riesgo" por caída de frecuencia de pedido (-40%)'
+    },
+    vitalis: {
+      name:'Vitalis Skin Clinic', phone:'Instagram · @vitalisskin', init:'VS', channelLabel:'Instagram DM',
+      msgs:[
+        {t:'Hola equipo Vitalis, vimos el anuncio de su nuevo consultorio — ¡felicidades! Distribuimos Xeomin, Belotero y equipos Ultherapy con entrega en 24-48h. ¿Les compartimos catálogo y precios de lanzamiento?', w:'out ai', tag:'IA', time:'8:50 · mensaje de prospección'},
+        {t:'¡Hola! Sí por favor, nos interesa mucho.', w:'in', time:'9:05'},
+        {t:'¿Nos pueden compartir el catálogo y precios?', w:'in', time:'9:12'}
+      ],
+      note:'Lead calificado por IA con score 92 · listo para cotización'
+    },
+    bellevue: {
+      name:'Clínica Bellevue', phone:'+506 8777-4433', init:'CB', channelLabel:'WhatsApp Business',
+      msgs:[
+        {t:'Necesitamos reabastecer Xeomin esta semana, ¿cuánto tienen disponible?', w:'in', time:'Ayer, 3:10pm'},
+        {t:'Tenemos 22 unidades del lote L-2291. Por tu volumen mensual califica para 15% de descuento en 10+ unidades. ¿Confirmamos 4 unidades como de costumbre o subimos a 10 para aprovechar el descuento?', w:'out ai', tag:'IA', time:'Ayer, 3:12pm'},
+        {t:'Perfecto, confirmamos el pedido de 4 Xeomin.', w:'in', time:'Ayer, 3:20pm'}
+      ],
+      note:'Cliente VIP · pedido registrado automáticamente en el pipeline de Pedidos'
+    },
+    renova: {
+      name:'Renova Med Spa', phone:'Instagram · @renovamedspa', init:'RM', channelLabel:'Instagram DM',
+      msgs:[
+        {t:'Vi su story sobre Ultherapy, ¿hacen envíos a Guanacaste?', w:'in', time:'Ayer, 11:02am'},
+        {t:'¡Sí! Despachamos a todo el país en 24-48h con cadena de frío garantizada. Como clínica nueva calificas para un kit de bienvenida con 10% off en tu primer pedido combinado.', w:'out ai', tag:'IA', time:'Ayer, 11:05am'},
+        {t:'Genial, cuéntenme sobre el kit de bienvenida.', w:'in', time:'Ayer, 11:20am'}
+      ],
+      note:'Lead calificado por IA con score 86 · cotización en preparación'
+    },
+    aurea: {
+      name:'Centro Aurea', phone:'+506 8666-9911', init:'CA', channelLabel:'WhatsApp Business',
+      msgs:[
+        {t:'Les comparto el comprobante de la transferencia de la factura #F-9918.', w:'in', time:'Lun, 2:14pm'},
+        {t:'¡Recibido! Pago confirmado y aplicado a la factura #F-9918. Gracias por la puntualidad 🙌', w:'out ai', tag:'Cobranza IA', time:'Lun, 2:15pm'},
+        {t:'Pago confirmado, gracias por la gestión 🙌', w:'in', time:'Lun, 2:16pm'}
+      ],
+      note:'Cliente activo · factura #F-9918 marcada como pagada automáticamente'
+    },
+    bruma: {
+      name:'Bruma Estética', phone:'Instagram · @brumaestetica', init:'BE', channelLabel:'Instagram DM',
+      msgs:[
+        {t:'Vi que etiquetaron a un proveedor con quejas de stock, nosotros trabajamos con trazabilidad completa por lote. ¿Les gustaría conocer nuestro catálogo?', w:'out ai', tag:'IA', time:'Lun, 4:40pm'},
+        {t:'¿Manejan Belotero también?', w:'in', time:'Lun, 5:02pm'}
+      ],
+      note:'Nuevo lead detectado por IA en comentarios de Instagram'
+    }
+  };
+
+  function openConv(item, key){
+    document.querySelectorAll('.conv-item').forEach(i=>i.classList.remove('active'));
+    item.classList.add('active');
+    const badge = item.querySelector('.unread-badge');
+    if(badge) badge.remove();
+
+    const d = convData[key];
+    document.querySelector('.thread-head-name').textContent = d.name;
+    document.querySelector('.thread-head-meta').lastChild ? null : null;
+    document.querySelector('.thread-head-meta').innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6.5 2 2 6.5 2 12c0 1.8.5 3.5 1.3 5L2 22l5.2-1.4c1.4.7 3 1.1 4.8 1.1 5.5 0 10-4.5 10-10S17.5 2 12 2Z"/></svg> ' + d.channelLabel + ' · ' + d.phone;
+    document.querySelector('.thread-head .conv-avatar').textContent = d.init;
+
+    const scroll = document.getElementById('threadScroll');
+    scroll.innerHTML = '<div class="day-sep"><span>Hoy</span></div>';
+    d.msgs.forEach(m=>{
+      const div = document.createElement('div');
+      div.className = 'msg ' + m.w;
+      div.innerHTML = m.t + (m.tag ? `<div class="msg-meta"><span class="msg-tag">${m.tag}</span> ${m.time||''}</div>` : (m.time ? `<div class="msg-meta">${m.time}</div>` : ''));
+      scroll.appendChild(div);
+    });
+    if(d.note){
+      const note = document.createElement('div');
+      note.className = 'system-note';
+      note.textContent = d.note;
+      scroll.appendChild(note);
+    }
+    scroll.scrollTop = scroll.scrollHeight;
+
+    // lead panel refresh (name/avatar/initials only, keep rest as illustrative demo)
+    document.querySelector('.lp-avatar').textContent = d.init;
+    document.querySelector('.lp-name').textContent = d.name;
+  }
+
+  // ===== Composer =====
+  const composerForm = document.getElementById('composerForm');
+  const composerInput = document.getElementById('composerInput');
+  function pushOutgoing(text){
+    const scroll = document.getElementById('threadScroll');
+    const div = document.createElement('div');
+    div.className = 'msg out';
+    div.innerHTML = text + '<div class="msg-meta">Ahora · enviado</div>';
+    scroll.appendChild(div);
+    scroll.scrollTop = scroll.scrollHeight;
+  }
+  composerForm.addEventListener('submit', e=>{
+    e.preventDefault();
+    const val = composerInput.value.trim();
+    if(!val) return;
+    pushOutgoing(val);
+    composerInput.value = '';
+  });
+  function sendSuggested(chip){
+    pushOutgoing(chip.textContent);
+  }
+
+  // ===== Modal =====
+  function openModal(id){ document.getElementById(id).classList.add('open'); document.body.style.overflow='hidden'; }
+  function closeModal(id){ document.getElementById(id).classList.remove('open'); document.body.style.overflow=''; }
+  document.querySelectorAll('.modal-overlay').forEach(o=>{
+    o.addEventListener('click', e=>{ if(e.target===o) closeModal(o.id); });
+  });
+  function sendBroadcast(btn){
+    btn.textContent = 'Difusión enviada ✓';
+    setTimeout(()=>{ closeModal('bcModal'); btn.textContent = 'Enviar difusión'; }, 1000);
+  }
+</script>
+
+</body>
+</html>
