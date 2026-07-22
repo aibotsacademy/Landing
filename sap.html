@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Euro Lab Group · Centro de Agentes SAP</title>
+<title>Euro Lab Group · Centro de Mando SAP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -33,8 +33,13 @@
     --amber-bg:#F7EEDD;
     --blue:#4A6FA1;
     --blue-bg:#E5ECF3;
+    --red:#B23A3A;
+    --red-bg:#FBE2E2;
     --radius:14px;
-    --shadow: 0 1px 2px rgba(11,42,74,0.04), 0 8px 24px -12px rgba(11,42,74,0.14);
+    --shadow: 0 1px 2px rgba(11,42,74,0.05), 0 10px 28px -10px rgba(11,42,74,0.16);
+    --shadow-lift: 0 4px 10px rgba(11,42,74,0.06), 0 26px 46px -18px rgba(11,42,74,0.24);
+    --glow-gold: 0 0 0 1px rgba(182,141,64,0.18), 0 0 22px -2px rgba(217,184,114,0.45);
+    --glow-sage: 0 0 0 1px rgba(92,138,110,0.2), 0 0 18px -2px rgba(95,190,134,0.5);
   }
   *{box-sizing:border-box; margin:0; padding:0;}
   html, body{ height:100%; }
@@ -45,173 +50,305 @@
     line-height:1.5;
     -webkit-font-smoothing:antialiased;
     overflow:hidden;
+    position:relative;
   }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--line-soft) 1px, transparent 1px),
+      linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+    background-size:56px 56px;
+    opacity:0.5;
+    pointer-events:none;
+    z-index:0;
+    mask-image: radial-gradient(circle at 30% 0%, black, transparent 72%);
+  }
+  .app{ position:relative; z-index:1; }
+  @keyframes glowPulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(217,184,114,0.35); }
+    50%{ box-shadow:0 0 0 6px rgba(217,184,114,0); }
+  }
+  @keyframes redGlowPulse{
+    0%,100%{ box-shadow:0 0 0 0 rgba(178,58,58,0.4); }
+    50%{ box-shadow:0 0 0 7px rgba(178,58,58,0); }
+  }
+  @keyframes softFloat{ 0%,100%{ transform:translateY(0);} 50%{ transform:translateY(-2px);} }
+  @keyframes scanSweep{ 0%{ transform:translateX(-100%);} 100%{ transform:translateX(220%);} }
+  @keyframes dashFlow{ to{ stroke-dashoffset:-40; } }
+  @keyframes thinkDot{ 0%,60%,100%{ opacity:0.25; } 30%{ opacity:1; } }
   .serif{ font-family:'Fraunces', serif; }
   .mono{ font-family:'IBM Plex Mono', monospace; }
   button{ font-family:inherit; }
   ::-webkit-scrollbar{ width:7px; height:7px; }
-  ::-webkit-scrollbar-thumb{ background:rgba(217,184,114,0.25); border-radius:10px; }
+  ::-webkit-scrollbar-thumb{ background:#D9D2C2; border-radius:10px; }
   ::-webkit-scrollbar-track{ background:transparent; }
 
   .app{ display:flex; height:100vh; }
 
   /* ---- Rail ---- */
-  .rail{ width:78px; flex-shrink:0; background:linear-gradient(180deg, var(--navy), var(--navy-deep)); display:flex; flex-direction:column; align-items:center; padding:18px 0; gap:6px; }
-  .rail-mark{ width:38px; height:38px; border-radius:10px; margin-bottom:16px; background:linear-gradient(135deg, var(--gold-light), var(--gold)); display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-weight:700; font-size:16px; color:var(--navy-deep); }
-  .rail-item{ width:54px; height:54px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; color:rgba(234,241,248,0.55); cursor:pointer; position:relative; transition:all .15s; }
-  .rail-item svg{ width:19px; height:19px; }
-  .rail-item span{ font-size:8px; font-weight:600; letter-spacing:0.2px; text-align:center; }
+  .rail{ width:80px; flex-shrink:0; background:linear-gradient(180deg, var(--navy), var(--navy-deep)); display:flex; flex-direction:column; align-items:center; padding:18px 0; gap:5px; }
+  .rail-mark{ width:38px; height:38px; border-radius:10px; margin-bottom:14px; background:linear-gradient(135deg, var(--gold-light), var(--gold)); display:flex; align-items:center; justify-content:center; font-family:'Fraunces', serif; font-weight:700; font-size:16px; color:var(--navy-deep); }
+  .rail-item{ width:56px; height:52px; border-radius:12px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; color:rgba(234,241,248,0.55); cursor:pointer; position:relative; transition:all .15s; }
+  .rail-item svg{ width:18px; height:18px; }
+  .rail-item span{ font-size:7.6px; font-weight:600; letter-spacing:0.1px; text-align:center; line-height:1.15; }
   .rail-item:hover{ color:#fff; background:rgba(255,255,255,0.08); }
   .rail-item.active{ color:var(--navy-deep); background:var(--gold-light); }
+  .rail-item .rail-badge{ position:absolute; top:2px; right:6px; min-width:14px; height:14px; padding:0 3px; border-radius:20px; background:var(--red); color:#fff; font-size:8px; font-weight:700; display:flex; align-items:center; justify-content:center; }
   .rail-spacer{ flex:1; }
-  .rail-pulse{ width:44px; height:44px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #7CD9A8, #3FA06A 75%); margin-bottom:8px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 4px rgba(95,190,134,0.14); position:relative; }
-  .rail-pulse svg{ width:18px; height:18px; color:#06210F; }
-  .rail-pulse::after{ content:""; position:absolute; inset:-4px; border-radius:50%; border:1.5px solid rgba(95,190,134,0.35); animation:ringPulse 2.4s infinite; }
-  @keyframes ringPulse{ 0%{ transform:scale(0.9); opacity:1;} 100%{ transform:scale(1.35); opacity:0;} }
+  .rail-pulse{ width:42px; height:42px; border-radius:50%; background:radial-gradient(circle at 30% 30%, #8FE0AF, #3FA06A 75%); margin-bottom:6px; display:flex; align-items:center; justify-content:center; box-shadow:0 0 0 4px rgba(95,190,134,0.18), var(--glow-sage); position:relative; animation:softFloat 3.4s ease-in-out infinite; }
+  .rail-pulse svg{ width:17px; height:17px; color:#06210F; }
+  .rail-pulse::after{ content:""; position:absolute; inset:-4px; border-radius:50%; border:1.5px solid rgba(95,190,134,0.4); animation:ringPulse 2.4s infinite; }
+  @keyframes ringPulse{ 0%{ transform:scale(0.9); opacity:1;} 100%{ transform:scale(1.4); opacity:0;} }
+  .rail-caption{ font-size:7px; color:rgba(234,241,248,0.4); text-align:center; letter-spacing:0.3px; }
 
-  /* ---- Main column ---- */
+  /* ---- Main ---- */
   .main{ flex:1; min-width:0; display:flex; flex-direction:column; }
 
-  .topbar{ flex-shrink:0; display:flex; align-items:center; gap:16px; padding:14px 26px; border-bottom:1px solid var(--line-soft); }
-  .topbar h1{ font-family:'Fraunces', serif; font-size:18px; font-weight:600; color:var(--text); }
-  .topbar .sub{ font-size:11px; color:var(--muted); margin-top:1px; }
-  .sap-pill{ display:flex; align-items:center; gap:7px; font-size:11px; font-weight:600; padding:6px 12px; border-radius:20px; border:1px solid var(--line); color:var(--muted); margin-left:6px; }
-  .sap-pill .dot{ width:6px; height:6px; border-radius:50%; background:var(--sage); box-shadow:0 0 0 3px rgba(95,190,134,0.18); }
-  .topbar-right{ margin-left:auto; display:flex; align-items:center; gap:12px; }
-  .autonomy-pill{ display:flex; align-items:center; gap:8px; font-size:11px; font-weight:600; padding:7px 13px; border-radius:20px; background:var(--gold-dim); color:var(--gold); border:1px solid rgba(217,184,114,0.28); }
+  .topbar{ flex-shrink:0; display:flex; align-items:center; gap:14px; padding:13px 24px; border-bottom:1px solid var(--line); }
+  .topbar h1{ font-family:'Fraunces', serif; font-size:18px; font-weight:600; color:var(--navy); }
+  .topbar .sub{ font-size:10.8px; color:var(--muted); margin-top:1px; }
+  .sap-pill{ display:flex; align-items:center; gap:7px; font-size:10.5px; font-weight:600; padding:6px 12px; border-radius:20px; border:1px solid var(--line); color:var(--muted); margin-left:6px; }
+  .sap-pill .dot{ width:6px; height:6px; border-radius:50%; background:var(--sage); box-shadow:0 0 0 3px var(--sage-bg); }
+  .sap-pill b{ color:var(--navy); font-weight:700; }
+  .topbar-right{ margin-left:auto; display:flex; align-items:center; gap:10px; }
+  .autonomy-pill{ display:flex; align-items:center; gap:7px; font-size:10.8px; font-weight:600; padding:7px 12px; border-radius:20px; background:var(--gold-dim); color:var(--gold-deep); border:1px solid rgba(182,141,64,0.3); }
   .autonomy-pill svg{ width:13px; height:13px; }
-  .btn-gold{ background:var(--gold); color:#0A1B2E; border:none; font-size:12.5px; font-weight:700; padding:9px 16px; border-radius:9px; cursor:pointer; transition:filter .15s; display:flex; align-items:center; gap:6px; }
-  .btn-gold:hover{ filter:brightness(1.08); }
+  .bell-btn{ position:relative; width:36px; height:36px; border-radius:9px; border:1px solid var(--line); background:var(--panel); display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--navy); }
+  .bell-btn svg{ width:15px; height:15px; }
+  .bell-badge{ position:absolute; top:-4px; right:-4px; min-width:16px; height:16px; padding:0 3px; border-radius:20px; background:var(--red); color:#fff; font-size:9px; font-weight:700; display:flex; align-items:center; justify-content:center; border:2px solid var(--bg); }
+  .btn-gold{ background:var(--navy); color:#fff; border:none; font-size:12.3px; font-weight:700; padding:9px 15px; border-radius:9px; cursor:pointer; transition:background .15s; display:flex; align-items:center; gap:6px; }
+  .btn-gold:hover{ background:var(--navy-light); }
   .btn-gold svg{ width:14px; height:14px; }
-  .avatar{ width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, #16324F, #0A1B2E); color:var(--gold); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:12px; font-weight:600; border:1px solid var(--line); }
+  .avatar{ width:32px; height:32px; border-radius:50%; background:linear-gradient(135deg, var(--navy-light), var(--navy)); color:var(--gold-light); display:flex; align-items:center; justify-content:center; font-family:'Fraunces',serif; font-size:12px; font-weight:600; }
 
-  /* KPI strip */
-  .kpi-strip{ display:flex; border-bottom:1px solid var(--line-soft); flex-shrink:0; }
-  .kpi-mini{ flex:1; padding:12px 22px; border-right:1px solid var(--line-soft); }
+  /* KPI strip w/ sparklines */
+  .kpi-strip{ display:flex; border-bottom:1px solid var(--line); flex-shrink:0; }
+  .kpi-mini{ flex:1; padding:11px 20px; border-right:1px solid var(--line); position:relative; transition:background .2s ease; }
+  .kpi-mini:hover{ background:var(--panel-alt); }
   .kpi-mini:last-child{ border-right:none; }
-  .kpi-mini .l{ font-size:10.5px; color:var(--muted); margin-bottom:3px; }
-  .kpi-mini .v{ font-family:'Fraunces', serif; font-size:19px; font-weight:600; color:var(--text); }
-  .kpi-mini .v small{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; font-weight:700; margin-left:6px; }
+  .kpi-mini .l{ font-size:10px; color:var(--muted); margin-bottom:3px; }
+  .kpi-mini .v{ font-family:'Fraunces', serif; font-size:18px; font-weight:600; color:var(--navy); }
+  .kpi-mini .v small{ font-family:'IBM Plex Mono', monospace; font-size:10px; font-weight:700; margin-left:5px; }
   .kpi-mini .v small.up{ color:var(--sage); }
   .kpi-mini .v small.warn{ color:var(--terracotta); }
+  .spark{ width:100%; height:20px; margin-top:4px; display:block; }
 
-  .view{ flex:1; min-height:0; display:none; overflow-y:auto; padding:20px 26px; }
+  .view{ flex:1; min-height:0; display:none; overflow-y:auto; padding:18px 24px 40px; }
   .view.active{ display:block; }
 
-  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); }
-  .panel-head{ padding:14px 18px; border-bottom:1px solid var(--line-soft); display:flex; align-items:center; justify-content:space-between; gap:10px; }
-  .panel-title{ font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); display:flex; align-items:center; gap:8px; }
+  .panel{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); box-shadow:var(--shadow); transition:box-shadow .2s ease; }
+  .panel-head{ padding:13px 18px; border-bottom:1px solid var(--line-soft); display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .panel-title{ font-size:10.8px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; color:var(--muted); display:flex; align-items:center; gap:8px; }
   .panel-title svg{ width:14px; height:14px; color:var(--gold); }
+  .tcode{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; font-weight:700; color:var(--gold-deep); background:var(--gold-dim); padding:1px 7px; border-radius:6px; }
 
-  /* =============== VISTA: CENTRO DE AGENTES =============== */
-  .control-grid{ display:grid; grid-template-columns:1.5fr 1fr; gap:18px; align-items:start; }
+  /* =============== HERO: DATA FLOW DIAGRAM =============== */
+  .flow-hero{ padding:24px 26px 28px; margin-bottom:16px; overflow:hidden; position:relative;
+    background:
+      radial-gradient(circle at 8% -20%, rgba(217,184,114,0.16), transparent 55%),
+      radial-gradient(circle at 100% 120%, rgba(74,111,161,0.10), transparent 50%),
+      var(--panel);
+    border:1px solid rgba(182,141,64,0.22);
+    box-shadow: var(--shadow-lift), 0 0 40px -18px rgba(217,184,114,0.35);
+  }
+  .flow-hero::before{
+    content:""; position:absolute; top:0; left:0; height:2px; width:40%;
+    background:linear-gradient(90deg, transparent, var(--gold-light), transparent);
+    animation:scanSweep 3.6s linear infinite;
+  }
+  .flow-hero-head{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:20px; flex-wrap:wrap; gap:10px; }
+  .flow-hero-head h2{ font-family:'Fraunces', serif; font-size:16px; font-weight:600; color:var(--navy); }
+  .flow-hero-head p{ font-size:11px; color:var(--muted); margin-top:2px; max-width:520px; }
+  .flow-diagram{ display:flex; align-items:center; gap:0; overflow-x:auto; padding:6px 2px 2px; }
+  .flow-node2{ flex-shrink:0; width:150px; text-align:center; }
+  .flow-node2-icon{ width:48px; height:48px; border-radius:14px; margin:0 auto 8px; display:flex; align-items:center; justify-content:center; position:relative; transition:transform .2s; }
+  .flow-node2:hover .flow-node2-icon{ transform:translateY(-2px) scale(1.05); }
+  .flow-node2-icon svg{ width:20px; height:20px; }
+  .flow-node2-icon.live{ animation:glowPulse 2.4s ease-in-out infinite; }
+  .flow-node2-title{ font-size:11.5px; font-weight:700; color:var(--navy); }
+  .flow-node2-sub{ font-size:9.3px; color:var(--muted); margin-top:2px; font-family:'IBM Plex Mono', monospace; }
+  .flow-connector{ flex:1; min-width:34px; height:2px; position:relative; background:repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 11px); margin-top:-30px; }
+  .flow-connector .pulse-dot{ position:absolute; top:-3px; width:8px; height:8px; border-radius:50%; background:var(--gold); box-shadow:0 0 10px 2px rgba(182,141,64,0.7); animation:flowMove 3.2s linear infinite; }
+  @keyframes flowMove{ 0%{ left:-4px; opacity:0;} 8%{ opacity:1;} 92%{ opacity:1;} 100%{ left:calc(100% - 4px); opacity:0;} }
 
-  /* Agent trace / terminal log */
+  /* =============== CENTRO DE MANDO =============== */
+  .control-grid{ display:grid; grid-template-columns:1.5fr 1fr; gap:16px; align-items:start; }
+
+  .gauge-row{ display:flex; gap:14px; margin-bottom:16px; }
+  .gauge-card{ flex:1; padding:16px; display:flex; align-items:center; gap:14px; }
+  .gauge-svg{ width:74px; height:74px; flex-shrink:0; }
+  .gauge-text .g-title{ font-size:10.3px; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; margin-bottom:3px; }
+  .gauge-text .g-num{ font-family:'Fraunces', serif; font-size:22px; font-weight:600; color:var(--navy); }
+  .gauge-text .g-sub{ font-size:10.3px; color:var(--sage); font-weight:600; margin-top:2px; }
+  .gauge-text .g-sub.warn{ color:var(--terracotta); }
+
   .trace-panel{ padding:0; overflow:hidden; }
-  .trace-scroll{ max-height:520px; overflow-y:auto; padding:6px 0; }
-  .trace-row{ display:flex; gap:12px; padding:10px 18px; border-bottom:1px solid var(--line-soft); font-size:12px; }
+  .trace-scroll{ max-height:460px; overflow-y:auto; padding:4px 0; }
+  .trace-row{ display:flex; gap:11px; padding:10px 18px; border-bottom:1px solid var(--line-soft); font-size:11.8px; }
   .trace-row:last-child{ border-bottom:none; }
-  .trace-time{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--muted-dim); width:52px; flex-shrink:0; padding-top:1px; }
+  .trace-time{ font-family:'IBM Plex Mono', monospace; font-size:10px; color:var(--muted-dim); width:50px; flex-shrink:0; padding-top:1px; }
   .trace-dot-wrap{ display:flex; flex-direction:column; align-items:center; flex-shrink:0; }
   .trace-dot{ width:9px; height:9px; border-radius:50%; margin-top:3px; }
-  .trace-dot.ok{ background:var(--sage); box-shadow:0 0 0 3px rgba(95,190,134,0.15); }
-  .trace-dot.info{ background:var(--blue); box-shadow:0 0 0 3px rgba(91,155,213,0.15); }
-  .trace-dot.warn{ background:var(--amber); box-shadow:0 0 0 3px rgba(232,184,96,0.15); }
-  .trace-dot.err{ background:var(--terracotta); box-shadow:0 0 0 3px rgba(226,121,90,0.15); }
+  .trace-dot.ok{ background:var(--sage); box-shadow:0 0 0 3px var(--sage-bg); }
+  .trace-dot.info{ background:var(--blue); box-shadow:0 0 0 3px var(--blue-bg); }
+  .trace-dot.warn{ background:var(--amber); box-shadow:0 0 0 3px var(--amber-bg); }
+  .trace-dot.err{ background:var(--terracotta); box-shadow:0 0 0 3px var(--terracotta-bg); }
   .trace-line{ flex:1; width:1.5px; background:var(--line-soft); margin-top:2px; }
   .trace-body{ flex:1; min-width:0; }
-  .trace-agent{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; font-weight:700; letter-spacing:0.3px; color:var(--gold); text-transform:uppercase; margin-bottom:3px; }
-  .trace-text{ color:var(--text); line-height:1.5; }
-  .trace-text b{ color:var(--gold); font-weight:600; }
-  .trace-meta{ font-size:10px; color:var(--muted); margin-top:4px; display:flex; gap:10px; }
-  .conf-chip{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; font-weight:700; padding:1px 7px; border-radius:8px; }
+  .trace-agent{ font-family:'IBM Plex Mono', monospace; font-size:9.3px; font-weight:700; letter-spacing:0.3px; color:var(--gold-deep); text-transform:uppercase; margin-bottom:3px; }
+  .trace-text{ color:var(--text); line-height:1.55; }
+  .trace-text b{ color:var(--navy); font-weight:700; }
+  .trace-text .ref{ font-family:'IBM Plex Mono', monospace; font-size:10.6px; color:var(--gold-deep); background:var(--gold-dim); padding:0 5px; border-radius:5px; }
+  .trace-meta{ font-size:9.8px; color:var(--muted); margin-top:4px; display:flex; gap:8px; flex-wrap:wrap; }
+  .conf-chip{ font-family:'IBM Plex Mono', monospace; font-size:9.3px; font-weight:700; padding:1px 7px; border-radius:8px; }
   .conf-chip.hi{ background:var(--sage-bg); color:var(--sage); }
-  .conf-chip.mid{ background:var(--amber-bg); color:var(--amber); }
+  .conf-chip.mid{ background:var(--amber-bg); color:var(--gold-deep); }
   .conf-chip.low{ background:var(--terracotta-bg); color:var(--terracotta); }
 
-  /* Agent roster */
-  .agent-card{ display:flex; align-items:center; gap:12px; padding:14px 18px; border-bottom:1px solid var(--line-soft); }
+  .agent-card{ display:flex; align-items:center; gap:11px; padding:13px 18px; border-bottom:1px solid var(--line-soft); }
   .agent-card:last-child{ border-bottom:none; }
-  .agent-avatar{ width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .agent-avatar svg{ width:18px; height:18px; }
-  .agent-avatar.ap{ background:var(--gold-dim); color:var(--gold); }
+  .agent-avatar{ width:36px; height:36px; border-radius:11px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .agent-avatar svg{ width:17px; height:17px; }
+  .agent-avatar.ap{ background:var(--gold-dim); color:var(--gold-deep); }
   .agent-avatar.gl{ background:var(--blue-bg); color:var(--blue); }
   .agent-avatar.close{ background:var(--sage-bg); color:var(--sage); }
-  .agent-avatar.recon{ background:var(--terracotta-bg); color:var(--terracotta); }
+  .agent-avatar.audit{ background:var(--terracotta-bg); color:var(--terracotta); }
   .agent-info{ flex:1; min-width:0; }
-  .agent-name{ font-size:12.6px; font-weight:700; color:var(--text); }
-  .agent-desc{ font-size:10.5px; color:var(--muted); margin-top:1px; }
+  .agent-name{ font-size:12.4px; font-weight:700; color:var(--text); }
+  .agent-desc{ font-size:10.2px; color:var(--muted); margin-top:1px; font-family:'IBM Plex Mono', monospace; }
   .agent-stats{ text-align:right; flex-shrink:0; }
-  .agent-stats .n{ font-family:'IBM Plex Mono', monospace; font-size:13px; font-weight:700; color:var(--text); }
-  .agent-stats .l{ font-size:9.5px; color:var(--muted); }
-  .agent-status{ display:inline-flex; align-items:center; gap:5px; font-size:9.5px; font-weight:700; padding:2px 8px; border-radius:20px; margin-top:4px; }
+  .agent-stats .n{ font-family:'IBM Plex Mono', monospace; font-size:12.5px; font-weight:700; color:var(--navy); }
+  .agent-stats .l{ font-size:9.3px; color:var(--muted); }
+  .agent-status{ display:inline-flex; align-items:center; gap:5px; font-size:9.3px; font-weight:700; padding:2px 8px; border-radius:20px; margin-top:4px; }
   .agent-status.on{ background:var(--sage-bg); color:var(--sage); }
-  .agent-status.paused{ background:var(--amber-bg); color:var(--amber); }
+  .agent-status.paused{ background:var(--amber-bg); color:var(--gold-deep); }
 
-  .autonomy-row{ display:flex; align-items:center; gap:12px; padding:12px 18px; border-bottom:1px solid var(--line-soft); }
+  .autonomy-row{ display:flex; align-items:center; gap:12px; padding:11px 18px; border-bottom:1px solid var(--line-soft); }
   .autonomy-row:last-child{ border-bottom:none; }
   .autonomy-row-text{ flex:1; }
-  .autonomy-row-text strong{ font-size:12px; color:var(--text); display:block; }
-  .autonomy-row-text span{ font-size:10.3px; color:var(--muted); }
+  .autonomy-row-text strong{ font-size:11.8px; color:var(--text); display:block; }
+  .autonomy-row-text span{ font-size:10px; color:var(--muted); font-family:'IBM Plex Mono', monospace; }
   .seg-toggle{ display:flex; border:1px solid var(--line); border-radius:8px; overflow:hidden; flex-shrink:0; }
-  .seg-toggle div{ padding:5px 10px; font-size:9.5px; font-weight:700; color:var(--muted); cursor:pointer; }
-  .seg-toggle div.active{ background:var(--gold); color:#0A1B2E; }
+  .seg-toggle div{ padding:5px 10px; font-size:9.3px; font-weight:700; color:var(--muted); cursor:pointer; }
+  .seg-toggle div.active{ background:var(--navy); color:#fff; }
 
-  /* =============== VISTA: FACTURAS PROVEEDORES (pipeline) =============== */
-  .ap-kanban{ display:grid; grid-template-columns:repeat(5,1fr); gap:14px; }
-  .ap-col{ background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); padding:12px; min-height:160px; }
-  .ap-col-head{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  /* =============== KANBAN AP =============== */
+  .ap-kanban{ display:grid; grid-template-columns:repeat(5,1fr); gap:13px; }
+  .ap-col{ background:var(--panel-alt); border:1px solid var(--line); border-radius:var(--radius); padding:11px; min-height:160px; }
+  .ap-col-head{ display:flex; align-items:center; gap:7px; margin-bottom:4px; }
   .ap-col-dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-  .ap-col-head h4{ font-size:11.3px; font-weight:700; color:var(--text); flex:1; }
-  .ap-col-count{ font-size:10px; font-family:'IBM Plex Mono', monospace; color:var(--muted); background:#fff; border:1px solid var(--line); padding:1px 7px; border-radius:10px; }
-  .ap-card{ background:var(--panel-alt); border:1px solid var(--line); border-radius:10px; padding:11px; margin-bottom:9px; cursor:pointer; transition:transform .15s; }
-  .ap-card:hover{ transform:translateY(-2px); border-color:rgba(217,184,114,0.4); }
+  .ap-col-head h4{ font-size:11px; font-weight:700; color:var(--navy); flex:1; }
+  .ap-col-count{ font-size:9.5px; font-family:'IBM Plex Mono', monospace; color:var(--muted); background:#fff; border:1px solid var(--line); padding:1px 7px; border-radius:10px; }
+  .ap-col-tcode{ font-size:9px; font-family:'IBM Plex Mono', monospace; color:var(--gold-deep); margin:0 0 9px 1px; }
+  .ap-card{ background:var(--panel); border:1px solid var(--line); border-radius:10px; padding:10px; margin-bottom:8px; cursor:pointer; transition:transform .15s; }
+  .ap-card:hover{ transform:translateY(-2px); border-color:var(--gold-light); }
   .ap-card-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px; }
-  .ap-card-vendor{ font-size:12px; font-weight:700; color:var(--text); }
-  .ap-card-inv{ font-family:'IBM Plex Mono', monospace; font-size:9.5px; color:var(--muted); margin-top:1px; }
-  .ap-card-amount{ font-family:'IBM Plex Mono', monospace; font-size:11.5px; font-weight:700; color:var(--gold); }
-  .ap-card-meta{ font-size:10.2px; color:var(--muted); line-height:1.5; margin-bottom:7px; }
+  .ap-card-vendor{ font-size:11.6px; font-weight:700; color:var(--text); }
+  .ap-card-inv{ font-family:'IBM Plex Mono', monospace; font-size:9.2px; color:var(--muted); margin-top:1px; }
+  .ap-card-amount{ font-family:'IBM Plex Mono', monospace; font-size:11px; font-weight:700; color:var(--navy); }
+  .ap-card-meta{ font-size:9.8px; color:var(--muted); line-height:1.5; margin-bottom:7px; }
   .ap-card-foot{ display:flex; align-items:center; justify-content:space-between; }
 
-  /* =============== VISTA: ASIENTOS & MAYOR =============== */
-  .gl-layout{ display:grid; grid-template-columns:1.4fr 1fr; gap:18px; align-items:start; }
+  /* =============== MAYOR =============== */
+  .gl-layout{ display:grid; grid-template-columns:1.4fr 1fr; gap:16px; align-items:start; }
   table{ width:100%; border-collapse:collapse; }
-  thead th{ text-align:left; font-size:10px; letter-spacing:0.6px; text-transform:uppercase; color:var(--muted); padding:11px 16px; border-bottom:1px solid var(--line-soft); font-weight:700; background:#FBFAF7; }
-  tbody td{ padding:11px 16px; border-bottom:1px solid var(--line-soft); font-size:12.3px; vertical-align:middle; color:var(--text); }
+  thead th{ text-align:left; font-size:9.6px; letter-spacing:0.5px; text-transform:uppercase; color:var(--muted); padding:10px 15px; border-bottom:1px solid var(--line-soft); font-weight:700; background:#FBFAF7; }
+  tbody td{ padding:10px 15px; border-bottom:1px solid var(--line-soft); font-size:11.8px; vertical-align:middle; color:var(--text); }
   tbody tr:last-child td{ border-bottom:none; }
   tbody tr:hover{ background:#FCFBF8; }
-  .pill{ font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; letter-spacing:0.2px; display:inline-block; }
+  .pill{ font-size:9.6px; font-weight:700; padding:3px 9px; border-radius:20px; letter-spacing:0.2px; display:inline-block; }
   .pill.ok{ background:var(--sage-bg); color:var(--sage); }
-  .pill.pending{ background:var(--amber-bg); color:var(--amber); }
+  .pill.pending{ background:var(--amber-bg); color:var(--gold-deep); }
   .pill.err{ background:var(--terracotta-bg); color:var(--terracotta); }
+  .pill.crit{ background:var(--red-bg); color:var(--red); }
 
-  .journal-detail{ padding:18px; }
-  .journal-line{ display:grid; grid-template-columns:1.6fr 2fr 90px 90px; gap:10px; padding:9px 0; border-top:1px solid var(--line-soft); font-size:11.8px; align-items:center; }
+  .journal-detail{ padding:17px; }
+  .journal-line{ display:grid; grid-template-columns:1.5fr 1.8fr 85px 85px; gap:8px; padding:8px 0; border-top:1px solid var(--line-soft); font-size:11.3px; align-items:center; }
   .journal-line:first-child{ border-top:none; }
-  .journal-line.head{ font-size:9.5px; text-transform:uppercase; letter-spacing:0.5px; color:var(--muted); font-weight:700; border-top:none; padding-bottom:6px; }
-  .journal-acct{ font-family:'IBM Plex Mono', monospace; color:var(--gold); font-weight:600; }
+  .journal-line.head{ font-size:9px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); font-weight:700; border-top:none; padding-bottom:5px; }
+  .journal-acct{ font-family:'IBM Plex Mono', monospace; color:var(--gold-deep); font-weight:600; }
   .journal-debe, .journal-haber{ font-family:'IBM Plex Mono', monospace; text-align:right; }
   .journal-debe{ color:var(--sage); }
   .journal-haber{ color:var(--terracotta); }
-  .reasoning-box{ background:rgba(217,184,114,0.06); border:1px dashed rgba(217,184,114,0.3); border-radius:10px; padding:12px 14px; margin-top:14px; font-size:11.5px; color:var(--muted); line-height:1.6; }
-  .reasoning-box b{ color:var(--gold); display:block; font-size:9.5px; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px; }
-  .sap-doc-badge{ display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:10.5px; font-weight:700; color:var(--gold); background:var(--gold-dim); padding:4px 10px; border-radius:20px; margin-top:10px; }
+  .cobj-row{ display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; }
+  .cobj{ font-family:'IBM Plex Mono', monospace; font-size:9.8px; color:var(--muted); background:var(--panel-alt); border:1px solid var(--line); padding:4px 9px; border-radius:7px; }
+  .cobj b{ color:var(--navy); }
+  .reasoning-box{ background:var(--gold-dim); border:1px dashed rgba(182,141,64,0.4); border-radius:10px; padding:11px 13px; margin-top:13px; font-size:11px; color:#6B5424; line-height:1.6; }
+  .reasoning-box b{ color:var(--gold-deep); display:block; font-size:9.3px; text-transform:uppercase; letter-spacing:0.4px; margin-bottom:6px; }
+  .sap-doc-badge{ display:inline-flex; align-items:center; gap:6px; font-family:'IBM Plex Mono', monospace; font-size:10.2px; font-weight:700; color:var(--navy); background:var(--blue-bg); padding:4px 10px; border-radius:20px; margin-top:10px; }
 
-  /* =============== VISTA: INTEGRACIONES SAP =============== */
-  .int-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; margin-bottom:18px; }
-  .int-card{ padding:16px 18px; }
-  .int-top{ display:flex; align-items:center; gap:10px; margin-bottom:10px; }
-  .int-icon{ width:34px; height:34px; border-radius:9px; background:var(--gold-dim); color:var(--gold); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .int-icon svg{ width:16px; height:16px; }
-  .int-name{ font-size:13px; font-weight:700; color:var(--text); }
-  .int-endpoint{ font-family:'IBM Plex Mono', monospace; font-size:9.8px; color:var(--muted); margin-top:1px; word-break:break-all; }
-  .int-stats{ display:flex; gap:14px; margin-top:10px; }
-  .int-stat .l{ font-size:9px; color:var(--muted); text-transform:uppercase; }
-  .int-stat .v{ font-family:'IBM Plex Mono', monospace; font-size:12.5px; font-weight:700; color:var(--text); }
+  /* =============== AUDITORÍA =============== */
+  .audit-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:16px; }
+  .benford-chart{ display:flex; align-items:flex-end; gap:8px; height:120px; padding:6px 4px 0; }
+  .benford-bar-wrap{ flex:1; display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:100%; position:relative; }
+  .benford-expected{ position:absolute; bottom:0; width:60%; border:1.5px dashed var(--muted-dim); border-bottom:none; }
+  .benford-actual{ width:60%; background:linear-gradient(180deg, var(--gold-light), var(--gold)); border-radius:3px 3px 0 0; }
+  .benford-label{ font-size:9px; color:var(--muted); margin-top:5px; font-family:'IBM Plex Mono', monospace; }
 
-  .log-row{ display:grid; grid-template-columns:78px 1fr 90px 70px 60px; gap:10px; padding:9px 18px; border-top:1px solid var(--line-soft); font-size:11px; align-items:center; }
+  .sod-row{ display:flex; align-items:flex-start; gap:12px; padding:13px 18px; border-top:1px solid var(--line-soft); }
+  .sod-row:first-child{ border-top:none; }
+  .sod-icon{ width:30px; height:30px; border-radius:9px; background:var(--red-bg); color:var(--red); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .sod-icon svg{ width:14px; height:14px; }
+  .sod-body{ flex:1; }
+  .sod-title{ font-size:12px; font-weight:700; color:var(--text); }
+  .sod-meta{ font-size:10.2px; color:var(--muted); margin-top:2px; font-family:'IBM Plex Mono', monospace; }
+
+  .ccm-row{ display:flex; align-items:center; gap:12px; padding:12px 18px; border-top:1px solid var(--line-soft); }
+  .ccm-row:first-child{ border-top:none; }
+  .ccm-icon{ width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .ccm-icon svg{ width:14px; height:14px; }
+  .ccm-icon.pass{ background:var(--sage-bg); color:var(--sage); }
+  .ccm-icon.warn{ background:var(--amber-bg); color:var(--gold-deep); }
+  .ccm-text{ flex:1; }
+  .ccm-text strong{ font-size:11.8px; color:var(--text); display:block; }
+  .ccm-text span{ font-size:10px; color:var(--muted); font-family:'IBM Plex Mono', monospace; }
+  .ccm-freq{ font-size:9.5px; color:var(--muted); flex-shrink:0; }
+
+  /* =============== ALERTAS =============== */
+  .alert-row{ display:flex; gap:13px; padding:15px 18px; border-top:1px solid var(--line-soft); }
+  .alert-row:first-child{ border-top:none; }
+  .alert-sev{ width:5px; border-radius:4px; flex-shrink:0; align-self:stretch; }
+  .alert-sev.critical{ background:var(--red); }
+  .alert-sev.high{ background:var(--terracotta); }
+  .alert-sev.medium{ background:var(--amber); }
+  .alert-sev.low{ background:var(--blue); }
+  .alert-icon{ width:34px; height:34px; border-radius:10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .alert-icon svg{ width:16px; height:16px; }
+  .alert-icon.critical{ background:var(--red-bg); color:var(--red); animation:redGlowPulse 1.8s ease-in-out infinite; }
+  .alert-icon.high{ background:var(--terracotta-bg); color:var(--terracotta); }
+  .alert-icon.medium{ background:var(--amber-bg); color:var(--gold-deep); }
+  .alert-icon.low{ background:var(--blue-bg); color:var(--blue); }
+  .alert-body{ flex:1; }
+  .alert-top-row{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .alert-title{ font-size:12.6px; font-weight:700; color:var(--text); }
+  .sev-tag{ font-size:8.8px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; padding:2px 8px; border-radius:20px; }
+  .sev-tag.critical{ background:var(--red-bg); color:var(--red); }
+  .sev-tag.high{ background:var(--terracotta-bg); color:var(--terracotta); }
+  .sev-tag.medium{ background:var(--amber-bg); color:var(--gold-deep); }
+  .sev-tag.low{ background:var(--blue-bg); color:var(--blue); }
+  .alert-meta{ font-size:10.3px; color:var(--muted); margin-top:3px; font-family:'IBM Plex Mono', monospace; }
+  .alert-desc{ font-size:11.3px; color:var(--text); margin-top:7px; line-height:1.55; }
+  .alert-actions{ display:flex; gap:8px; margin-top:10px; }
+  .btn-sm{ font-size:10.8px; font-weight:700; padding:6px 12px; border-radius:8px; cursor:pointer; border:1px solid var(--line); background:var(--panel); color:var(--text); }
+  .btn-sm.primary{ background:var(--navy); color:#fff; border:none; }
+  .btn-sm:hover{ border-color:var(--gold); }
+
+  /* =============== INTEGRACIONES =============== */
+  .int-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:16px; }
+  .int-card{ padding:15px 17px; }
+  .int-top{ display:flex; align-items:center; gap:10px; margin-bottom:9px; }
+  .int-icon{ width:32px; height:32px; border-radius:9px; background:var(--gold-dim); color:var(--gold-deep); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .int-icon svg{ width:15px; height:15px; }
+  .int-name{ font-size:12.4px; font-weight:700; color:var(--text); }
+  .int-endpoint{ font-family:'IBM Plex Mono', monospace; font-size:9.2px; color:var(--muted); margin-top:1px; word-break:break-all; }
+  .int-stats{ display:flex; gap:12px; margin-top:9px; }
+  .int-stat .l{ font-size:8.6px; color:var(--muted); text-transform:uppercase; }
+  .int-stat .v{ font-family:'IBM Plex Mono', monospace; font-size:11.8px; font-weight:700; color:var(--text); }
+
+  .log-row{ display:grid; grid-template-columns:72px 1fr 80px 60px 55px; gap:8px; padding:8px 18px; border-top:1px solid var(--line-soft); font-size:10.5px; align-items:center; }
   .log-row:first-child{ border-top:none; }
-  .log-row.head{ font-size:9.5px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); font-weight:700; }
+  .log-row.head{ font-size:9px; text-transform:uppercase; letter-spacing:0.4px; color:var(--muted); font-weight:700; }
   .log-time{ font-family:'IBM Plex Mono', monospace; color:var(--muted-dim); }
   .log-endpoint{ font-family:'IBM Plex Mono', monospace; color:var(--text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .log-status{ font-family:'IBM Plex Mono', monospace; font-weight:700; }
@@ -219,39 +356,24 @@
   .log-status.s4{ color:var(--terracotta); }
   .log-dur{ font-family:'IBM Plex Mono', monospace; color:var(--muted); }
 
-  /* =============== VISTA: CIERRE FINANCIERO =============== */
-  .close-progress{ padding:20px; margin-bottom:18px; }
-  .close-bar-wrap{ height:10px; border-radius:6px; background:#EDEAE2; overflow:hidden; margin:12px 0 6px; }
+  /* =============== CIERRE =============== */
+  .close-progress{ padding:18px; margin-bottom:16px; }
+  .close-bar-wrap{ height:9px; border-radius:6px; background:#EDEAE2; overflow:hidden; margin:11px 0 5px; }
   .close-bar{ height:100%; border-radius:6px; background:linear-gradient(90deg, var(--gold-deep), var(--gold)); }
-  .close-list-row{ display:flex; align-items:center; gap:14px; padding:14px 18px; border-top:1px solid var(--line-soft); }
+  .close-list-row{ display:flex; align-items:center; gap:13px; padding:13px 18px; border-top:1px solid var(--line-soft); }
   .close-list-row:first-child{ border-top:none; }
-  .close-icon{ width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .close-icon svg{ width:15px; height:15px; }
+  .close-icon{ width:30px; height:30px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .close-icon svg{ width:14px; height:14px; }
   .close-icon.done{ background:var(--sage-bg); color:var(--sage); }
-  .close-icon.progress{ background:var(--amber-bg); color:var(--amber); }
+  .close-icon.progress{ background:var(--amber-bg); color:var(--gold-deep); }
   .close-icon.pending{ background:#EDEAE2; color:var(--muted); }
   .close-text{ flex:1; }
-  .close-text strong{ font-size:12.5px; color:var(--text); display:block; }
-  .close-text span{ font-size:10.5px; color:var(--muted); }
-  .close-time-saved{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--gold); font-weight:700; flex-shrink:0; }
-
-  /* =============== VISTA: EXCEPCIONES =============== */
-  .exc-row{ display:flex; gap:14px; padding:16px 18px; border-top:1px solid var(--line-soft); align-items:flex-start; }
-  .exc-row:first-child{ border-top:none; }
-  .exc-icon{ width:34px; height:34px; border-radius:9px; background:var(--terracotta-bg); color:var(--terracotta); display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .exc-icon svg{ width:16px; height:16px; }
-  .exc-body{ flex:1; }
-  .exc-title{ font-size:12.8px; font-weight:700; color:var(--text); }
-  .exc-meta{ font-size:10.8px; color:var(--muted); margin-top:2px; }
-  .exc-suggestion{ background:rgba(217,184,114,0.06); border:1px dashed rgba(217,184,114,0.3); border-radius:9px; padding:9px 12px; margin-top:9px; font-size:11.3px; color:var(--muted); }
-  .exc-suggestion b{ color:var(--gold); }
-  .exc-actions{ display:flex; gap:8px; margin-top:10px; }
-  .btn-sm{ font-size:11px; font-weight:700; padding:7px 13px; border-radius:8px; cursor:pointer; border:1px solid var(--line); background:transparent; color:var(--text); }
-  .btn-sm.primary{ background:var(--gold); color:#0A1B2E; border:none; }
-  .btn-sm:hover{ border-color:var(--gold); }
+  .close-text strong{ font-size:11.8px; color:var(--text); display:block; }
+  .close-text span{ font-size:10px; color:var(--muted); font-family:'IBM Plex Mono', monospace; }
+  .close-time-saved{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:var(--gold-deep); font-weight:700; flex-shrink:0; }
 
   @media (max-width:1200px){
-    .control-grid, .gl-layout{ grid-template-columns:1fr; }
+    .control-grid, .gl-layout, .audit-grid{ grid-template-columns:1fr; }
     .ap-kanban{ grid-template-columns:repeat(3,1fr); }
     .int-grid{ grid-template-columns:1fr 1fr; }
   }
@@ -262,6 +384,7 @@
     .ap-kanban{ grid-template-columns:1fr; }
     .int-grid{ grid-template-columns:1fr; }
     .log-row{ grid-template-columns:1fr; gap:2px; }
+    .gauge-row{ flex-direction:column; }
   }
 </style>
 </head>
@@ -274,30 +397,36 @@
     <div class="rail-mark">EL</div>
     <div class="rail-item active" data-view="centro">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg>
-      <span>Centro</span>
+      <span>Mando</span>
     </div>
     <div class="rail-item" data-view="facturas">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-      <span>Facturas AP</span>
+      <span>MIRO / AP</span>
     </div>
     <div class="rail-item" data-view="mayor">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg>
-      <span>Mayor</span>
+      <span>Mayor FI</span>
+    </div>
+    <div class="rail-item" data-view="auditoria">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8v3l2 2"/></svg>
+      <span>Auditoría</span>
+    </div>
+    <div class="rail-item" data-view="alertas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+      <span>Alertas</span>
+      <span class="rail-badge" id="railAlertBadge">5</span>
     </div>
     <div class="rail-item" data-view="integraciones">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><circle cx="18" cy="6" r="2.5"/><path d="M8.3 6h7.4M18 8.5V15.5M8.3 7.5 15.7 16.5"/></svg>
-      <span>APIs SAP</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8.3 6h7.4M18 8.2v7.6M8.2 7.5 16 16"/></svg>
+      <span>APIs / IDoc</span>
     </div>
     <div class="rail-item" data-view="cierre">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
       <span>Cierre</span>
     </div>
-    <div class="rail-item" data-view="excepciones">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg>
-      <span>Excepciones</span>
-    </div>
     <div class="rail-spacer"></div>
     <div class="rail-pulse" title="3 agentes activos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8 6h8M18 8.2v7.6M8.2 7.5 16 16"/></svg></div>
+    <div class="rail-caption">Agentic<br>Layer</div>
   </aside>
 
   <!-- MAIN -->
@@ -305,12 +434,13 @@
 
     <div class="topbar">
       <div>
-        <h1 id="viewTitle">Centro de agentes</h1>
-        <div class="sub" id="viewSub">Trazabilidad en vivo de los agentes de IA operando sobre SAP</div>
+        <h1 id="viewTitle">Centro de mando</h1>
+        <div class="sub" id="viewSub">Capa agéntica operando en tiempo real sobre SAP S/4HANA</div>
       </div>
-      <div class="sap-pill"><span class="dot"></span> SAP S/4HANA Cloud · OData API</div>
+      <div class="sap-pill"><span class="dot"></span> <b>SAP S/4HANA Cloud</b> · Mandante 100 · Sociedad 1000 (CR) · Ledger 0L</div>
       <div class="topbar-right">
-        <div class="autonomy-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg> Autonomía: Supervisada</div>
+        <div class="autonomy-pill"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg> Autonomía: Supervisada · Tol. OBA3</div>
+        <div class="bell-btn" onclick="goToView('alertas')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span class="bell-badge">5</span></div>
         <button class="btn-gold" onclick="openModal('connModal')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
           Conectar API
@@ -319,106 +449,199 @@
       </div>
     </div>
 
-    <div class="kpi-strip">
-      <div class="kpi-mini"><div class="l">Facturas procesadas hoy</div><div class="v">61 <small class="up">+14</small></div></div>
-      <div class="kpi-mini"><div class="l">Contabilizado sin intervención</div><div class="v">92% <small class="up">↑ 6pp</small></div></div>
-      <div class="kpi-mini"><div class="l">Tiempo promedio por factura</div><div class="v">47s <small class="up">↓ 3.1min</small></div></div>
-      <div class="kpi-mini"><div class="l">Horas ahorradas este mes</div><div class="v">86h <small class="up">↑</small></div></div>
-      <div class="kpi-mini"><div class="l">Llamadas API a SAP (24h)</div><div class="v">3,842 <small class="up">99.7% ok</small></div></div>
-      <div class="kpi-mini"><div class="l">En excepción / revisión</div><div class="v">4 <small class="warn">atención</small></div></div>
+    <div class="kpi-strip" id="kpiStrip">
+      <div class="kpi-mini">
+        <div class="l">Docs. contabilizados hoy (BKPF)</div>
+        <div class="v"><span class="count" data-count="61">0</span> <small class="up">+14</small></div>
+        <svg class="spark" viewBox="0 0 100 20" preserveAspectRatio="none"><defs><linearGradient id="sg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5C8A6E" stop-opacity="0.35"/><stop offset="100%" stop-color="#5C8A6E" stop-opacity="0"/></linearGradient></defs><polygon points="0,16 15,14 30,15 45,10 60,11 75,6 100,3 100,20 0,20" fill="url(#sg1)"/><polyline points="0,16 15,14 30,15 45,10 60,11 75,6 100,3" fill="none" stroke="#5C8A6E" stroke-width="2"/></svg>
+      </div>
+      <div class="kpi-mini">
+        <div class="l">Contabilizado sin intervención</div>
+        <div class="v"><span class="count" data-count="92" data-suffix="%">0</span> <small class="up">↑ 6pp</small></div>
+        <svg class="spark" viewBox="0 0 100 20" preserveAspectRatio="none"><defs><linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#B68D40" stop-opacity="0.35"/><stop offset="100%" stop-color="#B68D40" stop-opacity="0"/></linearGradient></defs><polygon points="0,12 15,13 30,10 45,11 60,7 75,8 100,3 100,20 0,20" fill="url(#sg2)"/><polyline points="0,12 15,13 30,10 45,11 60,7 75,8 100,3" fill="none" stroke="#B68D40" stroke-width="2"/></svg>
+      </div>
+      <div class="kpi-mini">
+        <div class="l">Tiempo medio de contabilización</div>
+        <div class="v"><span class="count" data-count="47" data-suffix="s">0</span> <small class="up">↓ 3.1min</small></div>
+        <svg class="spark" viewBox="0 0 100 20" preserveAspectRatio="none"><defs><linearGradient id="sg3" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4A6FA1" stop-opacity="0.35"/><stop offset="100%" stop-color="#4A6FA1" stop-opacity="0"/></linearGradient></defs><polygon points="0,4 15,6 30,7 45,10 60,12 75,15 100,17 100,20 0,20" fill="url(#sg3)"/><polyline points="0,4 15,6 30,7 45,10 60,12 75,15 100,17" fill="none" stroke="#4A6FA1" stroke-width="2"/></svg>
+      </div>
+      <div class="kpi-mini">
+        <div class="l">Llamadas API a SAP (24h)</div>
+        <div class="v"><span class="count" data-count="3842">0</span> <small class="up">99.7% ok</small></div>
+        <svg class="spark" viewBox="0 0 100 20" preserveAspectRatio="none"><defs><linearGradient id="sg4" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#4A6FA1" stop-opacity="0.35"/><stop offset="100%" stop-color="#4A6FA1" stop-opacity="0"/></linearGradient></defs><polygon points="0,10 15,8 30,12 45,6 60,9 75,5 100,4 100,20 0,20" fill="url(#sg4)"/><polyline points="0,10 15,8 30,12 45,6 60,9 75,5 100,4" fill="none" stroke="#4A6FA1" stroke-width="2"/></svg>
+      </div>
+      <div class="kpi-mini">
+        <div class="l">Score de riesgo (Continuous Control)</div>
+        <div class="v"><span class="count" data-count="92">0</span><small class="up">/100</small></div>
+        <svg class="spark" viewBox="0 0 100 20" preserveAspectRatio="none"><defs><linearGradient id="sg5" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#5C8A6E" stop-opacity="0.35"/><stop offset="100%" stop-color="#5C8A6E" stop-opacity="0"/></linearGradient></defs><polygon points="0,15 15,13 30,14 45,9 60,10 75,7 100,5 100,20 0,20" fill="url(#sg5)"/><polyline points="0,15 15,13 30,14 45,9 60,10 75,7 100,5" fill="none" stroke="#5C8A6E" stroke-width="2"/></svg>
+      </div>
+      <div class="kpi-mini">
+        <div class="l">Alertas activas</div>
+        <div class="v"><span class="count" data-count="5">0</span> <small class="warn">2 críticas</small></div>
+        <svg class="spark" viewBox="0 0 100 20" preserveAspectRatio="none"><defs><linearGradient id="sg6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#C0613A" stop-opacity="0.35"/><stop offset="100%" stop-color="#C0613A" stop-opacity="0"/></linearGradient></defs><polygon points="0,6 15,9 30,7 45,12 60,10 75,14 100,16 100,20 0,20" fill="url(#sg6)"/><polyline points="0,6 15,9 30,7 45,12 60,10 75,14 100,16" fill="none" stroke="#C0613A" stroke-width="2"/></svg>
+      </div>
     </div>
 
-    <!-- =============== CENTRO DE AGENTES =============== -->
+    <!-- =============== CENTRO DE MANDO =============== -->
     <section class="view active" id="view-centro">
+
+      <div class="panel flow-hero">
+        <div class="flow-hero-head">
+          <div>
+            <h2>Cadena de automatización end-to-end</h2>
+            <p>De la factura entrante al asiento contabilizado y conciliado — cada nodo es un agente de IA conectado a una API o BAPI de SAP.</p>
+          </div>
+          <span class="tcode">IDoc · OData · BAPI</span>
+        </div>
+        <div class="flow-diagram">
+          <div class="flow-node2">
+            <div class="flow-node2-icon" style="background:var(--blue-bg);color:var(--blue);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+            <div class="flow-node2-title">Correo / Portal</div>
+            <div class="flow-node2-sub">IDoc INVOIC01</div>
+          </div>
+          <div class="flow-connector"><div class="pulse-dot" style="animation-delay:0s;"></div></div>
+          <div class="flow-node2">
+            <div class="flow-node2-icon live" style="background:var(--gold-dim);color:var(--gold-deep);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg></div>
+            <div class="flow-node2-title">Agente OCR / IA</div>
+            <div class="flow-node2-sub">Extracción + clasif.</div>
+          </div>
+          <div class="flow-connector"><div class="pulse-dot" style="animation-delay:0.8s;"></div></div>
+          <div class="flow-node2">
+            <div class="flow-node2-icon" style="background:var(--amber-bg);color:var(--gold-deep);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7l9-4 9 4-9 4-9-4Z"/><path d="M3 7v10l9 4 9-4V7"/></svg></div>
+            <div class="flow-node2-title">SAP MM</div>
+            <div class="flow-node2-sub">EKKO/EKPO · MIGO</div>
+          </div>
+          <div class="flow-connector"><div class="pulse-dot" style="animation-delay:1.6s;"></div></div>
+          <div class="flow-node2">
+            <div class="flow-node2-icon" style="background:var(--sage-bg);color:var(--sage);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg></div>
+            <div class="flow-node2-title">SAP FI · MIRO</div>
+            <div class="flow-node2-sub">BKPF / BSEG</div>
+          </div>
+          <div class="flow-connector"><div class="pulse-dot" style="animation-delay:2.4s;"></div></div>
+          <div class="flow-node2">
+            <div class="flow-node2-icon live" style="background:var(--red-bg);color:var(--red);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
+            <div class="flow-node2-title">Auditoría continua</div>
+            <div class="flow-node2-sub">SoD · Benford · CCM</div>
+          </div>
+          <div class="flow-connector"><div class="pulse-dot" style="animation-delay:3.2s;"></div></div>
+          <div class="flow-node2">
+            <div class="flow-node2-icon" style="background:var(--panel-hi);color:var(--navy);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
+            <div class="flow-node2-title">Banco · F110</div>
+            <div class="flow-node2-sub">Pago programado</div>
+          </div>
+        </div>
+      </div>
+
       <div class="control-grid">
 
-        <div class="panel trace-panel">
-          <div class="panel-head">
-            <div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6M12 19h8"/></svg> Traza de agentes en vivo</div>
-            <span class="conf-chip hi" id="liveTag">● en vivo</span>
+        <div>
+          <div class="gauge-row">
+            <div class="panel gauge-card" style="box-shadow:var(--shadow), var(--glow-sage);">
+              <svg class="gauge-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#EDEAE2" stroke-width="10"/>
+                <circle class="gauge-arc" data-target="21.1" cx="50" cy="50" r="42" fill="none" stroke="#5C8A6E" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9" transform="rotate(-90 50 50)" style="transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1);"/>
+                <text x="50" y="56" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="22" font-weight="700" fill="#0B2A4A">92</text>
+              </svg>
+              <div class="gauge-text"><div class="g-title">Continuous Control Score</div><div class="g-num">Saludable</div><div class="g-sub">↑ 4pts vs. semana anterior</div></div>
+            </div>
+            <div class="panel gauge-card" style="box-shadow:var(--shadow), var(--glow-gold);">
+              <svg class="gauge-svg" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="#EDEAE2" stroke-width="10"/>
+                <circle class="gauge-arc" data-target="41.9" cx="50" cy="50" r="42" fill="none" stroke="#B68D40" stroke-width="10" stroke-linecap="round" stroke-dasharray="263.9" stroke-dashoffset="263.9" transform="rotate(-90 50 50)" style="transition:stroke-dashoffset 1.4s cubic-bezier(.2,.8,.2,1);"/>
+                <text x="50" y="56" text-anchor="middle" font-family="IBM Plex Mono, monospace" font-size="22" font-weight="700" fill="#0B2A4A">84</text>
+              </svg>
+              <div class="gauge-text"><div class="g-title">Cobertura de autonomía IA</div><div class="g-num">184 tareas/día</div><div class="g-sub warn">16% requiere aprobación (tol. OBA3)</div></div>
+            </div>
           </div>
-          <div class="trace-scroll" id="traceScroll">
 
-            <div class="trace-row">
-              <div class="trace-time">10:41:02</div>
-              <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
-              <div class="trace-body">
-                <div class="trace-agent">Agente AP-01 · Facturas de proveedor</div>
-                <div class="trace-text">Factura <b>INV-88231</b> recibida por correo (proveedor@merzpharma.com). OCR extrajo monto <b>$18,420.00</b>, proveedor y fecha.</div>
-                <div class="trace-meta"><span class="conf-chip hi">confianza 98%</span><span>Fuente: Gmail API · adjunto PDF</span></div>
-              </div>
+          <div class="panel trace-panel">
+            <div class="panel-head">
+              <div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 17l6-6-6-6M12 19h8"/></svg> Traza de agentes en vivo</div>
+              <span class="conf-chip hi" id="liveTag" style="display:inline-flex;align-items:center;gap:5px;"><span style="width:6px;height:6px;border-radius:50%;background:#5C8A6E;display:inline-block;animation:glowPulse 1.6s ease-in-out infinite;"></span> en vivo</span>
             </div>
+            <div class="trace-scroll" id="traceScroll">
 
-            <div class="trace-row">
-              <div class="trace-time">10:41:09</div>
-              <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
-              <div class="trace-body">
-                <div class="trace-agent">Agente AP-01</div>
-                <div class="trace-text">Buscó orden de compra relacionada en SAP MM vía OData → encontrada <b>PO-4471</b>. Ejecutó 3-way match (PO · entrada de mercancía · factura).</div>
-                <div class="trace-meta"><span class="conf-chip hi">match exacto</span><span>API: /API_PURCHASEORDER_PROCESS_SRV</span></div>
+              <div class="trace-row">
+                <div class="trace-time">10:41:02</div>
+                <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
+                <div class="trace-body">
+                  <div class="trace-agent">Agente AP-01 · Invoice-to-Pay</div>
+                  <div class="trace-text">Factura <span class="ref">INV-88231</span> recibida vía IDoc <span class="ref">INVOIC01</span> de proveedor@merzpharma.com. OCR extrajo monto <b>$18,420.00</b>, proveedor (LFA1) y condición de pago.</div>
+                  <div class="trace-meta"><span class="conf-chip hi">confianza 98%</span><span>Sociedad 1000 · Ejercicio 2026 · Periodo 06</span></div>
+                </div>
               </div>
-            </div>
 
-            <div class="trace-row">
-              <div class="trace-time">10:41:15</div>
-              <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
-              <div class="trace-body">
-                <div class="trace-agent">Agente AP-01</div>
-                <div class="trace-text">Clasificó la cuenta contable como <b>140100 · Inventario Mercancías</b> según histórico de compras a Merz Pharma.</div>
-                <div class="trace-meta"><span class="conf-chip hi">confianza 96%</span><span>Modelo: clasificador de cuentas v3</span></div>
+              <div class="trace-row">
+                <div class="trace-time">10:41:09</div>
+                <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
+                <div class="trace-body">
+                  <div class="trace-agent">Agente AP-01</div>
+                  <div class="trace-text">Ejecutó match a 3 vías (PO · GR · Factura) contra <span class="ref">EKKO 4500004471</span>. Cantidad y precio dentro de tolerancia <span class="ref">OBA3 / PP2%</span>.</div>
+                  <div class="trace-meta"><span class="conf-chip hi">match exacto</span><span>BAPI: BAPI_INCOMINGINVOICE_CREATE</span></div>
+                </div>
               </div>
-            </div>
 
-            <div class="trace-row">
-              <div class="trace-time">10:41:22</div>
-              <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
-              <div class="trace-body">
-                <div class="trace-agent">Agente AP-01</div>
-                <div class="trace-text">Generó asiento contable (partida cuadrada) y lo publicó vía <b>API_JOURNALENTRY_CREATE</b>. Documento SAP <b>5100482</b> creado.</div>
-                <div class="trace-meta"><span class="conf-chip hi">publicado</span><span>Tiempo total: 41s</span></div>
+              <div class="trace-row">
+                <div class="trace-time">10:41:15</div>
+                <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
+                <div class="trace-body">
+                  <div class="trace-agent">Agente AP-01</div>
+                  <div class="trace-text">Clasificó cuenta <span class="ref">140100</span> (Inventario Mercancías), centro de costo <span class="ref">4100-DIST</span> y centro de beneficio <span class="ref">PC-DIST-CR</span>, según histórico del proveedor.</div>
+                  <div class="trace-meta"><span class="conf-chip hi">confianza 96%</span><span>Modelo: clasificador contable v3.2</span></div>
+                </div>
               </div>
-            </div>
 
-            <div class="trace-row">
-              <div class="trace-time">10:38:47</div>
-              <div class="trace-dot-wrap"><div class="trace-dot warn"></div><div class="trace-line"></div></div>
-              <div class="trace-body">
-                <div class="trace-agent">Agente AP-01</div>
-                <div class="trace-text">Factura <b>SCAN-0092</b> de $640.00: no se pudo identificar la cédula jurídica del proveedor con suficiente certeza. Enviada a cola de excepciones.</div>
-                <div class="trace-meta"><span class="conf-chip low">confianza 41%</span><span>Requiere revisión humana</span></div>
+              <div class="trace-row">
+                <div class="trace-time">10:41:22</div>
+                <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
+                <div class="trace-body">
+                  <div class="trace-agent">Agente AP-01</div>
+                  <div class="trace-text">Generó documento tipo <span class="ref">KR</span> (partida cuadrada) y lo publicó vía <span class="ref">BAPI_ACC_DOCUMENT_POST</span>. Documento <span class="ref">BKPF 5100482</span> creado en ledger 0L.</div>
+                  <div class="trace-meta"><span class="conf-chip hi">publicado</span><span>Tiempo total: 41s</span></div>
+                </div>
               </div>
-            </div>
 
-            <div class="trace-row">
-              <div class="trace-time">10:15:03</div>
-              <div class="trace-dot-wrap"><div class="trace-dot info"></div><div class="trace-line"></div></div>
-              <div class="trace-body">
-                <div class="trace-agent">Agente GL-02 · Conciliación bancaria</div>
-                <div class="trace-text">Concilió 44 movimientos del Banco Nacional CR contra el mayor de SAP. <b>43 coincidencias automáticas</b>, 1 pendiente de revisión por monto duplicado.</div>
-                <div class="trace-meta"><span class="conf-chip hi">98.4% conciliado</span><span>API: /API_BANKSTATEMENT_SRV</span></div>
+              <div class="trace-row">
+                <div class="trace-time">10:38:47</div>
+                <div class="trace-dot-wrap"><div class="trace-dot warn"></div><div class="trace-line"></div></div>
+                <div class="trace-body">
+                  <div class="trace-agent">Agente AP-01</div>
+                  <div class="trace-text">Factura <span class="ref">SCAN-0092</span> ($640.00): OCR no pudo leer con certeza la cédula jurídica (LFA1-STCD1). Bloqueada en <span class="ref">MRBR</span> y enviada a cola de auditoría.</div>
+                  <div class="trace-meta"><span class="conf-chip low">confianza 41%</span><span>Requiere revisión humana</span></div>
+                </div>
               </div>
-            </div>
 
-            <div class="trace-row">
-              <div class="trace-time">09:52:18</div>
-              <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
-              <div class="trace-body">
-                <div class="trace-agent">Agente AP-01</div>
-                <div class="trace-text">Factura <b>DHL-04471</b> de $1,180.50 clasificada como <b>610200 · Fletes y Aduanas</b> y contabilizada en SAP doc <b>5100479</b>.</div>
-                <div class="trace-meta"><span class="conf-chip hi">confianza 94%</span><span>Tiempo total: 38s</span></div>
+              <div class="trace-row">
+                <div class="trace-time">10:15:03</div>
+                <div class="trace-dot-wrap"><div class="trace-dot info"></div><div class="trace-line"></div></div>
+                <div class="trace-body">
+                  <div class="trace-agent">Agente GL-02 · Conciliación bancaria</div>
+                  <div class="trace-text">Concilió 44 movimientos del extracto bancario contra cuenta GR/IR <span class="ref">219100</span> y mayor 0L. <b>43 coincidencias automáticas</b> vía algoritmo de matching difuso.</div>
+                  <div class="trace-meta"><span class="conf-chip hi">98.4% conciliado</span><span>API: /API_BANKSTATEMENT_SRV</span></div>
+                </div>
               </div>
-            </div>
 
-            <div class="trace-row">
-              <div class="trace-time">09:30:00</div>
-              <div class="trace-dot-wrap"><div class="trace-dot info"></div></div>
-              <div class="trace-body">
-                <div class="trace-agent">Agente Close-03 · Cierre financiero</div>
-                <div class="trace-text">Inició el checklist de cierre de junio: acumulaciones, depreciación y borrador de estados financieros.</div>
-                <div class="trace-meta"><span>Ver progreso en la vista "Cierre"</span></div>
+              <div class="trace-row">
+                <div class="trace-time">09:52:18</div>
+                <div class="trace-dot-wrap"><div class="trace-dot ok"></div><div class="trace-line"></div></div>
+                <div class="trace-body">
+                  <div class="trace-agent">Agente AP-01</div>
+                  <div class="trace-text">Factura <span class="ref">DHL-04471</span> ($1,180.50) clasificada como <span class="ref">610200</span> Fletes y Aduanas, doc. <span class="ref">BKPF 5100479</span>.</div>
+                  <div class="trace-meta"><span class="conf-chip hi">confianza 94%</span><span>Tiempo total: 38s</span></div>
+                </div>
               </div>
-            </div>
 
+              <div class="trace-row">
+                <div class="trace-time">09:30:00</div>
+                <div class="trace-dot-wrap"><div class="trace-dot info"></div></div>
+                <div class="trace-body">
+                  <div class="trace-agent">Agente Close-03 · Cierre financiero</div>
+                  <div class="trace-text">Inició checklist de cierre del periodo 06/2026: acumulaciones, depreciación (AFAB) y borrador de estados financieros.</div>
+                  <div class="trace-meta"><span>Ver progreso en la vista "Cierre"</span></div>
+                </div>
+              </div>
+
+            </div>
           </div>
         </div>
 
@@ -430,18 +653,18 @@
               <div class="agent-avatar ap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
               <div class="agent-info">
                 <div class="agent-name">Agente AP-01</div>
-                <div class="agent-desc">Facturas de proveedor → asientos SAP</div>
-                <div class="agent-status on">● Activo</div>
+                <div class="agent-desc">MIRO · BAPI_INCOMINGINVOICE_CREATE</div>
+                <div class="agent-status on"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;animation:glowPulse 1.6s ease-in-out infinite;"></span> Activo</div>
               </div>
-              <div class="agent-stats"><div class="n">61</div><div class="l">hoy · 92% auto</div></div>
+              <div class="agent-stats"><div class="n">61</div><div class="l">docs · 92% auto</div></div>
             </div>
 
             <div class="agent-card">
               <div class="agent-avatar gl"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg></div>
               <div class="agent-info">
                 <div class="agent-name">Agente GL-02</div>
-                <div class="agent-desc">Conciliación bancaria y mayor contable</div>
-                <div class="agent-status on">● Activo</div>
+                <div class="agent-desc">FAGLL03 · Conciliación GR/IR 219100</div>
+                <div class="agent-status on"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;animation:glowPulse 1.6s ease-in-out infinite;"></span> Activo</div>
               </div>
               <div class="agent-stats"><div class="n">44</div><div class="l">movs · 98.4%</div></div>
             </div>
@@ -450,31 +673,35 @@
               <div class="agent-avatar close"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
               <div class="agent-info">
                 <div class="agent-name">Agente Close-03</div>
-                <div class="agent-desc">Checklist de cierre financiero mensual</div>
-                <div class="agent-status on">● En progreso</div>
+                <div class="agent-desc">F.13 / AFAB · Cierre periodo 06</div>
+                <div class="agent-status on"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;animation:glowPulse 1.6s ease-in-out infinite;"></span> En progreso</div>
               </div>
               <div class="agent-stats"><div class="n">4/6</div><div class="l">tareas</div></div>
             </div>
 
             <div class="agent-card">
-              <div class="agent-avatar recon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+              <div class="agent-avatar audit"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg></div>
               <div class="agent-info">
-                <div class="agent-name">Agente Excepciones-04</div>
-                <div class="agent-desc">Prepara contexto para revisión humana</div>
-                <div class="agent-status paused">● En espera</div>
+                <div class="agent-name">Agente Audit-04</div>
+                <div class="agent-desc">Continuous Controls Monitoring · SoD</div>
+                <div class="agent-status on"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block;animation:glowPulse 1.6s ease-in-out infinite;"></span> Monitoreando</div>
               </div>
-              <div class="agent-stats"><div class="n">4</div><div class="l">en cola</div></div>
+              <div class="agent-stats"><div class="n">5</div><div class="l">alertas hoy</div></div>
             </div>
           </div>
 
           <div class="panel">
-            <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg> Nivel de autonomía por tarea</div></div>
+            <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M9 10.5c0-1.5 1.3-2.5 3-2.5s3 1 3 2.5c0 1.4-1.1 1.8-2.3 2.5-.8.5-.7 1.2-.7 1.8M12 17.2h.01"/></svg> Autonomía por tarea (grupo tolerancia OBA3)</div></div>
             <div class="autonomy-row">
-              <div class="autonomy-row-text"><strong>Contabilizar facturas &lt; $2,000</strong><span>Proveedor conocido y match exacto</span></div>
+              <div class="autonomy-row-text"><strong>Contabilizar facturas &lt; $2,000</strong><span>Proveedor conocido · match exacto PO/GR</span></div>
               <div class="seg-toggle"><div class="active">Auto</div><div>Aprobar</div></div>
             </div>
             <div class="autonomy-row">
-              <div class="autonomy-row-text"><strong>Contabilizar facturas ≥ $2,000</strong><span>Requiere aprobación de gerencia</span></div>
+              <div class="autonomy-row-text"><strong>Contabilizar facturas ≥ $2,000</strong><span>Excede umbral de aprobación gerencial</span></div>
+              <div class="seg-toggle"><div>Auto</div><div class="active">Aprobar</div></div>
+            </div>
+            <div class="autonomy-row">
+              <div class="autonomy-row-text"><strong>Variación de precio &gt; tolerancia PP</strong><span>Fuera del rango de tolerancia OBA3</span></div>
               <div class="seg-toggle"><div>Auto</div><div class="active">Aprobar</div></div>
             </div>
             <div class="autonomy-row">
@@ -482,7 +709,7 @@
               <div class="seg-toggle"><div class="active">Auto</div><div>Aprobar</div></div>
             </div>
             <div class="autonomy-row">
-              <div class="autonomy-row-text"><strong>Cierre y estados financieros</strong><span>Borrador generado, requiere firma de contador</span></div>
+              <div class="autonomy-row-text"><strong>Cierre y estados financieros</strong><span>Borrador generado, requiere firma del contador</span></div>
               <div class="seg-toggle"><div>Auto</div><div class="active">Aprobar</div></div>
             </div>
           </div>
@@ -491,15 +718,16 @@
       </div>
     </section>
 
-    <!-- =============== FACTURAS PROVEEDORES =============== -->
+    <!-- =============== FACTURAS AP =============== -->
     <section class="view" id="view-facturas">
       <div class="ap-kanban">
 
         <div class="ap-col">
-          <div class="ap-col-head"><span class="ap-col-dot" style="background:var(--blue);"></span><h4>Recibida</h4><span class="ap-col-count">7</span></div>
+          <div class="ap-col-head"><span class="ap-col-dot" style="background:var(--blue);"></span><h4>Recepción</h4><span class="ap-col-count">7</span></div>
+          <div class="ap-col-tcode">IDoc INVOIC01 / correo</div>
           <div class="ap-card" onclick="openModal('apDetailModal')">
             <div class="ap-card-top"><div><div class="ap-card-vendor">Croma Pharma</div><div class="ap-card-inv">CR-33012</div></div><div class="ap-card-amount">$9,760</div></div>
-            <div class="ap-card-meta">Recibida por correo hace 6 min<br>Agente AP-01 procesando OCR…</div>
+            <div class="ap-card-meta">Recibida hace 6 min<br>Agente AP-01 procesando OCR…</div>
             <div class="ap-card-foot"><span class="pill pending">OCR en curso</span></div>
           </div>
           <div class="ap-card">
@@ -511,46 +739,50 @@
 
         <div class="ap-col">
           <div class="ap-col-head"><span class="ap-col-dot" style="background:var(--amber);"></span><h4>Extracción IA</h4><span class="ap-col-count">3</span></div>
+          <div class="ap-col-tcode">OCR + NLP · LFA1 match</div>
           <div class="ap-card">
             <div class="ap-card-top"><div><div class="ap-card-vendor">Merz Pharma GmbH</div><div class="ap-card-inv">INV-88232</div></div><div class="ap-card-amount">$6,140</div></div>
-            <div class="ap-card-meta">Monto, proveedor y fecha extraídos<br>Buscando PO relacionada…</div>
+            <div class="ap-card-meta">Monto, proveedor (LFA1) y fecha extraídos<br>Buscando PO relacionada en EKKO…</div>
             <div class="ap-card-foot"><span class="conf-chip hi">confianza 97%</span></div>
           </div>
         </div>
 
         <div class="ap-col">
-          <div class="ap-col-head"><span class="ap-col-dot" style="background:var(--gold);"></span><h4>Validación 3-way</h4><span class="ap-col-count">2</span></div>
+          <div class="ap-col-head"><span class="ap-col-dot" style="background:var(--gold);"></span><h4>Match 3 vías</h4><span class="ap-col-count">2</span></div>
+          <div class="ap-col-tcode">ME23N / MIGO / MIRO</div>
           <div class="ap-card">
             <div class="ap-card-top"><div><div class="ap-card-vendor">DHL Express CR</div><div class="ap-card-inv">DHL-04472</div></div><div class="ap-card-amount">$980</div></div>
-            <div class="ap-card-meta">PO-4488 encontrada · GR confirmada<br>Match exacto en monto y cantidad</div>
+            <div class="ap-card-meta">PO 4500004488 · GR MSEG confirmada<br>Match exacto en monto y cantidad</div>
             <div class="ap-card-foot"><span class="conf-chip hi">match OK</span></div>
           </div>
           <div class="ap-card" style="border-color:var(--terracotta);">
             <div class="ap-card-top"><div><div class="ap-card-vendor">Proveedor sin identificar</div><div class="ap-card-inv">SCAN-0092</div></div><div class="ap-card-amount">$640</div></div>
-            <div class="ap-card-meta">RUC/cédula no reconocido por OCR<br>Enviado a excepciones</div>
+            <div class="ap-card-meta">RUC/cédula (STCD1) no reconocido<br>Bloqueada en MRBR → Auditoría</div>
             <div class="ap-card-foot"><span class="conf-chip low">confianza 41%</span></div>
           </div>
         </div>
 
         <div class="ap-col">
-          <div class="ap-col-head"><span class="ap-col-dot" style="background:var(--sage);"></span><h4>Contabilizada SAP</h4><span class="ap-col-count">58</span></div>
+          <div class="ap-col-head"><span class="ap-col-dot" style="background:var(--sage);"></span><h4>Contabilizada</h4><span class="ap-col-count">58</span></div>
+          <div class="ap-col-tcode">BKPF / BSEG · doc. KR</div>
           <div class="ap-card" onclick="openModal('apDetailModal')">
             <div class="ap-card-top"><div><div class="ap-card-vendor">Merz Pharma GmbH</div><div class="ap-card-inv">INV-88231</div></div><div class="ap-card-amount">$18,420</div></div>
-            <div class="ap-card-meta">Doc. SAP 5100482 · cta. 140100<br>Publicada hace 12 min</div>
+            <div class="ap-card-meta">BKPF 5100482 · cta. 140100<br>Publicada hace 12 min</div>
             <div class="ap-card-foot"><span class="pill ok">Contabilizada</span></div>
           </div>
           <div class="ap-card">
             <div class="ap-card-top"><div><div class="ap-card-vendor">DHL Express CR</div><div class="ap-card-inv">DHL-04471</div></div><div class="ap-card-amount">$1,180.50</div></div>
-            <div class="ap-card-meta">Doc. SAP 5100479 · cta. 610200</div>
+            <div class="ap-card-meta">BKPF 5100479 · cta. 610200</div>
             <div class="ap-card-foot"><span class="pill ok">Contabilizada</span></div>
           </div>
         </div>
 
         <div class="ap-col">
-          <div class="ap-col-head"><span class="ap-col-dot" style="background:var(--muted);"></span><h4>Pagada</h4><span class="ap-col-count">41</span></div>
+          <div class="ap-col-head"><span class="ap-col-dot" style="background:var(--muted);"></span><h4>Programada F110</h4><span class="ap-col-count">41</span></div>
+          <div class="ap-col-tcode">Pago automático F110</div>
           <div class="ap-card">
             <div class="ap-card-top"><div><div class="ap-card-vendor">Oficentro Business Park</div><div class="ap-card-inv">OBP-1129</div></div><div class="ap-card-amount">$2,300</div></div>
-            <div class="ap-card-meta">Pago ejecutado vía SAP F110<br>Conciliado con banco</div>
+            <div class="ap-card-meta">Corrida de pagos F110 · lote 0026<br>Conciliado con banco</div>
             <div class="ap-card-foot"><span class="pill ok">Pagada</span></div>
           </div>
         </div>
@@ -563,41 +795,201 @@
       <div class="gl-layout">
 
         <div class="panel" style="padding:0;overflow:hidden;">
-          <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg> Asientos generados por IA</div></div>
+          <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg> Documentos contables (BKPF) · Ledger 0L</div></div>
           <table>
-            <thead><tr><th>Doc. SAP</th><th>Origen</th><th>Cuenta</th><th>Monto</th><th>Confianza</th><th>Estado</th></tr></thead>
+            <thead><tr><th>Doc. BKPF</th><th>Origen</th><th>Tipo</th><th>Cuenta</th><th>Monto</th><th>Confianza</th><th>Estado</th></tr></thead>
             <tbody>
               <tr onclick="openModal('apDetailModal')" style="cursor:pointer;">
-                <td class="mono">5100482</td><td>INV-88231 · Merz Pharma</td><td class="mono">140100</td><td class="mono">$18,420.00</td><td><span class="conf-chip hi">96%</span></td><td><span class="pill ok">Publicado</span></td>
+                <td class="mono">5100482</td><td>INV-88231 · Merz Pharma</td><td class="mono">KR</td><td class="mono">140100</td><td class="mono">$18,420.00</td><td><span class="conf-chip hi">96%</span></td><td><span class="pill ok">Publicado</span></td>
               </tr>
               <tr>
-                <td class="mono">5100481</td><td>CR-33012 · Croma Pharma</td><td class="mono">140100</td><td class="mono">$9,760.00</td><td><span class="conf-chip mid">78%</span></td><td><span class="pill pending">Pendiente aprobación</span></td>
+                <td class="mono">5100481</td><td>CR-33012 · Croma Pharma</td><td class="mono">KR</td><td class="mono">140100</td><td class="mono">$9,760.00</td><td><span class="conf-chip mid">78%</span></td><td><span class="pill pending">Pend. aprobación</span></td>
               </tr>
               <tr>
-                <td class="mono">5100480</td><td>OBP-1129 · Oficentro</td><td class="mono">620400</td><td class="mono">$2,300.00</td><td><span class="conf-chip hi">99%</span></td><td><span class="pill ok">Publicado</span></td>
+                <td class="mono">5100480</td><td>OBP-1129 · Oficentro</td><td class="mono">KR</td><td class="mono">620400</td><td class="mono">$2,300.00</td><td><span class="conf-chip hi">99%</span></td><td><span class="pill ok">Publicado</span></td>
               </tr>
               <tr>
-                <td class="mono">5100479</td><td>DHL-04471 · DHL Express</td><td class="mono">610200</td><td class="mono">$1,180.50</td><td><span class="conf-chip hi">94%</span></td><td><span class="pill ok">Publicado</span></td>
+                <td class="mono">5100479</td><td>DHL-04471 · DHL Express</td><td class="mono">KR</td><td class="mono">610200</td><td class="mono">$1,180.50</td><td><span class="conf-chip hi">94%</span></td><td><span class="pill ok">Publicado</span></td>
               </tr>
               <tr>
-                <td class="mono">—</td><td>SCAN-0092 · sin identificar</td><td class="mono">—</td><td class="mono">$640.00</td><td><span class="conf-chip low">41%</span></td><td><span class="pill err">En excepción</span></td>
+                <td class="mono">—</td><td>SCAN-0092 · sin identificar</td><td class="mono">—</td><td class="mono">—</td><td class="mono">$640.00</td><td><span class="conf-chip low">41%</span></td><td><span class="pill crit">Bloqueado MRBR</span></td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <div class="panel journal-detail">
-          <div class="panel-title" style="margin-bottom:6px;">Detalle del asiento · INV-88231</div>
-          <p style="font-size:11px;color:var(--muted);margin-bottom:12px;">Merz Pharma GmbH · Doc. SAP 5100482</p>
+          <div class="panel-title" style="margin-bottom:6px;">Detalle del asiento · Doc. BKPF 5100482</div>
+          <p style="font-size:10.6px;color:var(--muted);margin-bottom:11px;">Merz Pharma GmbH · Tipo doc. KR · Sociedad 1000 · Ejercicio 2026 / Periodo 06</p>
           <div class="journal-line head"><div>Cuenta</div><div>Descripción</div><div style="text-align:right;">Debe</div><div style="text-align:right;">Haber</div></div>
           <div class="journal-line"><div class="journal-acct">140100</div><div>Inventario Mercancías</div><div class="journal-debe">$18,420.00</div><div></div></div>
           <div class="journal-line"><div class="journal-acct">240100</div><div>Cuentas por Pagar Proveedores</div><div></div><div class="journal-haber">$18,420.00</div></div>
 
-          <div class="reasoning-box">
-            <b>Razonamiento del agente</b>
-            Proveedor Merz Pharma GmbH tiene 47 facturas históricas, el 100% clasificadas en la cuenta 140100. El monto coincide exactamente con la PO-4471 y la entrada de mercancía registrada el 18 de junio. No se detectaron variaciones de precio ni de cantidad, por lo que el asiento se publicó de forma autónoma según la política de autonomía para facturas de proveedores conocidos.
+          <div class="cobj-row">
+            <div class="cobj">Centro costo <b>4100-DIST</b></div>
+            <div class="cobj">Centro benef. <b>PC-DIST-CR</b></div>
+            <div class="cobj">Cód. impuesto <b>I1 (13%)</b></div>
+            <div class="cobj">Cond. pago <b>ZB30</b></div>
           </div>
-          <div class="sap-doc-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg> Publicado vía API_JOURNALENTRY_CREATE</div>
+
+          <div class="reasoning-box">
+            <b>Cadena de razonamiento del agente</b>
+            Proveedor con 47 facturas históricas, 100% clasificadas en cuenta 140100. Monto coincide exactamente con PO 4500004471 y entrada de mercancía MSEG del 18/06. Sin variación de precio ni cantidad → dentro de tolerancia OBA3/PP2%. Se publicó de forma autónoma según la política de autonomía vigente para proveedores homologados.
+          </div>
+          <div class="sap-doc-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg> Publicado vía BAPI_ACC_DOCUMENT_POST</div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- =============== AUDITORÍA EN TIEMPO REAL =============== -->
+    <section class="view" id="view-auditoria">
+
+      <div class="audit-grid">
+        <div class="panel" style="padding:18px;">
+          <div class="panel-title" style="margin-bottom:10px;"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3"/></svg> Detección de anomalías · Ley de Benford</div>
+          <p style="font-size:10.6px;color:var(--muted);margin-bottom:12px;">Distribución del primer dígito en montos de factura del mes vs. distribución esperada. Desviaciones grandes son indicio de manipulación o error sistemático.</p>
+          <div class="benford-chart">
+            <div class="benford-bar-wrap"><div class="benford-expected" style="height:30.1%;"></div><div class="benford-actual" style="height:29%;"></div><div class="benford-label">1</div></div>
+            <div class="benford-bar-wrap"><div class="benford-expected" style="height:17.6%;"></div><div class="benford-actual" style="height:19%;"></div><div class="benford-label">2</div></div>
+            <div class="benford-bar-wrap"><div class="benford-expected" style="height:12.5%;"></div><div class="benford-actual" style="height:11%;"></div><div class="benford-label">3</div></div>
+            <div class="benford-bar-wrap"><div class="benford-expected" style="height:9.7%;"></div><div class="benford-actual" style="height:9%;"></div><div class="benford-label">4</div></div>
+            <div class="benford-bar-wrap"><div class="benford-expected" style="height:7.9%;"></div><div class="benford-actual" style="height:14%;"></div><div class="benford-label">5</div></div>
+            <div class="benford-bar-wrap"><div class="benford-expected" style="height:6.7%;"></div><div class="benford-actual" style="height:6%;"></div><div class="benford-label">6</div></div>
+            <div class="benford-bar-wrap"><div class="benford-expected" style="height:5.8%;"></div><div class="benford-actual" style="height:5%;"></div><div class="benford-label">7</div></div>
+            <div class="benford-bar-wrap"><div class="benford-expected" style="height:5.1%;"></div><div class="benford-actual" style="height:4%;"></div><div class="benford-label">8</div></div>
+            <div class="benford-bar-wrap"><div class="benford-expected" style="height:4.6%;"></div><div class="benford-actual" style="height:3%;"></div><div class="benford-label">9</div></div>
+          </div>
+          <div style="display:flex;gap:16px;margin-top:12px;font-size:9.8px;color:var(--muted);">
+            <span>▭ dorado = observado</span><span>┄ línea = esperado (Ley de Benford)</span>
+          </div>
+          <div class="reasoning-box" style="margin-top:14px;">
+            <b>Hallazgo del agente</b>
+            El dígito "5" aparece 14% de las veces vs. 7.9% esperado — desviación de 6.1pp, por encima del umbral de alerta (5pp). 3 facturas de un mismo proveedor concentran el patrón. Ver alerta relacionada en la cola de Alertas.
+          </div>
+        </div>
+
+        <div class="panel" style="padding:0;overflow:hidden;">
+          <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/></svg> Conflictos de segregación de funciones (SoD)</div><span class="pill crit">2 activos</span></div>
+          <div class="sod-row">
+            <div class="sod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 9v4M12 17h.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+            <div class="sod-body">
+              <div class="sod-title">Usuario JPEREZ creó y aprobó la misma factura</div>
+              <div class="sod-meta">Regla SoD: F-BSEG-01 (creador ≠ aprobador) · Doc. BKPF 5100481</div>
+            </div>
+          </div>
+          <div class="sod-row">
+            <div class="sod-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div>
+            <div class="sod-body">
+              <div class="sod-title">Cambio de cuenta bancaria de proveedor sin doble aprobación</div>
+              <div class="sod-meta">Regla SoD: F-LFBK-02 · Proveedor Merz Pharma GmbH · CDHDR 0009341</div>
+            </div>
+          </div>
+
+          <div class="panel-head" style="border-top:1px solid var(--line-soft);">
+            <div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> Escáner de pagos duplicados</div>
+          </div>
+          <div class="sod-row">
+            <div class="sod-icon" style="background:var(--amber-bg);color:var(--gold-deep);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg></div>
+            <div class="sod-body">
+              <div class="sod-title">Posible pago duplicado · Centro Aurea · $390.00</div>
+              <div class="sod-meta">Coincidencia proveedor + monto + fecha (BSIK) · confianza 81%</div>
+            </div>
+          </div>
+
+          <div class="panel-head" style="border-top:1px solid var(--line-soft);">
+            <div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg> Continuous Controls Monitoring (CCM)</div>
+          </div>
+          <div class="ccm-row">
+            <div class="ccm-icon pass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg></div>
+            <div class="ccm-text"><strong>Cuenta GR/IR 219100 reconciliada diariamente</strong><span>Regla CCM-014 · última corrida 06:00am</span></div>
+            <div class="ccm-freq">Diaria</div>
+          </div>
+          <div class="ccm-row">
+            <div class="ccm-icon pass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg></div>
+            <div class="ccm-text"><strong>Facturas &gt; tolerancia OBA3 requieren aprobación</strong><span>Regla CCM-002 · 100% cumplimiento este mes</span></div>
+            <div class="ccm-freq">Por transacción</div>
+          </div>
+          <div class="ccm-row">
+            <div class="ccm-icon warn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg></div>
+            <div class="ccm-text"><strong>Cambios a maestro de proveedores (LFA1/LFBK)</strong><span>Regla CCM-021 · 1 excepción esta semana</span></div>
+            <div class="ccm-freq">Por cambio</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" style="padding:0;overflow:hidden;">
+        <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3"/></svg> Bitácora de cambios (CDHDR / CDPOS) · Auditoría inmutable</div></div>
+        <table>
+          <thead><tr><th>Doc. cambio</th><th>Objeto</th><th>Usuario</th><th>Campo</th><th>Antes → Después</th><th>Fecha/Hora</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">0009341</td><td>LFBK · Datos bancarios</td><td class="mono">JPEREZ</td><td>Cuenta IBAN</td><td class="mono">CR05...4471 → CR05...9982</td><td class="mono">10:12:04</td></tr>
+            <tr><td class="mono">0009338</td><td>BKPF · Doc. contable</td><td class="mono">SISTEMA (IA)</td><td>Estado</td><td class="mono">Borrador → Publicado</td><td class="mono">10:41:22</td></tr>
+            <tr><td class="mono">0009335</td><td>LFA1 · Maestro proveedor</td><td class="mono">MSOLANO</td><td>Condición de pago</td><td class="mono">ZB30 → ZB15</td><td class="mono">09:47:11</td></tr>
+            <tr><td class="mono">0009331</td><td>EKKO · Orden de compra</td><td class="mono">SISTEMA (IA)</td><td>Estado de liberación</td><td class="mono">Bloqueada → Liberada</td><td class="mono">09:20:40</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- =============== ALERTAS =============== -->
+    <section class="view" id="view-alertas">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg> Centro de alertas</div><span class="pill crit">2 críticas · 2 altas · 1 media</span></div>
+
+        <div class="alert-row">
+          <div class="alert-sev critical"></div>
+          <div class="alert-icon critical"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+          <div class="alert-body">
+            <div class="alert-top-row"><span class="alert-title">Conflicto SoD: mismo usuario creó y aprobó una factura</span><span class="sev-tag critical">Crítica</span></div>
+            <div class="alert-meta">Regla F-BSEG-01 · Doc. BKPF 5100481 · Usuario JPEREZ · Croma Pharma $9,760.00</div>
+            <div class="alert-desc">El agente de auditoría continua detectó que el mismo usuario ejecutó la creación (MIRO) y la liberación de pago de esta factura, violando la segregación de funciones configurada en el rol compuesto Z_AP_PROCESSOR.</div>
+            <div class="alert-actions"><button class="btn-sm primary">Reasignar aprobador</button><button class="btn-sm">Ver traza completa</button></div>
+          </div>
+        </div>
+
+        <div class="alert-row">
+          <div class="alert-sev critical"></div>
+          <div class="alert-icon critical"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div>
+          <div class="alert-body">
+            <div class="alert-top-row"><span class="alert-title">Cambio de cuenta bancaria de proveedor sin doble aprobación</span><span class="sev-tag critical">Crítica</span></div>
+            <div class="alert-meta">Regla F-LFBK-02 · CDHDR 0009341 · Merz Pharma GmbH · usuario JPEREZ</div>
+            <div class="alert-desc">Se modificó el IBAN registrado del proveedor sin el segundo nivel de aprobación requerido por política. Este patrón es consistente con intentos de fraude de desvío de pagos (vendor takeover fraud).</div>
+            <div class="alert-actions"><button class="btn-sm primary">Congelar pagos al proveedor</button><button class="btn-sm">Contactar proveedor para verificar</button></div>
+          </div>
+        </div>
+
+        <div class="alert-row">
+          <div class="alert-sev high"></div>
+          <div class="alert-icon high"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3"/></svg></div>
+          <div class="alert-body">
+            <div class="alert-top-row"><span class="alert-title">Anomalía estadística en distribución de montos (Ley de Benford)</span><span class="sev-tag high">Alta</span></div>
+            <div class="alert-meta">Desviación +6.1pp en dígito "5" · 3 facturas concentradas en 1 proveedor</div>
+            <div class="alert-desc">El agente de auditoría detectó una desviación significativa frente a la distribución esperada de primeros dígitos, patrón asociado estadísticamente a montos fabricados o fraccionamiento de compras para evadir umbrales de aprobación.</div>
+            <div class="alert-actions"><button class="btn-sm primary">Revisar facturas del proveedor</button><button class="btn-sm">Descartar (falso positivo)</button></div>
+          </div>
+        </div>
+
+        <div class="alert-row">
+          <div class="alert-sev high"></div>
+          <div class="alert-icon high"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
+          <div class="alert-body">
+            <div class="alert-top-row"><span class="alert-title">Posible pago duplicado</span><span class="sev-tag high">Alta</span></div>
+            <div class="alert-meta">Centro Aurea · $390.00 · confianza 81% · tabla BSIK</div>
+            <div class="alert-desc">Dos cargos idénticos en monto, proveedor y fecha en el estado de cuenta bancario. El agente recomienda verificar con el banco antes de aplicar cualquier reembolso.</div>
+            <div class="alert-actions"><button class="btn-sm primary">Marcar como revisado</button><button class="btn-sm">Escalar a contabilidad</button></div>
+          </div>
+        </div>
+
+        <div class="alert-row">
+          <div class="alert-sev medium"></div>
+          <div class="alert-icon medium"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8.3 6h7.4M18 8.2v7.6M8.2 7.5 16 16"/></svg></div>
+          <div class="alert-body">
+            <div class="alert-top-row"><span class="alert-title">Endpoint /API_BANKSTATEMENT_SRV requiere reautenticación</span><span class="sev-tag medium">Media</span></div>
+            <div class="alert-meta">Certificado OAuth2 expira en 3 días · último sync exitoso 10:15:03</div>
+            <div class="alert-desc">La integración con el estado de cuenta bancario funciona con normalidad, pero el certificado de autenticación vence pronto y debe renovarse para evitar interrupciones en la conciliación automática.</div>
+            <div class="alert-actions"><button class="btn-sm primary">Renovar certificado</button><button class="btn-sm">Posponer 24h</button></div>
+          </div>
         </div>
 
       </div>
@@ -613,7 +1005,7 @@
         </div>
 
         <div class="panel int-card">
-          <div class="int-top"><div class="int-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg></div><div><div class="int-name">Asientos Contables (FI-GL)</div><div class="int-endpoint">/API_JOURNALENTRY_CREATE</div></div></div>
+          <div class="int-top"><div class="int-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-7h6v7"/></svg></div><div><div class="int-name">Asientos Contables (FI-GL)</div><div class="int-endpoint">BAPI_ACC_DOCUMENT_POST</div></div></div>
           <div class="int-stats"><div class="int-stat"><div class="l">Estado</div><div class="v" style="color:var(--sage);">Conectado</div></div><div class="int-stat"><div class="l">Llamadas 24h</div><div class="v">1,204</div></div><div class="int-stat"><div class="l">Latencia</div><div class="v">190ms</div></div></div>
         </div>
 
@@ -628,120 +1020,84 @@
         </div>
 
         <div class="panel int-card">
-          <div class="int-top"><div class="int-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div><div><div class="int-name">Socios de Negocio</div><div class="int-endpoint">/API_BUSINESS_PARTNER</div></div></div>
+          <div class="int-top"><div class="int-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div><div><div class="int-name">Socios de Negocio (BP)</div><div class="int-endpoint">/API_BUSINESS_PARTNER</div></div></div>
           <div class="int-stats"><div class="int-stat"><div class="l">Estado</div><div class="v" style="color:var(--sage);">Conectado</div></div><div class="int-stat"><div class="l">Llamadas 24h</div><div class="v">156</div></div><div class="int-stat"><div class="l">Latencia</div><div class="v">175ms</div></div></div>
         </div>
 
         <div class="panel int-card">
           <div class="int-top"><div class="int-icon" style="background:var(--terracotta-bg);color:var(--terracotta);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div><div><div class="int-name">Estado de Cuenta Bancario</div><div class="int-endpoint">/API_BANKSTATEMENT_SRV</div></div></div>
-          <div class="int-stats"><div class="int-stat"><div class="l">Estado</div><div class="v" style="color:var(--amber);">Reautenticar</div></div><div class="int-stat"><div class="l">Llamadas 24h</div><div class="v">44</div></div><div class="int-stat"><div class="l">Latencia</div><div class="v">—</div></div></div>
+          <div class="int-stats"><div class="int-stat"><div class="l">Estado</div><div class="v" style="color:var(--gold-deep);">Reautenticar</div></div><div class="int-stat"><div class="l">Llamadas 24h</div><div class="v">44</div></div><div class="int-stat"><div class="l">Latencia</div><div class="v">—</div></div></div>
         </div>
 
       </div>
 
+      <div class="panel" style="padding:0;overflow:hidden;margin-bottom:16px;">
+        <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="6" cy="6" r="2.2"/><circle cx="18" cy="18" r="2.2"/><circle cx="18" cy="6" r="2.2"/><path d="M8.3 6h7.4M18 8.2v7.6M8.2 7.5 16 16"/></svg> Monitor de IDocs (WE02)</div></div>
+        <table>
+          <thead><tr><th>IDoc</th><th>Tipo básico</th><th>Socio</th><th>Estado</th><th>Hora</th></tr></thead>
+          <tbody>
+            <tr><td class="mono">0000004471821</td><td class="mono">INVOIC01</td><td>MERZPHARMA</td><td><span class="pill ok">51 · Aplicado</span></td><td class="mono">10:41:02</td></tr>
+            <tr><td class="mono">0000004471819</td><td class="mono">ORDERS05</td><td>CLINICA_BELLEVUE</td><td><span class="pill ok">53 · Confirmado</span></td><td class="mono">09:14:11</td></tr>
+            <tr><td class="mono">0000004471804</td><td class="mono">INVOIC01</td><td>CROMAPHARMA</td><td><span class="pill err">02 · Error de sintaxis</span></td><td class="mono">08:52:40</td></tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="panel" style="padding:0;overflow:hidden;">
-        <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3"/></svg> Registro de llamadas API</div></div>
+        <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 16v-5M12 16V8M16 16v-3"/></svg> Registro de llamadas API (OData/RFC)</div></div>
         <div class="log-row head"><div>Hora</div><div>Endpoint</div><div>Método</div><div>Estado</div><div>Dur.</div></div>
-        <div class="log-row"><div class="log-time">10:41:22</div><div class="log-endpoint">/API_JOURNALENTRY_CREATE</div><div>POST</div><div class="log-status s2">201</div><div class="log-dur">190ms</div></div>
+        <div class="log-row"><div class="log-time">10:41:22</div><div class="log-endpoint">BAPI_ACC_DOCUMENT_POST</div><div>RFC</div><div class="log-status s2">OK</div><div class="log-dur">190ms</div></div>
         <div class="log-row"><div class="log-time">10:41:15</div><div class="log-endpoint">/API_PURCHASEORDER_PROCESS_SRV</div><div>GET</div><div class="log-status s2">200</div><div class="log-dur">205ms</div></div>
         <div class="log-row"><div class="log-time">10:41:09</div><div class="log-endpoint">/API_SUPPLIERINVOICE_PROCESS_SRV</div><div>POST</div><div class="log-status s2">201</div><div class="log-dur">240ms</div></div>
         <div class="log-row"><div class="log-time">10:38:47</div><div class="log-endpoint">/API_BUSINESS_PARTNER</div><div>GET</div><div class="log-status s4">404</div><div class="log-dur">175ms</div></div>
         <div class="log-row"><div class="log-time">10:15:03</div><div class="log-endpoint">/API_BANKSTATEMENT_SRV</div><div>GET</div><div class="log-status s2">200</div><div class="log-dur">312ms</div></div>
-        <div class="log-row"><div class="log-time">09:52:18</div><div class="log-endpoint">/API_JOURNALENTRY_CREATE</div><div>POST</div><div class="log-status s2">201</div><div class="log-dur">188ms</div></div>
+        <div class="log-row"><div class="log-time">09:52:18</div><div class="log-endpoint">BAPI_ACC_DOCUMENT_POST</div><div>RFC</div><div class="log-status s2">OK</div><div class="log-dur">188ms</div></div>
       </div>
     </section>
 
     <!-- =============== CIERRE FINANCIERO =============== -->
     <section class="view" id="view-cierre">
       <div class="panel close-progress">
-        <div class="panel-title" style="margin-bottom:4px;">Cierre de junio 2026</div>
+        <div class="panel-title" style="margin-bottom:4px;">Cierre del periodo 06/2026 · Sociedad 1000</div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;">
-          <div class="serif" style="font-size:20px;font-weight:600;">4 de 6 tareas completadas</div>
-          <div class="mono" style="font-size:11px;color:var(--gold);">67%</div>
+          <div class="serif" style="font-size:19px;font-weight:600;">4 de 6 tareas completadas</div>
+          <div class="mono" style="font-size:10.5px;color:var(--gold-deep);">67%</div>
         </div>
         <div class="close-bar-wrap"><div class="close-bar" style="width:67%;"></div></div>
-        <div style="font-size:10.8px;color:var(--muted);">Estimado de cierre completo: 24 de junio, 6:00pm</div>
+        <div style="font-size:10.3px;color:var(--muted);">Bloqueo de periodo (OB52) estimado: 24 de junio, 6:00pm</div>
       </div>
 
       <div class="panel">
         <div class="close-list-row">
           <div class="close-icon done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg></div>
-          <div class="close-text"><strong>Conciliación bancaria completa</strong><span>98.4% conciliado automáticamente contra el mayor de SAP</span></div>
+          <div class="close-text"><strong>Conciliación bancaria completa</strong><span>FAGLL03 · 98.4% conciliado contra cuenta GR/IR 219100</span></div>
           <div class="close-time-saved">-3.2h</div>
         </div>
         <div class="close-list-row">
           <div class="close-icon done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg></div>
-          <div class="close-text"><strong>Todas las facturas de proveedor contabilizadas</strong><span>58 de 61 publicadas · 3 en excepción</span></div>
+          <div class="close-text"><strong>Facturas de proveedor contabilizadas</strong><span>58 de 61 en BKPF · 3 bloqueadas en MRBR</span></div>
           <div class="close-time-saved">-4.1h</div>
         </div>
         <div class="close-list-row">
           <div class="close-icon done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg></div>
-          <div class="close-text"><strong>Acumulaciones (accruals) calculadas</strong><span>Gastos de logística y arrendamiento del mes</span></div>
+          <div class="close-text"><strong>Acumulaciones (accruals) calculadas</strong><span>Doc. tipo SA · gastos de logística y arrendamiento</span></div>
           <div class="close-time-saved">-1.5h</div>
         </div>
         <div class="close-list-row">
           <div class="close-icon done"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg></div>
-          <div class="close-text"><strong>Depreciación de activos fijos</strong><span>Equipos Ultherapy y flotilla de reparto</span></div>
+          <div class="close-text"><strong>Depreciación de activos fijos (AFAB)</strong><span>Equipos Ultherapy y flotilla de reparto</span></div>
           <div class="close-time-saved">-0.8h</div>
         </div>
         <div class="close-list-row">
           <div class="close-icon progress"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg></div>
-          <div class="close-text"><strong>Borrador de estado de resultados y balance general</strong><span>Generándose desde el mayor de SAP · listo en ~20 min</span></div>
+          <div class="close-text"><strong>Borrador de estado de resultados y balance general</strong><span>Generándose desde ledger 0L · listo en ~20 min</span></div>
           <div class="close-time-saved">est. -2.5h</div>
         </div>
         <div class="close-list-row">
           <div class="close-icon pending"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/></svg></div>
-          <div class="close-text"><strong>Firma y aprobación del contador</strong><span>Requiere revisión humana antes de cerrar el periodo</span></div>
+          <div class="close-text"><strong>Firma, aprobación y bloqueo de periodo (OB52)</strong><span>Requiere revisión humana antes de cerrar el periodo</span></div>
           <div class="close-time-saved">pendiente</div>
         </div>
-      </div>
-    </section>
-
-    <!-- =============== EXCEPCIONES =============== -->
-    <section class="view" id="view-excepciones">
-      <div class="panel">
-        <div class="panel-head"><div class="panel-title"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.3 3.9 2.5 18a2 2 0 0 0 1.7 3h15.6a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/></svg> Cola de revisión humana</div><span class="conf-chip low">4 pendientes</span></div>
-
-        <div class="exc-row">
-          <div class="exc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 2.9-6.5 6.5-6.5s6.5 2.9 6.5 6.5"/></svg></div>
-          <div class="exc-body">
-            <div class="exc-title">Proveedor no identificado · SCAN-0092 · $640.00</div>
-            <div class="exc-meta">El OCR no pudo leer con certeza la cédula jurídica del proveedor en la imagen escaneada.</div>
-            <div class="exc-suggestion"><b>Sugerencia del agente:</b> Coincide en 62% con "Suministros Médicos del Valle S.A." según el nombre parcial y el monto histórico similar.</div>
-            <div class="exc-actions"><button class="btn-sm primary">Aprobar sugerencia</button><button class="btn-sm">Buscar proveedor manualmente</button></div>
-          </div>
-        </div>
-
-        <div class="exc-row">
-          <div class="exc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg></div>
-          <div class="exc-body">
-            <div class="exc-title">Discrepancia de monto · Croma Pharma CR-33012</div>
-            <div class="exc-meta">Factura por $9,760.00 vs. orden de compra PO-4455 por $9,410.00 — diferencia de $350.00 (3.7%).</div>
-            <div class="exc-suggestion"><b>Sugerencia del agente:</b> La diferencia corresponde a un cargo de flete no incluido en la PO original. Se recomienda aprobar y ajustar la PO.</div>
-            <div class="exc-actions"><button class="btn-sm primary">Aprobar con ajuste</button><button class="btn-sm">Rechazar factura</button></div>
-          </div>
-        </div>
-
-        <div class="exc-row">
-          <div class="exc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="20" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></div>
-          <div class="exc-body">
-            <div class="exc-title">Factura sin orden de compra · Marketing Digital CR · $890.00</div>
-            <div class="exc-meta">No existe una PO asociada. El agente identificó el gasto como servicios de marketing, pero requiere aprobación por política de compras.</div>
-            <div class="exc-suggestion"><b>Sugerencia del agente:</b> Clasificar en cuenta 630100 · Publicidad y Marketing.</div>
-            <div class="exc-actions"><button class="btn-sm primary">Aprobar clasificación</button><button class="btn-sm">Reasignar cuenta</button></div>
-          </div>
-        </div>
-
-        <div class="exc-row">
-          <div class="exc-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg></div>
-          <div class="exc-body">
-            <div class="exc-title">Posible pago duplicado · Centro Aurea · $390.00</div>
-            <div class="exc-meta">El agente de conciliación bancaria detectó dos cargos idénticos el mismo día en el estado de cuenta.</div>
-            <div class="exc-suggestion"><b>Sugerencia del agente:</b> Verificar con el banco antes de aplicar cualquier reembolso al cliente.</div>
-            <div class="exc-actions"><button class="btn-sm primary">Marcar como revisado</button><button class="btn-sm">Escalar a contabilidad</button></div>
-          </div>
-        </div>
-
       </div>
     </section>
 
@@ -749,21 +1105,21 @@
 </div>
 
 <!-- MODAL: Connect new API -->
-<div class="modal-overlay" id="connModal" style="position:fixed;inset:0;background:rgba(3,9,18,0.7);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:40px 20px;overflow-y:auto;">
+<div class="modal-overlay" id="connModal" style="position:fixed;inset:0;background:rgba(8,29,52,0.55);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:40px 20px;overflow-y:auto;">
   <div class="panel" style="width:100%;max-width:560px;">
     <div class="panel-head">
-      <div><div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;">Conectar nueva API de SAP</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Registra un endpoint OData/BAPI adicional para que los agentes lo utilicen.</div></div>
+      <div><div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--navy);">Conectar nueva API de SAP</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Registra un endpoint OData/BAPI/RFC adicional para que los agentes lo utilicen.</div></div>
       <div style="cursor:pointer;color:var(--muted);" onclick="closeModal('connModal')">✕</div>
     </div>
     <div style="padding:20px;">
       <div style="display:flex;flex-direction:column;gap:12px;">
-        <div><label style="font-size:10.5px;font-weight:700;color:var(--gold);text-transform:uppercase;">Nombre del servicio</label><input type="text" placeholder="Ej. Gestión de Activos Fijos" style="width:100%;margin-top:5px;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel-alt);color:var(--text);font-size:12.5px;outline:none;"></div>
-        <div><label style="font-size:10.5px;font-weight:700;color:var(--gold);text-transform:uppercase;">Endpoint OData / BAPI</label><input type="text" placeholder="/API_FIXEDASSET_SRV" style="width:100%;margin-top:5px;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel-alt);color:var(--text);font-size:12.5px;font-family:'IBM Plex Mono',monospace;outline:none;"></div>
-        <div><label style="font-size:10.5px;font-weight:700;color:var(--gold);text-transform:uppercase;">Autenticación</label>
+        <div><label style="font-size:10.5px;font-weight:700;color:var(--gold-deep);text-transform:uppercase;">Nombre del servicio</label><input type="text" placeholder="Ej. Gestión de Activos Fijos (FI-AA)" style="width:100%;margin-top:5px;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel-alt);color:var(--text);font-size:12.5px;outline:none;"></div>
+        <div><label style="font-size:10.5px;font-weight:700;color:var(--gold-deep);text-transform:uppercase;">Endpoint OData / BAPI / RFC</label><input type="text" placeholder="/API_FIXEDASSET_SRV o BAPI_FIXEDASSET_CREATE1" style="width:100%;margin-top:5px;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel-alt);color:var(--text);font-size:12.5px;font-family:'IBM Plex Mono',monospace;outline:none;"></div>
+        <div><label style="font-size:10.5px;font-weight:700;color:var(--gold-deep);text-transform:uppercase;">Autenticación</label>
           <select style="width:100%;margin-top:5px;padding:9px 12px;border-radius:9px;border:1px solid var(--line);background:var(--panel-alt);color:var(--text);font-size:12.5px;">
             <option>OAuth 2.0 Client Credentials</option>
             <option>Certificado X.509</option>
-            <option>Basic Auth (no recomendado)</option>
+            <option>SAP Cloud Connector (on-premise)</option>
           </select>
         </div>
       </div>
@@ -776,25 +1132,30 @@
 </div>
 
 <!-- MODAL: AP invoice detail -->
-<div class="modal-overlay" id="apDetailModal" style="position:fixed;inset:0;background:rgba(3,9,18,0.7);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:40px 20px;overflow-y:auto;">
+<div class="modal-overlay" id="apDetailModal" style="position:fixed;inset:0;background:rgba(8,29,52,0.55);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;z-index:100;padding:40px 20px;overflow-y:auto;">
   <div class="panel" style="width:100%;max-width:600px;">
     <div class="panel-head">
-      <div><div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;">Factura INV-88231 · Merz Pharma GmbH</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Procesada íntegramente por el Agente AP-01</div></div>
+      <div><div style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--navy);">Factura INV-88231 · Merz Pharma GmbH</div><div style="font-size:11px;color:var(--muted);margin-top:2px;">Procesada íntegramente por el Agente AP-01 · Doc. BKPF 5100482</div></div>
       <div style="cursor:pointer;color:var(--muted);" onclick="closeModal('apDetailModal')">✕</div>
     </div>
     <div style="padding:20px;">
       <div class="journal-line head"><div>Cuenta</div><div>Descripción</div><div style="text-align:right;">Debe</div><div style="text-align:right;">Haber</div></div>
       <div class="journal-line"><div class="journal-acct">140100</div><div>Inventario Mercancías</div><div class="journal-debe">$18,420.00</div><div></div></div>
       <div class="journal-line"><div class="journal-acct">240100</div><div>Cuentas por Pagar Proveedores</div><div></div><div class="journal-haber">$18,420.00</div></div>
+      <div class="cobj-row">
+        <div class="cobj">Centro costo <b>4100-DIST</b></div>
+        <div class="cobj">Centro benef. <b>PC-DIST-CR</b></div>
+        <div class="cobj">Cód. impuesto <b>I1 (13%)</b></div>
+      </div>
       <div class="reasoning-box">
         <b>Cadena de decisiones del agente</b>
-        1) OCR extrajo monto y proveedor con 98% de confianza · 2) 3-way match contra PO-4471 y entrada de mercancía · 3) Clasificación contable por histórico (96% confianza) · 4) Partida cuadrada generada y publicada en SAP.
+        1) OCR extrajo monto y proveedor con 98% de confianza · 2) Match 3 vías contra PO 4500004471 y entrada MSEG · 3) Clasificación contable por histórico (96%) · 4) Validación de tolerancia OBA3 · 5) Partida cuadrada generada y publicada vía BAPI_ACC_DOCUMENT_POST.
       </div>
-      <div class="sap-doc-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg> Doc. SAP 5100482 · publicado hace 12 min</div>
+      <div class="sap-doc-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12.5 11 14.5 15.5 9.5"/><circle cx="12" cy="12" r="9"/></svg> Doc. BKPF 5100482 · publicado hace 12 min</div>
     </div>
     <div style="display:flex;justify-content:space-between;padding:15px 20px;border-top:1px solid var(--line-soft);">
       <button class="btn-sm" onclick="closeModal('apDetailModal')">Cerrar</button>
-      <button class="btn-gold" onclick="closeModal('apDetailModal')">Ver en SAP</button>
+      <button class="btn-gold" onclick="closeModal('apDetailModal')">Ver en SAP (FB03)</button>
     </div>
   </div>
 </div>
@@ -802,23 +1163,24 @@
 <script>
   // ===== View switching =====
   const titles = {
-    centro: ['Centro de agentes', 'Trazabilidad en vivo de los agentes de IA operando sobre SAP'],
-    facturas: ['Facturas de proveedores', 'Del correo entrante a la partida contabilizada en SAP'],
-    mayor: ['Mayor contable y asientos', 'Cada asiento con su razonamiento y confianza del agente'],
-    integraciones: ['Integraciones y APIs de SAP', 'Estado de conexión, latencia y registro de llamadas'],
-    cierre: ['Cierre financiero', 'Checklist de cierre de mes automatizado por agentes'],
-    excepciones: ['Cola de excepciones', 'Casos que requieren criterio humano, con sugerencia del agente']
+    centro: ['Centro de mando', 'Capa agéntica operando en tiempo real sobre SAP S/4HANA'],
+    facturas: ['Facturas de proveedores (MIRO)', 'Del IDoc entrante a la partida contabilizada en BKPF/BSEG'],
+    mayor: ['Mayor contable (FI-GL)', 'Cada asiento BKPF con su razonamiento, objetos de imputación y confianza del agente'],
+    auditoria: ['Auditoría en tiempo real', 'Ley de Benford, segregación de funciones (SoD) y Continuous Controls Monitoring'],
+    alertas: ['Centro de alertas', 'Anomalías, conflictos SoD y estado de integraciones que requieren atención'],
+    integraciones: ['Integraciones, APIs e IDocs', 'Estado de conexión, latencia, RFC/BAPI y monitor de IDocs (WE02)'],
+    cierre: ['Cierre financiero', 'Checklist de cierre de periodo automatizado por agentes, con bloqueo OB52 al final']
   };
+  function goToView(v){
+    document.querySelectorAll('.rail-item').forEach(i=>i.classList.remove('active'));
+    document.querySelector('.rail-item[data-view="'+v+'"]').classList.add('active');
+    document.querySelectorAll('.view').forEach(sec=>sec.classList.remove('active'));
+    document.getElementById('view-'+v).classList.add('active');
+    document.getElementById('viewTitle').textContent = titles[v][0];
+    document.getElementById('viewSub').textContent = titles[v][1];
+  }
   document.querySelectorAll('.rail-item[data-view]').forEach(item=>{
-    item.addEventListener('click', ()=>{
-      document.querySelectorAll('.rail-item').forEach(i=>i.classList.remove('active'));
-      item.classList.add('active');
-      const v = item.dataset.view;
-      document.querySelectorAll('.view').forEach(sec=>sec.classList.remove('active'));
-      document.getElementById('view-'+v).classList.add('active');
-      document.getElementById('viewTitle').textContent = titles[v][0];
-      document.getElementById('viewSub').textContent = titles[v][1];
-    });
+    item.addEventListener('click', ()=> goToView(item.dataset.view));
   });
 
   // ===== Modals =====
@@ -832,12 +1194,13 @@
     setTimeout(()=>{ closeModal('connModal'); btn.textContent = 'Probar y conectar'; }, 1000);
   }
 
-  // ===== Live trace ticker: prepend a new autonomous action periodically =====
+  // ===== Live trace ticker =====
   const liveEvents = [
-    {agent:'Agente AP-01 · Facturas de proveedor', dot:'ok', text:'Factura <b>INV-88233</b> de Croma Pharma clasificada y publicada en SAP doc <b>5100483</b>.', meta:['confianza 95%','Tiempo total: 44s'], conf:'hi'},
-    {agent:'Agente GL-02 · Conciliación bancaria', dot:'info', text:'Nuevo movimiento bancario de $2,300.00 conciliado contra factura Oficentro <b>OBP-1129</b>.', meta:['match automático','API: /API_BANKSTATEMENT_SRV'], conf:'hi'},
-    {agent:'Agente AP-01', dot:'warn', text:'Factura de <b>Marketing Digital CR</b> por $890.00 no tiene PO asociada. Enviada a excepciones.', meta:['confianza 58%','Requiere revisión humana'], conf:'low'},
-    {agent:'Agente Close-03 · Cierre financiero', dot:'ok', text:'Depreciación de activos fijos calculada y contabilizada para el periodo de junio.', meta:['6 activos procesados','Tiempo total: 2.1min'], conf:'hi'}
+    {agent:'Agente AP-01 · Invoice-to-Pay', dot:'ok', text:'Factura <span class="ref">INV-88233</span> de Croma Pharma clasificada y publicada en <span class="ref">BKPF 5100483</span>.', meta:['confianza 95%','Tiempo total: 44s'], conf:'hi'},
+    {agent:'Agente GL-02 · Conciliación bancaria', dot:'info', text:'Movimiento bancario de $2,300.00 conciliado contra factura Oficentro <span class="ref">OBP-1129</span> en cuenta GR/IR 219100.', meta:['match automático','API: /API_BANKSTATEMENT_SRV'], conf:'hi'},
+    {agent:'Agente Audit-04 · Continuous Controls', dot:'warn', text:'Factura de <span class="ref">Marketing Digital CR</span> ($890.00) sin orden de compra asociada. Regla CCM-009 activada.', meta:['confianza 58%','Requiere revisión humana'], conf:'low'},
+    {agent:'Agente Close-03 · Cierre financiero', dot:'ok', text:'Depreciación de activos fijos (AFAB) calculada y contabilizada para el periodo 06/2026.', meta:['6 activos procesados','Tiempo total: 2.1min'], conf:'hi'},
+    {agent:'Agente Audit-04 · Continuous Controls', dot:'err', text:'Nuevo conflicto SoD detectado: usuario <span class="ref">MSOLANO</span> modificó condición de pago y liberó la misma factura.', meta:['regla F-BSEG-01','Severidad: Crítica'], conf:'low'}
   ];
   let liveIdx = 0;
   function pad(n){ return n.toString().padStart(2,'0'); }
@@ -847,6 +1210,7 @@
     const now = new Date();
     const timeStr = pad(now.getHours())+':'+pad(now.getMinutes())+':'+pad(now.getSeconds());
     const scroll = document.getElementById('traceScroll');
+    if(!scroll) return;
     const row = document.createElement('div');
     row.className = 'trace-row';
     row.style.opacity = '0';
@@ -860,10 +1224,34 @@
       </div>`;
     scroll.insertBefore(row, scroll.firstChild);
     requestAnimationFrame(()=>{ row.style.transition='opacity .4s ease'; row.style.opacity='1'; });
-    // trim to keep list manageable
     while(scroll.children.length > 14){ scroll.removeChild(scroll.lastChild); }
   }
   setInterval(prependTrace, 9000);
+
+  // ===== KPI count-up animation =====
+  function animateCount(el){
+    const target = parseFloat(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1200;
+    const start = performance.now();
+    function tick(now){
+      const p = Math.min((now-start)/duration, 1);
+      const eased = 1 - Math.pow(1-p, 3);
+      const val = Math.round(target * eased);
+      el.textContent = val.toLocaleString('en-US') + suffix;
+      if(p < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  }
+  document.querySelectorAll('.count[data-count]').forEach(el=> animateCount(el));
+
+  // ===== Gauge draw-in animation =====
+  window.addEventListener('load', ()=>{
+    document.querySelectorAll('.gauge-arc').forEach(arc=>{
+      const target = parseFloat(arc.dataset.target);
+      setTimeout(()=>{ arc.style.strokeDashoffset = target; }, 200);
+    });
+  });
 </script>
 
 </body>
