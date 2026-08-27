@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Euro AI · Pricing Plans </title>
+<title>Cotizador IA · Generador de Escenarios Comerciales</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -802,71 +802,95 @@
     }
   }
 
-  function collectState(){
-    const ids = ['f-company','f-owner',
-      'f-wa-on',
-      'f-scrap-on','f-scrap-extra',
-      'f-sales-on','f-lead-convrate','f-lead-ticket',
-      'f-platform-on',
-      'f-sap-on',
-      'f-other-on','f-impl-base-on','f-impl-station-on','f-impl-training-on'];
-    const state = {};
-    ids.forEach(id => {
-      const el = document.getElementById(id);
-      if(!el) return;
-      state[id] = el.type === 'checkbox' ? el.checked : el.value;
-    });
-    MODULES.forEach(m => { state[`mod-${m.id}-on`] = document.getElementById(`mod-${m.id}-on`).checked; });
-    state['countries'] = getSelectedCountries();
-    state['waPlan'] = selectedWaPlan;
-    state['leadPlan'] = selectedLeadPlan;
-    return state;
+  const COUNTRY_CODES = {'Brasil':'BR','Argentina':'AR','Perú':'PE','Chile':'CL','Ecuador':'EC','Bolivia':'BO','Paraguay':'PY','Uruguay':'UY','España':'ES','Portugal':'PT'};
+  const CODE_COUNTRIES = Object.fromEntries(Object.entries(COUNTRY_CODES).map(([name, code]) => [code, name]));
+
+  function buildShareURL(){
+    const params = new URLSearchParams();
+    const company = document.getElementById('f-company').value.trim();
+    const owner = document.getElementById('f-owner').value.trim();
+    if(company) params.set('empresa', company);
+    if(owner) params.set('asesor', owner);
+
+    const countries = getSelectedCountries();
+    if(countries.length) params.set('paises', countries.map(c => COUNTRY_CODES[c] || c).join(','));
+
+    params.set('whatsapp', on('f-wa-on') ? selectedWaPlan : 'no');
+    params.set('leads', on('f-scrap-on') ? selectedLeadPlan : 'no');
+    const extra = num('f-scrap-extra');
+    if(extra) params.set('leads_extra', extra);
+    params.set('ventas_ia', on('f-sales-on') ? 'si' : 'no');
+    params.set('conversion', num('f-lead-convrate'));
+    params.set('ticket', num('f-lead-ticket'));
+    params.set('euroapp', on('f-platform-on') ? 'si' : 'no');
+    const modOff = MODULES.filter(m => !on(`mod-${m.id}-on`)).map(m => m.id);
+    if(modOff.length) params.set('euroapp_sin', modOff.join(','));
+    params.set('sap', on('f-sap-on') ? 'si' : 'no');
+    params.set('implementacion', on('f-other-on') ? 'si' : 'no');
+    const implOff = [];
+    if(!on('f-impl-base-on')) implOff.push('base');
+    if(!on('f-impl-station-on')) implOff.push('pais');
+    if(!on('f-impl-training-on')) implOff.push('capacitacion');
+    if(implOff.length) params.set('implementacion_sin', implOff.join(','));
+
+    return location.origin + location.pathname + '?' + params.toString();
   }
 
-  function applyState(state){
-    Object.keys(state).forEach(id => {
-      if(id === 'countries' || id === 'waPlan' || id === 'leadPlan') return;
-      const el = document.getElementById(id);
-      if(!el) return;
-      if(el.type === 'checkbox') el.checked = !!state[id];
-      else el.value = state[id];
-    });
-    if(Array.isArray(state.countries)){
+  function applyShareParams(){
+    const params = new URLSearchParams(location.search);
+    if(![...params.keys()].length) return;
+
+    if(params.has('empresa')) document.getElementById('f-company').value = params.get('empresa');
+    if(params.has('asesor')) document.getElementById('f-owner').value = params.get('asesor');
+
+    if(params.has('paises')){
+      const names = params.get('paises').split(',').filter(Boolean).map(code => CODE_COUNTRIES[code] || code);
       document.querySelectorAll('.country-chip').forEach(chip => {
-        chip.classList.toggle('selected', state.countries.includes(chip.dataset.country));
+        chip.classList.toggle('selected', names.includes(chip.dataset.country));
       });
     }
-    if(state.waPlan && WA_PLANS.some(p => p.id === state.waPlan)){
-      selectWaPlan(state.waPlan);
+
+    if(params.has('whatsapp')){
+      const v = params.get('whatsapp');
+      document.getElementById('f-wa-on').checked = v !== 'no';
+      if(v !== 'no' && WA_PLANS.some(p => p.id === v)) selectWaPlan(v);
     }
-    if(state.leadPlan && LEAD_PLANS.some(p => p.id === state.leadPlan)){
-      selectLeadPlan(state.leadPlan);
+    if(params.has('leads')){
+      const v = params.get('leads');
+      document.getElementById('f-scrap-on').checked = v !== 'no';
+      if(v !== 'no' && LEAD_PLANS.some(p => p.id === v)) selectLeadPlan(v);
+    }
+    if(params.has('leads_extra')) document.getElementById('f-scrap-extra').value = params.get('leads_extra');
+    if(params.has('ventas_ia')) document.getElementById('f-sales-on').checked = params.get('ventas_ia') === 'si';
+    if(params.has('conversion')) document.getElementById('f-lead-convrate').value = params.get('conversion');
+    if(params.has('ticket')) document.getElementById('f-lead-ticket').value = params.get('ticket');
+    if(params.has('euroapp')) document.getElementById('f-platform-on').checked = params.get('euroapp') === 'si';
+    if(params.has('euroapp_sin')){
+      const offIds = params.get('euroapp_sin').split(',');
+      MODULES.forEach(m => { document.getElementById(`mod-${m.id}-on`).checked = !offIds.includes(m.id); });
+    }
+    if(params.has('sap')) document.getElementById('f-sap-on').checked = params.get('sap') === 'si';
+    if(params.has('implementacion')) document.getElementById('f-other-on').checked = params.get('implementacion') === 'si';
+    if(params.has('implementacion_sin')){
+      const offs = params.get('implementacion_sin').split(',');
+      document.getElementById('f-impl-base-on').checked = !offs.includes('base');
+      document.getElementById('f-impl-station-on').checked = !offs.includes('pais');
+      document.getElementById('f-impl-training-on').checked = !offs.includes('capacitacion');
     }
   }
 
   function copyLink(){
-    const state = collectState();
-    const encoded = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
-    const url = location.origin + location.pathname + '#s=' + encoded;
+    const url = buildShareURL();
     const msg = document.getElementById('copied-msg');
+    const newQuery = '?' + url.split('?')[1];
     navigator.clipboard.writeText(url).then(() => {
-      history.replaceState(null, '', '#s=' + encoded);
+      history.replaceState(null, '', newQuery);
       msg.textContent = '✓ Enlace copiado al portapapeles';
       setTimeout(() => msg.textContent = '', 2500);
     }).catch(() => {
-      history.replaceState(null, '', '#s=' + encoded);
+      history.replaceState(null, '', newQuery);
       prompt('Copia el enlace del escenario:', url);
     });
-  }
-
-  function loadFromHash(){
-    if(location.hash.startsWith('#s=')){
-      try{
-        const encoded = location.hash.slice(3);
-        const state = JSON.parse(decodeURIComponent(escape(atob(encoded))));
-        applyState(state);
-      }catch(e){ console.warn('No se pudo leer el escenario del enlace.', e); }
-    }
   }
 
   buildModuleList();
@@ -874,7 +898,7 @@
   buildWaPlans();
   buildLeadPlans();
   buildTierScale();
-  loadFromHash();
+  applyShareParams();
   update();
 </script>
 
