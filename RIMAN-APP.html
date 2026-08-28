@@ -257,6 +257,122 @@ table.riman-table tbody tr:hover{background:var(--blush);cursor:pointer;}
 .subtle{color:var(--grey);}
 hr.line{border:none;border-top:1px solid var(--line);}
 
+/* ---------- Per-module AI agent strip ---------- */
+.agent-strip{display:flex;gap:8px;flex-wrap:wrap;}
+.agent-chip{display:flex;align-items:center;gap:7px;padding:7px 12px 7px 8px;border-radius:999px;background:#fff;border:1px solid var(--line);cursor:pointer;transition:all .15s ease;}
+.agent-chip:hover{border-color:var(--dusty-rose);box-shadow:var(--shadow-sm);}
+.agent-chip .aci{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.agent-chip .aci svg{width:12px;height:12px;}
+.agent-chip .acl{font-size:11.5px;font-weight:700;color:var(--ink);}
+.agent-chip .acs{width:6px;height:6px;border-radius:50%;background:#1e7a47;flex-shrink:0;}
+.agent-insight-box{transition:opacity .25s ease;}
+
+/* ---------- Funnel ---------- */
+.funnel-row{display:flex;align-items:center;gap:12px;}
+.funnel-bar-track{flex:1;height:34px;border-radius:9px;background:var(--blush);overflow:hidden;position:relative;}
+.funnel-bar-fill{height:100%;border-radius:9px;background:linear-gradient(90deg,var(--burgundy),var(--rose));display:flex;align-items:center;padding-left:12px;color:#fff;font-weight:700;font-size:12px;transition:width 1s cubic-bezier(.4,0,.2,1);white-space:nowrap;}
+
+/* ---------- Heatmap (best contact time) ---------- */
+.heatmap-grid{display:grid;grid-template-columns:44px repeat(5,1fr);gap:4px;font-size:10px;}
+.heatmap-cell{aspect-ratio:1.6;border-radius:6px;display:flex;align-items:center;justify-content:center;font-weight:700;color:#fff;}
+.heatmap-label{display:flex;align-items:center;color:var(--grey);font-weight:700;font-size:10px;}
+
+/* ---------- Inbox / chat UI ---------- */
+.inbox-layout{display:grid;grid-template-columns:340px 1fr;gap:16px;min-height:520px;}
+@media (max-width:900px){.inbox-layout{grid-template-columns:1fr;}}
+.thread-row{display:flex;align-items:center;gap:10px;padding:12px;border-radius:14px;cursor:pointer;transition:background .15s ease;border:1px solid transparent;}
+.thread-row:hover{background:var(--blush);}
+.thread-row.active{background:var(--blush);border-color:var(--dusty-rose);}
+.channel-dot{width:16px;height:16px;border-radius:50%;display:flex;align-items:center;justify-content:center;position:absolute;transform:translate(14px,14px);border:2px solid #fff;}
+.channel-dot svg{width:9px;height:9px;color:#fff;}
+.chat-bubble{max-width:78%;padding:10px 13px;border-radius:15px;font-size:13px;line-height:1.45;}
+.chat-bubble.in{background:#F1EEEC;color:var(--ink);border-bottom-left-radius:4px;align-self:flex-start;}
+.chat-bubble.out{background:linear-gradient(135deg,var(--burgundy),var(--rose));color:#fff;border-bottom-right-radius:4px;align-self:flex-end;}
+
+/* ---------- Customer "Glow Score" — Oura/WHOOP-style premium dashboard ---------- */
+.glow-hero{
+  border-radius:24px;padding:28px 24px;position:relative;overflow:hidden;isolation:isolate;
+  background:radial-gradient(120% 140% at 20% 0%, #3a0f1c 0%, #642033 38%, #8D2944 68%, #B84C6B 100%);
+  color:#fff;box-shadow:var(--shadow-lg);
+}
+.glow-hero::before{
+  content:"";position:absolute;inset:0;z-index:0;
+  background:radial-gradient(340px 220px at 82% 10%, rgba(205,162,95,0.45), transparent 65%);
+  pointer-events:none;
+}
+.glow-orb{position:absolute;border-radius:50%;filter:blur(38px);opacity:.5;pointer-events:none;z-index:0;animation:orbDrift 12s ease-in-out infinite;}
+@keyframes orbDrift{0%,100%{transform:translate(0,0) scale(1);}50%{transform:translate(14px,-10px) scale(1.08);}}
+.glow-ring-wrap{position:relative;display:inline-flex;align-items:center;justify-content:center;z-index:1;}
+.glow-ring-wrap svg{transform:rotate(-90deg);filter:drop-shadow(0 0 10px rgba(205,162,95,0.55));}
+.factor-row{display:flex;align-items:center;gap:10px;}
+.factor-bar-track{flex:1;height:6px;border-radius:99px;background:rgba(255,255,255,0.16);overflow:hidden;}
+.factor-bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--gold-light),var(--gold));transition:width 1s cubic-bezier(.4,0,.2,1);}
+.streak-badge{
+  display:inline-flex;align-items:center;gap:6px;padding:6px 13px;border-radius:999px;
+  background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.22);font-weight:700;font-size:12px;
+}
+.streak-badge .flame-icon{animation:flicker 1.6s ease-in-out infinite;}
+@keyframes flicker{0%,100%{transform:scale(1) rotate(0deg);}50%{transform:scale(1.15) rotate(-4deg);}}
+.ritual-step{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:13px;border:1px solid var(--line);cursor:pointer;transition:all .15s ease;}
+.ritual-step.done{background:var(--blush);border-color:var(--dusty-rose);}
+.ritual-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--dusty-rose);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s ease;}
+.ritual-step.done .ritual-check{background:var(--burgundy);border-color:var(--burgundy);}
+.match-badge{
+  position:absolute;top:8px;right:8px;background:linear-gradient(135deg,var(--burgundy),var(--rose));color:#fff;
+  font-size:10px;font-weight:800;padding:3px 8px;border-radius:999px;display:flex;align-items:center;gap:3px;box-shadow:0 0 0 3px rgba(141,41,68,0.12), var(--shadow-sm);
+  animation:matchPulse 2.4s ease-in-out infinite;
+}
+@keyframes matchPulse{0%,100%{box-shadow:0 0 0 3px rgba(141,41,68,0.12), var(--shadow-sm);}50%{box-shadow:0 0 0 6px rgba(141,41,68,0.04), var(--shadow-sm);}}
+.star-row{display:flex;align-items:center;gap:2px;color:var(--gold);}
+.star-row svg{width:11px;height:11px;}
+.coach-avatar{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--burgundy),var(--rose),var(--gold));
+  display:flex;align-items:center;justify-content:center;color:#fff;
+}
+
+/* ---------- AI Skin Scan — computer-vision-flavored camera feature ---------- */
+.scan-stage{
+  position:relative;width:100%;max-width:340px;aspect-ratio:3/4;margin:0 auto;border-radius:22px;overflow:hidden;
+  background:#0e0508;box-shadow:0 20px 50px rgba(0,0,0,0.35);
+}
+.scan-stage video{width:100%;height:100%;object-fit:cover;transform:scaleX(-1);}
+.scan-placeholder{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 40%, #4a1526, #1a070d 75%);
+}
+.scan-corner{position:absolute;width:26px;height:26px;border-color:var(--gold-light);border-style:solid;opacity:.9;z-index:3;}
+.scan-corner.tl{top:14px;left:14px;border-width:3px 0 0 3px;border-top-left-radius:8px;}
+.scan-corner.tr{top:14px;right:14px;border-width:3px 3px 0 0;border-top-right-radius:8px;}
+.scan-corner.bl{bottom:14px;left:14px;border-width:0 0 3px 3px;border-bottom-left-radius:8px;}
+.scan-corner.br{bottom:14px;right:14px;border-width:0 3px 3px 0;border-bottom-right-radius:8px;}
+.scan-line{
+  position:absolute;left:8%;right:8%;height:2px;z-index:3;
+  background:linear-gradient(90deg,transparent,var(--gold-light) 20%,#fff 50%,var(--gold-light) 80%,transparent);
+  box-shadow:0 0 12px 2px rgba(228,203,152,0.75);
+  animation:scanSweep 2.2s ease-in-out infinite;
+}
+@keyframes scanSweep{0%{top:12%;}50%{top:88%;}100%{top:12%;}}
+.scan-mesh{position:absolute;inset:0;z-index:2;opacity:.35;background-image:
+    linear-gradient(rgba(228,203,152,0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(228,203,152,0.5) 1px, transparent 1px);
+  background-size:24px 24px; mix-blend-mode:screen; pointer-events:none;}
+.scan-status{
+  position:absolute;bottom:14px;left:14px;right:14px;z-index:4;text-align:center;
+  font-size:11.5px;font-weight:700;color:#fff;letter-spacing:.03em;
+  background:rgba(0,0,0,0.35);border-radius:10px;padding:7px 10px;backdrop-filter:blur(4px);
+}
+.metric-ring-sm{position:relative;display:inline-flex;align-items:center;justify-content:center;}
+.metric-ring-sm svg{transform:rotate(-90deg);}
+.shimmer{position:relative;overflow:hidden;}
+.shimmer::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.35) 45%, transparent 60%);
+  transform:translateX(-100%); animation:shimmerSweep 1.6s ease-in-out infinite;
+}
+@keyframes shimmerSweep{100%{transform:translateX(100%);}}
+.count-up{font-variant-numeric:tabular-nums;}
+
 /* ---------- Mobile ---------- */
 @media (max-width: 900px){
   #sidebar{display:none;}
@@ -521,6 +637,168 @@ const BEAUTY_QUIZ_RESULTS = [
 ];
 
 /* ============================================================
+   CUSTOMER "GLOW SCORE" — Oura/WHOOP-style tracking
+   ============================================================ */
+const GLOW_HISTORY = [72, 75, 71, 78, 81, 79, 84]; // last 7 days
+const RITUAL_STEPS_DEFAULT = [
+  {id:1, period:'AM', label:'Cleanse with the Ritual Cleansing Set', done:true},
+  {id:2, period:'AM', label:'Apply Vitamin C+ Ampoule', done:true},
+  {id:3, period:'AM', label:'Silk Sunscreen SPF50', done:false},
+  {id:4, period:'PM', label:'Double cleanse', done:false},
+  {id:5, period:'PM', label:'Collagen Renewal Serum', done:false},
+  {id:6, period:'PM', label:'24K Gold Radiance Cream', done:false},
+];
+const PRODUCT_MATCH = {p1:97, p2:91, p3:84, p4:88, p5:76, p6:95, p7:82, p8:90, p9:93, p10:79};
+const PRODUCT_RATING = {p1:4.9, p2:4.8, p3:4.6, p4:4.7, p5:4.5, p6:4.9, p7:4.6, p8:4.8, p9:5.0, p10:4.4};
+const PRODUCT_REVIEWS = {p1:1240, p2:980, p3:640, p4:710, p5:390, p6:860, p7:520, p8:670, p9:1510, p10:310};
+const COACH_TIPS = [
+  "Your consistency dipped on weekends — try keeping your PM ritual on your nightstand as a visual cue.",
+  "You're 3 days from a 2-week streak. One more evening ritual locks it in!",
+  "Hydration factor is your lowest score this week — the Rose Gold Facial Oil could help before bed.",
+  "Great job completing your AM ritual 6 days straight — that consistency is what drives long-term glow.",
+];
+
+/* ============================================================
+   AI SKIN SCAN — computer-vision-style camera analysis
+   ============================================================ */
+const SKIN_SCAN_RESULTS = [
+  {headline:'Combination skin with light dehydration', metrics:{'Hydration':64,'Texture':82,'Tone evenness':77,'Fine lines':88}, recs:['p8','p1','p7'],
+   tip:'Your T-zone shows healthy oil balance, but cheeks read slightly dehydrated. A facial oil at night could rebalance this within 2 weeks.'},
+  {headline:'Bright, even tone with early fine lines', metrics:{'Hydration':79,'Texture':85,'Tone evenness':91,'Fine lines':68}, recs:['p1','p6','p2'],
+   tip:'Your skin tone is remarkably even. Focus on the eye area — early fine lines respond well to consistent serum use.'},
+  {headline:'Radiant with minor pore visibility', metrics:{'Hydration':88,'Texture':74,'Tone evenness':85,'Fine lines':93}, recs:['p4','p3','p7'],
+   tip:'Great hydration levels! A gentle exfoliating routine could refine texture around the nose and chin.'},
+];
+let activeScanStream = null;
+let lastScanResult = null;
+function openSkinScanModal(){
+  openModal(`
+    <div style="padding:24px;text-align:center;">
+      <span class="badge badge-gold" style="margin-bottom:8px;"><i data-lucide="scan-face" style="width:11px;height:11px;"></i>Computer Vision</span>
+      <h3 style="font-family:'Manrope';font-weight:800;margin:4px 0 4px;">AI Skin Scan</h3>
+      <p class="subtle" style="font-size:12.5px;margin:0 0 18px;">Look into the camera and hold still for a few seconds.</p>
+      <div class="scan-stage" id="scan-stage">
+        <div class="scan-placeholder" id="scan-placeholder">
+          <i data-lucide="camera" style="width:36px;height:36px;color:rgba(255,255,255,0.5);"></i>
+        </div>
+        <video id="scan-video" autoplay playsinline muted style="display:none;"></video>
+      </div>
+      <div id="scan-controls" style="margin-top:18px;">
+        <button class="btn btn-primary" style="width:100%;" onclick="startSkinScan()"><i data-lucide="scan-face"></i>Start scan</button>
+        <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="closeModal()">Cancel</button>
+      </div>
+    </div>`);
+}
+async function startSkinScan(){
+  const stage = document.getElementById('scan-stage');
+  const placeholder = document.getElementById('scan-placeholder');
+  const video = document.getElementById('scan-video');
+  const controls = document.getElementById('scan-controls');
+  controls.innerHTML = `<div class="subtle" style="font-size:12px;">Requesting camera access...</div>`;
+  let noCam = false;
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user'}, audio:false});
+    activeScanStream = stream;
+    video.srcObject = stream;
+    video.style.display = 'block';
+    placeholder.style.display = 'none';
+  }catch(e){
+    noCam = true;
+  }
+  beginScanOverlay(stage, controls, noCam);
+}
+function beginScanOverlay(stage, controls, noCam){
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:absolute;inset:0;';
+  overlay.innerHTML = `
+    <div class="scan-mesh"></div>
+    <div class="scan-line"></div>
+    <div class="scan-corner tl"></div><div class="scan-corner tr"></div>
+    <div class="scan-corner bl"></div><div class="scan-corner br"></div>
+    <div class="scan-status" id="scan-status-text">Detecting facial landmarks...</div>`;
+  stage.appendChild(overlay);
+  controls.innerHTML = `<div class="subtle" style="font-size:12px;">${noCam?'Camera unavailable — running a sample analysis...':'Analyzing your skin...'}</div>`;
+  const steps = ['Detecting facial landmarks...','Mapping hydration levels...','Scanning for fine lines...','Evaluating tone evenness...','Finalizing your Glow profile...'];
+  let i = 0;
+  const statusEl = overlay.querySelector('#scan-status-text');
+  const stepInterval = setInterval(()=>{
+    i++; if(i<steps.length && statusEl) statusEl.textContent = steps[i];
+  }, 680);
+  setTimeout(()=>{
+    clearInterval(stepInterval);
+    stopSkinScanCamera();
+    showScanResults();
+  }, 3500);
+}
+function stopSkinScanCamera(){
+  if(activeScanStream){
+    try{ activeScanStream.getTracks().forEach(t=>t.stop()); }catch(e){}
+    activeScanStream = null;
+  }
+}
+function metricCardHtml(label, value){
+  return `<div class="card" style="padding:12px;">
+    <div class="subtle" style="font-size:10.5px;font-weight:700;margin-bottom:6px;">${label}</div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div class="progress-track" style="flex:1;"><div class="progress-fill scan-metric-fill" data-target="${value}" style="width:0%;"></div></div>
+      <span style="font-size:12px;font-weight:800;color:var(--burgundy);" class="scan-metric-num" data-target="${value}">0</span>
+    </div>
+  </div>`;
+}
+function showScanResults(){
+  lastScanResult = SKIN_SCAN_RESULTS[Math.floor(Math.random()*SKIN_SCAN_RESULTS.length)];
+  const r = lastScanResult;
+  const recProducts = r.recs.map(id=>PRODUCTS.find(p=>p.id===id));
+  openModal(`
+    <div style="padding:24px;">
+      <div style="text-align:center;margin-bottom:16px;">
+        <span class="badge badge-gold"><i data-lucide="check-circle" style="width:11px;height:11px;"></i>Scan complete</span>
+        <h3 style="font-family:'Manrope';font-weight:800;margin:10px 0 0;">${r.headline}</h3>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;">
+        ${Object.entries(r.metrics).map(([k,v])=>metricCardHtml(k,v)).join('')}
+      </div>
+      <div class="card" style="padding:14px;background:var(--blush);border:none;margin-bottom:16px;">
+        <div class="subtle" style="font-size:11px;font-weight:800;text-transform:uppercase;margin-bottom:5px;">AI analysis</div>
+        <div style="font-size:13px;line-height:1.5;">${r.tip}</div>
+      </div>
+      <div class="subtle" style="font-size:12px;font-weight:700;margin-bottom:8px;">Recommended for you</div>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+        ${recProducts.map(p=>productCard(p,true)).join('')}
+      </div>
+      <button class="btn btn-primary" style="width:100%;" onclick="applyScanToGlow()"><i data-lucide="sparkles"></i>Apply to my Glow Score</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:8px;" onclick="closeModal()">Close</button>
+    </div>`);
+  safeIcons();
+  setTimeout(animateScanMetrics, 80);
+}
+function animateScanMetrics(){
+  document.querySelectorAll('.scan-metric-fill').forEach(el=>{ el.style.width = el.dataset.target + '%'; });
+  document.querySelectorAll('.scan-metric-num').forEach(el=>{
+    const target = parseInt(el.dataset.target, 10);
+    let cur = 0;
+    const step = Math.max(1, Math.round(target/20));
+    const iv = setInterval(()=>{
+      cur += step;
+      if(cur>=target){ cur=target; clearInterval(iv); }
+      el.textContent = cur;
+    }, 28);
+  });
+}
+function applyScanToGlow(){
+  closeModal();
+  toast('Your Glow Score and product matches were updated from your scan.', 'sparkles');
+  if(state.role!=='customer') return;
+  if(state.view==='home'){
+    document.getElementById('view').innerHTML = viewHomeCustomer();
+    safeIcons(); renderRitualList(); initGlowChart(); animateGlowHero();
+  } else if(state.view==='beauty'){
+    document.getElementById('view').innerHTML = viewBeauty();
+    safeIcons(); initBeautyChart(); renderBeautyRitualList();
+  }
+}
+
+/* ============================================================
    AI AGENTS — autonomous background agents
    ============================================================ */
 const AGENTS = [
@@ -559,7 +837,82 @@ const AGENTS = [
      'Tatiana Brenes is on pace to hit Silver rank in 2 weeks — send encouragement.',
      'Team-wide order frequency dropped 6% this week — a group check-in could help.'
    ]},
+  {id:'competitor', name:'Competitor Intelligence Agent', icon:'eye', color:'#2158a3',
+   desc:'Tracks competitor pricing, promotions and launches so you can react fast.',
+   insights:[
+     'A rival brand dropped their vitamin C serum price 10% this week — your bundle still wins on value.',
+     'Competitor "Glow Co." just launched a gold-infused cream at $128 — $16 above yours with fewer actives.',
+     'Two competitors are running BOGO promos this weekend — consider matching with your own flash offer.'
+   ]},
+  {id:'packages', name:'Package Strategy Agent', icon:'box', color:'#8a672c',
+   desc:'Analyzes purchase patterns to recommend the highest-converting bundles and pricing.',
+   insights:[
+     'Customers who buy 2+ items convert 3x more on a bundle offer than a single-item discount.',
+     'The "Night Ritual" bundle has the best margin-to-conversion ratio this month — feature it first.',
+     'A $150–$220 price band is converting best with your VIP segment right now.'
+   ]},
 ];
+
+/* ============================================================
+   INBOX — ManyChat-style unified WhatsApp / Instagram / Facebook inbox
+   ============================================================ */
+const CHANNELS = {
+  whatsapp:{name:'WhatsApp', icon:'message-circle', color:'#25D366'},
+  instagram:{name:'Instagram', icon:'instagram', color:'#C13584'},
+  facebook:{name:'Facebook', icon:'facebook', color:'#1877F2'},
+};
+const CONVERSATIONS = [
+  {id:'c1', name:'Andrea Solano', channel:'whatsapp', tag:'Lead', avatarColor:'#B84C6B', unread:2, updated:'2m',
+    messages:[
+      {from:'them', text:'Hi! Do you still have the Diamond Eye Contour in stock?'},
+      {from:'me', text:'Yes! Just restocked today 😊'},
+      {from:'them', text:'Perfect, how much is it and does it work for early wrinkles?'},
+    ]},
+  {id:'c2', name:'Melissa Vargas', channel:'instagram', tag:'Prospect', avatarColor:'#8D2944', unread:1, updated:'12m',
+    messages:[
+      {from:'them', text:'Loved your last Reel! How does the distributor program work?'},
+    ]},
+  {id:'c3', name:'Karla Jimenez', channel:'whatsapp', tag:'Lead', avatarColor:'#CDA25F', unread:0, updated:'1h',
+    messages:[
+      {from:'me', text:'Hi Karla! Following up on the Starter Kit — still interested?'},
+      {from:'them', text:'Yes! Can I pay in 2 installments?'},
+    ]},
+  {id:'c4', name:'Sofia Araya', channel:'facebook', tag:'Customer', avatarColor:'#642033', unread:0, updated:'3h',
+    messages:[
+      {from:'them', text:'The facial oil arrived, smells amazing!'},
+      {from:'me', text:'So glad to hear that! 💗'},
+    ]},
+  {id:'c5', name:'Rocio Herrera', channel:'instagram', tag:'Prospect', avatarColor:'#B84C6B', unread:3, updated:'5h',
+    messages:[
+      {from:'them', text:'Hey! Are you still building your RIMAN team?'},
+      {from:'them', text:'I used to sell skincare before and I\'m looking for something new'},
+      {from:'them', text:'Let me know if we can chat sometime this week'},
+    ]},
+  {id:'c6', name:'Diana Castro', channel:'whatsapp', tag:'Customer', avatarColor:'#777777', unread:0, updated:'1d',
+    messages:[
+      {from:'me', text:'Hi Diana! Missed you — here\'s 20% off your next order 💕'},
+    ]},
+];
+const AI_REPLY_SUGGESTIONS = [
+  "Yes, it's $96 and it's great for early fine lines — most customers see results in about 3 weeks with daily use.",
+  "It's still available! Want me to reserve one for you and send payment details?",
+  "Of course, we can split it into 2 payments. I'll send you the link now.",
+  "The distributor program lets you earn on your own sales plus your team's — happy to walk you through it on a quick call!",
+];
+
+/* ============================================================
+   SUCCESS ROADMAP — milestones toward becoming a top distributor
+   ============================================================ */
+const SUCCESS_MILESTONES = [
+  {id:1, title:'Complete your profile & brand story', done:true, detail:'A complete profile builds trust with new leads and prospects.'},
+  {id:2, title:'Make your first 5 personal sales', done:true, detail:'Learn your products by selling them — you already hit 34 orders this month.'},
+  {id:3, title:'Recruit your first distributor', done:true, detail:'Tatiana Brenes joined your team last month — great start!'},
+  {id:4, title:'Reach $5,000 in team volume', done:true, detail:'You\'re well past this at $21,400 GV.'},
+  {id:5, title:'Build a 3-person active team', done:false, detail:'You have 10 active distributors across 3 levels — milestone complete once all report activity this cycle.'},
+  {id:6, title:'Hit Platinum rank', done:false, detail:'You\'re 52% of the way there — GV $21,400 / $30,000.'},
+  {id:7, title:'Mentor 2 distributors to their first sale', done:false, detail:'Use AI Content Studio to share scripts with Sofia Araya and Karla Jimenez.'},
+];
+
 
 /* Voice assistant canned responses (used with speechSynthesis) */
 const VOICE_RESPONSES = [
@@ -590,6 +943,8 @@ const state = {
   ])),
   coachActions: JSON.parse(localStorage.getItem('riman_coach')||JSON.stringify(AI_COACH_ACTIONS)),
   customerLevel: 'VIP',
+  ritualSteps: JSON.parse(localStorage.getItem('riman_ritual')||JSON.stringify(RITUAL_STEPS_DEFAULT)),
+  glowStreak: parseInt(localStorage.getItem('riman_streak')||'12'),
   voice:{listening:false, recognition:null},
 };
 function saveState(){
@@ -598,6 +953,8 @@ function saveState(){
   localStorage.setItem('riman_points', state.points);
   localStorage.setItem('riman_dailyplan', JSON.stringify(state.dailyPlan));
   localStorage.setItem('riman_coach', JSON.stringify(state.coachActions));
+  localStorage.setItem('riman_ritual', JSON.stringify(state.ritualSteps));
+  localStorage.setItem('riman_streak', state.glowStreak);
 }
 
 /* ============================================================
@@ -608,6 +965,7 @@ const NAV = {
     {id:'home', label:'Home', icon:'layout-dashboard'},
     {id:'coach', label:'AI Coach', icon:'sparkles'},
     {id:'agents', label:'AI Agents', icon:'bot'},
+    {id:'inbox', label:'Inbox', icon:'inbox'},
     {id:'leads', label:'Leads', icon:'target'},
     {id:'customers', label:'Customers', icon:'users'},
     {id:'network', label:'My Network', icon:'network'},
@@ -633,6 +991,7 @@ const VIEW_TITLES = {
   home:{t:'Home', s:'Your business at a glance today'},
   coach:{t:'AI Business Coach', s:'Your intelligent growth assistant'},
   agents:{t:'AI Agents', s:'Autonomous agents working for your business'},
+  inbox:{t:'Inbox', s:'WhatsApp, Instagram & Facebook in one place'},
   leads:{t:'AI Lead Generation', s:'Potential customers identified by AI'},
   customers:{t:'Customer CRM', s:'Manage your customer base'},
   network:{t:'My Network', s:'Your team structure and performance'},
@@ -648,12 +1007,16 @@ const VIEW_TITLES = {
   account:{t:'My Account', s:'Info and preferences'},
 };
 
+function unreadInboxCount(){ return CONVERSATIONS.reduce((s,c)=>s+c.unread,0); }
 function renderSidebar(){
   const items = NAV[state.role];
-  document.getElementById('sidebar-nav').innerHTML = items.map(it=>`
+  document.getElementById('sidebar-nav').innerHTML = items.map(it=>{
+    const badge = it.id==='inbox' && unreadInboxCount()>0 ? `<span class="badge badge-gold" style="margin-left:auto;">${unreadInboxCount()}</span>` : '';
+    return `
     <div class="navlink ${state.view===it.id?'active':''}" onclick="go('${it.id}')">
-      <i data-lucide="${it.icon}"></i><span>${it.label}</span>
-    </div>`).join('');
+      <i data-lucide="${it.icon}"></i><span>${it.label}</span>${badge}
+    </div>`;
+  }).join('');
   document.querySelectorAll('.role-btn').forEach(b=>{
     const on = b.dataset.role===state.role;
     b.style.background = on ? 'var(--burgundy-dark)' : 'transparent';
@@ -717,6 +1080,7 @@ function openModal(html){
   safeIcons();
 }
 function closeModal(){
+  if(typeof stopSkinScanCamera === 'function') stopSkinScanCamera();
   document.getElementById('modal-root').classList.remove('open');
 }
 document.addEventListener('keydown', e=>{if(e.key==='Escape') closeModal();});
@@ -758,9 +1122,62 @@ function avatarOf(name,color,size=40){
   return `<div class="avatar" style="width:${size}px;height:${size}px;background:${color};font-size:${size*0.36}px;">${initials}</div>`;
 }
 function scoreColor(n){ return n>=80?'#1e7a47': n>=60?'#8a672c':'#8D2944'; }
-function aiRibbon(text, cta){
+/* Insight pools for the auto-rotating AI ribbon — each view's ribbon cycles
+   through 3 realistic insights every 10 seconds, like a live monitoring feed. */
+const RIBBON_POOL = {
+  home:[
+    'Karla Jimenez has an 87% purchase probability today. Reach out before 6pm to maximize the close.',
+    'Your team\'s order frequency is up 9% this week — momentum is building toward Platinum.',
+    'Fabiola Rojas is $60 away from VVIP — a quick nudge could lock in the upgrade today.',
+  ],
+  coach:[
+    'I analyzed your last 7 days of activity: your close rate rises 23% when you contact leads within 2 hours. Prioritize response speed today.',
+    'Distributors who complete their Daily Action Plan 5+ days a week grow team volume 31% faster.',
+    'Your best-performing send time is between 4–6pm — 3 of today\'s actions fall in that window.',
+  ],
+  agents:[
+    '7 agents are working in the background right now, scanning trends, social signals, location data, competitors and your network health so you don\'t have to.',
+    'Agents flagged 4 new opportunities in the last hour across leads, content and pricing.',
+    'Your agent network has surfaced 12 actionable insights this week — 5 are still unread.',
+  ],
+  leads:[
+    '8 active leads. Natalia Urena (97 pts) is ready for a VIP upgrade — her best contact window is before 5pm based on history.',
+    'Andrea Solano\'s buy probability jumped to 78% after her last message — respond soon to capture it.',
+    '2 new leads were auto-scored overnight by the Social Listening Agent.',
+  ],
+  customers:[
+    'Diana Castro hasn\'t ordered in 20 days — high churn risk (61%). Send her a reactivation incentive today.',
+    'Sofia Araya\'s AI score climbed to 88 this week — she\'s ready for a premium upsell.',
+    '3 customers are within $50 of their next loyalty tier — a small nudge could tip them over.',
+  ],
+  network:[
+    'Network Health Agent: 2 distributors show declining activity — Diana Castro and Ingrid Salas. A quick check-in could prevent them from going inactive.',
+    'Tatiana Brenes\' team volume grew 40% this month — she\'s on track for her first rank promotion.',
+    'Level 2 recruitment slowed this week — consider sharing the invite script from Content Studio.',
+  ],
+  recruit:[
+    'Tatiana Brenes (97% match) has prior beauty sales experience — she\'s your strongest prospect this month.',
+    'Melissa Vargas engaged with 3 of your posts this week — a strong signal she\'s ready for an invite.',
+    'Geo-Prospecting Agent found 5 new prospects within 10 minutes of your usual routes.',
+  ],
+  sales:[
+    'Upsell tip: customers who buy the Collagen Renewal Serum are 68% more likely to buy the Diamond Eye Contour within 30 days.',
+    'Package Strategy Agent: the "Night Ritual" bundle is converting 22% above your other offers this month.',
+    'Competitor Intelligence Agent: a rival brand raised prices 8% this week — good moment to highlight your value.',
+  ],
+  inbox:[
+    'Auto-pilot replied to 4 messages today while you were busy with customers. 3 conversations need your personal touch.',
+    'Rocio Herrera has been waiting 5 hours for a reply — she\'s a 88% match prospect, worth prioritizing.',
+    'Response time across your inbox averaged 12 minutes today — well above your 2-hour target.',
+  ],
+};
+let ribbonRotateIndex = {};
+function aiRibbon(textOrKey, cta){
+  const isKey = RIBBON_POOL.hasOwnProperty(textOrKey);
+  const text = isKey ? RIBBON_POOL[textOrKey][0] : textOrKey;
+  const key = isKey ? textOrKey : null;
   return `
-  <div class="ai-ribbon">
+  <div class="ai-ribbon" ${key?`data-ribbon-key="${key}"`:''}>
     <div style="display:flex;align-items:flex-start;gap:12px;position:relative;">
       <div style="width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,0.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
         <i data-lucide="sparkles" style="width:17px;height:17px;"></i>
@@ -769,12 +1186,63 @@ function aiRibbon(text, cta){
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
           <span class="pulse-dot"></span>
           <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.85;">AI Insight</span>
+          ${key?'<span class="subtle" style="font-size:9.5px;font-weight:700;opacity:.65;margin-left:2px;">· live</span>':''}
         </div>
-        <div style="font-size:14px;font-weight:600;line-height:1.45;">${text}</div>
+        <div id="ai-ribbon-text" style="font-size:14px;font-weight:600;line-height:1.45;transition:opacity .3s ease;">${text}</div>
         ${cta?`<button class="btn btn-gold btn-sm" style="margin-top:12px;" onclick="${cta.onclick}">${cta.label}</button>`:''}
       </div>
     </div>
   </div>`;
+}
+/* Live auto-rotation for the AI insight ribbon: every 10s, swap in the next
+   insight for whichever view is currently on screen. Mirrors the AI Agents
+   live-update behavior so every module feels like it's monitoring in real time. */
+let ribbonRotateInterval = null;
+function startRibbonRotation(){
+  stopRibbonRotation();
+  ribbonRotateInterval = setInterval(()=>{
+    const el = document.getElementById('ai-ribbon-text');
+    const wrap = document.querySelector('.ai-ribbon[data-ribbon-key]');
+    if(!el || !wrap) return;
+    const key = wrap.getAttribute('data-ribbon-key');
+    const pool = RIBBON_POOL[key];
+    if(!pool) return;
+    ribbonRotateIndex[key] = ((ribbonRotateIndex[key]||0) + 1) % pool.length;
+    el.style.opacity = '0';
+    setTimeout(()=>{
+      el.textContent = pool[ribbonRotateIndex[key]];
+      el.style.opacity = '1';
+    }, 300);
+  }, 10000);
+}
+function stopRibbonRotation(){
+  if(ribbonRotateInterval){ clearInterval(ribbonRotateInterval); ribbonRotateInterval = null; }
+}
+/* Small "agents working on this module" strip — reused across every view.
+   Click a chip to get a fresh, module-specific insight without leaving the page. */
+function agentStripHtml(ids){
+  return `<div class="agent-strip">
+    ${ids.map(id=>{
+      const a = AGENTS.find(x=>x.id===id);
+      if(!a) return '';
+      return `<div class="agent-chip" onclick="quickAgentInsight('${a.id}', this)">
+        <span class="aci" style="background:${a.color};"><i data-lucide="${a.icon}"></i></span>
+        <span class="acl">${a.name.replace(' Agent','')}</span>
+        <span class="acs"></span>
+      </div>`;
+    }).join('')}
+  </div>`;
+}
+function quickAgentInsight(id, el){
+  const a = AGENTS.find(x=>x.id===id);
+  if(!a) return;
+  const dot = el.querySelector('.acs');
+  dot.style.background = 'var(--gold)';
+  setTimeout(()=>{
+    dot.style.background = '#1e7a47';
+    const insight = a.insights[Math.floor(Math.random()*a.insights.length)];
+    toast(insight, a.icon);
+  }, 500);
 }
 </script>
 <script>
@@ -788,7 +1256,8 @@ function viewHomeDistributor(){
   const pct = Math.min(100, Math.round((tv-rank.tv)/(next.tv-rank.tv)*100));
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
-    ${aiRibbon('Karla Jimenez has an 87% purchase probability today. Reach out before 6pm to maximize the close.', {label:'Open AI Coach', onclick:"go('coach')"})}
+    ${aiRibbon('home', {label:'Open AI Coach', onclick:"go('coach')"})}
+    ${agentStripHtml(['trend','network','packages'])}
 
     <div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -901,7 +1370,7 @@ function initHomeChart(){
 function viewCoach(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
-    ${aiRibbon('I analyzed your last 7 days of activity: your close rate rises 23% when you contact leads within 2 hours. Prioritize response speed today.')}
+    ${aiRibbon('coach')}
 
     <div class="card" style="padding:22px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
@@ -925,6 +1394,8 @@ function viewCoach(){
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;" id="coach-actions-list"></div>
     </div>
+
+    <div class="card" style="padding:22px;" id="success-roadmap"></div>
   </div>`;
 }
 function renderCoachActions(){
@@ -988,7 +1459,11 @@ function askCoach(){
 function viewAgents(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
-    ${aiRibbon('5 agents are working in the background right now, scanning trends, social signals, location data and your network health so you don\'t have to.')}
+    ${aiRibbon('agents')}
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span class="pulse-dot" style="background:var(--burgundy);"></span>
+      <span class="subtle" style="font-size:11.5px;font-weight:700;">Live — insights refresh automatically every 10 seconds</span>
+    </div>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;" id="agents-grid">
       ${AGENTS.map(a=>agentCardHtml(a)).join('')}
     </div>
@@ -1020,7 +1495,7 @@ function agentCardHtml(a){
       </div>
     </div>
     <p class="subtle" style="font-size:12px;line-height:1.5;margin:0 0 12px;">${a.desc}</p>
-    <div class="card" style="padding:11px 13px;background:var(--blush);border:none;margin-bottom:12px;" id="agent-insight-${a.id}">
+    <div class="card agent-insight-box" style="padding:11px 13px;background:var(--blush);border:none;margin-bottom:12px;" id="agent-insight-${a.id}">
       <div class="subtle" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;">Latest insight</div>
       <div style="font-size:12.5px;font-weight:600;line-height:1.4;">${a.insights[0]}</div>
     </div>
@@ -1032,17 +1507,56 @@ function runAgent(id){
   const dot = document.getElementById('agent-dot-'+id);
   const status = document.getElementById('agent-status-'+id);
   const insightBox = document.getElementById('agent-insight-'+id);
+  if(!dot || !status || !insightBox) return;
   dot.classList.remove('on'); dot.classList.add('busy');
   status.textContent = 'Analyzing...';
   setTimeout(()=>{
     dot.classList.remove('busy'); dot.classList.add('on');
     status.textContent = 'Active';
     const insight = a.insights[Math.floor(Math.random()*a.insights.length)];
-    insightBox.innerHTML = `
-      <div class="subtle" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;">Latest insight · just now</div>
-      <div style="font-size:12.5px;font-weight:600;line-height:1.4;">${insight}</div>`;
+    insightBox.style.opacity = '0';
+    setTimeout(()=>{
+      insightBox.innerHTML = `
+        <div class="subtle" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;">Latest insight · just now</div>
+        <div style="font-size:12.5px;font-weight:600;line-height:1.4;">${insight}</div>`;
+      insightBox.style.opacity = '1';
+    }, 180);
     toast(`${a.name} finished a new analysis`, 'sparkles');
   }, 900);
+}
+
+/* Live auto-refresh: every 10s, one random agent quietly surfaces a fresh insight —
+   mimics agents continuously monitoring in the background. Runs only while the
+   AI Agents view is on screen; cleared on navigation to avoid touching stale DOM. */
+let agentLiveInterval = null;
+function startAgentLiveUpdates(){
+  stopAgentLiveUpdates();
+  agentLiveInterval = setInterval(()=>{
+    if(state.view !== 'agents') { stopAgentLiveUpdates(); return; }
+    const a = AGENTS[Math.floor(Math.random()*AGENTS.length)];
+    const dot = document.getElementById('agent-dot-'+a.id);
+    const status = document.getElementById('agent-status-'+a.id);
+    const insightBox = document.getElementById('agent-insight-'+a.id);
+    if(!dot || !status || !insightBox) return;
+    dot.classList.remove('on'); dot.classList.add('busy');
+    status.textContent = 'Analyzing...';
+    setTimeout(()=>{
+      dot.classList.remove('busy'); dot.classList.add('on');
+      status.textContent = 'Active';
+      const insight = a.insights[Math.floor(Math.random()*a.insights.length)];
+      insightBox.style.transition = 'opacity .25s ease';
+      insightBox.style.opacity = '0';
+      setTimeout(()=>{
+        insightBox.innerHTML = `
+          <div class="subtle" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;">Latest insight · just now</div>
+          <div style="font-size:12.5px;font-weight:600;line-height:1.4;">${insight}</div>`;
+        insightBox.style.opacity = '1';
+      }, 250);
+    }, 700);
+  }, 10000);
+}
+function stopAgentLiveUpdates(){
+  if(agentLiveInterval){ clearInterval(agentLiveInterval); agentLiveInterval = null; }
 }
 
 /* ============================================================
@@ -1052,7 +1566,8 @@ const LEAD_STAGES = ['New','Contacted','Interested','Customer','VIP Customer'];
 function viewLeads(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:18px;">
-    ${aiRibbon('8 active leads. Natalia Urena (97 pts) is ready for a VIP upgrade — her best contact window is before 5pm based on history.')}
+    ${aiRibbon('leads')}
+    ${agentStripHtml(['social','geo'])}
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
         <span class="chip ${state.leadView==='list'?'active':''}" onclick="setLeadView('list')"><i data-lucide="list" style="width:13px;height:13px;"></i>List</span>
@@ -1156,7 +1671,8 @@ function copyText(btn, text){
 function viewCustomers(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:18px;">
-    ${aiRibbon('Diana Castro hasn\'t ordered in 20 days — high churn risk (61%). Send her a reactivation incentive today.')}
+    ${aiRibbon('customers')}
+    ${agentStripHtml(['network','social'])}
     <div class="card" style="overflow-x:auto;"><table class="riman-table"><thead><tr>
       <th>Customer</th><th>Level</th><th>Total spend</th><th>Orders</th><th>Last interaction</th><th>AI Score</th>
       </tr></thead><tbody>
@@ -1230,12 +1746,17 @@ function viewNetwork(){
   const atRisk = [...NETWORK.l1,...NETWORK.l2,...NETWORK.l3].filter(d=>!d.active);
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
-    ${aiRibbon('Network Health Agent: 2 distributors show declining activity — Diana Castro and Ingrid Salas. A quick check-in could prevent them from going inactive.', {label:'Open AI Agents', onclick:"go('agents')"})}
+    ${aiRibbon('network', {label:'Open AI Agents', onclick:"go('agents')"})}
+    ${agentStripHtml(['network','geo'])}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;">
       ${statCard({icon:'users',label:'Active distributors',value:totalActive})}
       ${statCard({icon:'trending-up',label:'Team sales',value:fmt.money(totalSales),color:'var(--gold)'})}
       ${statCard({icon:'network',label:'Active levels',value:'3'})}
       ${statCard({icon:'award',label:'Top performer',value:top[0].name.split(' ')[0],color:'var(--rose)'})}
+    </div>
+    <div class="card" style="padding:22px;">
+      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 12px;">Team sales by level</h3>
+      <div class="chart-wrap sm"><canvas id="chartNetworkLevels"></canvas></div>
     </div>
     ${atRisk.length? `
     <div class="card" style="padding:18px;border:1.5px solid #f0d9a8;background:#FBF6EC;">
@@ -1280,7 +1801,8 @@ const PROSPECT_STAGES = ['Prospect','Invited','Interested','Training','Active Di
 function viewRecruit(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:18px;">
-    ${aiRibbon('Tatiana Brenes (97% match) has prior beauty sales experience — she\'s your strongest prospect this month.')}
+    ${aiRibbon('recruit')}
+    ${agentStripHtml(['geo','social'])}
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
       <h3 class="section-title" style="font-size:17px;">Recruitment pipeline</h3>
       <button class="btn btn-primary btn-sm" onclick="toast('Geo-Prospecting Agent scanning your contacts...','sparkles')"><i data-lucide="scan-search"></i>Find prospects with AI</button>
@@ -1346,6 +1868,7 @@ function generateInviteMessage(id){
 function viewSales(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
+    ${agentStripHtml(['content','competitor','packages'])}
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <span class="chip active" data-tab="assistant" onclick="setSalesTab('assistant',this)">AI Sales Assistant</span>
       <span class="chip" data-tab="content" onclick="setSalesTab('content',this)">AI Content Studio</span>
@@ -1372,7 +1895,15 @@ function salesTabHtml(tab){
     </div>`;
   return `
     <div style="display:flex;flex-direction:column;gap:18px;">
-      ${aiRibbon('Upsell tip: customers who buy the Collagen Renewal Serum are 68% more likely to buy the Diamond Eye Contour within 30 days.')}
+      ${aiRibbon('sales')}
+      <div class="card" style="padding:18px;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:32px;height:32px;border-radius:10px;background:#E9F1FB;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i data-lucide="eye" style="width:15px;height:15px;color:#2158a3;"></i></div>
+          <h4 style="font-family:'Manrope';font-weight:800;margin:0;font-size:14px;">Competitor Intelligence Agent</h4>
+        </div>
+        <p class="subtle" style="font-size:12.5px;line-height:1.5;margin:0 0 10px;">${AGENTS.find(a=>a.id==='competitor').insights[0]}</p>
+        <button class="btn btn-outline btn-sm" onclick="toast(AGENTS.find(a=>a.id==='competitor').insights[Math.floor(Math.random()*3)], 'eye')">See more competitor insight</button>
+      </div>
       <div>
         <h3 class="section-title" style="font-size:16px;margin-bottom:10px;">Recommended bundles & upsells</h3>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">
@@ -1435,6 +1966,7 @@ function viewCommissions(){
   const pending = COMM_HISTORY.filter(c=>c.status==='Pending').reduce((s,c)=>s+c.amount,0);
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
+    ${agentStripHtml(['packages','trend'])}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;">
       ${statCard({icon:'shopping-bag',label:'Retail commission',value:fmt.money(420)})}
       ${statCard({icon:'network',label:'Team commission',value:fmt.money(560),color:'var(--rose)'})}
@@ -1444,17 +1976,29 @@ function viewCommissions(){
       ${statCard({icon:'clock',label:'Pending',value:fmt.money(pending),color:'#8a672c'})}
     </div>
 
+    <div style="display:grid;grid-template-columns:1fr 1.4fr;gap:16px;" class="home-grid">
+      <div class="card" style="padding:22px;">
+        <h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Income breakdown</h4>
+        <div class="chart-wrap sm"><canvas id="chartIncomeBreakdown"></canvas></div>
+      </div>
+      <div class="card" style="padding:22px;">
+        <h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Earnings by type — last 6 months</h4>
+        <div class="chart-wrap sm"><canvas id="chartIncomeTrend"></canvas></div>
+      </div>
+    </div>
+
     <div class="card" style="padding:22px;">
       <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 4px;">Earning potential calculator</h3>
-      <p class="subtle" style="font-size:12.5px;margin:0 0 18px;">Adjust the variables to see your estimated monthly income.</p>
+      <p class="subtle" style="font-size:12.5px;margin:0 0 4px;">Adjust the variables to see your estimated monthly income.</p>
+      <p class="subtle" style="font-size:11.5px;margin:0 0 18px;"><i data-lucide="sparkles" style="width:11px;height:11px;vertical-align:-1px;color:var(--gold);"></i> Growing your <b style="color:var(--ink);">customer base</b>, <b style="color:var(--ink);">average order</b> and <b style="color:var(--ink);">personal sales</b> has the biggest impact on your income.</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="calc-grid">
         <div style="display:flex;flex-direction:column;gap:16px;">
-          ${calcSlider('calc-customers','Number of customers',20,4,100,2)}
-          ${calcSlider('calc-avgorder','Average order ($)',65,20,250,5)}
-          ${calcSlider('calc-personal','Personal sales ($)',1500,300,8000,100)}
-          ${calcSlider('calc-distributors','Active distributors',6,0,40,1)}
-          ${calcSlider('calc-teamsales','Team sales ($)',9000,0,60000,500)}
-          ${calcSlider('calc-commission','Commission %',15,5,30,1)}
+          ${calcSlider('calc-customers','Number of customers',45,5,750,5)}
+          ${calcSlider('calc-avgorder','Average order ($)',150,20,1000,10)}
+          ${calcSlider('calc-personal','Personal sales ($)',6000,500,250000,500)}
+          ${calcSlider('calc-distributors','Active distributors',10,0,250,5)}
+          ${calcSlider('calc-teamsales','Team sales ($)',25000,0,1500000,5000)}
+          ${calcSlider('calc-commission','Commission %',18,5,35,1)}
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--blush);border-radius:18px;padding:24px;">
           <div class="subtle" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Estimated monthly income</div>
@@ -1478,6 +2022,37 @@ function viewCommissions(){
     </div>
   </div>`;
 }
+let commissionChartInstances = [];
+function initCommissionCharts(){
+  commissionChartInstances.forEach(c=>{ try{c && c.destroy();}catch(e){} });
+  commissionChartInstances = [];
+  const c1 = document.getElementById('chartIncomeBreakdown');
+  if(c1) commissionChartInstances.push(safeChart(c1,{type:'doughnut',
+    data:{labels:['Retail','Team','Recruitment','Rank bonus'],
+      datasets:[{data:[420,560,150,150],backgroundColor:['#8D2944','#B84C6B','#CDA25F','#642033'],borderWidth:0}]},
+    options:{plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:10.5}}}},cutout:'62%'}}));
+  const c2 = document.getElementById('chartIncomeTrend');
+  if(c2) commissionChartInstances.push(safeChart(c2,{type:'bar',
+    data:{labels:['Mar','Apr','May','Jun','Jul','Aug'],
+      datasets:[
+        {label:'Retail',data:[210,240,265,300,340,420],backgroundColor:'#8D2944',stack:'s'},
+        {label:'Team',data:[280,310,360,410,480,560],backgroundColor:'#B84C6B',stack:'s'},
+        {label:'Bonuses',data:[80,90,100,120,140,150],backgroundColor:'#CDA25F',stack:'s'},
+      ]},
+    options:{plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:10.5}}}},
+      scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:'#F1EEEC'}}}}}));
+}
+let networkChartInstance = null;
+function initNetworkChart(){
+  const el = document.getElementById('chartNetworkLevels');
+  if(!el) return;
+  if(networkChartInstance){ try{networkChartInstance.destroy();}catch(e){} networkChartInstance=null; }
+  const l1 = NETWORK.l1.reduce((s,d)=>s+d.sales,0), l2 = NETWORK.l2.reduce((s,d)=>s+d.sales,0), l3 = NETWORK.l3.reduce((s,d)=>s+d.sales,0);
+  networkChartInstance = safeChart(el, {type:'bar',
+    data:{labels:['Level 1 — Direct','Level 2','Level 3'],
+      datasets:[{data:[l1,l2,l3],backgroundColor:['#8D2944','#B84C6B','#CDA25F'],borderRadius:8}]},
+    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'#F1EEEC'}},y:{grid:{display:false}}}}});
+}
 function calcSlider(id,label,val,min,max,step){
   return `<div>
     <div style="display:flex;justify-content:space-between;font-size:12.5px;font-weight:700;margin-bottom:6px;">
@@ -1496,8 +2071,8 @@ function calcUpdate(){
   document.getElementById('calc-distributors-val').textContent = distributors;
   document.getElementById('calc-teamsales-val').textContent = '$'+fmt.num(teamsales);
   document.getElementById('calc-commission-val').textContent = commission+'%';
-  const retail = (customers*avgorder*0.12) + (personal*(commission/100));
-  const team = teamsales*(commission/100)*0.6 + distributors*35;
+  const retail = (customers*avgorder*0.16) + (personal*(commission/100));
+  const team = teamsales*(commission/100)*0.55 + distributors*30;
   const total = retail+team;
   document.getElementById('calc-result').textContent = '$'+fmt.num(Math.round(total));
   document.getElementById('calc-retail').textContent = '$'+fmt.num(Math.round(retail));
@@ -1519,6 +2094,7 @@ function viewRewards(){
       </div>
       <button class="btn btn-gold" onclick="openRedeemModal()"><i data-lucide="gem"></i>Redeem points</button>
     </div>
+    ${isDist ? agentStripHtml(['packages','content']) : ''}
 
     ${!isDist ? customerLevelsBlock() : ''}
 
@@ -1595,7 +2171,8 @@ function redeemItem(id){
 function viewOrders(){
   const statusColor = {Delivered:'badge-green','In transit':'badge-blue',Canceled:'badge-grey'};
   return `
-  <div class="fade-view">
+  <div class="fade-view" style="display:flex;flex-direction:column;gap:16px;">
+    ${state.role==='distributor' ? agentStripHtml(['packages','trend']) : ''}
     <div class="card" style="overflow-x:auto;">
       <table class="riman-table"><thead><tr><th>Order</th><th>Date</th>${state.role==='distributor'?'<th>Customer</th>':''}<th>Products</th><th>Total</th><th>Status</th></tr></thead><tbody>
         ${ORDERS.map(o=>`<tr onclick="openOrderModal('${o.id}')">
@@ -1631,8 +2208,24 @@ function openOrderModal(id){
    DISTRIBUTOR — REPORTS
    ============================================================ */
 function viewReports(){
+  const funnelStages = LEAD_STAGES.map(s=>({stage:s, count:LEADS.filter(l=>l.stage===s).length}));
+  const maxFunnel = Math.max(...funnelStages.map(f=>f.count), 1);
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat'];
+  const hours = ['9am','12pm','3pm','6pm','9pm'];
+  // Deterministic mock "response rate" heat grid (0-100)
+  const heat = [
+    [30,55,70,85,60],[35,60,75,90,65],[40,65,80,95,70],
+    [38,58,78,88,62],[45,70,85,97,75],[25,40,55,72,80]
+  ];
+  function heatColor(v){
+    // blush -> burgundy scale
+    const t = v/100;
+    const r = Math.round(247 + (141-247)*t), g = Math.round(236 + (41-236)*t), b = Math.round(236 + (68-236)*t);
+    return `rgb(${r},${g},${b})`;
+  }
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
+    ${agentStripHtml(['trend','competitor','network'])}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;">
       ${statCard({icon:'trending-up',label:'Sales growth',value:'+18%',color:'#1e7a47'})}
       ${statCard({icon:'users',label:'Team growth',value:'+12%',color:'var(--rose)'})}
@@ -1640,12 +2233,42 @@ function viewReports(){
       ${statCard({icon:'repeat',label:'Lead conversion',value:'34%'})}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="home-grid">
-      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Sales & team growth</h4><div class="chart-wrap"><canvas id="chartReportGrowth"></canvas></div></div>
+      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 4px;">Sales & team growth</h4><p class="subtle" style="font-size:11.5px;margin:0 0 8px;">Dashed bars are the AI-projected next 2 months.</p><div class="chart-wrap"><canvas id="chartReportGrowth"></canvas></div></div>
       <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Product performance</h4><div class="chart-wrap"><canvas id="chartReportProducts"></canvas></div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="home-grid">
       <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Recruitment conversion</h4><div class="chart-wrap sm"><canvas id="chartReportRecruit"></canvas></div></div>
       <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Customer conversion</h4><div class="chart-wrap sm"><canvas id="chartReportCustomers"></canvas></div></div>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <h4 style="font-family:'Manrope';font-weight:800;margin:0 0 4px;">Lead pipeline funnel</h4>
+      <p class="subtle" style="font-size:11.5px;margin:0 0 16px;">How your 8 active leads move through each stage.</p>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        ${funnelStages.map(f=>`
+        <div class="funnel-row">
+          <div style="width:96px;font-size:12px;font-weight:700;flex-shrink:0;">${f.stage}</div>
+          <div class="funnel-bar-track">
+            <div class="funnel-bar-fill" style="width:${Math.max(8,Math.round(f.count/maxFunnel*100))}%;">${f.count}</div>
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;">
+        <h4 style="font-family:'Manrope';font-weight:800;margin:0;">Best time to contact</h4>
+        <span class="badge badge-burgundy"><i data-lucide="sparkles" style="width:11px;height:11px;"></i>AI-modeled</span>
+      </div>
+      <p class="subtle" style="font-size:11.5px;margin:0 0 14px;">Response rate by day and time, based on your last 90 days of activity.</p>
+      <div class="heatmap-grid">
+        <div></div>
+        ${hours.map(h=>`<div class="heatmap-label" style="justify-content:center;">${h}</div>`).join('')}
+        ${days.map((d,ri)=>`
+          <div class="heatmap-label">${d}</div>
+          ${heat[ri].map(v=>`<div class="heatmap-cell" style="background:${heatColor(v)};" title="${v}% response rate">${v}</div>`).join('')}
+        `).join('')}
+      </div>
     </div>
   </div>`;
 }
@@ -1654,10 +2277,14 @@ function initReportCharts(){
   reportChartInstances.forEach(c=>{ try{c && c.destroy();}catch(e){} });
   reportChartInstances = [];
   const c1 = document.getElementById('chartReportGrowth');
-  if(c1) reportChartInstances.push(safeChart(c1,{type:'bar',data:{labels:['Mar','Apr','May','Jun','Jul','Aug'],
-    datasets:[{label:'Sales',data:[5200,5800,6400,7100,7800,8420],backgroundColor:'#8D2944',borderRadius:6},
-    {label:'Team',data:[14000,15200,16800,18500,19900,21400],backgroundColor:'#CDA25F',borderRadius:6}]},
-    options:{plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:11}}}},scales:{y:{grid:{color:'#F1EEEC'}},x:{grid:{display:false}}}}}));
+  if(c1) reportChartInstances.push(safeChart(c1,{type:'bar',data:{labels:['Mar','Apr','May','Jun','Jul','Aug','Sep*','Oct*'],
+    datasets:[
+      {label:'Sales',data:[5200,5800,6400,7100,7800,8420,null,null],backgroundColor:'#8D2944',borderRadius:6},
+      {label:'Sales (AI forecast)',data:[null,null,null,null,null,8420,9050,9700],backgroundColor:'rgba(141,41,68,0.35)',borderRadius:6},
+      {label:'Team',data:[14000,15200,16800,18500,19900,21400,null,null],backgroundColor:'#CDA25F',borderRadius:6},
+      {label:'Team (AI forecast)',data:[null,null,null,null,null,21400,23400,25600],backgroundColor:'rgba(205,162,95,0.35)',borderRadius:6},
+    ]},
+    options:{plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:10}}}},scales:{y:{grid:{color:'#F1EEEC'}},x:{grid:{display:false}}}}}));
   const c2 = document.getElementById('chartReportProducts');
   if(c2) reportChartInstances.push(safeChart(c2,{type:'bar',data:{labels:['Serum','Gold Cream','Vitamin C+','Starter Kit','Eye Contour'],
     datasets:[{data:[42,38,29,25,19],backgroundColor:['#8D2944','#B84C6B','#C98B9C','#CDA25F','#642033'],borderRadius:6}]},
@@ -1680,6 +2307,7 @@ function viewProfile(){
   const pv=1780, tv=21400, recruits=10;
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
+    ${agentStripHtml(['network','trend'])}
     <div class="card" style="padding:26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
       ${avatarOf('Sandra Rodriguez','#8D2944',64)}
       <div style="flex:1;min-width:180px;">
@@ -1727,31 +2355,111 @@ function viewProfile(){
 /* ============================================================
    CUSTOMER — HOME
    ============================================================ */
+function computeGlowScore(){
+  const total = state.ritualSteps.length;
+  const done = state.ritualSteps.filter(s=>s.done).length;
+  const hydration = 72;
+  const radiance = 88;
+  const consistency = Math.round(55 + (done/total)*45);
+  const overall = Math.round((hydration+radiance+consistency)/3);
+  return {overall, hydration, radiance, consistency};
+}
+/* Animates the Glow ring filling in + the score counting up from 0 — the
+   Oura/WHOOP-style "reveal" moment on load. */
+function animateGlowHero(){
+  const g = computeGlowScore();
+  const ringEl = document.getElementById('glow-ring-fg');
+  const numEl = document.getElementById('glow-score-num');
+  if(!ringEl || !numEl) return;
+  const r = 62, c = 2*Math.PI*r;
+  const off = c*(1-g.overall/100);
+  requestAnimationFrame(()=>{
+    setTimeout(()=>{ ringEl.style.strokeDashoffset = off; }, 60);
+  });
+  let cur = 0;
+  const step = Math.max(1, Math.round(g.overall/24));
+  const iv = setInterval(()=>{
+    cur += step;
+    if(cur>=g.overall){ cur=g.overall; clearInterval(iv); }
+    numEl.textContent = cur;
+  }, 35);
+}
 function viewHomeCustomer(){
+  const g = computeGlowScore();
+  const trendDelta = g.overall - GLOW_HISTORY[GLOW_HISTORY.length-2];
+  const r = 62, c = 2*Math.PI*r;
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
-    ${aiRibbon('Your combination skin needs more hydration this week based on your last analysis. We recommend the Rose Gold Facial Oil.', {label:'Open AI Beauty Advisor', onclick:"go('beauty')"})}
-    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;" class="home-grid">
-      <div class="card" style="padding:22px;display:flex;align-items:center;gap:18px;">
-        <div>
-          <span class="badge badge-burgundy">${state.customerLevel} level</span>
-          <div style="font-family:'Manrope';font-weight:800;font-size:20px;margin-top:8px;">Hi, Marcela! 👋</div>
-          <div class="subtle" style="font-size:12.5px;margin-top:2px;">You have ${fmt.num(state.points)} RIMAN$ available</div>
-          <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="go('shop')"><i data-lucide="shopping-bag"></i>Go to shop</button>
+    <div class="glow-hero">
+      <div class="glow-orb" style="width:160px;height:160px;background:var(--gold);top:-40px;right:-30px;"></div>
+      <div class="glow-orb" style="width:120px;height:120px;background:var(--rose);bottom:-30px;left:10%;animation-delay:3s;"></div>
+      <div style="position:relative;display:flex;align-items:center;gap:22px;flex-wrap:wrap;z-index:1;">
+        <div class="glow-ring-wrap" style="width:140px;height:140px;">
+          <svg width="140" height="140">
+            <circle cx="70" cy="70" r="${r}" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="11"/>
+            <circle id="glow-ring-fg" cx="70" cy="70" r="${r}" fill="none" stroke="url(#ringGrad)" stroke-width="11" stroke-linecap="round"
+              stroke-dasharray="${c}" stroke-dashoffset="${c}" style="transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1);"/>
+          </svg>
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;">
+            <div id="glow-score-num" class="count-up" style="font-family:'Manrope';font-weight:800;font-size:34px;line-height:1;">0</div>
+            <div style="font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.8;margin-top:3px;">Glow Score</div>
+          </div>
+        </div>
+        <div style="flex:1;min-width:200px;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            <span class="badge badge-gold">${state.customerLevel} member</span>
+            <span class="streak-badge"><i data-lucide="flame" class="flame-icon" style="width:13px;height:13px;color:var(--gold-light);"></i>${state.glowStreak}-day streak</span>
+            <span style="font-size:12px;font-weight:700;color:${trendDelta>=0?'#8ee6b0':'#f3b3b3'};">${trendDelta>=0?'▲':'▼'} ${Math.abs(trendDelta)} vs yesterday</span>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;max-width:340px;">
+            <div class="factor-row"><span style="font-size:11.5px;width:82px;flex-shrink:0;opacity:.85;">Hydration</span><div class="factor-bar-track"><div class="factor-bar-fill" style="width:${g.hydration}%;"></div></div><span style="font-size:11.5px;font-weight:700;width:26px;text-align:right;">${g.hydration}</span></div>
+            <div class="factor-row"><span style="font-size:11.5px;width:82px;flex-shrink:0;opacity:.85;">Radiance</span><div class="factor-bar-track"><div class="factor-bar-fill" style="width:${g.radiance}%;"></div></div><span style="font-size:11.5px;font-weight:700;width:26px;text-align:right;">${g.radiance}</span></div>
+            <div class="factor-row"><span style="font-size:11.5px;width:82px;flex-shrink:0;opacity:.85;">Consistency</span><div class="factor-bar-track"><div class="factor-bar-fill" style="width:${g.consistency}%;"></div></div><span style="font-size:11.5px;font-weight:700;width:26px;text-align:right;">${g.consistency}</span></div>
+          </div>
+          <button class="btn btn-gold btn-sm" style="margin-top:14px;" onclick="openSkinScanModal()"><i data-lucide="scan-face"></i>AI Skin Scan</button>
+        </div>
+        <div style="width:100%;max-width:100%;margin-top:4px;">
+          <div class="chart-wrap sm" style="height:110px;"><canvas id="chartGlowTrend"></canvas></div>
         </div>
       </div>
+    </div>
+
+    <div class="card" style="padding:20px;display:flex;gap:14px;align-items:flex-start;">
+      <div class="coach-avatar"><i data-lucide="sparkles" style="width:20px;height:20px;"></i></div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:800;font-size:13.5px;font-family:'Manrope';margin-bottom:3px;">Your AI Beauty Coach</div>
+        <div style="font-size:13px;line-height:1.5;color:var(--ink);">${COACH_TIPS[0]}</div>
+        <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="go('beauty')">Open coaching</button>
+      </div>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+        <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0;">Today's ritual</h3>
+        <span class="badge badge-burgundy">${state.ritualSteps.filter(s=>s.done).length}/${state.ritualSteps.length} done</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;" id="ritual-list"></div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;" class="home-grid">
+      <div class="card" style="padding:20px;">
+        <span class="badge badge-gold">${state.customerLevel} member</span>
+        <div style="font-family:'Manrope';font-weight:800;font-size:19px;margin-top:8px;">Welcome back, Marcela 👋</div>
+        <div class="subtle" style="font-size:12.5px;margin-top:2px;">You have ${fmt.num(state.points)} RIMAN$ available</div>
+        <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="go('shop')"><i data-lucide="shopping-bag"></i>Go to shop</button>
+      </div>
       <div class="card" style="padding:20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;">
-        ${ring({percent:75, size:88, label:'75%', sublabel:'to VVIP'})}
+        ${ring({percent:75, size:80, label:'75%', sublabel:'to VVIP'})}
         <div class="subtle" style="font-size:11.5px;">$380 more to reach VVIP</div>
       </div>
     </div>
     <div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <h3 class="section-title" style="font-size:16px;">Recommended for you</h3>
+        <h3 class="section-title" style="font-size:16px;">Matched for your skin</h3>
         <span class="subtle" style="font-size:12px;cursor:pointer;font-weight:700;" onclick="go('shop')">View all →</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;">
-        ${PRODUCTS.slice(0,4).map(p=>productCard(p)).join('')}
+        ${PRODUCTS.slice().sort((a,b)=>PRODUCT_MATCH[b.id]-PRODUCT_MATCH[a.id]).slice(0,4).map(p=>productCard(p,true)).join('')}
       </div>
     </div>
     <div class="card" style="padding:22px;">
@@ -1764,18 +2472,65 @@ function viewHomeCustomer(){
     </div>
   </div>`;
 }
+function renderRitualList(){
+  const list = document.getElementById('ritual-list');
+  if(!list) return;
+  const periods = ['AM','PM'];
+  list.innerHTML = periods.map(p=>`
+    <div style="margin-bottom:4px;">
+      <div class="subtle" style="font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:6px 0 6px;">${p==='AM'?'☀️ Morning':'🌙 Evening'}</div>
+      ${state.ritualSteps.filter(s=>s.period===p).map(s=>`
+        <div class="ritual-step ${s.done?'done':''}" onclick="toggleRitualStep(${s.id})">
+          <div class="ritual-check">${s.done?'<i data-lucide="check" style="width:13px;height:13px;color:#fff;"></i>':''}</div>
+          <span style="font-size:13px;font-weight:600;text-decoration:${s.done?'line-through':'none'};color:${s.done?'var(--grey)':'var(--ink)'};">${s.label}</span>
+        </div>`).join('')}
+    </div>`).join('');
+  safeIcons();
+}
+function toggleRitualStep(id){
+  const step = state.ritualSteps.find(s=>s.id===id);
+  step.done = !step.done;
+  saveState();
+  if(step.done) toast('Nice! Your Glow Score just got a boost.', 'sparkles');
+  if(state.view==='home' && state.role==='customer'){
+    document.getElementById('view').innerHTML = viewHomeCustomer();
+    safeIcons(); renderRitualList(); initGlowChart(); animateGlowHero();
+  }
+}
+let glowChartInstance = null;
+function initGlowChart(){
+  const el = document.getElementById('chartGlowTrend');
+  if(!el) return;
+  if(glowChartInstance){ try{glowChartInstance.destroy();}catch(e){} glowChartInstance=null; }
+  glowChartInstance = safeChart(el, {
+    type:'line',
+    data:{labels:['6d','5d','4d','3d','2d','Yest.','Today'],
+      datasets:[{data:[...GLOW_HISTORY.slice(0,6), computeGlowScore().overall],borderColor:'#E4CB98',backgroundColor:'rgba(228,203,152,0.18)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#E4CB98'}]},
+    options:{plugins:{legend:{display:false}},
+      scales:{y:{display:false,min:50,max:100},x:{grid:{display:false},ticks:{color:'rgba(255,255,255,0.6)',font:{size:9}}}}}
+  });
+}
 
 /* ============================================================
    CUSTOMER — SHOP
    ============================================================ */
-function productCard(p){
+function starsHtml(rating){
+  const full = Math.round(rating);
+  return `<span class="star-row">${Array.from({length:5}).map((_,i)=>`<i data-lucide="star" style="${i<full?'fill:var(--gold);':''}"></i>`).join('')}</span><span class="subtle" style="font-size:10.5px;">${rating}</span>`;
+}
+function productCard(p, showMatch){
   const inCart = state.cart.find(c=>c.id===p.id);
+  const match = PRODUCT_MATCH[p.id];
+  const rating = PRODUCT_RATING[p.id];
+  const reviews = PRODUCT_REVIEWS[p.id];
   return `
-  <div class="card card-hover" style="padding:14px;display:flex;flex-direction:column;">
+  <div class="card card-hover" style="padding:14px;display:flex;flex-direction:column;position:relative;">
+    ${showMatch && match ? `<span class="match-badge"><i data-lucide="sparkles" style="width:9px;height:9px;"></i>${match}% match</span>`:''}
     <div onclick="openProductModal('${p.id}')" style="cursor:pointer;">
       <div style="width:100%;aspect-ratio:1/1;border-radius:13px;background:linear-gradient(135deg,var(--blush),#fff);display:flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:10px;">${p.img}</div>
       <div class="subtle" style="font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;">${p.cat}</div>
-      <div style="font-weight:700;font-size:13px;line-height:1.3;margin:3px 0 8px;min-height:34px;">${p.name}</div>
+      <div style="font-weight:700;font-size:13px;line-height:1.3;margin:3px 0 5px;min-height:34px;">${p.name}</div>
+      ${rating?`<div style="margin-bottom:6px;">${starsHtml(rating)} <span class="subtle" style="font-size:10px;">(${fmt.num(reviews)})</span></div>`:''}
     </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:auto;">
       <span style="font-weight:800;font-family:'Manrope';">${fmt.money(p.price)}</span>
@@ -1796,7 +2551,7 @@ function viewShop(){
       </button>
     </div>
     <div id="shop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;">
-      ${PRODUCTS.map(p=>productCard(p)).join('')}
+      ${PRODUCTS.map(p=>productCard(p,true)).join('')}
     </div>
   </div>`;
 }
@@ -1804,7 +2559,7 @@ function filterShop(cat, el){
   document.querySelectorAll('#shop-cats .chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
   const list = cat==='All'?PRODUCTS:PRODUCTS.filter(p=>p.cat===cat);
-  document.getElementById('shop-grid').innerHTML = list.map(p=>productCard(p)).join('');
+  document.getElementById('shop-grid').innerHTML = list.map(p=>productCard(p,true)).join('');
   safeIcons();
 }
 function addToCart(id){
@@ -1873,9 +2628,29 @@ function checkoutCart(){
    CUSTOMER — AI BEAUTY ADVISOR
    ============================================================ */
 function viewBeauty(){
+  const g = computeGlowScore();
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:18px;">
-    ${aiRibbon('Your AI Beauty Advisor analyzes your skin, habits and local climate to recommend the perfect ritual.')}
+    <div class="glow-hero" style="padding:22px 24px;">
+      <div style="position:relative;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+        <div class="coach-avatar" style="width:52px;height:52px;"><i data-lucide="wand-2" style="width:24px;height:24px;"></i></div>
+        <div style="flex:1;min-width:220px;">
+          <div style="font-weight:800;font-family:'Manrope';font-size:16px;">Your AI Beauty Coach</div>
+          <div style="font-size:13px;line-height:1.5;opacity:.92;margin-top:4px;">${COACH_TIPS[Math.floor(Math.random()*COACH_TIPS.length)]}</div>
+        </div>
+        <div style="text-align:center;flex-shrink:0;">
+          <div style="font-family:'Manrope';font-weight:800;font-size:26px;">${g.overall}</div>
+          <div style="font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;opacity:.8;">Glow Score</div>
+        </div>
+      </div>
+      <button class="btn btn-gold btn-sm" style="margin-top:14px;position:relative;z-index:1;" onclick="openSkinScanModal()"><i data-lucide="scan-face"></i>Run an AI Skin Scan</button>
+    </div>
+
+    <div class="card" style="padding:20px;">
+      <h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;font-size:14.5px;">4-week trend</h4>
+      <div class="chart-wrap sm"><canvas id="chartBeautyTrend"></canvas></div>
+    </div>
+
     <div class="card" style="padding:22px;text-align:center;">
       <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--burgundy),var(--rose));display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
         <i data-lucide="wand-2" style="width:28px;height:28px;color:#fff;"></i>
@@ -1889,7 +2664,36 @@ function viewBeauty(){
       </div>
     </div>
     <div id="beauty-result"></div>
+
+    <div class="card" style="padding:22px;">
+      <h4 style="font-family:'Manrope';font-weight:800;margin:0 0 4px;font-size:14.5px;">Your ritual, tracked</h4>
+      <p class="subtle" style="font-size:12px;margin:0 0 14px;">Followed daily on Home — here's today's progress.</p>
+      <div style="display:flex;flex-direction:column;gap:8px;" id="beauty-ritual-list"></div>
+      <button class="btn btn-primary btn-sm" style="width:100%;margin-top:14px;" onclick="go('home')">Go to today's ritual</button>
+    </div>
   </div>`;
+}
+let beautyChartInstance = null;
+function initBeautyChart(){
+  const el = document.getElementById('chartBeautyTrend');
+  if(!el) return;
+  if(beautyChartInstance){ try{beautyChartInstance.destroy();}catch(e){} beautyChartInstance=null; }
+  beautyChartInstance = safeChart(el, {
+    type:'line',
+    data:{labels:['Wk 1','Wk 2','Wk 3','Wk 4'],
+      datasets:[{data:[66,71,75,computeGlowScore().overall],borderColor:'#8D2944',backgroundColor:'rgba(141,41,68,0.08)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#8D2944'}]},
+    options:{plugins:{legend:{display:false}},scales:{y:{grid:{color:'#F1EEEC'},min:40,max:100},x:{grid:{display:false}}}}
+  });
+}
+function renderBeautyRitualList(){
+  const box = document.getElementById('beauty-ritual-list');
+  if(!box) return;
+  box.innerHTML = state.ritualSteps.map(s=>`
+    <div class="ritual-step ${s.done?'done':''}" style="cursor:default;">
+      <div class="ritual-check">${s.done?'<i data-lucide="check" style="width:13px;height:13px;color:#fff;"></i>':''}</div>
+      <span style="font-size:12.5px;font-weight:600;color:${s.done?'var(--grey)':'var(--ink)'};">${s.period} · ${s.label}</span>
+    </div>`).join('');
+  safeIcons();
 }
 function runBeautyQuiz(i){
   const box = document.getElementById('beauty-result');
@@ -1903,7 +2707,7 @@ function runBeautyQuiz(i){
       <h4 style="font-family:'Manrope';font-weight:800;margin:0 0 8px;">${r.tone}</h4>
       <p class="subtle" style="font-size:13px;line-height:1.5;margin:0 0 16px;">${r.tip}</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;">
-        ${recProducts.map(p=>productCard(p)).join('')}
+        ${recProducts.map(p=>productCard(p,true)).join('')}
       </div>
     </div>`;
     safeIcons();
@@ -2030,11 +2834,157 @@ function askVoice(question){
 </script>
 <script>
 /* ============================================================
+   INBOX — unified WhatsApp / Instagram / Facebook conversations
+   ============================================================ */
+state.inboxFilter = 'all';
+state.activeConversationId = CONVERSATIONS[0].id;
+function viewInbox(){
+  return `
+  <div class="fade-view" style="display:flex;flex-direction:column;gap:16px;">
+    ${aiRibbon('inbox')}
+    ${agentStripHtml(['social','content'])}
+    <div class="inbox-layout">
+      <div class="card" style="padding:14px;display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          ${['all','whatsapp','instagram','facebook'].map(f=>`
+            <span class="chip ${state.inboxFilter===f?'active':''}" onclick="setInboxFilter('${f}')">${f==='all'?'All':CHANNELS[f].name}</span>`).join('')}
+        </div>
+        <div id="thread-list" style="display:flex;flex-direction:column;gap:2px;max-height:520px;overflow-y:auto;"></div>
+      </div>
+      <div class="card" id="chat-panel" style="padding:0;display:flex;flex-direction:column;overflow:hidden;"></div>
+    </div>
+  </div>`;
+}
+function setInboxFilter(f){ state.inboxFilter = f; renderInbox(); }
+function threadListHtml(){
+  const list = state.inboxFilter==='all' ? CONVERSATIONS : CONVERSATIONS.filter(c=>c.channel===state.inboxFilter);
+  if(!list.length) return `<div class="subtle" style="font-size:12.5px;text-align:center;padding:30px 0;">No conversations here.</div>`;
+  return list.map(c=>{
+    const ch = CHANNELS[c.channel];
+    const last = c.messages[c.messages.length-1];
+    return `
+    <div class="thread-row ${state.activeConversationId===c.id?'active':''}" onclick="openConversation('${c.id}')">
+      <div style="position:relative;flex-shrink:0;">
+        ${avatarOf(c.name,c.avatarColor,42)}
+        <span class="channel-dot" style="background:${ch.color};"><i data-lucide="${ch.icon}"></i></span>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="display:flex;justify-content:space-between;gap:6px;">
+          <span style="font-weight:700;font-size:13px;">${c.name}</span>
+          <span class="subtle" style="font-size:10.5px;flex-shrink:0;">${c.updated}</span>
+        </div>
+        <div class="subtle" style="font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;">${last?(last.from==='me'?'You: ':'')+last.text:''}</div>
+      </div>
+      ${c.unread? `<span class="badge badge-gold" style="flex-shrink:0;">${c.unread}</span>`:''}
+    </div>`;
+  }).join('');
+}
+function renderInbox(){
+  const listEl = document.getElementById('thread-list');
+  if(!listEl) return;
+  listEl.innerHTML = threadListHtml();
+  renderChatPanel();
+  safeIcons();
+}
+function openConversation(id){
+  state.activeConversationId = id;
+  const convo = CONVERSATIONS.find(c=>c.id===id);
+  if(convo) convo.unread = 0;
+  renderInbox();
+}
+function renderChatPanel(){
+  const panel = document.getElementById('chat-panel');
+  if(!panel) return;
+  const c = CONVERSATIONS.find(x=>x.id===state.activeConversationId);
+  if(!c){ panel.innerHTML = ''; return; }
+  const ch = CHANNELS[c.channel];
+  panel.innerHTML = `
+    <div style="padding:16px 18px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:12px;">
+      <div style="position:relative;">${avatarOf(c.name,c.avatarColor,38)}<span class="channel-dot" style="background:${ch.color};"><i data-lucide="${ch.icon}"></i></span></div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:700;font-size:13.5px;">${c.name}</div>
+        <div class="subtle" style="font-size:11px;">${ch.name}</div>
+      </div>
+      <span class="badge badge-burgundy">${c.tag}</span>
+    </div>
+    <div id="chat-messages" style="flex:1;padding:18px;display:flex;flex-direction:column;gap:10px;overflow-y:auto;max-height:360px;min-height:220px;background:var(--cream);">
+      ${c.messages.map(m=>`<div class="chat-bubble ${m.from==='me'?'out':'in'}">${m.text}</div>`).join('')}
+    </div>
+    <div style="padding:12px 16px;border-top:1px solid var(--line);">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;" id="ai-reply-chips"></div>
+      <div style="display:flex;gap:8px;">
+        <input class="input" id="chat-input" placeholder="Type a reply...">
+        <button class="btn btn-primary btn-sm" onclick="sendInboxMessage()"><i data-lucide="send"></i></button>
+      </div>
+    </div>`;
+  renderAiReplyChips();
+  const box = document.getElementById('chat-messages');
+  if(box) box.scrollTop = box.scrollHeight;
+  safeIcons();
+}
+function renderAiReplyChips(){
+  const box = document.getElementById('ai-reply-chips');
+  if(!box) return;
+  box.innerHTML = `
+    <span class="chip" onclick="useAiReply()"><i data-lucide="sparkles" style="width:12px;height:12px;"></i>AI suggested reply</span>
+    <span class="chip" onclick="toast('Contact tagged as hot lead','target')">Tag as hot lead</span>
+    <span class="chip" onclick="toast('Follow-up reminder scheduled','bell')">Schedule follow-up</span>`;
+}
+function useAiReply(){
+  const suggestion = AI_REPLY_SUGGESTIONS[Math.floor(Math.random()*AI_REPLY_SUGGESTIONS.length)];
+  const input = document.getElementById('chat-input');
+  if(input) input.value = suggestion;
+}
+function sendInboxMessage(){
+  const input = document.getElementById('chat-input');
+  const val = input.value.trim();
+  if(!val) return;
+  const c = CONVERSATIONS.find(x=>x.id===state.activeConversationId);
+  c.messages.push({from:'me', text:val});
+  c.updated = 'now';
+  input.value = '';
+  renderChatPanel();
+  renderInbox();
+}
+
+/* ============================================================
+   SUCCESS ROADMAP — embedded in AI Coach
+   ============================================================ */
+function renderSuccessRoadmap(){
+  const box = document.getElementById('success-roadmap');
+  if(!box) return;
+  const done = SUCCESS_MILESTONES.filter(m=>m.done).length;
+  const pct = Math.round(done/SUCCESS_MILESTONES.length*100);
+  box.innerHTML = `
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+      <div>
+        <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0;">Your Path to Diamond</h3>
+        <p class="subtle" style="font-size:12px;margin:2px 0 0;">AI-suggested milestones toward becoming a top RIMAN distributor</p>
+      </div>
+      <span class="badge badge-gold">${done}/${SUCCESS_MILESTONES.length}</span>
+    </div>
+    <div class="progress-track" style="margin-bottom:16px;"><div class="progress-fill progress-fill-gold" style="width:${pct}%"></div></div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${SUCCESS_MILESTONES.map(m=>`
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:10px 12px;border-radius:12px;background:${m.done?'var(--blush)':'#fff'};border:1px solid var(--line);">
+        <div style="width:22px;height:22px;border-radius:50%;background:${m.done?'#1e7a47':'var(--dusty-rose)'};display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;">
+          <i data-lucide="${m.done?'check':'circle'}" style="width:12px;height:12px;color:#fff;"></i>
+        </div>
+        <div style="flex:1;min-width:0;">
+          <div style="font-size:13px;font-weight:700;text-decoration:${m.done?'line-through':'none'};color:${m.done?'var(--grey)':'var(--ink)'};">${m.title}</div>
+          <div class="subtle" style="font-size:11.5px;margin-top:2px;">${m.detail}</div>
+        </div>
+      </div>`).join('')}
+    </div>`;
+  safeIcons();
+}
+
+/* ============================================================
    ROUTER
    ============================================================ */
 const VIEW_RENDERERS = {
   distributor:{
-    home:viewHomeDistributor, coach:viewCoach, agents:viewAgents, leads:viewLeads, customers:viewCustomers,
+    home:viewHomeDistributor, coach:viewCoach, agents:viewAgents, inbox:viewInbox, leads:viewLeads, customers:viewCustomers,
     network:viewNetwork, recruit:viewRecruit, sales:viewSales, commissions:viewCommissions,
     rewards:viewRewards, orders:viewOrders, reports:viewReports, profile:viewProfile,
   },
@@ -2044,24 +2994,32 @@ const VIEW_RENDERERS = {
   }
 };
 const POST_RENDER = {
-  home:()=>{ if(state.role==='distributor'){ renderDailyPlan(); initHomeChart(); } },
-  coach:()=>{ renderCoachActions(); },
+  home:()=>{ if(state.role==='distributor'){ renderDailyPlan(); initHomeChart(); } else { renderRitualList(); initGlowChart(); animateGlowHero(); } },
+  coach:()=>{ renderCoachActions(); renderSuccessRoadmap(); },
   leads:()=>{ document.getElementById('leads-body').innerHTML = leadsBodyHtml(); },
   sales:()=>{ document.getElementById('sales-tab-body').innerHTML = salesTabHtml('assistant'); },
-  commissions:()=>{ calcUpdate(); },
+  commissions:()=>{ calcUpdate(); initCommissionCharts(); },
+  network:()=>{ initNetworkChart(); },
   reports:()=>{ initReportCharts(); },
+  inbox:()=>{ renderInbox(); },
+  agents:()=>{ startAgentLiveUpdates(); },
+  beauty:()=>{ initBeautyChart(); renderBeautyRitualList(); },
 };
 
 function render(){
+  stopAgentLiveUpdates();
+  stopRibbonRotation();
   renderSidebar();
   renderBottomNav();
-  const meta = VIEW_TITLES[state.view] || {t:'RIMAN AI', s:''};
+  let meta = VIEW_TITLES[state.view] || {t:'RIMAN AI', s:''};
+  if(state.view==='home' && state.role==='customer'){ meta = {t:'Home', s:'Your glow, tracked daily'}; }
   document.getElementById('topbar-title').textContent = meta.t;
   document.getElementById('topbar-sub').textContent = meta.s;
   const renderer = (VIEW_RENDERERS[state.role] && VIEW_RENDERERS[state.role][state.view]) || VIEW_RENDERERS[state.role].home;
   if(!VIEW_RENDERERS[state.role][state.view]) state.view = 'home';
   document.getElementById('view').innerHTML = renderer();
   safeIcons();
+  startRibbonRotation();
   const post = POST_RENDER[state.view];
   if(post) post();
 }
@@ -2105,7 +3063,11 @@ window.addEventListener('resize', ()=>{
   clearTimeout(resizeT);
   resizeT = setTimeout(()=>{
     if(homeChartInstance) try{homeChartInstance.resize();}catch(e){}
+    if(glowChartInstance) try{glowChartInstance.resize();}catch(e){}
+    if(beautyChartInstance) try{beautyChartInstance.resize();}catch(e){}
+    if(networkChartInstance) try{networkChartInstance.resize();}catch(e){}
     reportChartInstances.forEach(c=>{ try{c && c.resize();}catch(e){} });
+    commissionChartInstances.forEach(c=>{ try{c && c.resize();}catch(e){} });
   }, 150);
 });
 
