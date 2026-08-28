@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fotona Academy — Plataforma de Entrenamiento Clínico</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,400;0,500;0,600;0,700;1,500&family=Space+Mono:wght@400;700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --obsidian:#0a0807;
+    --obsidian-rgb:10,8,7;
+    --charcoal:#151009;
+    --charcoal-2:#1e1610;
+    --media-bg:#050403;
+    --line:#332721;
+    --fotona-red:#7d1220;
+    --ember:#c81f34;
+    --ember-bright:#ff3050;
+    --gold:#c9a227;
+    --gold-light:#f0d488;
+    --gold-dim:#8a7326;
+    --bone:#f4eee1;
+    --bone-dim:#a89a84;
+    --display: 'Cormorant', serif;
+    --mono: 'Space Mono', monospace;
+    --body: 'Manrope', sans-serif;
+  }
+  html[data-theme="light"]{
+    --obsidian:#f8f3e7;
+    --obsidian-rgb:248,243,231;
+    --charcoal:#ffffff;
+    --charcoal-2:#f2e9d4;
+    --media-bg:#ece1c6;
+    --line:#e1d3ac;
+    --fotona-red:#7d1220;
+    --ember:#b81a2d;
+    --ember-bright:#d81e37;
+    --gold:#9c7a17;
+    --gold-light:#7c5f10;
+    --gold-dim:#c9a227;
+    --bone:#1c140d;
+    --bone-dim:#6d6151;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--obsidian);
+    color:var(--bone);
+    font-family:var(--body);
+    overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
+    transition:background .4s ease, color .4s ease;
+  }
+  ::selection{background:var(--ember);color:var(--bone);}
+
+  a{color:inherit;text-decoration:none;}
+  img{max-width:100%;display:block;}
+
+  /* ============ SCROLL BEAM ============ */
+  .beam-track{
+    position:fixed; top:0; left:0; width:3px; height:100vh;
+    background:linear-gradient(180deg, transparent, var(--line) 8%, var(--line) 92%, transparent);
+    z-index:500;
+  }
+  .beam-fill{
+    position:absolute; top:0; left:0; width:100%; height:0%;
+    background:linear-gradient(180deg, var(--gold-light), var(--ember-bright));
+    box-shadow:0 0 12px 2px var(--ember-bright), 0 0 24px 4px rgba(200,31,52,.5);
+    transition:height .05s linear;
+  }
+  .beam-dot{
+    position:absolute; left:50%; width:9px; height:9px; border-radius:50%;
+    background:var(--gold-light); transform:translate(-50%,-50%);
+    box-shadow:0 0 10px 3px var(--ember-bright);
+  }
+
+  /* ============ NAV ============ */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:400;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 5vw 22px 7vw;
+    backdrop-filter:blur(10px);
+    background:linear-gradient(180deg, rgba(var(--obsidian-rgb),.85), rgba(var(--obsidian-rgb),0));
+    border-bottom:1px solid rgba(201,162,39,.12);
+  }
+  .logo{display:flex;align-items:center;gap:10px;}
+  .logo-mark{
+    width:30px;height:30px; flex-shrink:0;
+    filter:drop-shadow(0 0 8px rgba(200,31,52,.55));
+  }
+  .logo-mark svg{display:block;}
+  .logo-text{font-family:var(--display); font-size:1.25rem; letter-spacing:.06em; font-weight:600;}
+  .logo-text b{color:var(--gold-light); font-weight:700;}
+  .logo-tag{font-family:var(--mono); font-size:.58rem; letter-spacing:.22em; color:var(--bone-dim); text-transform:uppercase; margin-top:2px;}
+  nav ul{list-style:none; display:flex; gap:34px;}
+  nav a{font-size:.82rem; letter-spacing:.02em; color:var(--bone-dim); transition:color .25s;}
+  nav a:hover{color:var(--gold-light);}
+  .nav-cta{
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.05em;
+    border:1px solid var(--gold-dim); padding:10px 18px; border-radius:2px;
+    color:var(--gold-light); transition:all .3s;
+  }
+  .nav-cta:hover{background:var(--gold); color:var(--obsidian); border-color:var(--gold);}
+  .nav-links{display:flex; align-items:center; gap:22px;}
+  @media(max-width:860px){ nav ul{display:none;} }
+
+  .theme-toggle{
+    width:38px; height:38px; border-radius:50%; border:1px solid var(--gold-dim);
+    background:transparent; color:var(--gold-light); display:flex; align-items:center; justify-content:center;
+    cursor:pointer; transition:all .3s; flex-shrink:0;
+  }
+  .theme-toggle:hover{border-color:var(--gold); background:rgba(201,162,39,.1);}
+  .theme-toggle svg{width:16px; height:16px;}
+  .theme-toggle .icon-sun{display:none;}
+  .theme-toggle .icon-moon{display:block;}
+  html[data-theme="light"] .theme-toggle .icon-sun{display:block;}
+  html[data-theme="light"] .theme-toggle .icon-moon{display:none;}
+
+  /* ============ HERO ============ */
+  .hero{
+    position:relative; min-height:100vh; display:flex; flex-direction:column;
+    justify-content:center; padding:0 7vw; overflow:hidden;
+    background:
+      radial-gradient(ellipse 60% 50% at 80% 20%, rgba(125,18,32,.35), transparent 60%),
+      radial-gradient(ellipse 50% 40% at 15% 85%, rgba(201,162,39,.12), transparent 60%),
+      var(--obsidian);
+  }
+  .hero-grid{
+    position:absolute; inset:0; opacity:.35;
+    background-image:linear-gradient(rgba(201,162,39,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(201,162,39,.06) 1px, transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse 70% 60% at 60% 40%, black, transparent 75%);
+  }
+  .hero-sweep{
+    position:absolute; top:0; left:-20%; width:2px; height:100%;
+    background:linear-gradient(180deg, transparent, var(--ember-bright), transparent);
+    box-shadow:0 0 30px 6px rgba(255,48,80,.7);
+    animation:sweep 7s ease-in-out infinite;
+    opacity:.8;
+  }
+  @keyframes sweep{
+    0%{left:-5%;} 45%{left:104%;} 50%{left:104%;} 95%{left:-5%;} 100%{left:-5%;}
+  }
+  .eyebrow{
+    font-family:var(--mono); font-size:.72rem; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--gold-light); display:flex; align-items:center; gap:12px; margin-bottom:26px;
+    opacity:0; animation:rise .9s .2s ease forwards;
+  }
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--gold);}
+  h1.hero-title{
+    font-family:var(--display); font-weight:600; font-size:clamp(2.8rem, 7vw, 6.4rem);
+    line-height:1.02; letter-spacing:-.01em; max-width:16ch;
+    opacity:0; animation:rise 1s .35s ease forwards;
+  }
+  h1.hero-title em{
+    font-style:italic; font-weight:500;
+    background:linear-gradient(100deg, var(--gold-light), var(--ember-bright) 70%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .hero-sub{
+    font-size:1.05rem; color:var(--bone-dim); max-width:46ch; margin:28px 0 40px;
+    line-height:1.65; font-weight:300;
+    opacity:0; animation:rise 1s .55s ease forwards;
+  }
+  .hero-cta-row{display:flex; gap:16px; flex-wrap:wrap; opacity:0; animation:rise 1s .7s ease forwards;}
+  .btn-primary{
+    font-family:var(--mono); font-size:.78rem; letter-spacing:.05em; text-transform:uppercase;
+    background:linear-gradient(120deg, var(--ember), var(--fotona-red));
+    color:var(--bone); padding:16px 30px; border-radius:2px; border:1px solid transparent;
+    box-shadow:0 8px 30px -8px rgba(200,31,52,.7);
+    transition:transform .3s, box-shadow .3s;
+  }
+  .btn-primary:hover{transform:translateY(-2px); box-shadow:0 14px 34px -6px rgba(255,48,80,.55);}
+  .btn-ghost{
+    font-family:var(--mono); font-size:.78rem; letter-spacing:.05em; text-transform:uppercase;
+    border:1px solid var(--gold-dim); color:var(--gold-light); padding:16px 30px; border-radius:2px;
+    transition:all .3s;
+  }
+  .btn-ghost:hover{background:rgba(201,162,39,.1); border-color:var(--gold);}
+
+  @keyframes rise{from{opacity:0; transform:translateY(22px);} to{opacity:1; transform:translateY(0);}}
+
+  /* console readout ticker */
+  .console{
+    margin-top:64px; display:inline-flex; gap:0; border:1px solid var(--line);
+    background:rgba(20,15,11,.65); border-radius:3px; overflow:hidden;
+    opacity:0; animation:rise 1s .9s ease forwards;
+  }
+  .console-field{
+    padding:14px 22px; border-right:1px solid var(--line); font-family:var(--mono);
+  }
+  .console-field:last-child{border-right:none;}
+  .console-label{font-size:.58rem; letter-spacing:.18em; color:var(--bone-dim); text-transform:uppercase;}
+  .console-val{font-size:1.05rem; color:var(--gold-light); margin-top:4px; text-shadow:0 0 10px rgba(240,212,136,.4);}
+  @media(max-width:700px){.console{flex-wrap:wrap; width:100%;} .console-field{flex:1 1 40%;}}
+
+  .scroll-cue{
+    position:absolute; bottom:34px; left:7vw; font-family:var(--mono); font-size:.62rem;
+    letter-spacing:.2em; color:var(--bone-dim); display:flex; align-items:center; gap:10px;
+  }
+  .scroll-cue .line{width:1px; height:36px; background:linear-gradient(180deg, var(--gold), transparent); animation:pulse-h 2s infinite;}
+  @keyframes pulse-h{0%,100%{opacity:.3;} 50%{opacity:1;}}
+
+  /* ============ SECTION SHELL ============ */
+  section{position:relative; padding:130px 7vw;}
+  .section-head{max-width:60ch; margin-bottom:64px;}
+  .section-eyebrow{
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--gold); margin-bottom:16px; display:flex; align-items:center; gap:12px;
+  }
+  .section-eyebrow::before{content:"";width:20px;height:1px;background:var(--gold);}
+  h2{
+    font-family:var(--display); font-weight:600; font-size:clamp(2rem, 4vw, 3.3rem);
+    line-height:1.08; letter-spacing:-.01em;
+  }
+  h2 em{font-style:italic; color:var(--gold-light); font-weight:500;}
+  .section-desc{margin-top:20px; color:var(--bone-dim); font-size:1rem; line-height:1.7; font-weight:300;}
+
+  .reveal{opacity:0; transform:translateY(36px); transition:opacity .8s ease, transform .8s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+  .stagger .reveal:nth-child(1){transition-delay:.05s;}
+  .stagger .reveal:nth-child(2){transition-delay:.15s;}
+  .stagger .reveal:nth-child(3){transition-delay:.25s;}
+  .stagger .reveal:nth-child(4){transition-delay:.35s;}
+
+  /* ============ STATS ============ */
+  .stats{
+    background:var(--charcoal); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    padding:70px 7vw; display:grid; grid-template-columns:repeat(4,1fr); gap:30px;
+  }
+  .stat-num{font-family:var(--display); font-size:clamp(2.2rem,4vw,3.4rem); font-weight:600; color:var(--gold-light); text-shadow:0 0 24px rgba(240,212,136,.25);}
+  .stat-label{font-family:var(--mono); font-size:.65rem; letter-spacing:.14em; color:var(--bone-dim); text-transform:uppercase; margin-top:8px;}
+  @media(max-width:760px){.stats{grid-template-columns:repeat(2,1fr);}}
+
+  /* ============ AUDIENCE CARDS ============ */
+  .audience-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--line); border:1px solid var(--line);}
+  .audience-card{background:var(--charcoal); padding:44px 34px; transition:background .35s;}
+  .audience-card:hover{background:var(--charcoal-2);}
+  .audience-icon{width:44px;height:44px; margin-bottom:26px; color:var(--gold);}
+  .audience-card h3{font-family:var(--display); font-size:1.5rem; font-weight:600; margin-bottom:14px;}
+  .audience-card p{color:var(--bone-dim); font-size:.9rem; line-height:1.65; font-weight:300;}
+  @media(max-width:860px){.audience-grid{grid-template-columns:1fr;}}
+
+  /* ============ MACHINE CONSOLES ============ */
+  .machine{
+    display:grid; grid-template-columns:.85fr 1.15fr; gap:0; margin-bottom:2px;
+    background:var(--charcoal); border:1px solid var(--line); overflow:hidden;
+  }
+  .machine-info{padding:52px; border-right:1px solid var(--line); position:relative;}
+  .machine-id{font-family:var(--mono); font-size:.65rem; color:var(--ember-bright); letter-spacing:.2em; margin-bottom:14px;}
+  .machine h3{font-family:var(--display); font-size:2.4rem; font-weight:600; margin-bottom:6px;}
+  .machine-tag{color:var(--gold-light); font-size:.82rem; font-family:var(--mono); letter-spacing:.04em; margin-bottom:20px; display:block;}
+  .machine p.desc{color:var(--bone-dim); font-size:.92rem; line-height:1.7; font-weight:300; margin-bottom:28px;}
+  .param-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); margin-bottom:10px;}
+  .param{background:var(--charcoal-2); padding:14px 16px;}
+  .param-label{font-family:var(--mono); font-size:.56rem; color:var(--bone-dim); letter-spacing:.14em; text-transform:uppercase;}
+  .param-val{font-family:var(--mono); font-size:1rem; color:var(--gold-light); margin-top:5px;}
+  .indications{margin-top:22px; display:flex; flex-wrap:wrap; gap:8px;}
+  .pill{font-family:var(--mono); font-size:.62rem; letter-spacing:.05em; border:1px solid var(--gold-dim); color:var(--gold-light); padding:6px 12px; border-radius:20px; text-transform:uppercase;}
+
+  .machine-video{background:var(--media-bg); position:relative; display:flex; align-items:center; justify-content:center; min-height:340px;}
+  .video-slot{position:relative; width:100%; height:100%; min-height:340px;}
+  .video-frame{width:100%; height:100%; min-height:340px; border:0; display:block;}
+  .video-badge{
+    position:absolute; top:18px; left:18px; z-index:2; font-family:var(--mono); font-size:.6rem;
+    letter-spacing:.14em; text-transform:uppercase; background:rgba(var(--obsidian-rgb),.75); color:var(--gold-light);
+    padding:7px 12px; border:1px solid var(--gold-dim); pointer-events:none;
+  }
+  @media(max-width:900px){.machine{grid-template-columns:1fr;} .machine-info{border-right:none; border-bottom:1px solid var(--line);}}
+
+  /* ============ PROCEDURES ============ */
+  .proc-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--line); border:1px solid var(--line);}
+  .proc-card{background:var(--charcoal); display:flex; flex-direction:column;}
+  .proc-video{aspect-ratio:16/9; background:var(--media-bg); position:relative; overflow:hidden;}
+  .proc-body{padding:26px 26px 30px;}
+  .proc-num{font-family:var(--mono); font-size:.62rem; color:var(--ember-bright); letter-spacing:.14em; margin-bottom:10px;}
+  .proc-card h4{font-family:var(--display); font-size:1.4rem; font-weight:600; margin-bottom:8px;}
+  .proc-card p{color:var(--bone-dim); font-size:.84rem; line-height:1.6; font-weight:300;}
+  .proc-machines{margin-top:14px; font-family:var(--mono); font-size:.6rem; color:var(--gold-dim); letter-spacing:.06em; text-transform:uppercase;}
+  .proc-img{width:100%; height:100%; object-fit:cover; display:block; transition:transform .5s ease;}
+  .proc-card:hover .proc-img{transform:scale(1.04);}
+  .proc-foot{margin-top:18px; display:flex; align-items:center; justify-content:space-between; gap:10px;}
+  @media(max-width:900px){.proc-grid{grid-template-columns:repeat(2,1fr);}}
+  @media(max-width:600px){.proc-grid{grid-template-columns:1fr;}}
+
+  /* evidence / fitzpatrick badge */
+  .evidence-badge{
+    display:inline-flex; align-items:center; gap:10px; margin-top:22px; padding:12px 18px;
+    border:1px solid var(--gold-dim); border-radius:2px; background:rgba(201,162,39,.06);
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.03em; color:var(--gold-light); line-height:1.5; max-width:64ch;
+  }
+  .evidence-badge svg{flex-shrink:0; margin-top:2px;}
+  .fitz-tag{
+    display:inline-block; margin-top:12px; font-family:var(--mono); font-size:.58rem; letter-spacing:.08em;
+    color:var(--bone-dim); text-transform:uppercase;
+  }
+  .fitz-tag b{color:var(--gold-light);}
+
+  /* ver curso button */
+  .btn-course{
+    display:inline-flex; align-items:center; gap:7px; font-family:var(--mono); font-size:.65rem; letter-spacing:.06em;
+    text-transform:uppercase; color:var(--gold-light); border:1px solid var(--gold-dim); padding:9px 14px;
+    border-radius:2px; background:transparent; cursor:pointer; transition:all .25s;
+  }
+  .btn-course:hover{background:var(--gold); color:var(--obsidian); border-color:var(--gold);}
+  .btn-course.full{width:100%; justify-content:center; margin-top:22px;}
+
+  /* bolt bullet used in place of the old star/emoji marker */
+  .bolt-bullet{
+    content:""; display:inline-block; width:13px; height:13px; flex-shrink:0; margin-top:3px;
+    background:var(--gold);
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 3 14h7l-1 8 10-14h-7z'/%3E%3C/svg%3E") center/contain no-repeat;
+    mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 3 14h7l-1 8 10-14h-7z'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+
+  /* ============ COURSE OVERLAY ============ */
+  .course-overlay{
+    position:fixed; inset:0; z-index:900; background:rgba(var(--obsidian-rgb),.92);
+    backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .3s ease; padding:4vh 4vw;
+  }
+  .course-overlay.open{opacity:1; pointer-events:auto;}
+  .course-panel{
+    width:100%; max-width:1100px; height:92vh; background:var(--charcoal); border:1px solid var(--line);
+    display:flex; flex-direction:column; transform:translateY(16px); transition:transform .35s ease;
+  }
+  .course-overlay.open .course-panel{transform:translateY(0);}
+  .course-top{
+    display:flex; align-items:center; justify-content:space-between; padding:22px 28px;
+    border-bottom:1px solid var(--line); flex-shrink:0;
+  }
+  .course-top-tag{font-family:var(--mono); font-size:.62rem; letter-spacing:.16em; color:var(--gold); text-transform:uppercase; margin-bottom:6px;}
+  .course-top h3{font-family:var(--display); font-size:1.7rem; font-weight:600;}
+  .course-close{
+    width:38px; height:38px; border-radius:50%; border:1px solid var(--line); background:transparent;
+    color:var(--bone-dim); font-size:1rem; cursor:pointer; flex-shrink:0; transition:all .25s;
+  }
+  .course-close:hover{border-color:var(--gold); color:var(--gold-light);}
+  .course-body{display:grid; grid-template-columns:260px 1fr; flex:1; min-height:0;}
+  .course-sidebar{border-right:1px solid var(--line); overflow-y:auto; padding:10px;}
+  .course-lesson-item{
+    width:100%; display:flex; align-items:center; gap:12px; text-align:left; padding:13px 12px;
+    background:transparent; border:none; border-radius:2px; cursor:pointer; color:var(--bone-dim); transition:all .2s;
+  }
+  .course-lesson-item:hover{background:var(--charcoal-2);}
+  .course-lesson-item.active{background:var(--charcoal-2); color:var(--bone);}
+  .cli-num{font-family:var(--mono); font-size:.68rem; color:var(--gold-dim); flex-shrink:0;}
+  .course-lesson-item.active .cli-num{color:var(--gold-light);}
+  .cli-title{font-size:.83rem; line-height:1.35; font-weight:500;}
+  .course-main{display:flex; flex-direction:column; min-height:0; overflow-y:auto;}
+  .course-media{width:100%; aspect-ratio:16/9; background:var(--media-bg); flex-shrink:0;}
+  .course-media iframe, .course-media img{width:100%; height:100%; object-fit:cover; border:0; display:block;}
+  .course-lesson-info{padding:26px 32px; flex:1;}
+  .course-lesson-num{font-family:var(--mono); font-size:.62rem; letter-spacing:.12em; color:var(--gold); text-transform:uppercase; margin-bottom:10px;}
+  .course-lesson-info h4{font-family:var(--display); font-size:1.5rem; font-weight:600; margin-bottom:10px;}
+  .course-lesson-info p{color:var(--bone-dim); font-size:.9rem; line-height:1.7; font-weight:300; max-width:68ch;}
+  .course-points{list-style:none; margin-top:18px; max-width:68ch; display:flex; flex-direction:column; gap:10px;}
+  .course-points li{
+    display:flex; gap:10px; align-items:flex-start; font-size:.86rem; color:var(--bone); line-height:1.55; font-weight:300;
+  }
+  .course-points li::before{
+    content:""; width:11px; height:11px; flex-shrink:0; margin-top:4px; background:var(--gold);
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 3 14h7l-1 8 10-14h-7z'/%3E%3C/svg%3E") center/contain no-repeat;
+    mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 3 14h7l-1 8 10-14h-7z'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+  .course-nav{
+    display:flex; align-items:center; justify-content:space-between; padding:18px 32px;
+    border-top:1px solid var(--line); flex-shrink:0; font-family:var(--mono); font-size:.7rem; color:var(--bone-dim);
+  }
+  .course-nav-btn{
+    font-family:var(--mono); font-size:.7rem; letter-spacing:.04em; text-transform:uppercase;
+    border:1px solid var(--gold-dim); color:var(--gold-light); background:transparent; padding:11px 18px;
+    border-radius:2px; cursor:pointer; transition:all .25s;
+  }
+  .course-nav-btn:hover:not(:disabled){background:var(--gold); color:var(--obsidian); border-color:var(--gold);}
+  .course-nav-btn:disabled{opacity:.3; cursor:not-allowed;}
+  .course-nav-btn.primary{background:var(--ember); color:var(--bone); border-color:var(--ember);}
+  .course-nav-btn.primary:hover:not(:disabled){background:var(--ember-bright); border-color:var(--ember-bright); color:var(--bone);}
+  @media(max-width:760px){
+    .course-body{grid-template-columns:1fr;}
+    .course-sidebar{border-right:none; border-bottom:1px solid var(--line); max-height:160px;}
+    .course-panel{height:96vh;}
+  }
+
+  /* live consult premium lock */
+  .premium-note{
+    display:inline-flex; align-items:center; gap:8px; margin-bottom:20px; padding:8px 14px;
+    border:1px solid var(--ember); color:var(--ember-bright); font-family:var(--mono); font-size:.64rem;
+    letter-spacing:.1em; text-transform:uppercase; border-radius:2px;
+  }
+
+  /* play button overlay (generic for any video slot) */
+  .play-overlay{
+    position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; color:var(--bone-dim); pointer-events:none;
+    background:
+      radial-gradient(circle at 50% 42%, rgba(200,31,52,.14), transparent 60%),
+      repeating-linear-gradient(115deg, rgba(201,162,39,.035) 0 2px, transparent 2px 22px);
+  }
+  .play-btn{
+    width:56px; height:56px; border-radius:50%; border:1px solid var(--gold-dim);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .play-overlay small{font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;}
+
+  /* ============ COMPLICATIONS (ALERT ZONE) ============ */
+  .alert-zone{
+    background:
+      linear-gradient(180deg, rgba(125,18,32,.18), transparent 30%),
+      var(--obsidian);
+    border-top:1px solid var(--fotona-red); border-bottom:1px solid var(--fotona-red);
+  }
+  .alert-strip{
+    font-family:var(--mono); font-size:.62rem; letter-spacing:.2em; text-transform:uppercase;
+    color:var(--ember-bright); display:flex; align-items:center; gap:10px; margin-bottom:20px;
+  }
+  .alert-dot{width:7px;height:7px;border-radius:50%;background:var(--ember-bright); box-shadow:0 0 8px 2px var(--ember-bright); animation:blink 1.6s infinite;}
+  @keyframes blink{0%,100%{opacity:1;}50%{opacity:.25;}}
+  .comp-grid{display:grid; grid-template-columns:repeat(2,1fr); gap:2px; background:var(--line); border:1px solid var(--line); margin-top:50px;}
+  .comp-card{background:var(--charcoal); padding:0;}
+  .comp-video{aspect-ratio:16/9; background:var(--media-bg); position:relative;}
+  .comp-body{padding:28px 30px 34px;}
+  .comp-body h4{font-family:var(--display); font-size:1.5rem; font-weight:600; margin-bottom:10px; color:var(--bone);}
+  .comp-body p{color:var(--bone-dim); font-size:.86rem; line-height:1.65; font-weight:300;}
+  .comp-sev{display:inline-block; margin-top:14px; font-family:var(--mono); font-size:.6rem; letter-spacing:.1em; padding:5px 10px; border:1px solid var(--fotona-red); color:var(--ember-bright); text-transform:uppercase;}
+  @media(max-width:800px){.comp-grid{grid-template-columns:1fr;}}
+
+  /* ============ HOW IT WORKS ============ */
+  .steps{counter-reset:step;}
+  .step{
+    display:grid; grid-template-columns:110px 1fr; gap:30px; padding:38px 0; border-top:1px solid var(--line);
+  }
+  .step:last-child{border-bottom:1px solid var(--line);}
+  .step-num{font-family:var(--mono); font-size:2.2rem; color:var(--gold-dim); font-weight:700;}
+  .step h4{font-family:var(--display); font-size:1.5rem; font-weight:600; margin-bottom:8px;}
+  .step p{color:var(--bone-dim); font-size:.9rem; line-height:1.65; max-width:60ch; font-weight:300;}
+
+  /* ============ PRICING ============ */
+  .pricing-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:2px; background:var(--line); border:1px solid var(--line);}
+  .plan{background:var(--charcoal); padding:44px 34px; display:flex; flex-direction:column;}
+  .plan.featured{background:linear-gradient(180deg, rgba(125,18,32,.28), var(--charcoal-2) 40%); position:relative;}
+  .plan.featured::before{
+    content:"MÁS ELEGIDO"; position:absolute; top:0; right:0; font-family:var(--mono); font-size:.58rem;
+    letter-spacing:.14em; background:var(--ember); color:var(--bone); padding:6px 14px;
+  }
+  .plan-name{font-family:var(--mono); font-size:.68rem; letter-spacing:.16em; color:var(--gold-light); text-transform:uppercase; margin-bottom:16px;}
+  .plan-price{font-family:var(--display); font-size:2.6rem; font-weight:600; margin-bottom:4px;}
+  .plan-price span{font-family:var(--mono); font-size:.85rem; color:var(--bone-dim); font-weight:400;}
+  .plan-desc{color:var(--bone-dim); font-size:.85rem; margin-bottom:28px; font-weight:300;}
+  .plan-feats{list-style:none; margin-bottom:32px; flex:1;}
+  .plan-feats li{
+    font-size:.85rem; color:var(--bone); padding:11px 0; border-top:1px solid var(--line);
+    display:flex; gap:10px; align-items:flex-start; font-weight:300;
+  }
+  .plan-feats li::before{
+    content:""; width:12px; height:12px; flex-shrink:0; margin-top:4px; background:var(--gold);
+    -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 3 14h7l-1 8 10-14h-7z'/%3E%3C/svg%3E") center/contain no-repeat;
+    mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M13 2 3 14h7l-1 8 10-14h-7z'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+  .plan-cta{
+    text-align:center; font-family:var(--mono); font-size:.75rem; letter-spacing:.05em; text-transform:uppercase;
+    padding:15px; border:1px solid var(--gold-dim); color:var(--gold-light); transition:all .3s;
+  }
+  .plan.featured .plan-cta{background:var(--ember); color:var(--bone); border-color:var(--ember);}
+  .plan-cta:hover{background:var(--gold); color:var(--obsidian); border-color:var(--gold);}
+  @media(max-width:900px){.pricing-grid{grid-template-columns:1fr;}}
+
+  /* ============ LIVE CONSULT MOCKUP ============ */
+  .consult-wrap{display:grid; grid-template-columns:1fr 1fr; gap:60px; align-items:center;}
+  .chat-mock{
+    background:var(--charcoal); border:1px solid var(--line); border-radius:4px; padding:28px; font-family:var(--mono); font-size:.82rem;
+  }
+  .chat-head{display:flex; align-items:center; gap:10px; margin-bottom:22px; padding-bottom:16px; border-bottom:1px solid var(--line);}
+  .chat-live{width:8px;height:8px;border-radius:50%;background:#3ecf7a; box-shadow:0 0 6px 2px #3ecf7a;}
+  .chat-head span{color:var(--bone-dim); font-size:.68rem; letter-spacing:.08em; text-transform:uppercase;}
+  .msg{margin-bottom:18px; line-height:1.6;}
+  .msg .who{color:var(--gold-light); font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; margin-bottom:4px;}
+  .msg.doc .who{color:var(--bone-dim);}
+  .msg p{color:var(--bone); font-weight:400;}
+  .msg.expert{border-left:2px solid var(--ember); padding-left:14px;}
+  @media(max-width:860px){.consult-wrap{grid-template-columns:1fr; gap:40px;}}
+
+  /* ============ FOOTER CTA ============ */
+  .final-cta{
+    text-align:center; padding:150px 7vw; position:relative;
+    background:radial-gradient(ellipse 60% 70% at 50% 30%, rgba(125,18,32,.3), transparent 65%);
+  }
+  .final-cta h2{max-width:20ch; margin:0 auto;}
+  .final-cta .btn-primary{margin-top:40px;}
+
+  footer{
+    border-top:1px solid var(--line); padding:60px 7vw 40px; display:flex; justify-content:space-between; flex-wrap:wrap; gap:30px;
+  }
+  .foot-col h5{font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; color:var(--gold); text-transform:uppercase; margin-bottom:14px;}
+  .foot-col a, .foot-col p{display:block; color:var(--bone-dim); font-size:.82rem; margin-bottom:8px; font-weight:300;}
+  .foot-col a:hover{color:var(--gold-light);}
+  .foot-legal{width:100%; margin-top:40px; padding-top:24px; border-top:1px solid var(--line); font-family:var(--mono); font-size:.62rem; color:var(--bone-dim); letter-spacing:.04em;}
+
+  @media(max-width:640px){
+    section{padding:90px 6vw;}
+    .machine-info{padding:34px 26px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="beam-track"><div class="beam-fill" id="beamFill"><div class="beam-dot" id="beamDot"></div></div></div>
+
+<header>
+  <div class="logo">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24" width="30" height="30">
+        <defs>
+          <linearGradient id="boltGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" style="stop-color:var(--gold-light)"/>
+            <stop offset="100%" style="stop-color:var(--fotona-red)"/>
+          </linearGradient>
+        </defs>
+        <path fill="url(#boltGrad)" d="M13 2 3 14h7l-1 8 10-14h-7z"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text"><b>FOTONA</b> ACADEMY</div>
+      <div class="logo-tag">Academia de certificación láser</div>
+    </div>
+  </div>
+  <div class="nav-links">
+    <nav>
+      <ul>
+        <li><a href="#equipos">Equipos</a></li>
+        <li><a href="#procedimientos">Procedimientos</a></li>
+        <li><a href="#complicaciones">Complicaciones</a></li>
+        <li><a href="#planes">Suscripción</a></li>
+      </ul>
+    </nav>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Cambiar tema">
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 12.8A9 9 0 1111.2 3 7 7 0 0021 12.8z"/></svg>
+    </button>
+    <a href="#planes" class="nav-cta">Solicitar acceso</a>
+  </div>
+</header>
+
+<!-- ============ HERO ============ -->
+<section class="hero" style="padding-top:0;">
+  <div class="hero-grid"></div>
+  <div class="hero-sweep"></div>
+  <div class="eyebrow">Plataforma de suscripción para clínicas</div>
+  <h1 class="hero-title">Cada parámetro,<br><em>dominado</em>. Cada protocolo,<br>con base científica.</h1>
+  <p class="hero-sub">Fotona Academy es la primera academia de suscripción para clínicas Fotona: cursos de configuración por equipo y por procedimiento, ajustados al fototipo de Fitzpatrick de cada paciente y respaldados por evidencia clínica publicada.</p>
+  <div class="hero-cta-row">
+    <a href="#planes" class="btn-primary">Suscribir mi clínica</a>
+    <a href="#equipos" class="btn-ghost">Explorar entrenamientos</a>
+  </div>
+  <div class="console">
+    <div class="console-field"><div class="console-label">Equipo activo</div><div class="console-val">Dynamis SP</div></div>
+    <div class="console-field"><div class="console-label">Modo</div><div class="console-val">Nd:YAG / Er:YAG</div></div>
+    <div class="console-field"><div class="console-label">Fluencia</div><div class="console-val">12 J/cm²</div></div>
+    <div class="console-field"><div class="console-label">Estado</div><div class="console-val" style="color:#3ecf7a;">Protocolo verificado</div></div>
+  </div>
+  <div class="scroll-cue"><div class="line"></div>SCROLL</div>
+</section>
+
+<!-- ============ STATS ============ -->
+<div class="stats">
+  <div>
+    <div class="stat-num" data-count="118">0</div>
+    <div class="stat-label">Clínicas suscritas</div>
+  </div>
+  <div>
+    <div class="stat-num" data-count="410">0</div>
+    <div class="stat-label">Doctores y asistentes certificados</div>
+  </div>
+  <div>
+    <div class="stat-num" data-count="62">0</div>
+    <div class="stat-label">Protocolos documentados</div>
+  </div>
+  <div>
+    <div class="stat-num" data-count="24" data-suffix="/7">0</div>
+    <div class="stat-label">Consulta en vivo, en planes a la medida</div>
+  </div>
+</div>
+
+<!-- ============ AUDIENCE ============ -->
+<section>
+  <div class="section-head reveal">
+    <div class="section-eyebrow">Una suscripción, todo el equipo</div>
+    <h2>Diseñada para <em>quien opera la máquina</em>,<br>no solo para quien la compró.</h2>
+    <p class="section-desc">Un solo acceso de clínica, tres formas de usarlo. Cada persona del equipo entra a lo que necesita según su rol.</p>
+  </div>
+  <div class="audience-grid stagger">
+    <div class="audience-card reveal">
+      <svg class="audience-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>
+      <h3>Médicos</h3>
+      <p>Protocolos clínicos completos por indicación, criterios de selección de paciente, ajuste fino de parámetros y biblioteca de casos con antes/después documentados.</p>
+    </div>
+    <div class="audience-card reveal">
+      <svg class="audience-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="14" rx="1"/><path d="M8 20h8M12 18v2"/></svg>
+      <h3>Asistentes clínicos</h3>
+      <p>Preparación de sala, configuración de equipo paso a paso, protocolos de bioseguridad y checklist previo/posterior a cada procedimiento.</p>
+    </div>
+    <div class="audience-card reveal">
+      <svg class="audience-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><path d="M3 21V9l9-6 9 6v12"/><path d="M9 21v-6h6v6"/></svg>
+      <h3>Directores de clínica</h3>
+      <p>Panel de avance del equipo, control de certificaciones vigentes, reportes de uso por sede y respaldo ante auditorías o inspecciones.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MACHINES ============ -->
+<section id="equipos">
+  <div class="section-head reveal">
+    <div class="section-eyebrow">Módulo 01 · Cursos por equipo</div>
+    <h2>Configura cada plataforma<br>como <em>lo haría el instructor</em>.</h2>
+    <p class="section-desc">Cursos oficiales por equipo, en lecciones: encendido, selección de handpiece, ajuste de parámetros y errores comunes de configuración — explicados sobre la consola real.</p>
+  </div>
+
+  <div class="machine reveal">
+    <div class="machine-info">
+      <div class="machine-id">EQUIPO 01 · MULTIAPLICACIÓN</div>
+      <h3>Dynamis</h3>
+      <span class="machine-tag">Nd:YAG 1064nm + Er:YAG 2940nm</span>
+      <p class="desc">La plataforma base de la mayoría de clínicas suscritas: dos longitudes de onda en un mismo cabezal para vascular, rejuvenecimiento, tightening y procedimientos ginecológicos funcionales.</p>
+      <div class="param-grid">
+        <div class="param"><div class="param-label">Modo</div><div class="param-val">SMOOTH / QSP</div></div>
+        <div class="param"><div class="param-label">Spot size</div><div class="param-val">2 – 10 mm</div></div>
+        <div class="param"><div class="param-label">Frecuencia</div><div class="param-val">1 – 10 Hz</div></div>
+        <div class="param"><div class="param-label">Pulso</div><div class="param-val">0.3 – 100 ms</div></div>
+      </div>
+      <div class="indications">
+        <span class="pill">Flacidez</span><span class="pill">Vaginal</span><span class="pill">Vascular</span><span class="pill">Rejuvenecimiento</span>
+      </div>
+      <button class="btn-course" style="margin-top:24px;" onclick="openCourse('dynamis')">Ver curso completo · 5 lecciones</button>
+    </div>
+    <div class="machine-video">
+      <div class="video-slot">
+        <div class="video-badge">Training · Configuración base Dynamis</div>
+        <div class="play-overlay"><div class="play-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold-light)"><path d="M8 5v14l11-7z"/></svg></div><small>Embed de YouTube — reemplazar src</small></div>
+        <!-- Reemplazar el src por el ID real del video de YouTube -->
+        <iframe class="video-frame" src="https://www.youtube.com/embed/FoDvuueT30g" title="Training Dynamis" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="machine reveal">
+    <div class="machine-info">
+      <div class="machine-id">EQUIPO 02 · Q-SWITCHED / PICO</div>
+      <h3>StarWalker</h3>
+      <span class="machine-tag">Nd:YAG Q-Switch + MaQX Pulse</span>
+      <p class="desc">El estándar para remoción de tatuajes y pigmento: tecnología PQX/MaQX para fragmentar tinta y melanina con mínima injuria térmica al tejido circundante.</p>
+      <div class="param-grid">
+        <div class="param"><div class="param-label">Modo</div><div class="param-val">QS / MaQX / FRAC3</div></div>
+        <div class="param"><div class="param-label">Longitud onda</div><div class="param-val">1064 / 532 nm</div></div>
+        <div class="param"><div class="param-label">Fluencia</div><div class="param-val">1 – 12 J/cm²</div></div>
+        <div class="param"><div class="param-label">Spot size</div><div class="param-val">2 – 8 mm</div></div>
+      </div>
+      <div class="indications">
+        <span class="pill">Remoción de tatuajes</span><span class="pill">Manchas</span><span class="pill">Melasma</span>
+      </div>
+      <button class="btn-course" style="margin-top:24px;" onclick="openCourse('starwalker')">Ver curso completo · 5 lecciones</button>
+    </div>
+    <div class="machine-video">
+      <div class="video-slot">
+        <div class="video-badge">Training · Configuración base StarWalker</div>
+        <div class="play-overlay"><div class="play-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold-light)"><path d="M8 5v14l11-7z"/></svg></div><small>Embed de YouTube — reemplazar src</small></div>
+        <iframe class="video-frame" src="https://www.youtube.com/embed/FoDvuueT30g" title="Training StarWalker" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="machine reveal">
+    <div class="machine-info">
+      <div class="machine-id">EQUIPO 03 · CORPORAL</div>
+      <h3>StarFormer</h3>
+      <span class="machine-tag">Electromagnética + Radiofrecuencia</span>
+      <p class="desc">Remodelación corporal no invasiva: estimulación muscular de alta intensidad combinada con calentamiento dérmico controlado para tono y firmeza.</p>
+      <div class="param-grid">
+        <div class="param"><div class="param-label">Modo</div><div class="param-val">EMS + RF</div></div>
+        <div class="param"><div class="param-label">Intensidad</div><div class="param-val">10 – 100%</div></div>
+        <div class="param"><div class="param-label">Aplicadores</div><div class="param-val">Abdomen / Glúteo</div></div>
+        <div class="param"><div class="param-label">Sesión</div><div class="param-val">20 – 30 min</div></div>
+      </div>
+      <div class="indications">
+        <span class="pill">Corporal</span><span class="pill">Tonificación</span><span class="pill">Flacidez</span>
+      </div>
+      <button class="btn-course" style="margin-top:24px;" onclick="openCourse('starformer')">Ver curso completo · 5 lecciones</button>
+    </div>
+    <div class="machine-video">
+      <div class="video-slot">
+        <div class="video-badge">Training · Configuración base StarFormer</div>
+        <div class="play-overlay"><div class="play-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold-light)"><path d="M8 5v14l11-7z"/></svg></div><small>Embed de YouTube — reemplazar src</small></div>
+        <iframe class="video-frame" src="https://www.youtube.com/embed/FoDvuueT30g" title="Training StarFormer" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <div class="machine reveal">
+    <div class="machine-info">
+      <div class="machine-id">EQUIPO 04 · TODA LA LÍNEA</div>
+      <h3>SP / XS Dynamis y más</h3>
+      <span class="machine-tag">Catálogo completo Fotona</span>
+      <p class="desc">TimeWalker, SP Dynamis, XS Dynamis y equipos futuros se agregan a la biblioteca sin costo adicional durante tu suscripción activa.</p>
+      <div class="indications" style="margin-top:8px;">
+        <span class="pill">Actualizaciones incluidas</span><span class="pill">Sin costo adicional</span>
+      </div>
+      <button class="btn-course" style="margin-top:24px;" onclick="openCourse('catalogo')">Ver curso completo · 2 lecciones</button>
+    </div>
+    <div class="machine-video">
+      <div class="video-slot">
+        <div class="video-badge">Training · Introducción al catálogo completo</div>
+        <div class="play-overlay"><div class="play-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="var(--gold-light)"><path d="M8 5v14l11-7z"/></svg></div><small>Embed de YouTube — reemplazar src</small></div>
+        <iframe class="video-frame" src="https://www.youtube.com/embed/FoDvuueT30g" title="Training catálogo completo" allowfullscreen loading="lazy"></iframe>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROCEDURES ============ -->
+<section id="procedimientos">
+  <div class="section-head reveal">
+    <div class="section-eyebrow">Módulo 02 · Cursos por procedimiento</div>
+    <h2>Un protocolo <em>por indicación</em>,<br>no un manual genérico.</h2>
+    <p class="section-desc">Cada procedimiento es un curso propio: selección de equipo, ajuste de parámetros, técnica de aplicación y manejo posterior.</p>
+    <div class="evidence-badge">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M9 2h6M12 2v6M6 22l4.5-14h3L18 22M8 17h8"/></svg>
+      Todos los protocolos están respaldados por evidencia clínica publicada y se ajustan según el fototipo de piel de Fitzpatrick (I–VI) de cada paciente.
+    </div>
+  </div>
+  <div class="proc-grid stagger">
+
+    <div class="proc-card reveal">
+      <div class="proc-video">
+        <img class="proc-img" src="https://theaihumans.com/img/A.png" alt="Curso de Flacidez">
+      </div>
+      <div class="proc-body">
+        <div class="proc-num">01 · TightSculpting</div>
+        <h4>Flacidez</h4>
+        <p>Protocolo de calentamiento dérmico progresivo en 3 pasadas para estimular colágeno sin dañar la epidermis.</p>
+        <div class="proc-machines">Dynamis · SP Dynamis</div>
+        <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('flacidez')">Ver curso · 5 lecciones</button></div>
+      </div>
+    </div>
+
+    <div class="proc-card reveal">
+      <div class="proc-video">
+        <img class="proc-img" src="https://theaihumans.com/img/B.png" alt="Curso de Manchas">
+      </div>
+      <div class="proc-body">
+        <div class="proc-num">02 · Pigmentación</div>
+        <h4>Manchas</h4>
+        <p>Diferenciación entre lesiones epidérmicas y dérmicas, y selección de fluencia según fototipo Fitzpatrick.</p>
+        <div class="proc-machines">StarWalker</div>
+        <div class="fitz-tag">Fototipo recomendado <b>I – IV</b></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('manchas')">Ver curso · 5 lecciones</button></div>
+      </div>
+    </div>
+
+    <div class="proc-card reveal">
+      <div class="proc-video">
+        <img class="proc-img" src="https://theaihumans.com/img/C.png" alt="Curso de Rejuvenecimiento de piel">
+      </div>
+      <div class="proc-body">
+        <div class="proc-num">03 · Facial</div>
+        <h4>Rejuvenecimiento de piel</h4>
+        <p>Combinación Er:YAG + Nd:YAG para textura, poro y luminosidad con protocolo de recuperación mínima.</p>
+        <div class="proc-machines">Dynamis</div>
+        <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('rejuvenecimiento')">Ver curso · 5 lecciones</button></div>
+      </div>
+    </div>
+
+    <div class="proc-card reveal">
+      <div class="proc-video">
+        <img class="proc-img" src="https://theaihumans.com/img/C.png" alt="Curso de Rejuvenecimiento vaginal">
+      </div>
+      <div class="proc-body">
+        <div class="proc-num">04 · IntimaLase / IncontiLase</div>
+        <h4>Rejuvenecimiento vaginal</h4>
+        <p>Protocolo funcional no ablativo: profundidad de tratamiento, número de pasadas y consentimiento informado.</p>
+        <div class="proc-machines">Dynamis</div>
+        <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('vaginal')">Ver curso · 5 lecciones</button></div>
+      </div>
+    </div>
+
+    <div class="proc-card reveal">
+      <div class="proc-video">
+        <img class="proc-img" src="https://theaihumans.com/img/B.png" alt="Curso de Corporal">
+      </div>
+      <div class="proc-body">
+        <div class="proc-num">05 · Remodelación</div>
+        <h4>Corporal</h4>
+        <p>Mapeo de zonas, secuencia de aplicadores y combinación EMS + RF por tipo de tejido y objetivo.</p>
+        <div class="proc-machines">StarFormer</div>
+        <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('corporal')">Ver curso · 5 lecciones</button></div>
+      </div>
+    </div>
+
+    <div class="proc-card reveal">
+      <div class="proc-video">
+        <img class="proc-img" src="https://theaihumans.com/img/A.png" alt="Curso de Remoción de tatuajes">
+      </div>
+      <div class="proc-body">
+        <div class="proc-num">06 · MaQX / PQX</div>
+        <h4>Remoción de tatuajes</h4>
+        <p>Test de spot previo, lectura de la reacción tisular inmediata y espaciado correcto entre sesiones.</p>
+        <div class="proc-machines">StarWalker</div>
+        <div class="fitz-tag">Fototipo recomendado <b>I – V</b></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('tatuajes')">Ver curso · 5 lecciones</button></div>
+      </div>
+    </div>
+
+    <div class="proc-card reveal">
+      <div class="proc-video">
+        <img class="proc-img" src="https://theaihumans.com/img/A.png" alt="Curso de Acné y cicatrices">
+      </div>
+      <div class="proc-body">
+        <div class="proc-num">07 · Fraccionado</div>
+        <h4>Acné y cicatrices</h4>
+        <p>Modo FRAC3 para remodelación de cicatrices atróficas y control de brotes activos de acné inflamatorio.</p>
+        <div class="proc-machines">StarWalker · Dynamis</div>
+        <div class="fitz-tag">Fototipo recomendado <b>I – IV</b></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('acne')">Ver curso · 5 lecciones</button></div>
+      </div>
+    </div>
+
+    <div class="proc-card reveal">
+      <div class="proc-video">
+        <img class="proc-img" src="https://theaihumans.com/img/C.png" alt="Curso de Onicomicosis">
+      </div>
+      <div class="proc-body">
+        <div class="proc-num">08 · Antifúngico</div>
+        <h4>Onicomicosis</h4>
+        <p>Protocolo térmico controlado sobre lecho ungueal y seguimiento micológico entre sesiones.</p>
+        <div class="proc-machines">Dynamis</div>
+        <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('onicomicosis')">Ver curso · 5 lecciones</button></div>
+      </div>
+    </div>
+
+    <div class="proc-card reveal">
+      <div class="proc-video">
+        <img class="proc-img" src="https://theaihumans.com/img/B.png" alt="Curso de Ronquido y vía aérea">
+      </div>
+      <div class="proc-body">
+        <div class="proc-num">09 · NightLase</div>
+        <h4>Ronquido y vía aérea</h4>
+        <p>Tightening del tejido palatino y de vía aérea superior para reducción no invasiva del ronquido.</p>
+        <div class="proc-machines">Dynamis</div>
+        <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('nightlase')">Ver curso · 5 lecciones</button></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ============ COMPLICATIONS ============ -->
+<section id="complicaciones" class="alert-zone">
+  <div class="section-head reveal">
+    <div class="alert-strip"><div class="alert-dot"></div>Módulo 03 · Zona crítica del entrenamiento</div>
+    <h2>Cuando el protocolo <em>no sale como el manual predice</em>.</h2>
+    <p class="section-desc">La mayoría de plataformas de entrenamiento enseñan la técnica ideal y se detienen ahí. Fotona Academy documenta también lo que pasa cuando algo se sale del plan, con criterios claros de cuándo escalar a un especialista.</p>
+  </div>
+  <div class="comp-grid stagger">
+    <div class="comp-card reveal">
+      <div class="comp-video">
+        <div class="play-overlay"><div class="play-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold-light)"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <iframe class="video-frame" src="https://www.youtube.com/embed/FoDvuueT30g" title="Manejo de quemaduras" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="comp-body">
+        <h4>Quemaduras y ampollas</h4>
+        <p>Identificación temprana de sobredosificación térmica, enfriamiento inmediato y curación según profundidad de la lesión.</p>
+        <span class="comp-sev">Protocolo de urgencia</span>
+      </div>
+    </div>
+    <div class="comp-card reveal">
+      <div class="comp-video">
+        <div class="play-overlay"><div class="play-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold-light)"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <iframe class="video-frame" src="https://www.youtube.com/embed/FoDvuueT30g" title="Manejo de hiperpigmentación" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="comp-body">
+        <h4>Hiperpigmentación postinflamatoria</h4>
+        <p>Ajuste de fluencia para fototipos altos y protocolo de manejo tópico cuando aparece la mancha residual.</p>
+        <span class="comp-sev">Seguimiento a 6 semanas</span>
+      </div>
+    </div>
+    <div class="comp-card reveal">
+      <div class="comp-video">
+        <div class="play-overlay"><div class="play-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold-light)"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <iframe class="video-frame" src="https://www.youtube.com/embed/FoDvuueT30g" title="Manejo de reacciones adversas" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="comp-body">
+        <h4>Reacciones adversas en zona íntima</h4>
+        <p>Criterios de alarma en procedimientos de rejuvenecimiento vaginal y cuándo derivar a evaluación ginecológica.</p>
+        <span class="comp-sev">Escalamiento inmediato</span>
+      </div>
+    </div>
+    <div class="comp-card reveal">
+      <div class="comp-video">
+        <div class="play-overlay"><div class="play-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="var(--gold-light)"><path d="M8 5v14l11-7z"/></svg></div></div>
+        <iframe class="video-frame" src="https://www.youtube.com/embed/FoDvuueT30g" title="Qué hacer ante error de equipo" allowfullscreen loading="lazy"></iframe>
+      </div>
+      <div class="comp-body">
+        <h4>Códigos de error y falla de equipo</h4>
+        <p>Lectura de códigos en consola Dynamis / StarWalker / StarFormer y pasos antes de llamar a soporte técnico.</p>
+        <span class="comp-sev">Diagnóstico en consola</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOW IT WORKS ============ -->
+<section>
+  <div class="section-head reveal">
+    <div class="section-eyebrow">Cómo funciona</div>
+    <h2>De la firma del contrato<br>a <em>equipo certificado</em>.</h2>
+  </div>
+  <div class="steps">
+    <div class="step reveal"><div class="step-num">01</div><div><h4>Registra tu clínica</h4><p>Vinculamos tus equipos Fotona instalados y activamos la biblioteca correspondiente a tu inventario.</p></div></div>
+    <div class="step reveal"><div class="step-num">02</div><div><h4>Invita a tu equipo</h4><p>Cada médico y asistente recibe su propio acceso, con progreso y certificación individual.</p></div></div>
+    <div class="step reveal"><div class="step-num">03</div><div><h4>Entrena por equipo y por procedimiento</h4><p>Video-entrenamientos, guías de parámetros descargables y evaluaciones cortas por módulo.</p></div></div>
+    <div class="step reveal"><div class="step-num">04</div><div><h4>Certifícate módulo a módulo</h4><p>Cada curso cierra con una evaluación corta; al completarlo, el médico o asistente queda certificado y visible en el panel de la clínica.</p></div></div>
+  </div>
+</section>
+
+<!-- ============ LIVE CONSULT ============ -->
+<section>
+  <div class="consult-wrap">
+    <div class="reveal">
+      <div class="premium-note">Disponible en planes a la medida</div>
+      <div class="section-eyebrow">Una capa adicional, no un curso más</div>
+      <h2>Para el caso atípico,<br><em>soporte clínico en vivo.</em></h2>
+      <p class="section-desc">La biblioteca de cursos resuelve el 90% de las dudas. Para el otro 10% — la reacción inesperada, la duda a mitad de un procedimiento — las clínicas con un plan a la medida tienen una línea directa con especialistas certificados Fotona.</p>
+    </div>
+    <div class="chat-mock reveal">
+      <div class="chat-head"><div class="chat-live"></div><span>Canal de consulta en vivo · Clínica activa</span></div>
+      <div class="msg doc"><div class="who">Dra. M. Solano · 09:41</div><p>Paciente fototipo IV con eritema persistente 20 min post StarWalker en mancha malar. ¿Bajo fluencia o pauso sesión?</p></div>
+      <div class="msg expert"><div class="who">Especialista Fotona · 09:43</div><p>Pausa la sesión. Enfriamiento inmediato y reevaluar en 48h — con ese fototipo el margen de fluencia es más estrecho de lo que indica el protocolo estándar.</p></div>
+      <div class="msg doc"><div class="who">Dra. M. Solano · 09:44</div><p>Entendido, gracias. ¿Documento el caso en el módulo de manchas?</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section id="planes">
+  <div class="section-head reveal" style="margin:0 auto 64px; text-align:center;">
+    <div class="section-eyebrow" style="justify-content:center;">Suscripción para clínicas</div>
+    <h2>Un plan por el tamaño<br>de <em>tu operación</em>.</h2>
+  </div>
+  <div class="pricing-grid stagger">
+    <div class="plan reveal">
+      <div class="plan-name">Clínica Starter</div>
+      <div class="plan-price">$149<span>/mes</span></div>
+      <p class="plan-desc">Para consultorios con un equipo Fotona y un equipo clínico pequeño.</p>
+      <ul class="plan-feats">
+        <li>Hasta 3 usuarios (médicos + asistentes)</li>
+        <li>Biblioteca completa por procedimiento</li>
+        <li>Cursos de 1 plataforma Fotona</li>
+        <li>Soporte por correo, horario laboral</li>
+      </ul>
+      <a href="#" class="plan-cta">Solicitar acceso</a>
+    </div>
+    <div class="plan featured reveal">
+      <div class="plan-name">Clínica Pro</div>
+      <div class="plan-price">$329<span>/mes</span></div>
+      <p class="plan-desc">Para clínicas con múltiples equipos y rotación de personal.</p>
+      <ul class="plan-feats">
+        <li>Hasta 12 usuarios</li>
+        <li>Todos los cursos por equipo incluidos</li>
+        <li>Módulo completo de manejo de complicaciones</li>
+        <li>Certificación y panel de progreso por doctor</li>
+        <li>Soporte prioritario por correo y chat</li>
+      </ul>
+      <a href="#" class="plan-cta">Solicitar acceso</a>
+    </div>
+    <div class="plan reveal">
+      <div class="plan-name">Red Corporativa</div>
+      <div class="plan-price">A medida</div>
+      <p class="plan-desc">Para grupos con varias sedes o cadenas de clínicas.</p>
+      <ul class="plan-feats">
+        <li>Usuarios ilimitados por sede</li>
+        <li>Consulta en vivo con especialistas, 24/7</li>
+        <li>Panel corporativo multi-clínica</li>
+        <li>Onboarding y auditoría de protocolos in situ</li>
+        <li>Gerente de cuenta dedicado</li>
+      </ul>
+      <a href="#" class="plan-cta">Hablar con ventas</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="final-cta">
+  <div class="reveal">
+    <div class="section-eyebrow" style="justify-content:center;">Empieza hoy</div>
+    <h2>Tu equipo ya sabe encender<br>la máquina. <em>Enséñale a dominarla.</em></h2>
+    <a href="#planes" class="btn-primary">Suscribir mi clínica</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-col">
+    <div class="logo" style="margin-bottom:10px;">
+      <div class="logo-mark" style="width:22px;height:22px;"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="var(--gold)" d="M13 2 3 14h7l-1 8 10-14h-7z"/></svg></div>
+      <div class="logo-text" style="font-size:1rem;"><b>FOTONA</b> ACADEMY</div>
+    </div>
+    <p>Plataforma independiente de entrenamiento clínico para usuarios de equipos Fotona.</p>
+  </div>
+  <div class="foot-col">
+    <h5>Plataforma</h5>
+    <a href="#equipos">Equipos</a>
+    <a href="#procedimientos">Procedimientos</a>
+    <a href="#complicaciones">Complicaciones</a>
+    <a href="#planes">Suscripción</a>
+  </div>
+  <div class="foot-col">
+    <h5>Clínicas</h5>
+    <a href="#">Solicitar acceso</a>
+    <a href="#">Soporte</a>
+    <a href="#">Contacto de ventas</a>
+  </div>
+  <div class="foot-legal">
+    Fotona Academy no está afiliada oficialmente a Fotona d.o.o. — los nombres de equipos se usan con fines de referencia formativa. Este contenido es material de entrenamiento interno para personal clínico ya calificado y no sustituye el criterio médico individual ni el prospecto oficial del fabricante.
+  </div>
+</footer>
+
+<!-- ============ COURSE OVERLAY (NAVEGACIÓN DE LECCIONES) ============ -->
+<div class="course-overlay" id="courseOverlay" onclick="if(event.target===this) closeCourse();">
+  <div class="course-panel">
+    <div class="course-top">
+      <div>
+        <div class="course-top-tag" id="courseTag"></div>
+        <h3 id="courseTitle"></h3>
+      </div>
+      <button class="course-close" onclick="closeCourse()" aria-label="Cerrar curso">✕</button>
+    </div>
+    <div class="course-body">
+      <aside class="course-sidebar" id="courseSidebar"></aside>
+      <div class="course-main">
+        <div class="course-media" id="courseMedia"></div>
+        <div class="course-lesson-info">
+          <div class="course-lesson-num" id="courseLessonNum"></div>
+          <h4 id="courseLessonTitle"></h4>
+          <p id="courseLessonDesc"></p>
+          <ul class="course-points" id="courseLessonPoints"></ul>
+        </div>
+        <div class="course-nav">
+          <button class="course-nav-btn" id="prevLessonBtn" onclick="stepLesson(-1)">← Anterior</button>
+          <span id="courseProgress"></span>
+          <button class="course-nav-btn primary" id="nextLessonBtn" onclick="stepLesson(1)">Siguiente →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Scroll progress beam
+  const beamFill = document.getElementById('beamFill');
+  const beamDot = document.getElementById('beamDot');
+  function updateBeam(){
+    const h = document.documentElement;
+    const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
+    const pct = Math.min(Math.max(scrolled,0),1) * 100;
+    beamFill.style.height = pct + '%';
+    beamDot.style.top = '100%';
+  }
+  document.addEventListener('scroll', updateBeam, {passive:true});
+  updateBeam();
+
+  // Reveal on scroll
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
+    });
+  }, {threshold:.15});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  // Count-up stats
+  const counters = document.querySelectorAll('.stat-num');
+  const cio = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){
+        const el = e.target;
+        const target = parseInt(el.dataset.count,10);
+        const suffix = el.dataset.suffix || '';
+        const dur = 1400;
+        const start = performance.now();
+        function tick(now){
+          const p = Math.min((now-start)/dur, 1);
+          const eased = 1 - Math.pow(1-p, 3);
+          el.textContent = Math.round(eased*target) + suffix;
+          if(p<1) requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+        cio.unobserve(el);
+      }
+    });
+  }, {threshold:.5});
+  counters.forEach(el=>cio.observe(el));
+
+  // ============ LIGHT / DARK MODE ============
+  const THEME_KEY = 'fotona-academy-theme';
+  (function initTheme(){
+    const saved = localStorage.getItem(THEME_KEY);
+    const preferred = saved || ((window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', preferred);
+  })();
+  function toggleTheme(){
+    const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', current);
+    localStorage.setItem(THEME_KEY, current);
+  }
+
+  // ============ COURSE NAVIGATION ============
+  function img(text){
+    return 'https://placehold.co/960x540/13100c/c9a227?text=' + encodeURIComponent(text);
+  }
+
+  const COURSES = {
+    dynamis: {
+      title:'Dynamis — Curso de configuración', tag:'Equipo · Nd:YAG 1064nm + Er:YAG 2940nm',
+      lessons:[
+        {title:'Fundamento científico de la doble longitud de onda', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Dynamis combina dos cromóforos objetivo distintos en un mismo cabezal. El Nd:YAG (1064 nm) penetra profundo y es absorbido preferentemente por hemoglobina y, en modo largo, por agua dérmica difusa — de ahí su uso en vascular y tightening. El Er:YAG (2940 nm) coincide casi exactamente con el pico de absorción del agua, lo que permite ablación superficial controlada o calentamiento fraccionado con daño térmico colateral mínimo.',
+         points:[
+           'Nd:YAG 1064 nm: profundidad de penetración de 4-6 mm, ideal para estructuras vasculares y colágeno dérmico profundo.',
+           'Er:YAG 2940 nm: coeficiente de absorción en agua ~10.000 veces mayor que el Nd:YAG, por eso su efecto es más superficial y preciso.',
+           'El modo SMOOTH (pulso largo) calienta de forma difusa sin fragmentar tejido, activando fibroblastos vía choque térmico controlado.',
+           'Principio de fototermólisis selectiva: cada longitud de onda se diseña para depositar energía en un cromóforo específico sin difundirla al tejido sano circundante.'
+         ]},
+        {title:'Selección de paciente y fototipo Fitzpatrick', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Dynamis es apta para fototipos I–VI porque el Nd:YAG 1064 nm tiene baja afinidad por la melanina epidérmica comparado con longitudes de onda más cortas, lo que reduce el riesgo de daño epidérmico en piel oscura. Aun así, el criterio clínico de selección va más allá del fototipo.',
+         points:[
+           'Contraindicaciones relativas: embarazo, fotosensibilidad activa, uso de isotretinoína en los últimos 6 meses, infección activa en la zona a tratar.',
+           'Antecedente de cicatrización queloide: reduce agresividad de parámetros y aumenta el intervalo entre sesiones.',
+           'Bronceado reciente o exposición solar intensa: pospone la sesión 2-4 semanas para evitar competencia de cromóforos.',
+           'Expectativas realistas: documentar objetivo del paciente y correlacionarlo con el resultado esperable según literatura publicada de la técnica.'
+         ]},
+        {title:'Configuración de consola y ajuste de parámetros', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Encendido, calibración de energía, selección de handpiece y transición entre modo vascular y modo tightening sin perder trazabilidad del protocolo registrado en la ficha del paciente.',
+         points:[
+           'Secuencia de encendido: calibración automática de energía antes del primer disparo de cada sesión.',
+           'Spot size 2–10 mm: spots grandes para tightening difuso, spots pequeños para trabajo vascular focal.',
+           'Frecuencia 1–10 Hz y pulso 0.3–100 ms: a mayor duración de pulso, mayor difusión térmica y menor riesgo de púrpura.',
+           'Test de spot obligatorio en zona poco visible antes de tratar áreas extensas en primera sesión con paciente nuevo.'
+         ]},
+        {title:'Protocolo de sesiones y manejo posterior', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Número de sesiones, espaciado recomendado y cuidados posteriores según el tipo de tejido tratado.',
+         points:[
+           'Tightening facial/corporal: 3-4 sesiones espaciadas cada 3-4 semanas, con mantenimiento semestral.',
+           'Tratamiento vascular: respuesta visible desde la primera sesión; espaciar 4-6 semanas para reevaluar.',
+           'Cuidado posterior: fotoprotección estricta 4 semanas, evitar calor intenso (sauna, ejercicio de alto impacto) 48h.',
+           'Documentar respuesta con fotografía estandarizada antes de cada sesión para trazabilidad clínica.'
+         ]},
+        {title:'Errores comunes de configuración', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Los errores de spot size y fluencia que más generan reclamos clínicos, y cómo evitarlos desde la consola.',
+         points:[
+           'Fluencia excesiva en piel delgada periorbitaria: reducir 20-30% respecto al protocolo estándar de cuerpo.',
+           'Repetir pasadas sobre la misma zona sin dejar enfriar: acumula calor y aumenta riesgo de quemadura.',
+           'No documentar el modo/energía usados: imposibilita ajustar la siguiente sesión con criterio.',
+           'Usar el mismo protocolo en fototipo V-VI sin reducir fluencia: aumenta riesgo de hiperpigmentación postinflamatoria.'
+         ]}
+      ]
+    },
+    starwalker: {
+      title:'StarWalker — Curso de configuración', tag:'Equipo · Q-Switch / MaQX / PQX',
+      lessons:[
+        {title:'Fundamento científico: fototermólisis vs. fotoacústica', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'StarWalker trabaja con pulsos de nanosegundos (Q-Switch clásico) y picosegundos (MaQX/PQX). A menor duración de pulso, mayor efecto fotoacústico: la energía se deposita tan rápido que fragmenta mecánicamente las partículas de tinta o melanina en lugar de solo calentarlas, reduciendo el daño térmico colateral.',
+         points:[
+           'Q-Switch (ns): fragmentación por onda de choque térmico-mecánica sobre partículas de pigmento.',
+           'MaQX Pulse: modula el pulso en una ráfaga de subpulsos que aumenta el efecto fotoacústico manteniendo seguridad epidérmica.',
+           '1064 nm penetra más profundo (tintas oscuras/negras); 532 nm es absorbido preferentemente por pigmentos rojos/naranjas y lesiones melánicas superficiales.',
+           'El objetivo es fragmentar la partícula lo suficiente para que el sistema linfático la elimine de forma gradual entre sesiones.'
+         ]},
+        {title:'Fototipo Fitzpatrick y selección de paciente', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'La longitud de onda 532 nm compite con la melanina epidérmica, por lo que en fototipos IV-V el margen de fluencia segura es más estrecho que en piel clara.',
+         points:[
+           'Fototipos I–III: mayor margen de fluencia con menor riesgo de hipopigmentación.',
+           'Fototipos IV–V: preferir 1064 nm sobre 532 nm cuando sea posible; reducir fluencia inicial 20-30%.',
+           'Contraindicado en tatuajes con reacción alérgica previa a la tinta sin evaluación dermatológica previa.',
+           'Test de spot obligatorio 48-72h antes en pacientes con antecedente de hiperpigmentación postinflamatoria.'
+         ]},
+        {title:'Configuración de consola por tipo de lesión', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Diferencia entre modos QS, MaQX y FRAC3, y cuándo usar cada uno según el objetivo clínico.',
+         points:[
+           'Tatuajes de tinta negra/oscura: 1064 nm, fluencia media-alta, spot 4-6 mm.',
+           'Pigmento rojo/naranja o lesiones melánicas: 532 nm, fluencia más conservadora por mayor absorción epidérmica.',
+           'FRAC3 (fraccionado): para remodelación de textura y cicatrices, no para remoción de pigmento.',
+           'Endpoint clínico esperado: blanqueamiento inmediato (frosting) sin sangrado ni ampolla activa.'
+         ]},
+        {title:'Test de spot y espaciado entre sesiones', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Lectura de la reacción tisular inmediata y criterios para decidir cuándo repetir sesión.',
+         points:[
+           'Espaciar sesiones de remoción de tatuaje 6-8 semanas mínimo para permitir aclaramiento linfático completo.',
+           'Espaciar sesiones de pigmento facial 4 semanas, evaluando respuesta y posible rebote.',
+           'Reducir fluencia si aparece ampolla o costra en la sesión previa, en vez de mantener el mismo parámetro.',
+           'Registrar número de pasadas y respuesta fotográfica en cada visita.'
+         ]},
+        {title:'Errores comunes de configuración', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Sobredosificación, spot size incorrecto y espaciado insuficiente entre sesiones: cómo prevenirlos.',
+         points:[
+           'Sobredosificar buscando aclaramiento más rápido: aumenta riesgo de cicatriz y despigmentación permanente.',
+           'Usar spot pequeño en áreas extensas: prolonga innecesariamente el tiempo de sesión y el riesgo acumulado.',
+           'Tratar antes de que la sesión previa haya cicatrizado por completo: interrumpe el proceso de aclaramiento.',
+           'No advertir sobre fotoprotección estricta post-sesión: el área tratada queda temporalmente más fotosensible.'
+         ]}
+      ]
+    },
+    starformer: {
+      title:'StarFormer — Curso de configuración', tag:'Equipo · EMS + Radiofrecuencia',
+      lessons:[
+        {title:'Fundamento científico: EMS + calentamiento dérmico', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'StarFormer combina estimulación electromagnética de alta intensidad (EMS), que induce contracciones supramáximas del músculo esquelético no alcanzables voluntariamente, con radiofrecuencia que calienta la dermis y el tejido subcutáneo para estimular remodelación de colágeno.',
+         points:[
+           'La EMS de alta intensidad genera contracciones musculares involuntarias que exceden el reclutamiento voluntario máximo, promoviendo hipertrofia e hiperplasia de fibra muscular.',
+           'La RF calienta el tejido a 40-42°C sostenidos, activando fibroblastos y neocolagénesis sin dañar la epidermis si se controla la temperatura de superficie.',
+           'El efecto combinado busca tonificación muscular y firmeza dérmica en una sola sesión, distinto a un tratamiento puramente estético de superficie.',
+           'La respuesta es acumulativa: el efecto muscular se mide en semanas, no en la sesión inmediata.'
+         ]},
+        {title:'Selección de paciente y criterios clínicos', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Criterios de candidatura y expectativas realistas según composición corporal e historia clínica.',
+         points:[
+           'Contraindicado en embarazo, marcapasos o dispositivos electrónicos implantados, hernias abdominales activas.',
+           'No recomendado sobre tejido con implantes metálicos en la zona de aplicación.',
+           'Mejor candidato: IMC dentro de rango saludable, buscando tonificación más que pérdida de grasa significativa.',
+           'Explicar que no sustituye ejercicio ni control nutricional; es un complemento de remodelación localizada.'
+         ]},
+        {title:'Colocación de aplicadores y configuración', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Posicionamiento correcto de aplicadores según la zona corporal a tratar.',
+         points:[
+           'Alineación del aplicador con el eje muscular principal (recto abdominal, glúteo mayor) para maximizar el reclutamiento.',
+           'Intensidad 10-100%: iniciar en el tercio bajo del rango y progresar según tolerancia del paciente.',
+           'Duración de sesión 20-30 minutos por zona, con fases de calentamiento, trabajo e integración muscular.',
+           'Verificar contacto uniforme del aplicador antes de iniciar para evitar puntos de sobrecalentamiento local.'
+         ]},
+        {title:'Curva de intensidad progresiva', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Curva de intensidad recomendada por sesión y señales de tolerancia del paciente.',
+         points:[
+           'Progresión típica: aumentar intensidad cada 2-3 sesiones según reporte de confort, no en cada sesión.',
+           'Señal de tolerancia adecuada: contracción visible y sostenida sin dolor agudo referido por el paciente.',
+           'Protocolo estándar: 4 sesiones en 2 semanas para el ciclo inicial, con mantenimiento mensual.',
+           'Registrar intensidad final de cada sesión en la ficha para dar continuidad en la siguiente visita.'
+         ]},
+        {title:'Errores comunes y contraindicaciones', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Contraindicaciones frecuentes y ajustes cuando el paciente reporta molestia.',
+         points:[
+           'Omitir el tamizaje de dispositivos electrónicos implantados antes de la primera sesión.',
+           'Aumentar intensidad de forma agresiva ignorando el reporte de molestia del paciente.',
+           'No dejar tiempo de recuperación muscular entre sesiones consecutivas de la misma zona.',
+           'Prometer resultados de pérdida de peso: StarFormer tonifica, no sustituye un déficit calórico.'
+         ]}
+      ]
+    },
+    catalogo: {
+      title:'Catálogo completo Fotona', tag:'Toda la línea de equipos',
+      lessons:[
+        {title:'Introducción a la línea SP / XS Dynamis', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Diferencias entre plataformas y cómo la biblioteca se actualiza automáticamente con tu suscripción.',
+         points:[
+           'SP Dynamis: mismo motor óptico que Dynamis, en formato compacto para clínicas con espacio reducido.',
+           'XS Dynamis: versión de entrada con subconjunto de modos, ideal para clínicas iniciando su primera plataforma Fotona.',
+           'TimeWalker: plataforma orientada a rejuvenecimiento facial de alta gama con protocolos combinados.',
+           'Cada nueva incorporación al catálogo mantiene la misma estructura de curso: fundamento, paciente, configuración, técnica.'
+         ]},
+        {title:'Cómo se agregan nuevos equipos a tu biblioteca', type:'video', src:'https://www.youtube.com/embed/FoDvuueT30g',
+         desc:'Proceso para solicitar un curso cuando tu clínica adquiere una plataforma nueva.',
+         points:[
+           'Al registrar un nuevo equipo en el panel de clínica, la biblioteca correspondiente se habilita automáticamente.',
+           'Los cursos nuevos siguen el mismo estándar científico y de certificación que el resto de la academia.',
+           'Sin costo adicional durante la vigencia de la suscripción activa de la clínica.',
+           'El equipo clínico recibe notificación cuando un curso nuevo queda disponible para su plataforma.'
+         ]}
+      ]
+    },
+    flacidez: {
+      title:'Flacidez — TightSculpting', tag:'Procedimiento · Dynamis / SP Dynamis',
+      lessons:[
+        {title:'Base científica: neocolagénesis por choque térmico', type:'image', src:img('Fundamento cientifico TightSculpting'),
+         desc:'El protocolo TightSculpting utiliza el modo SMOOTH del Nd:YAG para calentar la dermis reticular de forma difusa y controlada hasta 55-65°C transitorios, el rango en el que la contracción inmediata del colágeno tipo I y la activación fibroblástica posterior generan remodelación estructural sin dañar la epidermis.',
+         points:[
+           'El choque térmico controlado desnaturaliza parcialmente el colágeno existente, generando contracción tisular inmediata.',
+           'La activación fibroblástica posterior estimula síntesis de colágeno nuevo en las 4-8 semanas siguientes.',
+           'El monitoreo de temperatura de superficie durante la sesión es el principal control de seguridad del protocolo.',
+           'Evidencia publicada respalda mejoría objetiva de firmeza cutánea con protocolos de 3-4 sesiones espaciadas.'
+         ]},
+        {title:'Fototipo Fitzpatrick y candidatura del paciente', type:'image', src:img('Fitzpatrick y candidatura Flacidez'),
+         desc:'Apto para fototipos I-VI dado que el 1064 nm tiene baja interacción con melanina epidérmica.',
+         points:[
+           'Mejor candidato: flacidez leve a moderada con buena calidad de piel remanente (no sustituye cirugía en flacidez severa).',
+           'Contraindicado en embarazo, marcapasos en zona torácica, infección activa o lesión cutánea abierta en el área.',
+           'Evaluar expectativas: el efecto es progresivo, visible completamente entre la 8ª y 12ª semana tras la última sesión.',
+           'Documentar fototipo y tipo de piel (grasa/seca/mixta) porque modifica el umbral de fluencia inicial.'
+         ]},
+        {title:'Configuración del equipo', type:'image', src:img('Configuracion Dynamis TightSculpting'),
+         desc:'Selección de handpiece, energía de partida y número de pasadas recomendado.',
+         points:[
+           'Handpiece de spot grande (8-10 mm) para cobertura difusa en zonas extensas como abdomen o brazos.',
+           'Energía de partida conservadora, incrementando progresivamente según respuesta térmica reportada por el paciente.',
+           'Frecuencia media-baja para permitir disipación de calor entre disparos y evitar acumulación excesiva.',
+           'Confirmar temperatura de superficie con termómetro infrarrojo si el equipo no la reporta en consola.'
+         ]},
+        {title:'Técnica de aplicación en 3 pasadas', type:'image', src:img('Tecnica 3 pasadas Flacidez'),
+         desc:'Recorrido, velocidad de aplicación y señales visuales del endpoint térmico correcto.',
+         points:[
+           'Primera pasada: calentamiento base a velocidad constante cubriendo toda la zona sin detenerse.',
+           'Segunda y tercera pasada: refuerzo en zonas de mayor laxitud, evitando repetir sobre puntos ya enrojecidos.',
+           'Endpoint clínico: eritema homogéneo y sensación de calor profundo tolerable reportada por el paciente, sin dolor agudo.',
+           'Detener inmediatamente si aparece palidez, ampolla o dolor punzante focal.'
+         ]},
+        {title:'Protocolo de sesiones y manejo posterior', type:'image', src:img('Protocolo sesiones Flacidez'),
+         desc:'Espaciado entre sesiones, cuidados posteriores y señales de alarma a vigilar.',
+         points:[
+           'Protocolo estándar: 3-4 sesiones cada 3-4 semanas, mantenimiento semestral según respuesta individual.',
+           'Fotoprotección estricta las 4 semanas posteriores a cada sesión.',
+           'Evitar calor adicional (sauna, exposición solar directa) 48 horas tras el tratamiento.',
+           'Señal de alarma: eritema que persiste más de 72h o aparición de ampolla — evaluar y documentar antes de la siguiente sesión.'
+         ]}
+      ]
+    },
+    manchas: {
+      title:'Manchas — Pigmentación', tag:'Procedimiento · StarWalker',
+      lessons:[
+        {title:'Base científica: fototermólisis selectiva de melanina', type:'image', src:img('Fundamento cientifico Manchas'),
+         desc:'Las lesiones pigmentadas absorben energía lumínica de forma selectiva según la profundidad y densidad de melanina. El principio de fototermólisis/fotoacústica selectiva busca fragmentar los melanosomas sin transferir calor excesivo a la dermis circundante.',
+         points:[
+           'Lesiones epidérmicas (léntigos solares, efélides): responden bien a 532 nm por su absorción superficial.',
+           'Lesiones dérmicas o mixtas (melasma, nevus de Ota): requieren 1064 nm por su mayor profundidad de penetración.',
+           'El objetivo es fragmentar el pigmento en partículas lo bastante pequeñas para ser eliminadas por macrófagos dérmicos.',
+           'El melasma tiene componente hormonal/vascular y responde de forma distinta a una lesión pigmentada simple — requiere protocolo conservador.'
+         ]},
+        {title:'Fototipo Fitzpatrick y diagnóstico diferencial', type:'image', src:img('Fitzpatrick diagnostico Manchas'),
+         desc:'Diferenciación entre lesiones epidérmicas y dérmicas, y su relación con el fototipo del paciente antes de tratar.',
+         points:[
+           'Fototipos I-III: mayor margen de seguridad con fluencias estándar.',
+           'Fototipos IV-V: riesgo elevado de hiperpigmentación postinflamatoria; iniciar con fluencia conservadora.',
+           'Melasma en fototipo IV-VI: contraindicado tratar de forma agresiva; priorizar protocolos suaves y fotoprotección.',
+           'Diagnóstico diferencial obligatorio con dermatólogo ante lesión de bordes irregulares o cambio reciente de aspecto.'
+         ]},
+        {title:'Configuración del equipo', type:'image', src:img('Configuracion StarWalker Pigmentacion'),
+         desc:'Selección de longitud de onda y fluencia inicial según el tipo de lesión.',
+         points:[
+           'Léntigos superficiales: 532 nm, fluencia media, spot pequeño para precisión.',
+           'Melasma/lesiones dérmicas: 1064 nm en modo suave, fluencia baja, mayor número de sesiones.',
+           'Test de spot obligatorio en zona representativa antes de tratar el área completa.',
+           'Registrar parámetros exactos usados para poder replicar o ajustar en la siguiente sesión.'
+         ]},
+        {title:'Técnica y endpoint clínico', type:'image', src:img('Tecnica endpoint Manchas'),
+         desc:'Cómo reconocer el endpoint clínico correcto y evitar sobretratamiento.',
+         points:[
+           'Endpoint esperado: leve blanqueamiento (frosting) inmediato sin sangrado ni ampolla.',
+           'Si aparece sangrado puntiforme, la fluencia fue excesiva para esa lesión — reducir en la siguiente pasada.',
+           'No repasar la misma lesión más de una vez por sesión en fototipos altos.',
+           'Fotografiar antes/después con la misma iluminación para evaluar objetivamente la respuesta.'
+         ]},
+        {title:'Espaciado entre sesiones y seguimiento', type:'image', src:img('Seguimiento Manchas'),
+         desc:'Espaciado entre sesiones y señales de alarma de hiperpigmentación posinflamatoria.',
+         points:[
+           'Espaciar sesiones 4 semanas mínimo para permitir aclaramiento y evaluar respuesta real.',
+           'Melasma: mantenimiento continuo con fotoprotección estricta, ya que tiende a recurrir sin control solar.',
+           'Ante hiperpigmentación postinflamatoria: pausar tratamiento activo e iniciar manejo tópico despigmentante.',
+           'Reevaluar diagnóstico si la lesión no responde tras 3 sesiones — puede requerir otro abordaje.'
+         ]}
+      ]
+    },
+    rejuvenecimiento: {
+      title:'Rejuvenecimiento de piel', tag:'Procedimiento · Dynamis',
+      lessons:[
+        {title:'Base científica: Er:YAG + Nd:YAG combinados', type:'image', src:img('Fundamento cientifico Rejuvenecimiento'),
+         desc:'El protocolo facial combina la acción superficial del Er:YAG (renovación de textura, poro, tono) con el calentamiento dérmico profundo del Nd:YAG (firmeza y estímulo de colágeno), abordando las capas cutáneas de forma secuencial.',
+         points:[
+           'Er:YAG en modo no ablativo: microcalentamiento epidérmico que acelera el recambio celular sin herida abierta.',
+           'Nd:YAG modo SMOOTH: calentamiento dérmico profundo que complementa el efecto superficial del Er:YAG.',
+           'La combinación aborda simultáneamente textura superficial y firmeza estructural, algo que un solo láser no logra igual de eficiente.',
+           'El recambio epidérmico completo toma entre 4-6 semanas; los resultados de firmeza toman 8-12 semanas.'
+         ]},
+        {title:'Fototipo Fitzpatrick y selección de paciente', type:'image', src:img('Fitzpatrick Rejuvenecimiento'),
+         desc:'Fundamento del uso combinado Er:YAG + Nd:YAG y su seguridad en distintos fototipos.',
+         points:[
+           'Apto para fototipos I-VI por la baja interacción de ambas longitudes de onda con la melanina epidérmica.',
+           'Contraindicado en dermatitis activa, acné inflamatorio severo o infección herpética activa en la zona.',
+           'Pausar si el paciente usa retinoides tópicos de alta concentración — puede aumentar sensibilidad cutánea.',
+           'Ideal para paciente con fotoenvejecimiento leve-moderado buscando mejora de textura sin tiempo de inactividad.'
+         ]},
+        {title:'Configuración del equipo', type:'image', src:img('Configuracion Dynamis Facial'),
+         desc:'Secuencia de modos y parámetros de partida por tipo de piel.',
+         points:[
+           'Primera fase: Er:YAG en modo suave sobre toda la superficie facial para uniformar textura.',
+           'Segunda fase: Nd:YAG SMOOTH con spot grande para tightening general del óvalo facial.',
+           'Ajustar energía a la baja en zonas de piel fina (párpados, cuello) respecto a mejillas y frente.',
+           'Evaluar tipo de piel (grasa/seca/sensible) antes de definir la energía de partida de cada fase.'
+         ]},
+        {title:'Técnica de aplicación', type:'image', src:img('Tecnica aplicacion facial'),
+         desc:'Patrón de pasadas y protocolo de recuperación mínima posterior.',
+         points:[
+           'Patrón de aplicación en cuadrantes faciales para asegurar cobertura uniforme.',
+           'Endpoint esperado: eritema leve-moderado y sensación de calor tolerable, sin ampollas.',
+           'Recuperación esperada: enrojecimiento leve 24-48h, maquillaje mineral permitido al día siguiente.',
+           'No combinar en la misma sesión con peelings químicos profundos sobre la misma zona.'
+         ]},
+        {title:'Protocolo de recuperación mínima', type:'image', src:img('Recuperacion Rejuvenecimiento'),
+         desc:'Cuidados posteriores y espaciado entre sesiones para maximizar el resultado.',
+         points:[
+           'Protocolo típico: 3 sesiones cada 3-4 semanas, mantenimiento cada 4-6 meses.',
+           'Fotoprotección estricta e hidratación reforzada durante todo el proceso.',
+           'Evitar exfoliantes activos (ácidos, retinol) los 5 días posteriores a cada sesión.',
+           'Documentar fotográficamente antes de cada sesión para evaluar progreso de textura y tono.'
+         ]}
+      ]
+    },
+    vaginal: {
+      title:'Rejuvenecimiento vaginal', tag:'Procedimiento · IntimaLase / IncontiLase',
+      lessons:[
+        {title:'Base científica: remodelación de colágeno funcional', type:'image', src:img('Fundamento cientifico Vaginal'),
+         desc:'Los protocolos IntimaLase e IncontiLase utilizan el Er:YAG en modo no ablativo para inducir contracción y remodelación del colágeno de la mucosa vaginal y el tejido periuretral, buscando mejorar tono tisular y soporte funcional sin cirugía.',
+         points:[
+           'El calentamiento controlado del Er:YAG estimula neocolagénesis en la lámina propia de la mucosa vaginal.',
+           'IncontiLase se enfoca en el tejido periuretral para mejorar soporte funcional en incontinencia urinaria de esfuerzo leve.',
+           'IntimaLase se orienta a laxitud vaginal, mejorando tono y sensibilidad reportada por la paciente.',
+           'Es un protocolo funcional no ablativo: no reemplaza cirugía reconstructiva en casos de prolapso significativo.'
+         ]},
+        {title:'Candidatura, contraindicaciones y consentimiento informado', type:'image', src:img('Candidatura consentimiento Vaginal'),
+         desc:'Respaldo clínico del protocolo funcional no ablativo y consideraciones éticas del consentimiento en un área sensible.',
+         points:[
+           'Contraindicado en embarazo, infección activa, sangrado vaginal no diagnosticado o cáncer ginecológico activo.',
+           'Evaluación previa obligatoria por profesional calificado en ginecología o medicina funcional femenina.',
+           'El consentimiento informado debe explicar expectativas realistas, número de sesiones y limitaciones del protocolo.',
+           'Documentar siempre en presencia de un acompañante clínico y con privacidad absoluta del historial.'
+         ]},
+        {title:'Configuración del equipo', type:'image', src:img('Configuracion Dynamis Vaginal'),
+         desc:'Selección de handpiece específico y parámetros de profundidad de tratamiento.',
+         points:[
+           'Handpiece intracavitario específico, calibrado antes de cada uso según protocolo del fabricante.',
+           'Parámetros de energía conservadores en la primera sesión, ajustando según tolerancia reportada.',
+           'Profundidad de tratamiento diferenciada entre pared anterior (IncontiLase) y circunferencial (IntimaLase).',
+           'Verificar esterilización y protocolo de bioseguridad del handpiece antes de cada paciente.'
+         ]},
+        {title:'Técnica y número de pasadas', type:'image', src:img('Tecnica pasadas Vaginal'),
+         desc:'Número de pasadas y patrón de aplicación según el objetivo funcional.',
+         points:[
+           'Patrón de rotación completa del handpiece para cobertura circunferencial uniforme.',
+           'Número de pasadas ajustado según respuesta tisular observada durante la sesión.',
+           'Sesión breve (15-20 min) y ambulatoria, sin necesidad de anestesia en la mayoría de los casos.',
+           'Pausar de inmediato ante molestia significativa reportada por la paciente.'
+         ]},
+        {title:'Manejo posterior y criterios de alarma', type:'image', src:img('Manejo posterior Vaginal'),
+         desc:'Número de sesiones recomendado y criterios de alarma ante reacción adversa.',
+         points:[
+           'Protocolo típico: 3 sesiones espaciadas 4-6 semanas, con reevaluación de síntomas en cada visita.',
+           'Reposo de actividad sexual y uso de tampones 48-72h posteriores a cada sesión.',
+           'Criterio de alarma: dolor intenso, sangrado abundante o flujo con signos de infección — derivar a evaluación ginecológica inmediata.',
+           'Registrar evolución de síntomas funcionales (no solo estéticos) en cada control de seguimiento.'
+         ]}
+      ]
+    },
+    corporal: {
+      title:'Remodelación corporal', tag:'Procedimiento · StarFormer',
+      lessons:[
+        {title:'Base científica: EMS supramáxima y remodelación tisular', type:'image', src:img('Fundamento cientifico Corporal'),
+         desc:'La estimulación electromagnética de alta intensidad induce contracciones musculares supramáximas que generan estrés metabólico similar al entrenamiento de resistencia, mientras la radiofrecuencia asociada estimula remodelación de colágeno en el tejido conectivo circundante.',
+         points:[
+           'Las contracciones EMS supramáximas superan el reclutamiento voluntario, generando adaptación muscular acumulativa.',
+           'La RF asociada calienta el tejido subcutáneo, favoreciendo firmeza y textura de la piel suprayacente.',
+           'El efecto combinado se documenta en semanas: hipertrofia muscular progresiva y mejora de firmeza dérmica.',
+           'No es un tratamiento de pérdida de peso; su mecanismo es de tonificación y remodelación localizada.'
+         ]},
+        {title:'Selección de paciente y expectativas realistas', type:'image', src:img('Seleccion paciente Corporal'),
+         desc:'Criterios clínicos para candidatura y expectativas realistas según composición corporal.',
+         points:[
+           'Mejor candidato: composición corporal cercana al rango saludable, buscando definición y firmeza localizada.',
+           'Contraindicado en embarazo, dispositivos electrónicos implantados o hernias activas en la zona.',
+           'Explicar que el efecto es acumulativo — se evalúa a las 4-6 semanas del ciclo completo, no en la primera sesión.',
+           'No es sustituto de ejercicio ni de manejo nutricional en pacientes con objetivo de pérdida de grasa significativa.'
+         ]},
+        {title:'Configuración del equipo', type:'image', src:img('Configuracion StarFormer Corporal'),
+         desc:'Mapeo de zonas y combinación de intensidades EMS + RF.',
+         points:[
+           'Mapeo previo de la zona muscular objetivo (abdomen, glúteo) para alinear correctamente el aplicador.',
+           'Progresión de intensidad EMS iniciando conservador y ajustando según tolerancia y contracción visible.',
+           'RF asociada en rango de confort térmico del paciente, sin llegar a sensación de quemazón.',
+           'Registrar intensidad final de cada sesión para dar continuidad en el ciclo completo.'
+         ]},
+        {title:'Secuencia de sesiones y seguimiento', type:'image', src:img('Secuencia sesiones Corporal'),
+         desc:'Frecuencia de sesiones recomendada y registro de progreso objetivo.',
+         points:[
+           'Ciclo inicial estándar: 4 sesiones en 2 semanas, con mantenimiento mensual posterior.',
+           'Medición de circunferencia y fotografía estandarizada en cada control para evaluar progreso real.',
+           'Evaluar tolerancia y ajustar intensidad de forma progresiva, nunca agresiva desde la primera sesión.',
+           'No combinar en la misma zona el mismo día con otros tratamientos térmicos intensos.'
+         ]},
+        {title:'Errores comunes y contraindicaciones', type:'image', src:img('Errores comunes Corporal'),
+         desc:'Contraindicaciones frecuentes y ajustes cuando el paciente reporta molestia.',
+         points:[
+           'Omitir el tamizaje de dispositivos electrónicos implantados antes de la primera sesión.',
+           'Prometer resultados de pérdida de peso en lugar de tonificación y firmeza localizada.',
+           'No respetar tiempo de recuperación muscular entre sesiones consecutivas de la misma zona.',
+           'Ignorar reporte de dolor agudo del paciente al aumentar intensidad.'
+         ]}
+      ]
+    },
+    tatuajes: {
+      title:'Remoción de tatuajes', tag:'Procedimiento · StarWalker (MaQX / PQX)',
+      lessons:[
+        {title:'Base científica: fragmentación fotoacústica de tinta', type:'image', src:img('Fundamento cientifico Tatuajes'),
+         desc:'La remoción de tatuajes se basa en fragmentar las partículas de tinta depositadas en la dermis mediante pulsos ultracortos que generan una onda de choque fotoacústica, sin depender principalmente del calor, lo que reduce el daño térmico al tejido circundante.',
+         points:[
+           'Pulsos de nano/picosegundos generan fragmentación mecánica de la partícula de tinta por onda de choque.',
+           'Las partículas fragmentadas son eliminadas gradualmente por el sistema linfático entre sesiones.',
+           'El color de la tinta determina la longitud de onda óptima: negro/oscuro absorbe bien 1064 nm, rojo/naranja responde mejor a 532 nm.',
+           'Tintas verdes y azules son las más resistentes al tratamiento y suelen requerir mayor número de sesiones.'
+         ]},
+        {title:'Fototipo Fitzpatrick y evaluación previa', type:'image', src:img('Fitzpatrick evaluacion Tatuajes'),
+         desc:'Fundamento de la fragmentación de tinta y su relación con el fototipo del paciente antes de iniciar.',
+         points:[
+           'Fototipos I-III: mayor margen de fluencia segura y menor riesgo de cambios pigmentarios.',
+           'Fototipos IV-V: preferir 1064 nm, reducir fluencia inicial y aumentar espaciado entre sesiones.',
+           'Evaluar antecedente de reacción alérgica a la tinta — puede generar reacción sistémica al fragmentarse.',
+           'Documentar tipo de tinta (profesional vs. amateur), profundidad estimada y densidad del pigmento.'
+         ]},
+        {title:'Configuración del equipo', type:'image', src:img('Configuracion StarWalker Tatuajes'),
+         desc:'Selección de modo, longitud de onda y fluencia según el color de la tinta.',
+         points:[
+           'Tinta negra/oscura: 1064 nm, fluencia media-alta, spot 4-6 mm según extensión.',
+           'Tinta roja/naranja: 532 nm con fluencia más conservadora por mayor absorción epidérmica.',
+           'MaQX Pulse para tatuajes resistentes que no responden adecuadamente al modo QS estándar.',
+           'Iniciar siempre con test de spot en una zona pequeña antes de tratar el diseño completo.'
+         ]},
+        {title:'Test de spot y lectura de reacción tisular', type:'image', src:img('Test spot Tatuajes'),
+         desc:'Test de spot previo y lectura de la reacción tisular inmediata durante la sesión.',
+         points:[
+           'Endpoint esperado: frosting (blanqueamiento) inmediato sin sangrado activo.',
+           'Sangrado puntiforme indica fluencia excesiva para esa densidad de tinta — reducir parámetro.',
+           'Ampolla inmediata post-sesión es una respuesta esperable en algunos casos y debe explicarse al paciente previamente.',
+           'Documentar fotográficamente el frosting inmediato como referencia de dosis aplicada.'
+         ]},
+        {title:'Espaciado entre sesiones y manejo posterior', type:'image', src:img('Espaciado Tatuajes'),
+         desc:'Espaciado correcto entre sesiones para permitir aclaramiento linfático completo.',
+         points:[
+           'Espaciar sesiones mínimo 6-8 semanas para permitir aclaramiento linfático completo del pigmento fragmentado.',
+           'Fotoprotección estricta en el área durante todo el proceso de remoción.',
+           'No repetir tratamiento si persiste costra, ampolla o eritema activo de la sesión previa.',
+           'Reevaluar el plan si tras 3-4 sesiones no hay aclaramiento visible — puede requerir cambio de longitud de onda.'
+         ]}
+      ]
+    },
+    acne: {
+      title:'Acné y cicatrices', tag:'Procedimiento · StarWalker · Dynamis',
+      lessons:[
+        {title:'Base científica: modo fraccionado FRAC3', type:'image', src:img('Fundamento cientifico Acne'),
+         desc:'El modo fraccionado FRAC3 genera microzonas de tratamiento térmico rodeadas de tejido sano intacto, lo que acelera la recuperación respecto a un tratamiento de superficie completa y estimula remodelación de colágeno en cicatrices atróficas.',
+         points:[
+           'La fototermólisis fraccionada trata solo un porcentaje de la superficie por sesión, dejando "puentes" de tejido sano que aceleran la reepitelización.',
+           'En cicatrices atróficas de acné, el estímulo térmico induce remodelación de colágeno en la base de la cicatriz.',
+           'En acné inflamatorio activo, el efecto térmico tiene además una acción antibacteriana coadyuvante sobre P. acnes.',
+           'La densidad fraccionada (% de cobertura) determina el balance entre eficacia y tiempo de recuperación.'
+         ]},
+        {title:'Fototipo Fitzpatrick y selección de paciente', type:'image', src:img('Fitzpatrick seleccion Acne'),
+         desc:'Evidencia del modo fraccionado FRAC3 en cicatrices atróficas y su seguridad según fototipo.',
+         points:[
+           'Fototipos I-III: mayor margen de densidad fraccionada sin riesgo elevado de hiperpigmentación.',
+           'Fototipos IV-VI: reducir densidad y fluencia inicial; priorizar protocolo conservador y progresivo.',
+           'Contraindicado en acné con infección bacteriana activa no controlada o uso reciente de isotretinoína oral.',
+           'Evaluar tipo de cicatriz (icepick, boxcar, rolling) porque modifica el protocolo de profundidad recomendado.'
+         ]},
+        {title:'Configuración del equipo', type:'image', src:img('Configuracion FRAC3 Acne'),
+         desc:'Ajuste de densidad y profundidad según el tipo de cicatriz o el brote activo.',
+         points:[
+           'Cicatrices profundas (icepick/boxcar): mayor profundidad de penetración, menor densidad de cobertura por sesión.',
+           'Acné inflamatorio activo: densidad más baja y fluencia conservadora, priorizando confort y seguridad.',
+           'Zonas de piel fina (mejilla) requieren menor energía que zonas de piel gruesa (mentón, frente).',
+           'Registrar densidad y profundidad exactas usadas para permitir progresión controlada entre sesiones.'
+         ]},
+        {title:'Técnica de aplicación', type:'image', src:img('Tecnica aplicacion Acne'),
+         desc:'Patrón de pasadas fraccionadas y manejo del brote inflamatorio activo durante el tratamiento.',
+         points:[
+           'Patrón de aplicación uniforme evitando superposición excesiva entre pasadas fraccionadas.',
+           'En brote activo, evitar tratar directamente lesiones inflamatorias abiertas o con pus.',
+           'Endpoint esperado: eritema puntiforme homogéneo sin sangrado activo generalizado.',
+           'Explicar al paciente que puede haber sensación de "papel de lija" en la piel los días siguientes.'
+         ]},
+        {title:'Manejo posterior y control de brotes', type:'image', src:img('Manejo posterior Acne'),
+         desc:'Cuidados posteriores y control de brotes inflamatorios activos entre sesiones.',
+         points:[
+           'Protocolo típico: 3-5 sesiones espaciadas 4 semanas para remodelación de cicatrices.',
+           'Hidratación reforzada y fotoprotección estricta durante todo el proceso de recuperación.',
+           'Evitar activos exfoliantes (retinoides, ácidos) los 5-7 días posteriores a cada sesión.',
+           'Si el brote inflamatorio empeora tras el tratamiento, pausar y derivar a manejo dermatológico del acné activo.'
+         ]}
+      ]
+    },
+    onicomicosis: {
+      title:'Onicomicosis', tag:'Procedimiento · Dynamis',
+      lessons:[
+        {title:'Base científica: efecto térmico antifúngico', type:'image', src:img('Fundamento cientifico Onicomicosis'),
+         desc:'El calentamiento controlado del lecho ungueal con Nd:YAG eleva la temperatura local a niveles que inhiben el crecimiento del hongo dermatofito, sin necesidad de medicación sistémica, siendo especialmente útil en pacientes con contraindicación a antifúngicos orales.',
+         points:[
+           'El objetivo térmico es alcanzar temperaturas fungicidas (~50-60°C transitorios) en la lámina ungueal y el lecho.',
+           'Es un tratamiento coadyuvante: la evidencia respalda mejor resultado combinado con manejo tópico antifúngico.',
+           'Especialmente indicado en pacientes con contraindicación a antifúngicos orales (interacción medicamentosa, hepatopatía).',
+           'El crecimiento de una uña sana visible toma 6-12 meses; el protocolo debe evaluarse en ese horizonte de tiempo.'
+         ]},
+        {title:'Selección de paciente y diagnóstico previo', type:'image', src:img('Seleccion diagnostico Onicomicosis'),
+         desc:'Respaldo clínico del protocolo térmico controlado sobre el lecho ungueal y criterios de candidatura.',
+         points:[
+           'Confirmación diagnóstica previa recomendada (cultivo micológico o examen directo) antes de iniciar el protocolo.',
+           'Contraindicado en neuropatía periférica severa (el paciente no percibe correctamente la sensación térmica).',
+           'Diabetes no controlada: extremar precaución por riesgo de cicatrización lenta ante cualquier microlesión.',
+           'Explicar que el protocolo no reemplaza higiene podológica ni manejo de factores de riesgo (humedad, calzado).'
+         ]},
+        {title:'Configuración del equipo', type:'image', src:img('Configuracion Dynamis Onicomicosis'),
+         desc:'Parámetros de partida y número de pasadas por sesión sobre el lecho ungueal.',
+         points:[
+           'Spot ajustado al tamaño de la uña tratada, priorizando cobertura completa de la lámina y el lecho.',
+           'Energía de partida conservadora, con pasadas repetidas para alcanzar temperatura terapéutica sostenida.',
+           'Verificar tolerancia térmica del paciente en tiempo real durante toda la sesión.',
+           'Registrar parámetros exactos para mantener consistencia entre sesiones del mismo paciente.'
+         ]},
+        {title:'Seguimiento micológico', type:'image', src:img('Seguimiento micologico Onicomicosis'),
+         desc:'Frecuencia de sesiones y criterios de seguimiento micológico durante el tratamiento.',
+         points:[
+           'Protocolo típico: sesiones cada 3-4 semanas hasta observar crecimiento de uña sana visible.',
+           'Reevaluación micológica periódica recomendada para confirmar respuesta al tratamiento.',
+           'Continuar manejo tópico antifúngico en paralelo según indicación del profesional tratante.',
+           'Documentar fotográficamente el avance del crecimiento ungueal sano en cada control.'
+         ]},
+        {title:'Manejo posterior y expectativas', type:'image', src:img('Manejo posterior Onicomicosis'),
+         desc:'Qué comunicar al paciente sobre el tiempo de respuesta y los cuidados entre sesiones.',
+         points:[
+           'Explicar que el resultado visible requiere el crecimiento completo de la uña, no es un efecto inmediato.',
+           'Mantener la uña seca y con buena ventilación entre sesiones para no favorecer la recurrencia.',
+           'Recomendar higiene y desinfección del calzado como parte del manejo integral.',
+           'Ante ausencia total de mejoría tras varias sesiones, reevaluar diagnóstico con el profesional tratante.'
+         ]}
+      ]
+    },
+    nightlase: {
+      title:'Ronquido y vía aérea — NightLase', tag:'Procedimiento · Dynamis',
+      lessons:[
+        {title:'Base científica: tightening del tejido palatino', type:'image', src:img('Fundamento cientifico NightLase'),
+         desc:'NightLase utiliza el Er:YAG en modo no ablativo para inducir contracción térmica y remodelación de colágeno en el tejido blando del paladar y la vía aérea superior, reduciendo la vibración tisular asociada al ronquido simple.',
+         points:[
+           'El calentamiento controlado del tejido palatino blando genera contracción de colágeno y mayor firmeza tisular.',
+           'Menor laxitud tisular se traduce en menor vibración del paladar blando durante el sueño — mecanismo del ronquido simple.',
+           'Es un abordaje no invasivo, sin anestesia ni tiempo de recuperación, indicado en ronquido primario no obstructivo.',
+           'No sustituye el estudio ni tratamiento de apnea obstructiva del sueño diagnosticada — requiere evaluación médica previa.'
+         ]},
+        {title:'Selección de paciente y descarte de apnea', type:'image', src:img('Seleccion descarte NightLase'),
+         desc:'Criterios de candidatura y la importancia de descartar apnea obstructiva antes de iniciar el protocolo.',
+         points:[
+           'Candidato ideal: ronquido simple sin diagnóstico de apnea obstructiva del sueño (AOS).',
+           'Ante sospecha de AOS (pausas respiratorias, somnolencia diurna severa), derivar a estudio de sueño antes de tratar.',
+           'Contraindicado en infección activa de vía aérea superior o cirugía reciente de paladar.',
+           'Documentar antecedente de ronquido: frecuencia, intensidad reportada por el compañero de cama, factores agravantes.'
+         ]},
+        {title:'Configuración del equipo', type:'image', src:img('Configuracion Dynamis NightLase'),
+         desc:'Selección de handpiece intraoral y parámetros de partida para el tejido palatino.',
+         points:[
+           'Handpiece intraoral específico, calibrado y esterilizado según protocolo antes de cada paciente.',
+           'Energía de partida conservadora dado que el tejido palatino es delicado y muy vascularizado.',
+           'Cobertura uniforme del paladar blando y úvula, evitando concentrar energía en un solo punto.',
+           'Verificar reflejo nauseoso y tolerancia del paciente antes de iniciar el protocolo completo.'
+         ]},
+        {title:'Técnica y número de sesiones', type:'image', src:img('Tecnica sesiones NightLase'),
+         desc:'Protocolo de sesiones recomendado y qué esperar en términos de mejoría subjetiva.',
+         points:[
+           'Protocolo estándar: 3 sesiones espaciadas 2-3 semanas, con mantenimiento anual según recurrencia.',
+           'La mejoría se evalúa por reporte subjetivo del paciente y su acompañante, no por imagenología.',
+           'Sesión breve (10-15 min), sin anestesia, con retorno inmediato a actividades habituales.',
+           'Explicar que el efecto es gradual y acumulativo a lo largo de las tres sesiones.'
+         ]},
+        {title:'Criterios de derivación', type:'image', src:img('Derivacion NightLase'),
+         desc:'Cuándo derivar a evaluación médica especializada en lugar de continuar el protocolo estético.',
+         points:[
+           'Persistencia o aparición de pausas respiratorias reportadas: derivar a estudio de sueño de inmediato.',
+           'Ausencia de mejoría subjetiva tras el protocolo completo: reevaluar diagnóstico diferencial.',
+           'Dolor persistente o dificultad para tragar más allá de 48h: evaluación médica presencial.',
+           'Documentar siempre la derivación y el motivo en la ficha clínica del paciente.'
+         ]}
+      ]
+    }
+  };
+
+  let currentCourseId = null, currentLesson = 0;
+
+  function openCourse(id){
+    const course = COURSES[id];
+    if(!course) return;
+    currentCourseId = id; currentLesson = 0;
+    document.getElementById('courseTag').textContent = course.tag;
+    document.getElementById('courseTitle').textContent = course.title;
+    renderSidebar(); renderLesson();
+    document.getElementById('courseOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCourse(){
+    document.getElementById('courseOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+  function renderSidebar(){
+    const course = COURSES[currentCourseId];
+    const sb = document.getElementById('courseSidebar');
+    sb.innerHTML = course.lessons.map((l,i)=>
+      '<button class="course-lesson-item ' + (i===currentLesson?'active':'') + '" onclick="goLesson(' + i + ')">' +
+      '<span class="cli-num">0' + (i+1) + '</span><span class="cli-title">' + l.title + '</span></button>'
+    ).join('');
+  }
+  function goLesson(i){ currentLesson = i; renderSidebar(); renderLesson(); }
+  function stepLesson(dir){
+    const course = COURSES[currentCourseId];
+    const n = currentLesson + dir;
+    if(n < 0 || n >= course.lessons.length) return;
+    currentLesson = n; renderSidebar(); renderLesson();
+  }
+  function renderLesson(){
+    const course = COURSES[currentCourseId];
+    const l = course.lessons[currentLesson];
+    const media = document.getElementById('courseMedia');
+    media.innerHTML = l.type === 'video'
+      ? '<iframe src="' + l.src + '" title="' + l.title + '" allowfullscreen loading="lazy"></iframe>'
+      : '<img src="' + l.src + '" alt="' + l.title + '">';
+    document.getElementById('courseLessonNum').textContent = 'Lección ' + (currentLesson+1) + ' de ' + course.lessons.length;
+    document.getElementById('courseLessonTitle').textContent = l.title;
+    document.getElementById('courseLessonDesc').textContent = l.desc;
+    const pointsEl = document.getElementById('courseLessonPoints');
+    pointsEl.innerHTML = (l.points || []).map(p => '<li>' + p + '</li>').join('');
+    document.getElementById('courseProgress').textContent = (currentLesson+1) + ' / ' + course.lessons.length;
+    document.getElementById('prevLessonBtn').disabled = currentLesson === 0;
+    const nextBtn = document.getElementById('nextLessonBtn');
+    const isLast = currentLesson === course.lessons.length - 1;
+    nextBtn.disabled = isLast;
+    nextBtn.textContent = isLast ? 'Curso completado ✓' : 'Siguiente →';
+  }
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape') closeCourse();
+  });
+</script>
+
+</body>
+</html>
