@@ -499,9 +499,79 @@
   .foot-legal{width:100%; margin-top:40px; padding-top:24px; border-top:1px solid var(--line); font-family:var(--mono); font-size:.62rem; color:var(--bone-dim); letter-spacing:.04em;}
 
   @media(max-width:640px){
-    section{padding:90px 6vw;}
-    .machine-info{padding:34px 26px;}
+  /* ============ COURSE PRICE / BUY ============ */
+  .course-price-tag{
+    display:inline-flex; align-items:center; gap:8px; font-family:var(--mono); font-size:.62rem;
+    letter-spacing:.08em; text-transform:uppercase; color:var(--gold-light); border:1px solid var(--gold-dim);
+    padding:5px 10px; border-radius:2px; margin-top:8px;
   }
+  .btn-buy{
+    font-family:var(--mono); font-size:.68rem; letter-spacing:.05em; text-transform:uppercase;
+    background:linear-gradient(120deg, var(--ember), var(--fotona-red)); color:var(--bone);
+    padding:11px 18px; border-radius:2px; border:1px solid transparent; cursor:pointer; transition:all .25s;
+    white-space:nowrap;
+  }
+  .btn-buy:hover{transform:translateY(-1px); box-shadow:0 8px 20px -6px rgba(255,48,80,.55);}
+  .course-top-actions{display:flex; align-items:center; gap:10px; flex-shrink:0;}
+
+  /* ============ CHECKOUT OVERLAY ============ */
+  .checkout-overlay{
+    position:fixed; inset:0; z-index:950; background:rgba(var(--obsidian-rgb),.94);
+    backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:center;
+    opacity:0; pointer-events:none; transition:opacity .3s ease; padding:4vh 4vw; overflow-y:auto;
+  }
+  .checkout-overlay.open{opacity:1; pointer-events:auto;}
+  .checkout-panel{
+    width:100%; max-width:560px; background:var(--charcoal); border:1px solid var(--line);
+    transform:translateY(16px); transition:transform .35s ease; margin:auto;
+  }
+  .checkout-overlay.open .checkout-panel{transform:translateY(0);}
+  .checkout-top{
+    display:flex; align-items:flex-start; justify-content:space-between; padding:26px 30px;
+    border-bottom:1px solid var(--line);
+  }
+  .checkout-top-tag{font-family:var(--mono); font-size:.6rem; letter-spacing:.16em; color:var(--gold); text-transform:uppercase; margin-bottom:6px;}
+  .checkout-top h3{font-family:var(--display); font-size:1.5rem; font-weight:600;}
+  .checkout-price{font-family:var(--display); font-size:1.6rem; font-weight:600; color:var(--gold-light); margin-top:4px;}
+  .checkout-close{
+    width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:transparent;
+    color:var(--bone-dim); font-size:1rem; cursor:pointer; flex-shrink:0; transition:all .25s;
+  }
+  .checkout-close:hover{border-color:var(--gold); color:var(--gold-light);}
+  .checkout-body{padding:28px 30px 32px;}
+  .checkout-fieldset{border:none; margin-bottom:22px;}
+  .checkout-fieldset legend{
+    font-family:var(--mono); font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gold);
+    margin-bottom:14px; padding:0;
+  }
+  .checkout-row{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  .checkout-row.single{grid-template-columns:1fr;}
+  .checkout-field{margin-bottom:14px;}
+  .checkout-field label{
+    display:block; font-family:var(--mono); font-size:.62rem; letter-spacing:.06em; text-transform:uppercase;
+    color:var(--bone-dim); margin-bottom:7px;
+  }
+  .checkout-field input, .checkout-field select{
+    width:100%; background:var(--charcoal-2); border:1px solid var(--line); color:var(--bone);
+    padding:11px 13px; font-family:var(--body); font-size:.88rem; border-radius:2px; transition:border-color .25s;
+  }
+  .checkout-field input:focus, .checkout-field select:focus{outline:none; border-color:var(--gold-dim);}
+  .checkout-submit{
+    width:100%; font-family:var(--mono); font-size:.78rem; letter-spacing:.05em; text-transform:uppercase;
+    background:linear-gradient(120deg, var(--ember), var(--fotona-red)); color:var(--bone);
+    padding:16px; border-radius:2px; border:1px solid transparent; cursor:pointer; margin-top:6px; transition:all .25s;
+  }
+  .checkout-submit:hover{transform:translateY(-1px); box-shadow:0 10px 26px -8px rgba(255,48,80,.6);}
+  .checkout-note{
+    margin-top:14px; font-family:var(--mono); font-size:.62rem; color:var(--bone-dim); line-height:1.6; text-align:center;
+  }
+  .checkout-success{display:none; text-align:center; padding:20px 0 6px;}
+  .checkout-success.show{display:block;}
+  .checkout-success svg{color:#3ecf7a; margin-bottom:16px;}
+  .checkout-success h4{font-family:var(--display); font-size:1.4rem; font-weight:600; margin-bottom:10px;}
+  .checkout-success p{color:var(--bone-dim); font-size:.88rem; line-height:1.6; max-width:40ch; margin:0 auto;}
+  .checkout-form.hide{display:none;}
+  @media(max-width:600px){.checkout-row{grid-template-columns:1fr;}}
 </style>
 </head>
 <body>
@@ -632,7 +702,7 @@
       <div class="indications">
         <span class="pill">Flacidez</span><span class="pill">Vaginal</span><span class="pill">Vascular</span><span class="pill">Rejuvenecimiento</span>
       </div>
-      <button class="btn-course" style="margin-top:24px;" onclick="openCourse('dynamis')">Ver curso completo · 5 lecciones</button>
+      <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:24px;"><button class="btn-course" onclick="openCourse('dynamis')">Ver curso completo · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('dynamis')">$99 · Comprar individual</button></div>
     </div>
     <div class="machine-video">
       <div class="video-slot">
@@ -659,7 +729,7 @@
       <div class="indications">
         <span class="pill">Remoción de tatuajes</span><span class="pill">Manchas</span><span class="pill">Melasma</span>
       </div>
-      <button class="btn-course" style="margin-top:24px;" onclick="openCourse('starwalker')">Ver curso completo · 5 lecciones</button>
+      <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:24px;"><button class="btn-course" onclick="openCourse('starwalker')">Ver curso completo · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('starwalker')">$99 · Comprar individual</button></div>
     </div>
     <div class="machine-video">
       <div class="video-slot">
@@ -685,7 +755,7 @@
       <div class="indications">
         <span class="pill">Corporal</span><span class="pill">Tonificación</span><span class="pill">Flacidez</span>
       </div>
-      <button class="btn-course" style="margin-top:24px;" onclick="openCourse('starformer')">Ver curso completo · 5 lecciones</button>
+      <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:24px;"><button class="btn-course" onclick="openCourse('starformer')">Ver curso completo · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('starformer')">$99 · Comprar individual</button></div>
     </div>
     <div class="machine-video">
       <div class="video-slot">
@@ -705,7 +775,7 @@
       <div class="indications" style="margin-top:8px;">
         <span class="pill">Actualizaciones incluidas</span><span class="pill">Sin costo adicional</span>
       </div>
-      <button class="btn-course" style="margin-top:24px;" onclick="openCourse('catalogo')">Ver curso completo · 2 lecciones</button>
+      <div style="display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-top:24px;"><button class="btn-course" onclick="openCourse('catalogo')">Ver curso completo · 2 lecciones</button><button class="btn-buy" onclick="openCheckout('catalogo')">$99 · Comprar individual</button></div>
     </div>
     <div class="machine-video">
       <div class="video-slot">
@@ -740,7 +810,7 @@
         <p>Protocolo de calentamiento dérmico progresivo en 3 pasadas para estimular colágeno sin dañar la epidermis.</p>
         <div class="proc-machines">Dynamis · SP Dynamis</div>
         <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
-        <div class="proc-foot"><button class="btn-course" onclick="openCourse('flacidez')">Ver curso · 5 lecciones</button></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('flacidez')">Ver curso · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('flacidez')">$99</button></div>
       </div>
     </div>
 
@@ -754,7 +824,7 @@
         <p>Diferenciación entre lesiones epidérmicas y dérmicas, y selección de fluencia según fototipo Fitzpatrick.</p>
         <div class="proc-machines">StarWalker</div>
         <div class="fitz-tag">Fototipo recomendado <b>I – IV</b></div>
-        <div class="proc-foot"><button class="btn-course" onclick="openCourse('manchas')">Ver curso · 5 lecciones</button></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('manchas')">Ver curso · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('manchas')">$99</button></div>
       </div>
     </div>
 
@@ -768,7 +838,7 @@
         <p>Combinación Er:YAG + Nd:YAG para textura, poro y luminosidad con protocolo de recuperación mínima.</p>
         <div class="proc-machines">Dynamis</div>
         <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
-        <div class="proc-foot"><button class="btn-course" onclick="openCourse('rejuvenecimiento')">Ver curso · 5 lecciones</button></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('rejuvenecimiento')">Ver curso · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('rejuvenecimiento')">$99</button></div>
       </div>
     </div>
 
@@ -782,7 +852,7 @@
         <p>Protocolo funcional no ablativo: profundidad de tratamiento, número de pasadas y consentimiento informado.</p>
         <div class="proc-machines">Dynamis</div>
         <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
-        <div class="proc-foot"><button class="btn-course" onclick="openCourse('vaginal')">Ver curso · 5 lecciones</button></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('vaginal')">Ver curso · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('vaginal')">$99</button></div>
       </div>
     </div>
 
@@ -796,7 +866,7 @@
         <p>Mapeo de zonas, secuencia de aplicadores y combinación EMS + RF por tipo de tejido y objetivo.</p>
         <div class="proc-machines">StarFormer</div>
         <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
-        <div class="proc-foot"><button class="btn-course" onclick="openCourse('corporal')">Ver curso · 5 lecciones</button></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('corporal')">Ver curso · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('corporal')">$99</button></div>
       </div>
     </div>
 
@@ -810,7 +880,7 @@
         <p>Test de spot previo, lectura de la reacción tisular inmediata y espaciado correcto entre sesiones.</p>
         <div class="proc-machines">StarWalker</div>
         <div class="fitz-tag">Fototipo recomendado <b>I – V</b></div>
-        <div class="proc-foot"><button class="btn-course" onclick="openCourse('tatuajes')">Ver curso · 5 lecciones</button></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('tatuajes')">Ver curso · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('tatuajes')">$99</button></div>
       </div>
     </div>
 
@@ -824,7 +894,7 @@
         <p>Modo FRAC3 para remodelación de cicatrices atróficas y control de brotes activos de acné inflamatorio.</p>
         <div class="proc-machines">StarWalker · Dynamis</div>
         <div class="fitz-tag">Fototipo recomendado <b>I – IV</b></div>
-        <div class="proc-foot"><button class="btn-course" onclick="openCourse('acne')">Ver curso · 5 lecciones</button></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('acne')">Ver curso · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('acne')">$99</button></div>
       </div>
     </div>
 
@@ -838,7 +908,7 @@
         <p>Protocolo térmico controlado sobre lecho ungueal y seguimiento micológico entre sesiones.</p>
         <div class="proc-machines">Dynamis</div>
         <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
-        <div class="proc-foot"><button class="btn-course" onclick="openCourse('onicomicosis')">Ver curso · 5 lecciones</button></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('onicomicosis')">Ver curso · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('onicomicosis')">$99</button></div>
       </div>
     </div>
 
@@ -852,7 +922,7 @@
         <p>Tightening del tejido palatino y de vía aérea superior para reducción no invasiva del ronquido.</p>
         <div class="proc-machines">Dynamis</div>
         <div class="fitz-tag">Fototipo recomendado <b>I – VI</b></div>
-        <div class="proc-foot"><button class="btn-course" onclick="openCourse('nightlase')">Ver curso · 5 lecciones</button></div>
+        <div class="proc-foot"><button class="btn-course" onclick="openCourse('nightlase')">Ver curso · 5 lecciones</button><button class="btn-buy" onclick="openCheckout('nightlase')">$99</button></div>
       </div>
     </div>
 
@@ -1038,7 +1108,10 @@
         <div class="course-top-tag" id="courseTag"></div>
         <h3 id="courseTitle"></h3>
       </div>
-      <button class="course-close" onclick="closeCourse()" aria-label="Cerrar curso">✕</button>
+      <div class="course-top-actions">
+        <button class="btn-buy" onclick="openCheckout(currentCourseId)">Comprar este curso · $99</button>
+        <button class="course-close" onclick="closeCourse()" aria-label="Cerrar curso">✕</button>
+      </div>
     </div>
     <div class="course-body">
       <aside class="course-sidebar" id="courseSidebar"></aside>
@@ -1056,6 +1129,105 @@
           <button class="course-nav-btn primary" id="nextLessonBtn" onclick="stepLesson(1)">Siguiente →</button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ CHECKOUT OVERLAY (COMPRA INDIVIDUAL DE CURSO) ============ -->
+<!-- NOTA PARA DESARROLLO: este formulario es una maqueta visual. Antes de publicar,
+     reemplazar submitCheckout() por una integración real de pago (Stripe Checkout,
+     PayPal, etc.) y nunca procesar ni almacenar datos de tarjeta directamente en el
+     cliente/frontend. -->
+<div class="checkout-overlay" id="checkoutOverlay" onclick="if(event.target===this) closeCheckout();">
+  <div class="checkout-panel">
+    <div class="checkout-top">
+      <div>
+        <div class="checkout-top-tag" id="checkoutTag"></div>
+        <h3 id="checkoutTitle"></h3>
+        <div class="checkout-price" id="checkoutPrice">$99</div>
+      </div>
+      <button class="checkout-close" onclick="closeCheckout()" aria-label="Cerrar compra">✕</button>
+    </div>
+    <div class="checkout-body">
+
+      <form class="checkout-form" id="checkoutForm" onsubmit="submitCheckout(event)">
+        <fieldset class="checkout-fieldset">
+          <legend>Datos del comprador</legend>
+          <div class="checkout-row">
+            <div class="checkout-field">
+              <label for="ckName">Nombre completo</label>
+              <input type="text" id="ckName" name="ckName" required autocomplete="name">
+            </div>
+            <div class="checkout-field">
+              <label for="ckRole">Rol en la clínica</label>
+              <select id="ckRole" name="ckRole" required>
+                <option value="" disabled selected>Selecciona...</option>
+                <option value="medico">Médico</option>
+                <option value="asistente">Asistente clínico</option>
+                <option value="director">Director de clínica</option>
+                <option value="otro">Otro</option>
+              </select>
+            </div>
+          </div>
+          <div class="checkout-row">
+            <div class="checkout-field">
+              <label for="ckEmail">Correo electrónico</label>
+              <input type="email" id="ckEmail" name="ckEmail" required autocomplete="email">
+            </div>
+            <div class="checkout-field">
+              <label for="ckPhone">Teléfono</label>
+              <input type="tel" id="ckPhone" name="ckPhone" required autocomplete="tel">
+            </div>
+          </div>
+          <div class="checkout-row">
+            <div class="checkout-field">
+              <label for="ckClinic">Clínica / Institución</label>
+              <input type="text" id="ckClinic" name="ckClinic" required autocomplete="organization">
+            </div>
+            <div class="checkout-field">
+              <label for="ckCountry">País</label>
+              <input type="text" id="ckCountry" name="ckCountry" required autocomplete="country-name">
+            </div>
+          </div>
+        </fieldset>
+
+        <fieldset class="checkout-fieldset">
+          <legend>Datos de pago</legend>
+          <div class="checkout-row single">
+            <div class="checkout-field">
+              <label for="ckCardName">Nombre en la tarjeta</label>
+              <input type="text" id="ckCardName" name="ckCardName" required autocomplete="cc-name">
+            </div>
+          </div>
+          <div class="checkout-row single">
+            <div class="checkout-field">
+              <label for="ckCardNumber">Número de tarjeta</label>
+              <input type="text" id="ckCardNumber" name="ckCardNumber" inputmode="numeric" placeholder="0000 0000 0000 0000" maxlength="19" required autocomplete="cc-number">
+            </div>
+          </div>
+          <div class="checkout-row">
+            <div class="checkout-field">
+              <label for="ckCardExp">Vencimiento (MM/AA)</label>
+              <input type="text" id="ckCardExp" name="ckCardExp" placeholder="MM/AA" maxlength="5" required autocomplete="cc-exp">
+            </div>
+            <div class="checkout-field">
+              <label for="ckCardCvv">CVV</label>
+              <input type="text" id="ckCardCvv" name="ckCardCvv" inputmode="numeric" placeholder="123" maxlength="4" required autocomplete="cc-csc">
+            </div>
+          </div>
+        </fieldset>
+
+        <button type="submit" class="checkout-submit">Confirmar compra · $99</button>
+        <p class="checkout-note">Pago único, acceso inmediato y permanente a este curso. Al confirmar aceptas los términos de uso de Fotona Academy.</p>
+      </form>
+
+      <div class="checkout-success" id="checkoutSuccess">
+        <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="10"/><path d="M8 12.5l2.5 2.5L16 9"/></svg>
+        <h4>Compra confirmada</h4>
+        <p id="checkoutSuccessText"></p>
+        <button class="btn-course full" style="margin-top:24px;" onclick="closeCheckout()">Cerrar</button>
+      </div>
+
     </div>
   </div>
 </div>
@@ -1738,7 +1910,55 @@
     nextBtn.textContent = isLast ? 'Curso completado ✓' : 'Siguiente →';
   }
   document.addEventListener('keydown', function(e){
-    if(e.key === 'Escape') closeCourse();
+    if(e.key === 'Escape'){ closeCourse(); closeCheckout(); }
+  });
+
+  // ============ CHECKOUT: COMPRA INDIVIDUAL DE CURSO ($99) ============
+  let checkoutCourseId = null;
+
+  function openCheckout(id){
+    const course = COURSES[id];
+    if(!course) return;
+    checkoutCourseId = id;
+    document.getElementById('checkoutTag').textContent = course.tag;
+    document.getElementById('checkoutTitle').textContent = course.title;
+    document.getElementById('checkoutPrice').textContent = '$99';
+    document.getElementById('checkoutForm').classList.remove('hide');
+    document.getElementById('checkoutForm').reset();
+    document.getElementById('checkoutSuccess').classList.remove('show');
+    document.getElementById('checkoutOverlay').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+  function closeCheckout(){
+    document.getElementById('checkoutOverlay').classList.remove('open');
+    document.body.style.overflow = document.getElementById('courseOverlay').classList.contains('open') ? 'hidden' : '';
+  }
+  function submitCheckout(e){
+    e.preventDefault();
+    const course = COURSES[checkoutCourseId];
+    const name = document.getElementById('ckName').value.trim();
+    const email = document.getElementById('ckEmail').value.trim();
+    document.getElementById('checkoutForm').classList.add('hide');
+    document.getElementById('checkoutSuccessText').textContent =
+      'Enviamos el acceso al curso "' + (course ? course.title : '') + '" a ' + email + '. ' +
+      (name ? name + ', ya' : 'Ya') + ' puedes ingresar desde tu correo o desde el panel de tu clínica.';
+    document.getElementById('checkoutSuccess').classList.add('show');
+  }
+
+  // Formato automático del número de tarjeta (solo visual, no procesa pagos reales en esta demo)
+  document.addEventListener('input', function(e){
+    if(e.target && e.target.id === 'ckCardNumber'){
+      let v = e.target.value.replace(/\D/g,'').slice(0,16);
+      e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
+    }
+    if(e.target && e.target.id === 'ckCardExp'){
+      let v = e.target.value.replace(/\D/g,'').slice(0,4);
+      if(v.length >= 3) v = v.slice(0,2) + '/' + v.slice(2);
+      e.target.value = v;
+    }
+    if(e.target && e.target.id === 'ckCardCvv'){
+      e.target.value = e.target.value.replace(/\D/g,'').slice(0,4);
+    }
   });
 </script>
 
