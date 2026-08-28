@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
@@ -57,6 +57,7 @@ h1,h2,h3,h4,.font-display{font-family:'Manrope',sans-serif;}
   display:flex;flex-direction:column;
   gap:6px;
 }
+#sidebar-nav{flex:1;overflow-y:auto;}
 #main-col{flex:1;min-width:0;display:flex;flex-direction:column;min-height:100vh;}
 #topbar{
   position:sticky;top:0;z-index:30;
@@ -66,7 +67,7 @@ h1,h2,h3,h4,.font-display{font-family:'Manrope',sans-serif;}
   padding:14px 28px;
   display:flex;align-items:center;justify-content:space-between;gap:12px;
 }
-#view-container{flex:1;padding:26px 28px 100px;max-width:1360px;width:100%;margin:0 auto;}
+#view-container{flex:1;padding:26px 28px 100px;max-width:1360px;width:100%;margin:0 auto;contain:layout;}
 #bottomnav{display:none;}
 
 .logo-mark{
@@ -93,6 +94,7 @@ h1,h2,h3,h4,.font-display{font-family:'Manrope',sans-serif;}
   box-shadow:0 6px 16px rgba(141,41,68,0.28);
 }
 .navlink.active svg{color:#fff;}
+.navlink .nl-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);margin-left:auto;flex-shrink:0;}
 .nav-section-label{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dusty-rose);font-weight:700;margin:14px 6px 4px;}
 
 /* ---------- Cards & primitives ---------- */
@@ -166,6 +168,11 @@ h1,h2,h3,h4,.font-display{font-family:'Manrope',sans-serif;}
 .pulse-dot::after{content:"";position:absolute;inset:-5px;border-radius:50%;background:var(--gold-light);opacity:.55;animation:pulse 1.8s ease-out infinite;}
 @keyframes pulse{0%{transform:scale(.6);opacity:.6;}100%{transform:scale(2.1);opacity:0;}}
 
+/* ---------- Charts: fixed-height wrapper prevents Chart.js resize-on-scroll drift ---------- */
+.chart-wrap{position:relative;width:100%;height:230px;}
+.chart-wrap canvas{position:absolute !important;inset:0;width:100% !important;height:100% !important;}
+.chart-wrap.sm{height:190px;}
+
 /* ---------- Kanban ---------- */
 .kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(230px,1fr);gap:14px;overflow-x:auto;padding-bottom:10px;}
 .kanban-col{background:var(--blush);border-radius:16px;padding:12px;min-height:120px;}
@@ -198,6 +205,43 @@ table.riman-table tbody tr:hover{background:var(--blush);cursor:pointer;}
   display:flex;align-items:center;gap:8px;box-shadow:var(--shadow-lg);animation:toastIn .25s ease;
 }
 @keyframes toastIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+/* ---------- Voice Assistant FAB ---------- */
+.voice-fab{
+  position:fixed;right:24px;bottom:28px;z-index:60;
+  width:58px;height:58px;border-radius:50%;border:none;cursor:pointer;
+  background:linear-gradient(135deg,var(--burgundy),var(--rose) 60%,var(--gold) 130%);
+  box-shadow:0 10px 26px rgba(141,41,68,0.38);
+  display:flex;align-items:center;justify-content:center;color:#fff;
+  transition:transform .18s ease;
+}
+.voice-fab:hover{transform:scale(1.06);}
+.voice-fab svg{width:24px;height:24px;}
+@media (max-width:900px){.voice-fab{right:16px;bottom:86px;width:52px;height:52px;}.voice-fab svg{width:21px;height:21px;}}
+.voice-orb{
+  width:96px;height:96px;border-radius:50%;margin:0 auto;
+  background:linear-gradient(135deg,var(--burgundy),var(--rose),var(--gold));
+  display:flex;align-items:center;justify-content:center;color:#fff;position:relative;
+}
+.voice-orb.listening::before, .voice-orb.listening::after{
+  content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--rose);
+  animation:orbPulse 1.6s ease-out infinite;
+}
+.voice-orb.listening::after{animation-delay:.5s;}
+@keyframes orbPulse{0%{transform:scale(1);opacity:.7;}100%{transform:scale(1.9);opacity:0;}}
+.voice-bars{display:flex;align-items:center;gap:3px;height:18px;}
+.voice-bars span{width:3px;background:#fff;border-radius:2px;animation:bar 1s ease-in-out infinite;}
+.voice-bars span:nth-child(1){height:6px;animation-delay:0s;}
+.voice-bars span:nth-child(2){height:14px;animation-delay:.15s;}
+.voice-bars span:nth-child(3){height:18px;animation-delay:.3s;}
+.voice-bars span:nth-child(4){height:10px;animation-delay:.45s;}
+.voice-bars span:nth-child(5){height:15px;animation-delay:.6s;}
+@keyframes bar{0%,100%{transform:scaleY(.4);}50%{transform:scaleY(1);}}
+
+/* ---------- AI agent status dot ---------- */
+.agent-status-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.agent-status-dot.on{background:#1e7a47;box-shadow:0 0 0 3px rgba(30,122,71,0.18);}
+.agent-status-dot.busy{background:var(--gold);box-shadow:0 0 0 3px rgba(205,162,95,0.22);}
 
 /* ---------- Misc ---------- */
 .progress-track{height:8px;border-radius:99px;background:var(--blush);overflow:hidden;}
@@ -235,13 +279,19 @@ hr.line{border:none;border-top:1px solid var(--line);}
 <body>
 <script>
 /* Defensive helpers: never let a slow/blocked CDN (lucide, Chart.js) crash the app */
-function safeIcons(){ try{ if(window.lucide && typeof lucide.createIcons==='function') safeIcons(); }catch(e){} }
+function safeIcons(){ try{ if(window.lucide && typeof lucide.createIcons==='function') lucide.createIcons(); }catch(e){} }
 function safeChart(canvasEl, config){
   try{
-    if(window.Chart && canvasEl){ return new Chart(canvasEl, config); }
+    if(window.Chart && canvasEl){
+      config.options = config.options || {};
+      config.options.responsive = true;
+      config.options.maintainAspectRatio = false;
+      config.options.resizeDelay = 150;
+      return new Chart(canvasEl, config);
+    }
     if(canvasEl){
       const box = canvasEl.parentElement;
-      if(box) box.insertAdjacentHTML('beforeend', '<div class="subtle" style="font-size:12px;text-align:center;padding:30px 0;">Gráfico no disponible sin conexión.</div>');
+      if(box) box.insertAdjacentHTML('beforeend', '<div class="subtle" style="font-size:12px;text-align:center;padding:30px 0;">Chart unavailable offline.</div>');
     }
   }catch(e){}
   return null;
@@ -266,11 +316,11 @@ function safeChart(canvasEl, config){
         <div style="font-size:10.5px;color:var(--dusty-rose);font-weight:700;letter-spacing:.04em;">BUSINESS OS</div>
       </div>
     </div>
-    <div id="sidebar-nav" style="flex:1;overflow-y:auto;"></div>
+    <div id="sidebar-nav"></div>
     <div style="border-top:1px solid var(--line);padding-top:12px;margin-top:8px;">
       <div id="role-switch" class="card" style="padding:5px;display:flex;gap:4px;border-radius:13px;">
-        <button data-role="distributor" class="role-btn btn-sm" style="flex:1;border-radius:9px;border:none;font-weight:700;cursor:pointer;">Distribuidor</button>
-        <button data-role="customer" class="role-btn btn-sm" style="flex:1;border-radius:9px;border:none;font-weight:700;cursor:pointer;">Cliente</button>
+        <button data-role="distributor" class="role-btn btn-sm" style="flex:1;border-radius:9px;border:none;font-weight:700;cursor:pointer;">Distributor</button>
+        <button data-role="customer" class="role-btn btn-sm" style="flex:1;border-radius:9px;border:none;font-weight:700;cursor:pointer;">Customer</button>
       </div>
     </div>
   </aside>
@@ -278,14 +328,13 @@ function safeChart(canvasEl, config){
   <div id="main-col">
     <header id="topbar">
       <div style="display:flex;align-items:center;gap:12px;min-width:0;">
-        <div class="logo-mark" style="display:none;" id="topbar-logo">R</div>
         <div style="min-width:0;">
           <div id="topbar-title" style="font-family:'Manrope';font-weight:800;font-size:17px;letter-spacing:-.01em;">Home</div>
           <div id="topbar-sub" class="subtle" style="font-size:12px;"></div>
         </div>
       </div>
       <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-        <button id="notif-btn" class="btn btn-ghost btn-sm" style="position:relative;padding:9px;" aria-label="Notificaciones">
+        <button id="notif-btn" class="btn btn-ghost btn-sm" style="position:relative;padding:9px;" aria-label="Notifications">
           <i data-lucide="bell"></i>
           <span id="notif-dot" style="position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:var(--rose);"></span>
         </button>
@@ -298,9 +347,14 @@ function safeChart(canvasEl, config){
 
 <nav id="bottomnav"></nav>
 
+<button class="voice-fab" id="voice-fab" onclick="openVoiceAssistant()" aria-label="AI Voice Assistant">
+  <i data-lucide="mic"></i>
+</button>
+
 <div id="modal-root"><div class="modal-backdrop" onclick="closeModal()"></div><div class="modal-panel" id="modal-panel"></div></div>
 <div id="toast-root"></div>
 <script>
+safeIcons();
 /* ============================================================
    RIMAN AI APP — DEMO STATE & MOCK DATA
    ============================================================ */
@@ -311,7 +365,7 @@ const fmt = {
   pct:(n)=> Number(n).toFixed(0)+'%',
 };
 function uid(){return Math.random().toString(36).slice(2,9);}
-function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toLocaleDateString('es-CR',{day:'2-digit',month:'short'});}
+function daysAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toLocaleDateString('en-US',{day:'2-digit',month:'short'});}
 
 const RANKS = [
   {name:'Bronze', color:'#B08D57', pv:0, tv:0, recruits:0},
@@ -322,56 +376,56 @@ const RANKS = [
 ];
 
 const PRODUCTS = [
-  {id:'p1', name:'Serum Renovador de Colágeno', cat:'Skincare', price:89, img:'✨', desc:'Serum premium con péptidos que restaura firmeza y luminosidad en 14 días.'},
-  {id:'p2', name:'Crema Radiance Gold 24K', cat:'Skincare', price:112, img:'🌟', desc:'Crema nocturna con oro coloidal para regeneración celular profunda.'},
-  {id:'p3', name:'Set Limpieza Facial Ritual', cat:'Skincare', price:64, img:'💧', desc:'Ritual de limpieza en 3 pasos para todo tipo de piel.'},
-  {id:'p4', name:'Ampolletas Vitamina C+', cat:'Skincare', price:75, img:'🍊', desc:'Ampolletas antioxidantes iluminadoras de uso intensivo.'},
-  {id:'p5', name:'Mascarilla Burgundy Clay', cat:'Skincare', price:48, img:'🏺', desc:'Mascarilla de arcilla purificante con extracto de vino tinto.'},
-  {id:'p6', name:'Contorno de Ojos Diamond', cat:'Skincare', price:96, img:'💎', desc:'Tratamiento anti-edad concentrado para el contorno de ojos.'},
-  {id:'p7', name:'Protector Solar Silk SPF50', cat:'Skincare', price:52, img:'☀️', desc:'Protección diaria de acabado sedoso, no deja residuo blanco.'},
-  {id:'p8', name:'Aceite Facial Rose Gold', cat:'Skincare', price:68, img:'🌹', desc:'Aceite nutritivo de rosa mosqueta y oro para piel radiante.'},
-  {id:'p9', name:'Kit Iniciación RIMAN', cat:'Bundles', price:210, img:'🎁', desc:'Kit completo de bienvenida: limpieza, serum y crema.'},
-  {id:'p10', name:'Suplemento Beauty Collagen', cat:'Wellness', price:58, img:'💊', desc:'Colágeno hidrolizado en polvo, sabor cítrico.'},
+  {id:'p1', name:'Collagen Renewal Serum', cat:'Skincare', price:89, img:'✨', desc:'Premium peptide serum that restores firmness and radiance in 14 days.'},
+  {id:'p2', name:'24K Gold Radiance Cream', cat:'Skincare', price:112, img:'🌟', desc:'Night cream with colloidal gold for deep cellular renewal.'},
+  {id:'p3', name:'Ritual Cleansing Set', cat:'Skincare', price:64, img:'💧', desc:'3-step cleansing ritual for all skin types.'},
+  {id:'p4', name:'Vitamin C+ Ampoules', cat:'Skincare', price:75, img:'🍊', desc:'Antioxidant ampoules for intensive brightening.'},
+  {id:'p5', name:'Burgundy Clay Mask', cat:'Skincare', price:48, img:'🏺', desc:'Purifying clay mask with red wine extract.'},
+  {id:'p6', name:'Diamond Eye Contour', cat:'Skincare', price:96, img:'💎', desc:'Concentrated anti-aging treatment for the eye area.'},
+  {id:'p7', name:'Silk Sunscreen SPF50', cat:'Skincare', price:52, img:'☀️', desc:'Daily protection with a silky finish, no white cast.'},
+  {id:'p8', name:'Rose Gold Facial Oil', cat:'Skincare', price:68, img:'🌹', desc:'Nourishing rosehip and gold oil for radiant skin.'},
+  {id:'p9', name:'RIMAN Starter Kit', cat:'Bundles', price:210, img:'🎁', desc:'Complete welcome kit: cleanser, serum and cream.'},
+  {id:'p10', name:'Beauty Collagen Supplement', cat:'Wellness', price:58, img:'💊', desc:'Hydrolyzed collagen powder, citrus flavor.'},
 ];
 
 const LEADS = [
-  {id:uid(), name:'Andrea Solano', score:92, interest:'Skincare anti-edad', prob:78, product:'Contorno de Ojos Diamond', next:'Enviar muestra + seguimiento en 2 días', stage:'Interested', avatarColor:'#B84C6B'},
-  {id:uid(), name:'Karla Jiménez', score:87, interest:'Rutina facial completa', prob:71, product:'Kit Iniciación RIMAN', next:'Llamar para cerrar venta', stage:'Contacted', avatarColor:'#8D2944'},
-  {id:uid(), name:'Marcela Vindas', score:65, interest:'Protección solar', prob:54, product:'Protector Solar Silk SPF50', stage:'New', next:'Enviar mensaje de bienvenida', avatarColor:'#C98B9C'},
-  {id:uid(), name:'Fabiola Rojas', score:95, interest:'Tratamiento VIP', prob:88, product:'Crema Radiance Gold 24K', next:'Agendar videollamada de cierre', stage:'Customer', avatarColor:'#CDA25F'},
-  {id:uid(), name:'Gabriela Mora', score:58, interest:'Limpieza facial', prob:41, product:'Set Limpieza Facial Ritual', next:'Enviar contenido educativo', stage:'New', avatarColor:'#642033'},
-  {id:uid(), name:'Paola Chinchilla', score:81, interest:'Suplementos belleza', prob:66, product:'Suplemento Beauty Collagen', next:'Compartir testimonio de clienta', stage:'Contacted', avatarColor:'#B84C6B'},
-  {id:uid(), name:'Ingrid Salas', score:73, interest:'Vitamina C', prob:60, product:'Ampolletas Vitamina C+', stage:'Interested', next:'Enviar comparación antes/después', avatarColor:'#8D2944'},
-  {id:uid(), name:'Natalia Ureña', score:97, interest:'Membresía VVIP', prob:91, product:'Kit Iniciación RIMAN', stage:'VIP Customer', next:'Ofrecer upgrade a distribuidora', avatarColor:'#CDA25F'},
+  {id:uid(), name:'Andrea Solano', score:92, interest:'Anti-aging skincare', prob:78, product:'Diamond Eye Contour', next:'Send sample + follow up in 2 days', stage:'Interested', avatarColor:'#B84C6B'},
+  {id:uid(), name:'Karla Jimenez', score:87, interest:'Full facial routine', prob:71, product:'RIMAN Starter Kit', next:'Call to close the sale', stage:'Contacted', avatarColor:'#8D2944'},
+  {id:uid(), name:'Marcela Vindas', score:65, interest:'Sun protection', prob:54, product:'Silk Sunscreen SPF50', stage:'New', next:'Send welcome message', avatarColor:'#C98B9C'},
+  {id:uid(), name:'Fabiola Rojas', score:95, interest:'VIP treatment', prob:88, product:'24K Gold Radiance Cream', next:'Schedule closing video call', stage:'Customer', avatarColor:'#CDA25F'},
+  {id:uid(), name:'Gabriela Mora', score:58, interest:'Facial cleansing', prob:41, product:'Ritual Cleansing Set', next:'Send educational content', stage:'New', avatarColor:'#642033'},
+  {id:uid(), name:'Paola Chinchilla', score:81, interest:'Beauty supplements', prob:66, product:'Beauty Collagen Supplement', next:'Share a customer testimonial', stage:'Contacted', avatarColor:'#B84C6B'},
+  {id:uid(), name:'Ingrid Salas', score:73, interest:'Vitamin C', prob:60, product:'Vitamin C+ Ampoules', stage:'Interested', next:'Send before/after comparison', avatarColor:'#8D2944'},
+  {id:uid(), name:'Natalia Urena', score:97, interest:'VVIP membership', prob:91, product:'RIMAN Starter Kit', stage:'VIP Customer', next:'Offer distributor upgrade', avatarColor:'#CDA25F'},
 ];
 
 const CUSTOMERS = [
-  {id:uid(), name:'Fabiola Rojas', level:'VVIP', spend:1840, lastInt:'Hace 2 días', aiScore:95, orders:9, rec:'Crema Radiance Gold 24K', followup:'Feliz cumpleaños el 30 — enviar detalle', avatarColor:'#8D2944'},
-  {id:uid(), name:'Natalia Ureña', level:'VIP', spend:1120, lastInt:'Hace 5 días', aiScore:91, orders:6, rec:'Kit Iniciación RIMAN', followup:'Recompra estimada en 6 días', avatarColor:'#B84C6B'},
-  {id:uid(), name:'Marcela Vindas', level:'Customer', spend:210, lastInt:'Hace 12 días', aiScore:58, orders:2, rec:'Protector Solar Silk SPF50', followup:'No compra hace 12 días — reactivar', avatarColor:'#C98B9C'},
-  {id:uid(), name:'Karla Jiménez', level:'Customer', spend:340, lastInt:'Hoy', aiScore:74, orders:3, rec:'Ampolletas Vitamina C+', followup:'Consultó por rutina anti-edad', avatarColor:'#CDA25F'},
-  {id:uid(), name:'Sofía Araya', level:'VIP', spend:980, lastInt:'Hace 1 día', aiScore:88, orders:7, rec:'Aceite Facial Rose Gold', followup:'Pidió recomendación de regalo', avatarColor:'#642033'},
-  {id:uid(), name:'Diana Castro', level:'Customer', spend:150, lastInt:'Hace 20 días', aiScore:39, orders:1, rec:'Set Limpieza Facial Ritual', followup:'Riesgo de abandono — enviar descuento', avatarColor:'#777777'},
+  {id:uid(), name:'Fabiola Rojas', level:'VVIP', spend:1840, lastInt:'2 days ago', aiScore:95, orders:9, rec:'24K Gold Radiance Cream', followup:'Birthday on the 30th — send a gift note', avatarColor:'#8D2944'},
+  {id:uid(), name:'Natalia Urena', level:'VIP', spend:1120, lastInt:'5 days ago', aiScore:91, orders:6, rec:'RIMAN Starter Kit', followup:'Repeat purchase expected in 6 days', avatarColor:'#B84C6B'},
+  {id:uid(), name:'Marcela Vindas', level:'Customer', spend:210, lastInt:'12 days ago', aiScore:58, orders:2, rec:'Silk Sunscreen SPF50', followup:'No purchase in 12 days — reactivate', avatarColor:'#C98B9C'},
+  {id:uid(), name:'Karla Jimenez', level:'Customer', spend:340, lastInt:'Today', aiScore:74, orders:3, rec:'Vitamin C+ Ampoules', followup:'Asked about an anti-aging routine', avatarColor:'#CDA25F'},
+  {id:uid(), name:'Sofia Araya', level:'VIP', spend:980, lastInt:'1 day ago', aiScore:88, orders:7, rec:'Rose Gold Facial Oil', followup:'Asked for a gift recommendation', avatarColor:'#642033'},
+  {id:uid(), name:'Diana Castro', level:'Customer', spend:150, lastInt:'20 days ago', aiScore:39, orders:1, rec:'Ritual Cleansing Set', followup:'Churn risk — send a discount', avatarColor:'#777777'},
 ];
 
 const PROSPECTS = [
-  {id:uid(), name:'Melissa Vargas', match:94, profile:'Influencer de belleza, 4.2k seguidores', stage:'Interested', avatarColor:'#8D2944'},
-  {id:uid(), name:'Rocío Herrera', match:88, profile:'Ex-clienta VIP, alto potencial de venta', stage:'Invited', avatarColor:'#B84C6B'},
-  {id:uid(), name:'Yendry Castillo', match:81, profile:'Emprendedora, busca ingreso adicional', stage:'Prospect', avatarColor:'#CDA25F'},
-  {id:uid(), name:'Laura Méndez', match:90, profile:'Referida por Fabiola Rojas (top distribuidora)', stage:'Training', avatarColor:'#C98B9C'},
-  {id:uid(), name:'Vanessa Solís', match:76, profile:'Interesada en skincare, activa en redes', stage:'Prospect', avatarColor:'#642033'},
-  {id:uid(), name:'Tatiana Brenes', match:97, profile:'Ex-asesora de belleza en otra marca', stage:'Active Distributor', avatarColor:'#8D2944'},
+  {id:uid(), name:'Melissa Vargas', match:94, profile:'Beauty influencer, 4.2k followers', stage:'Interested', avatarColor:'#8D2944'},
+  {id:uid(), name:'Rocio Herrera', match:88, profile:'Former VIP customer, high sales potential', stage:'Invited', avatarColor:'#B84C6B'},
+  {id:uid(), name:'Yendry Castillo', match:81, profile:'Entrepreneur looking for extra income', stage:'Prospect', avatarColor:'#CDA25F'},
+  {id:uid(), name:'Laura Mendez', match:90, profile:'Referred by Fabiola Rojas (top distributor)', stage:'Training', avatarColor:'#C98B9C'},
+  {id:uid(), name:'Vanessa Solis', match:76, profile:'Interested in skincare, active on social media', stage:'Prospect', avatarColor:'#642033'},
+  {id:uid(), name:'Tatiana Brenes', match:97, profile:'Former beauty advisor at another brand', stage:'Active Distributor', avatarColor:'#8D2944'},
 ];
 
 const NETWORK = {
   l1: [
     {name:'Fabiola Rojas', sales:8400, pv:1200, gv:8400, recruits:5, active:true},
-    {name:'Natalia Ureña', sales:6100, pv:950, gv:6100, recruits:3, active:true},
+    {name:'Natalia Urena', sales:6100, pv:950, gv:6100, recruits:3, active:true},
     {name:'Tatiana Brenes', sales:2200, pv:600, gv:2200, recruits:1, active:true},
   ],
   l2: [
-    {name:'Sofía Araya', sales:3100, pv:500, gv:3100, recruits:2, active:true},
-    {name:'Karla Jiménez', sales:1800, pv:300, gv:1800, recruits:0, active:true},
+    {name:'Sofia Araya', sales:3100, pv:500, gv:3100, recruits:2, active:true},
+    {name:'Karla Jimenez', sales:1800, pv:300, gv:1800, recruits:0, active:true},
     {name:'Marcela Vindas', sales:900, pv:150, gv:900, recruits:1, active:true},
     {name:'Ingrid Salas', sales:1200, pv:220, gv:1200, recruits:0, active:false},
   ],
@@ -383,89 +437,139 @@ const NETWORK = {
 };
 
 const ORDERS = [
-  {id:'RM-10422', date:daysAgo(1), customer:'Fabiola Rojas', items:'Crema Radiance Gold 24K x2', total:224, status:'Entregado'},
-  {id:'RM-10419', date:daysAgo(2), customer:'Natalia Ureña', items:'Kit Iniciación RIMAN', total:210, status:'En camino'},
-  {id:'RM-10415', date:daysAgo(4), customer:'Sofía Araya', items:'Aceite Facial Rose Gold', total:68, status:'Entregado'},
-  {id:'RM-10410', date:daysAgo(6), customer:'Karla Jiménez', items:'Ampolletas Vitamina C+ x3', total:225, status:'Entregado'},
-  {id:'RM-10402', date:daysAgo(9), customer:'Marcela Vindas', items:'Protector Solar Silk SPF50', total:52, status:'Cancelado'},
-  {id:'RM-10398', date:daysAgo(11), customer:'Diana Castro', items:'Set Limpieza Facial Ritual', total:150, status:'Entregado'},
+  {id:'RM-10422', date:daysAgo(1), customer:'Fabiola Rojas', items:'24K Gold Radiance Cream x2', total:224, status:'Delivered'},
+  {id:'RM-10419', date:daysAgo(2), customer:'Natalia Urena', items:'RIMAN Starter Kit', total:210, status:'In transit'},
+  {id:'RM-10415', date:daysAgo(4), customer:'Sofia Araya', items:'Rose Gold Facial Oil', total:68, status:'Delivered'},
+  {id:'RM-10410', date:daysAgo(6), customer:'Karla Jimenez', items:'Vitamin C+ Ampoules x3', total:225, status:'Delivered'},
+  {id:'RM-10402', date:daysAgo(9), customer:'Marcela Vindas', items:'Silk Sunscreen SPF50', total:52, status:'Canceled'},
+  {id:'RM-10398', date:daysAgo(11), customer:'Diana Castro', items:'Ritual Cleansing Set', total:150, status:'Delivered'},
 ];
 
 const COMM_HISTORY = [
-  {date:daysAgo(1), type:'Comisión de venta', amount:42, status:'Pagada'},
-  {date:daysAgo(3), type:'Comisión de equipo', amount:118, status:'Pagada'},
-  {date:daysAgo(5), type:'Bono de reclutamiento', amount:75, status:'Pagada'},
-  {date:daysAgo(8), type:'Bono de rango', amount:150, status:'Pendiente'},
-  {date:daysAgo(12), type:'Incentivo mensual', amount:60, status:'Pagada'},
-  {date:daysAgo(15), type:'Comisión de venta', amount:33, status:'Pagada'},
+  {date:daysAgo(1), type:'Retail commission', amount:42, status:'Paid'},
+  {date:daysAgo(3), type:'Team commission', amount:118, status:'Paid'},
+  {date:daysAgo(5), type:'Recruitment bonus', amount:75, status:'Paid'},
+  {date:daysAgo(8), type:'Rank bonus', amount:150, status:'Pending'},
+  {date:daysAgo(12), type:'Monthly incentive', amount:60, status:'Paid'},
+  {date:daysAgo(15), type:'Retail commission', amount:33, status:'Paid'},
 ];
 
 const REWARD_HISTORY = [
-  {date:daysAgo(1), desc:'Compra Crema Radiance Gold', delta:+112},
-  {date:daysAgo(4), desc:'Bono por meta mensual', delta:+250},
-  {date:daysAgo(7), desc:'Canje: Descuento 20% siguiente compra', delta:-300},
-  {date:daysAgo(10), desc:'Compra Kit Iniciación', delta:+210},
-  {date:daysAgo(18), desc:'Referido activo (Karla J.)', delta:+150},
+  {date:daysAgo(1), desc:'Purchase: 24K Gold Radiance Cream', delta:+112},
+  {date:daysAgo(4), desc:'Monthly goal bonus', delta:+250},
+  {date:daysAgo(7), desc:'Redeemed: 20% off next purchase', delta:-300},
+  {date:daysAgo(10), desc:'Purchase: Starter Kit', delta:+210},
+  {date:daysAgo(18), desc:'Active referral (Karla J.)', delta:+150},
 ];
 
 const REDEEM_CATALOG = [
-  {id:'r1', name:'Descuento 15% próxima compra', cost:150, icon:'percent'},
-  {id:'r2', name:'Envío gratis x3 pedidos', cost:120, icon:'truck'},
-  {id:'r3', name:'Serum Renovador de Colágeno', cost:600, icon:'sparkles'},
-  {id:'r4', name:'Acceso anticipado a lanzamientos', cost:200, icon:'rocket'},
-  {id:'r5', name:'Sesión virtual AI Beauty Advisor Pro', cost:350, icon:'wand-2'},
-  {id:'r6', name:'Kit Iniciación RIMAN', cost:1400, icon:'gift'},
+  {id:'r1', name:'15% off next purchase', cost:150, icon:'percent'},
+  {id:'r2', name:'Free shipping x3 orders', cost:120, icon:'truck'},
+  {id:'r3', name:'Collagen Renewal Serum', cost:600, icon:'sparkles'},
+  {id:'r4', name:'Early access to new launches', cost:200, icon:'rocket'},
+  {id:'r5', name:'AI Beauty Advisor Pro session', cost:350, icon:'wand-2'},
+  {id:'r6', name:'RIMAN Starter Kit', cost:1400, icon:'gift'},
 ];
 
 const AI_COACH_ACTIONS = [
-  {icon:'phone-call', cat:'Seguimiento', text:'Llama a Karla Jiménez — lista para cerrar compra de Kit Iniciación', impact:'Alto', done:false},
-  {icon:'users', cat:'Reclutamiento', text:'Contacta a Melissa Vargas (94% match) — el mejor momento es hoy en la tarde', impact:'Alto', done:false},
-  {icon:'message-circle', cat:'Cliente', text:'Escribe a Marcela Vindas — no compra hace 12 días, riesgo de abandono', impact:'Medio', done:false},
-  {icon:'megaphone', cat:'Promoción', text:'Comparte la promo de Vitamina C+ en tu estado de WhatsApp hoy', impact:'Medio', done:false},
-  {icon:'trending-up', cat:'Ventas', text:'Sugiere upgrade a Fabiola Rojas — está a $60 de nivel VVIP', impact:'Alto', done:false},
-  {icon:'network', cat:'Red', text:'Felicita a Tatiana Brenes por su primer mes activo — fortalece retención', impact:'Bajo', done:false},
+  {icon:'phone-call', cat:'Follow-up', text:'Call Karla Jimenez — ready to close on the Starter Kit', impact:'High', done:false},
+  {icon:'users', cat:'Recruitment', text:'Reach out to Melissa Vargas (94% match) — best time is this afternoon', impact:'High', done:false},
+  {icon:'message-circle', cat:'Customer', text:'Message Marcela Vindas — no purchase in 12 days, churn risk', impact:'Medium', done:false},
+  {icon:'megaphone', cat:'Promotion', text:'Share the Vitamin C+ promo on your WhatsApp status today', impact:'Medium', done:false},
+  {icon:'trending-up', cat:'Sales', text:'Suggest an upgrade to Fabiola Rojas — she is $60 away from VVIP', impact:'High', done:false},
+  {icon:'network', cat:'Network', text:'Congratulate Tatiana Brenes on her first active month — boosts retention', impact:'Low', done:false},
 ];
 
 const CONTENT_TOPICS = {
-  'Venta de producto':[
-    '✨ Tu piel merece un ritual de verdad. El Serum Renovador de Colágeno trabaja mientras duermes — resultados visibles en 14 días. ¿Lista para probarlo?',
-    '🌟 Este mes: Crema Radiance Gold 24K con 15% off para las primeras 10 clientas. Escríbeme "RADIANCE" y te cuento cómo pedirla.'
+  'Product Sales':[
+    '✨ Your skin deserves a real ritual. The Collagen Renewal Serum works while you sleep — visible results in 14 days. Ready to try it?',
+    '🌟 This month: 24K Gold Radiance Cream with 15% off for the first 10 customers. Message me "RADIANCE" and I\'ll walk you through it.'
   ],
-  'Reclutamiento':[
-    '💫 ¿Sientes que tu talento vale más de lo que ganas hoy? Te invito a conocer cómo estoy construyendo un negocio de belleza con RIMAN, con el respaldo de IA que te dice exactamente qué hacer cada día.',
-    '🚀 Busco 3 mujeres emprendedoras para mi equipo este mes. Si te interesa vender productos premium y crear ingreso extra, hablemos 15 minutos.'
+  'Recruiting':[
+    '💫 Do you feel your talent is worth more than what you earn today? I\'d love to show you how I\'m building a beauty business with RIMAN, backed by AI that tells me exactly what to do every day.',
+    '🚀 Looking for 3 driven women to join my team this month. If selling premium products and building extra income interests you, let\'s talk for 15 minutes.'
   ],
-  'Seguimiento':[
-    'Hola! Vi que estabas interesada en el Contorno de Ojos Diamond 💎 ¿Tienes alguna duda que te pueda resolver antes de tu pedido?',
-    '¡Hola de nuevo! Quería saber cómo te fue con el producto que te envié la semana pasada. Cuéntame 😊'
+  'Follow-up':[
+    'Hi! I saw you were interested in the Diamond Eye Contour 💎 Any questions I can answer before you order?',
+    'Hey again! I wanted to check in on how the product I sent last week is working for you. Let me know 😊'
   ],
-  'Promoción':[
-    '🎉 FIN DE SEMANA DORADO: 2x1 en ampolletas de Vitamina C+ solo hasta el domingo. Reserva la tuya ahora.',
-    '✨ Nueva colección disponible. Las primeras 5 clientas reciben una mascarilla de regalo con su compra.'
+  'Promotion':[
+    '🎉 GOLDEN WEEKEND: Buy 1 get 1 on Vitamin C+ ampoules, only through Sunday. Reserve yours now.',
+    '✨ New collection just dropped. The first 5 customers get a free mask with their order.'
   ],
-  'Reactivación de clientes':[
-    'Te extrañamos 💕 Como cliente especial tienes un 20% en tu próxima compra. Válido esta semana — ¿te ayudo a elegir algo?',
-    'Ha pasado un tiempo desde tu última compra. Quiero regalarte envío gratis en tu próximo pedido, solo dime qué necesitas.'
+  'Customer Reactivation':[
+    'We miss you 💕 As a special customer you have 20% off your next order. Valid this week only — want help choosing something?',
+    'It\'s been a while since your last order. I want to gift you free shipping on your next one — just tell me what you need.'
   ],
-  'Redes sociales':[
-    '📸 Antes / Después con 21 días de Crema Radiance Gold 24K. La constancia es la verdadera fórmula ✨ #RimanGlow',
-    '🎥 3 pasos para una piel radiante esta noche: limpieza, serum, crema. Guarda este post como tu ritual diario 💗'
+  'Social Media':[
+    '📸 Before / After with 21 days of the 24K Gold Radiance Cream. Consistency is the real formula ✨ #RimanGlow',
+    '🎥 3 steps to glowing skin tonight: cleanse, serum, cream. Save this post as your daily ritual 💗'
   ],
 };
 
 const OBJECTIONS = [
-  {q:'"Está muy caro"', a:'Entiendo, y por eso te cuento: es una inversión de menos de $3 al día que reemplaza 3 productos en uno. Además tenemos el plan de 2 pagos sin intereses.'},
-  {q:'"Ya uso otra marca"', a:'¡Perfecto! Te propongo probarlo junto a tu rutina actual por 14 días — si no ves diferencia, te ayudo con otra opción sin compromiso.'},
-  {q:'"Necesito pensarlo"', a:'Claro, tómate tu tiempo 💕 Te dejo apartado el precio de hoy por 48 horas por si decides seguir adelante.'},
-  {q:'"No sé si me funcionará"', a:'Total tiene sentido. Cuéntame tu tipo de piel y te armo una recomendación personalizada con la IA para asegurarnos que sea el producto correcto.'},
+  {q:'"It\'s too expensive"', a:'I hear you — think of it as under $3 a day replacing 3 products in one. We also have a 2-payment plan with no interest.'},
+  {q:'"I already use another brand"', a:'Perfect! Try it alongside your current routine for 14 days — if you don\'t see a difference, I\'ll help you find another option, no pressure.'},
+  {q:'"I need to think about it"', a:'Of course, take your time 💕 I\'ll hold today\'s price for 48 hours in case you decide to move forward.'},
+  {q:'"I\'m not sure it will work for me"', a:'Totally fair. Tell me about your skin type and I\'ll build a personalized AI recommendation to make sure it\'s the right fit.'},
 ];
 
 const BEAUTY_QUIZ_RESULTS = [
-  {tone:'Piel mixta con tendencia a brillo en zona T', recs:['p3','p7','p4'], tip:'Prioriza limpieza suave 2x al día y protector solar en gel para controlar el brillo sin resecar.'},
-  {tone:'Piel seca con signos de deshidratación', recs:['p2','p8','p6'], tip:'Incorpora un aceite facial antes de dormir para sellar la hidratación de la crema nocturna.'},
-  {tone:'Piel con primeros signos de la edad', recs:['p1','p6','p2'], tip:'El dúo serum + contorno de ojos es tu mejor aliado — aplica de mañana y noche para resultados en 3 semanas.'},
+  {tone:'Combination skin with T-zone shine', recs:['p3','p7','p4'], tip:'Prioritize gentle cleansing twice a day and a gel sunscreen to control shine without drying out.'},
+  {tone:'Dry skin with signs of dehydration', recs:['p2','p8','p6'], tip:'Add a facial oil before bed to seal in the moisture from your night cream.'},
+  {tone:'Skin with early signs of aging', recs:['p1','p6','p2'], tip:'The serum + eye contour combo is your best ally — apply morning and night for results in 3 weeks.'},
 ];
 
+/* ============================================================
+   AI AGENTS — autonomous background agents
+   ============================================================ */
+const AGENTS = [
+  {id:'trend', name:'Trend Analysis Agent', icon:'trending-up', color:'#8D2944',
+   desc:'Continuously scans skincare trends, seasonality and competitor pricing to tell you what to promote next.',
+   insights:[
+     'Vitamin C serums are trending +34% in your region this week — push the Vitamin C+ Ampoules.',
+     'Searches for "anti-aging routines" spiked 21% this month among your customer segment.',
+     'Gold-infused skincare is outperforming category average by 18% this quarter.'
+   ]},
+  {id:'content', name:'Content Agent', icon:'pen-tool', color:'#B84C6B',
+   desc:'Auto-drafts social captions, WhatsApp scripts and promo copy tuned to your brand voice.',
+   insights:[
+     '6 new captions are ready for review in AI Content Studio.',
+     'Reactivation message A/B test: version 2 is converting 12% better.',
+     'Drafted 3 Reels scripts based on your best-performing post this month.'
+   ]},
+  {id:'social', name:'Social Listening Agent', icon:'radio', color:'#CDA25F',
+   desc:'Monitors social mentions, comments and DMs to surface warm leads in real time.',
+   insights:[
+     '3 Instagram comments show buying intent — review them in Leads.',
+     'A customer tagged you in a Story with 340 views — good moment to follow up.',
+     'Sentiment around your last post is 92% positive, mostly about the Gold Cream.'
+   ]},
+  {id:'geo', name:'Geo-Prospecting Agent', icon:'map-pin', color:'#642033',
+   desc:'Analyzes location data to find customer and recruit clusters near you.',
+   insights:[
+     'High-density prospect cluster detected in Escazú, 12 minutes from your last route.',
+     '4 unengaged leads are within 3km of your next scheduled delivery.',
+     'Recruitment interest is up 27% in Heredia this month — consider a local event.'
+   ]},
+  {id:'network', name:'Network Health Agent', icon:'activity', color:'#1e7a47',
+   desc:'Watches your downline for drop-off risk and recommends who needs support.',
+   insights:[
+     '2 distributors show declining activity — check in with Diana Castro and Ingrid Salas.',
+     'Tatiana Brenes is on pace to hit Silver rank in 2 weeks — send encouragement.',
+     'Team-wide order frequency dropped 6% this week — a group check-in could help.'
+   ]},
+];
+
+/* Voice assistant canned responses (used with speechSynthesis) */
+const VOICE_RESPONSES = [
+  "Here's your snapshot: Karla Jimenez is your hottest lead at 87 percent, and Fabiola Rojas is just 60 dollars from VVIP. Reaching both today could add about 180 dollars in sales.",
+  "Your network grew 12 percent this month. Inviting Melissa Vargas, a 94 percent match, would put you 60 percent of the way to Platinum rank.",
+  "You have 3 customers who haven't ordered in over 10 days. I'd suggest sending them the reactivation message from Content Studio.",
+  "Today's priorities: call Karla Jimenez, invite Melissa Vargas to your team, and check in on Diana Castro before she churns.",
+];
+</script>
+<script>
 /* ============================================================
    APP STATE
    ============================================================ */
@@ -475,18 +579,18 @@ const state = {
   leadFilter: 'all',
   leadView: 'list',
   prospectView: 'kanban',
-  contentTopic: 'Venta de producto',
+  contentTopic: 'Product Sales',
   cart: JSON.parse(localStorage.getItem('riman_cart')||'[]'),
   points: parseInt(localStorage.getItem('riman_points')||'1280'),
-  ribbonIndex: 0,
   dailyPlan: JSON.parse(localStorage.getItem('riman_dailyplan')||JSON.stringify([
-    {id:1, text:'Contactar 3 leads calientes', done:false},
-    {id:2, text:'Reclutar 2 nuevas distribuidoras', done:false},
-    {id:3, text:'Dar seguimiento a 4 clientas', done:false},
-    {id:4, text:'Compartir 1 promoción en redes', done:true},
+    {id:1, text:'Contact 3 hot leads', done:false},
+    {id:2, text:'Recruit 2 new distributors', done:false},
+    {id:3, text:'Follow up with 4 customers', done:false},
+    {id:4, text:'Share 1 promotion on social media', done:true},
   ])),
   coachActions: JSON.parse(localStorage.getItem('riman_coach')||JSON.stringify(AI_COACH_ACTIONS)),
   customerLevel: 'VIP',
+  voice:{listening:false, recognition:null},
 };
 function saveState(){
   localStorage.setItem('riman_role', state.role);
@@ -495,8 +599,7 @@ function saveState(){
   localStorage.setItem('riman_dailyplan', JSON.stringify(state.dailyPlan));
   localStorage.setItem('riman_coach', JSON.stringify(state.coachActions));
 }
-</script>
-<script>
+
 /* ============================================================
    NAVIGATION CONFIG
    ============================================================ */
@@ -504,46 +607,46 @@ const NAV = {
   distributor: [
     {id:'home', label:'Home', icon:'layout-dashboard'},
     {id:'coach', label:'AI Coach', icon:'sparkles'},
+    {id:'agents', label:'AI Agents', icon:'bot'},
     {id:'leads', label:'Leads', icon:'target'},
-    {id:'customers', label:'Clientas', icon:'users'},
-    {id:'network', label:'Mi Red', icon:'network'},
-    {id:'recruit', label:'Reclutar', icon:'user-plus'},
-    {id:'sales', label:'Ventas IA', icon:'shopping-bag'},
-    {id:'commissions', label:'Comisiones', icon:'wallet'},
-    {id:'rewards', label:'Recompensas', icon:'gem'},
-    {id:'orders', label:'Órdenes', icon:'package'},
-    {id:'reports', label:'Reportes', icon:'bar-chart-3'},
-    {id:'profile', label:'Perfil', icon:'user-circle'},
+    {id:'customers', label:'Customers', icon:'users'},
+    {id:'network', label:'My Network', icon:'network'},
+    {id:'recruit', label:'Recruit', icon:'user-plus'},
+    {id:'sales', label:'Sales & Content', icon:'shopping-bag'},
+    {id:'commissions', label:'Commissions', icon:'wallet'},
+    {id:'rewards', label:'Rewards', icon:'gem'},
+    {id:'orders', label:'Orders', icon:'package'},
+    {id:'reports', label:'Reports', icon:'bar-chart-3'},
+    {id:'profile', label:'Profile', icon:'user-circle'},
   ],
   customer: [
     {id:'home', label:'Home', icon:'home'},
-    {id:'shop', label:'Tienda', icon:'shopping-bag'},
-    {id:'rewards', label:'Recompensas', icon:'gem'},
-    {id:'orders', label:'Órdenes', icon:'package'},
+    {id:'shop', label:'Shop', icon:'shopping-bag'},
+    {id:'rewards', label:'Rewards', icon:'gem'},
+    {id:'orders', label:'Orders', icon:'package'},
     {id:'beauty', label:'AI Beauty', icon:'wand-2'},
-    {id:'account', label:'Cuenta', icon:'user-circle'},
+    {id:'account', label:'Account', icon:'user-circle'},
   ]
 };
-const BOTTOM_MAIN = {distributor:['home','coach','leads','customers','network'], customer:['home','shop','rewards','orders','beauty']};
+const BOTTOM_MAIN = {distributor:['home','coach','agents','leads','customers'], customer:['home','shop','rewards','orders','beauty']};
 const VIEW_TITLES = {
-  home:{t:'Home', s:'Resumen de tu negocio hoy'},
-  coach:{t:'AI Business Coach', s:'Tu asistente inteligente de crecimiento'},
-  leads:{t:'AI Lead Generation', s:'Clientas potenciales identificadas por IA'},
-  customers:{t:'Customer CRM', s:'Gestiona tu cartera de clientas'},
-  network:{t:'Mi Red', s:'Organización y desempeño de tu equipo'},
-  recruit:{t:'AI Recruitment', s:'Prospectos de nuevas distribuidoras'},
-  sales:{t:'Ventas & Contenido IA', s:'Asistente de ventas y creación de contenido'},
-  commissions:{t:'Comisiones & Earnings', s:'Tus ingresos y calculadora de potencial'},
-  rewards:{t:'Rewards Wallet', s:'RIMAN Dollars y beneficios'},
-  orders:{t:'Órdenes', s:'Historial de pedidos'},
-  reports:{t:'Reportes & Analytics', s:'Desempeño de tu negocio'},
-  profile:{t:'Mi Perfil', s:'Tu información y rango'},
-  shop:{t:'Tienda', s:'Descubre productos RIMAN'},
-  beauty:{t:'AI Beauty Advisor', s:'Recomendaciones personalizadas'},
-  account:{t:'Mi Cuenta', s:'Información y preferencias'},
+  home:{t:'Home', s:'Your business at a glance today'},
+  coach:{t:'AI Business Coach', s:'Your intelligent growth assistant'},
+  agents:{t:'AI Agents', s:'Autonomous agents working for your business'},
+  leads:{t:'AI Lead Generation', s:'Potential customers identified by AI'},
+  customers:{t:'Customer CRM', s:'Manage your customer base'},
+  network:{t:'My Network', s:'Your team structure and performance'},
+  recruit:{t:'AI Recruitment', s:'Prospective new distributors'},
+  sales:{t:'Sales & Content Studio', s:'AI sales assistant and content creation'},
+  commissions:{t:'Commissions & Earnings', s:'Your income and potential calculator'},
+  rewards:{t:'Rewards Wallet', s:'RIMAN Dollars and benefits'},
+  orders:{t:'Orders', s:'Order history'},
+  reports:{t:'Reports & Analytics', s:'Your business performance'},
+  profile:{t:'My Profile', s:'Your info and rank'},
+  shop:{t:'Shop', s:'Discover RIMAN products'},
+  beauty:{t:'AI Beauty Advisor', s:'Personalized recommendations'},
+  account:{t:'My Account', s:'Info and preferences'},
 };
-
-function iconsOf(list){return list.map(k=>`<i data-lucide="${k}"></i>`).join('');}
 
 function renderSidebar(){
   const items = NAV[state.role];
@@ -565,14 +668,14 @@ function renderBottomNav(){
       <i data-lucide="${it.icon}"></i><span>${it.label}</span>
     </div>`).join('') + `
     <div class="bn-item ${!ids.includes(state.view)?'active':''}" onclick="openMoreSheet()">
-      <i data-lucide="more-horizontal"></i><span>Más</span>
+      <i data-lucide="more-horizontal"></i><span>More</span>
     </div>`;
 }
 function openMoreSheet(){
   const items = NAV[state.role].filter(n=>!BOTTOM_MAIN[state.role].includes(n.id));
   openModal(`
     <div style="padding:22px;">
-      <h3 class="section-title" style="margin:0 0 14px;">Más opciones</h3>
+      <h3 class="section-title" style="margin:0 0 14px;">More options</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
         ${items.map(it=>`
           <div class="card card-hover" style="padding:16px;text-align:center;cursor:pointer;" onclick="closeModal();go('${it.id}')">
@@ -665,7 +768,7 @@ function aiRibbon(text, cta){
       <div style="flex:1;">
         <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
           <span class="pulse-dot"></span>
-          <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.85;">Insight de IA</span>
+          <span style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;opacity:.85;">AI Insight</span>
         </div>
         <div style="font-size:14px;font-weight:600;line-height:1.45;">${text}</div>
         ${cta?`<button class="btn btn-gold btn-sm" style="margin-top:12px;" onclick="${cta.onclick}">${cta.label}</button>`:''}
@@ -683,54 +786,70 @@ function viewHomeDistributor(){
   const next = RANKS[3]; // Platinum
   const pv = 1780, tv = 21400;
   const pct = Math.min(100, Math.round((tv-rank.tv)/(next.tv-rank.tv)*100));
-  const insights = [
-    'Karla Jiménez tiene 87% de probabilidad de compra hoy. Contáctala antes de las 6pm para maximizar el cierre.',
-    'Tu equipo creció 12% este mes. Reclutar 1 distribuidora más te acerca a rango Platinum.',
-    'Fabiola Rojas está a $60 de nivel VVIP — sugiérele el Kit Iniciación para el upgrade.'
-  ];
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
-    ${aiRibbon(insights[0], {label:'Ver AI Coach', onclick:"go('coach')"})}
+    ${aiRibbon('Karla Jimenez has an 87% purchase probability today. Reach out before 6pm to maximize the close.', {label:'Open AI Coach', onclick:"go('coach')"})}
 
     <div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <h2 class="section-title">Resumen del mes</h2>
-        <span class="badge badge-grey"><i data-lucide="calendar" style="width:12px;height:12px;"></i>Agosto 2026</span>
+        <h2 class="section-title">Monthly overview</h2>
+        <span class="badge badge-grey"><i data-lucide="calendar" style="width:12px;height:12px;"></i>August 2026</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;">
-        ${statCard({icon:'trending-up',label:'Ventas del mes',value:fmt.money(8420),sub:'+18%'})}
-        ${statCard({icon:'wallet',label:'Comisiones',value:fmt.money(1240),sub:'+9%',color:'var(--gold)'})}
-        ${statCard({icon:'package',label:'Órdenes',value:'34',sub:'+5'})}
-        ${statCard({icon:'users',label:'Distribuidoras activas',value:'10',color:'var(--rose)'})}
-        ${statCard({icon:'heart',label:'Clientas',value:'86'})}
-        ${statCard({icon:'target',label:'Leads activos',value:LEADS.length.toString(),color:'var(--rose)'})}
-        ${statCard({icon:'network',label:'Ventas de equipo',value:fmt.money(tv),color:'var(--gold)'})}
+        ${statCard({icon:'trending-up',label:'Monthly sales',value:fmt.money(8420),sub:'+18%'})}
+        ${statCard({icon:'wallet',label:'Commissions',value:fmt.money(1240),sub:'+9%',color:'var(--gold)'})}
+        ${statCard({icon:'package',label:'Orders',value:'34',sub:'+5'})}
+        ${statCard({icon:'users',label:'Active distributors',value:'10',color:'var(--rose)'})}
+        ${statCard({icon:'heart',label:'Customers',value:'86'})}
+        ${statCard({icon:'target',label:'Active leads',value:LEADS.length.toString(),color:'var(--rose)'})}
+        ${statCard({icon:'network',label:'Team sales',value:fmt.money(tv),color:'var(--gold)'})}
         ${statCard({icon:'gem',label:'RIMAN Dollars',value:fmt.num(state.points),color:'var(--gold)'})}
       </div>
     </div>
 
     <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;" class="home-grid">
       <div class="card" style="padding:22px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-          <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0;">Tendencia de ventas</h3>
-          <span class="badge badge-green">Últimos 6 meses</span>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0;">Sales trend</h3>
+          <span class="badge badge-green">Last 6 months</span>
         </div>
-        <canvas id="chartHomeSales" height="150"></canvas>
+        <div class="chart-wrap"><canvas id="chartHomeSales"></canvas></div>
       </div>
       <div class="card" style="padding:22px;display:flex;flex-direction:column;align-items:center;gap:10px;text-align:center;">
-        <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0;align-self:flex-start;">Progreso de rango</h3>
-        ${ring({percent:pct, size:120, label:pct+'%', sublabel:'a '+next.name})}
+        <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0;align-self:flex-start;">Rank progress</h3>
+        ${ring({percent:pct, size:120, label:pct+'%', sublabel:'to '+next.name})}
         <div>
           <div style="font-weight:800;color:${rank.color};font-family:'Manrope';">${rank.name} → ${next.name}</div>
           <div class="subtle" style="font-size:12.5px;margin-top:2px;">GV ${fmt.money(tv)} / ${fmt.money(next.tv)}</div>
         </div>
-        <button class="btn btn-outline btn-sm" style="width:100%;" onclick="go('profile')">Ver detalle de rango</button>
+        <button class="btn btn-outline btn-sm" style="width:100%;" onclick="go('profile')">View rank details</button>
+      </div>
+    </div>
+
+    <div class="card" style="padding:22px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div>
+          <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0;">Follow-Up Coach</h3>
+          <p class="subtle" style="font-size:12px;margin:2px 0 0;">AI-prioritized customers who need attention today</p>
+        </div>
+        <span class="badge badge-burgundy"><i data-lucide="sparkles" style="width:11px;height:11px;"></i>Live</span>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
+        ${CUSTOMERS.slice().sort((a,b)=>a.aiScore-b.aiScore).slice(0,3).map(c=>`
+        <div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;background:var(--blush);cursor:pointer;" onclick="openCustomerModal('${c.id}')">
+          ${avatarOf(c.name,c.avatarColor,32)}
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:700;font-size:13px;">${c.name}</div>
+            <div class="subtle" style="font-size:11.5px;">${c.followup}</div>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();toast('Follow-up reminder scheduled','bell')">Follow up</button>
+        </div>`).join('')}
       </div>
     </div>
 
     <div class="card" style="padding:22px;">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-        <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0;">Plan de acción diario</h3>
+        <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0;">Daily action plan</h3>
         <span id="dp-progress-label" class="badge badge-burgundy"></span>
       </div>
       <div class="progress-track" style="margin-bottom:16px;"><div class="progress-fill" id="dp-progress-fill" style="width:0%"></div></div>
@@ -744,7 +863,7 @@ function renderDailyPlan(){
   const done = state.dailyPlan.filter(i=>i.done).length;
   const pct = Math.round(done/state.dailyPlan.length*100);
   document.getElementById('dp-progress-fill').style.width = pct+'%';
-  document.getElementById('dp-progress-label').textContent = `${done}/${state.dailyPlan.length} completadas`;
+  document.getElementById('dp-progress-label').textContent = `${done}/${state.dailyPlan.length} done`;
   list.innerHTML = state.dailyPlan.map(item=>`
     <div style="display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;background:${item.done?'var(--blush)':'#fff'};border:1px solid var(--line);cursor:pointer;" onclick="toggleDailyItem(${item.id})">
       <div style="width:22px;height:22px;border-radius:7px;border:2px solid ${item.done?'var(--burgundy)':'var(--dusty-rose)'};background:${item.done?'var(--burgundy)':'transparent'};display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -759,19 +878,20 @@ function toggleDailyItem(id){
   item.done = !item.done;
   saveState();
   renderDailyPlan();
-  if(item.done) toast('¡Buen trabajo! Acción completada.', 'check-circle');
+  if(item.done) toast('Nice work! Action completed.', 'check-circle');
 }
+let homeChartInstance = null;
 function initHomeChart(){
   const el = document.getElementById('chartHomeSales');
   if(!el) return;
-  safeChart(el, {
+  if(homeChartInstance){ try{homeChartInstance.destroy();}catch(e){} homeChartInstance=null; }
+  homeChartInstance = safeChart(el, {
     type:'line',
-    data:{labels:['Mar','Abr','May','Jun','Jul','Ago'],
-      datasets:[{label:'Ventas personales',data:[5200,5800,6400,7100,7800,8420],borderColor:'#8D2944',backgroundColor:'rgba(141,41,68,0.08)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#8D2944'},
-      {label:'Ventas de equipo',data:[14000,15200,16800,18500,19900,21400],borderColor:'#CDA25F',backgroundColor:'rgba(205,162,95,0.08)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#CDA25F'}]},
+    data:{labels:['Mar','Apr','May','Jun','Jul','Aug'],
+      datasets:[{label:'Personal sales',data:[5200,5800,6400,7100,7800,8420],borderColor:'#8D2944',backgroundColor:'rgba(141,41,68,0.08)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#8D2944'},
+      {label:'Team sales',data:[14000,15200,16800,18500,19900,21400],borderColor:'#CDA25F',backgroundColor:'rgba(205,162,95,0.08)',fill:true,tension:.4,pointRadius:3,pointBackgroundColor:'#CDA25F'}]},
     options:{plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{family:'Inter',size:11}}}},
-      scales:{y:{grid:{color:'#F1EEEC'},ticks:{font:{family:'Inter',size:10}}}, x:{grid:{display:false},ticks:{font:{family:'Inter',size:10}}}},
-      responsive:true,maintainAspectRatio:false}
+      scales:{y:{grid:{color:'#F1EEEC'},ticks:{font:{family:'Inter',size:10}}}, x:{grid:{display:false},ticks:{font:{family:'Inter',size:10}}}}}
   });
 }
 
@@ -781,20 +901,27 @@ function initHomeChart(){
 function viewCoach(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
-    ${aiRibbon('Analicé tu actividad de los últimos 7 días: tus tasas de cierre suben 23% cuando contactas leads en menos de 2 horas. Prioriza velocidad de respuesta hoy.')}
+    ${aiRibbon('I analyzed your last 7 days of activity: your close rate rises 23% when you contact leads within 2 hours. Prioritize response speed today.')}
 
     <div class="card" style="padding:22px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <i data-lucide="message-square" style="width:16px;height:16px;color:var(--burgundy);"></i>
+          <h4 style="font-family:'Manrope';font-weight:800;margin:0;font-size:14.5px;">Ask your AI Coach</h4>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="openVoiceAssistant()"><i data-lucide="mic"></i>Ask by voice</button>
+      </div>
       <div style="display:flex;gap:10px;">
-        <input class="input" id="coach-ask" placeholder="Pregúntale algo a tu AI Coach... ej: ¿A quién debo contactar hoy?">
-        <button class="btn btn-primary" onclick="askCoach()"><i data-lucide="send"></i>Preguntar</button>
+        <input class="input" id="coach-ask" placeholder="e.g. Who should I contact today?">
+        <button class="btn btn-primary" onclick="askCoach()"><i data-lucide="send"></i>Ask</button>
       </div>
       <div id="coach-answer" style="margin-top:14px;"></div>
     </div>
 
     <div>
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
-        <h3 class="section-title" style="font-size:17px;">Acciones recomendadas hoy</h3>
-        <button class="btn btn-outline btn-sm" onclick="regenerateCoach()"><i data-lucide="refresh-cw"></i>Regenerar</button>
+        <h3 class="section-title" style="font-size:17px;">Recommended actions today</h3>
+        <button class="btn btn-outline btn-sm" onclick="regenerateCoach()"><i data-lucide="refresh-cw"></i>Regenerate</button>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;" id="coach-actions-list"></div>
     </div>
@@ -803,7 +930,7 @@ function viewCoach(){
 function renderCoachActions(){
   const list = document.getElementById('coach-actions-list');
   if(!list) return;
-  const impactColor = {Alto:'#8D2944',Medio:'#8a672c',Bajo:'#777777'};
+  const impactColor = {High:'#8D2944',Medium:'#8a672c',Low:'#777777'};
   list.innerHTML = state.coachActions.map((a,i)=>`
     <div class="card" style="padding:16px;display:flex;align-items:center;gap:14px;${a.done?'opacity:.55;':''}">
       <div style="width:40px;height:40px;border-radius:11px;background:var(--blush);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
@@ -812,12 +939,12 @@ function renderCoachActions(){
       <div style="flex:1;min-width:0;">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px;flex-wrap:wrap;">
           <span class="badge badge-burgundy">${a.cat}</span>
-          <span style="font-size:10.5px;font-weight:700;color:${impactColor[a.impact]};">Impacto ${a.impact}</span>
+          <span style="font-size:10.5px;font-weight:700;color:${impactColor[a.impact]};">${a.impact} impact</span>
         </div>
         <div style="font-size:13.5px;font-weight:600;line-height:1.4;text-decoration:${a.done?'line-through':'none'};">${a.text}</div>
       </div>
       <button class="btn ${a.done?'btn-ghost':'btn-primary'} btn-sm" onclick="completeCoachAction(${i})" ${a.done?'disabled':''}>
-        ${a.done?'Hecho':'Hacerlo'}
+        ${a.done?'Done':'Do it'}
       </button>
     </div>`).join('');
   safeIcons();
@@ -826,30 +953,25 @@ function completeCoachAction(i){
   state.coachActions[i].done = true;
   saveState();
   renderCoachActions();
-  toast('Acción marcada como completada por IA.', 'sparkles');
+  toast('Action marked complete.', 'sparkles');
 }
 function regenerateCoach(){
   state.coachActions = JSON.parse(JSON.stringify(AI_COACH_ACTIONS)).sort(()=>Math.random()-0.5);
   saveState();
   renderCoachActions();
-  toast('Nuevas recomendaciones generadas.', 'sparkles');
+  toast('New recommendations generated.', 'sparkles');
 }
-const COACH_RESPONSES = {
-  default:[
-    "Basado en tu actividad, tus 3 prioridades hoy son: cerrar a Karla Jiménez, invitar a Melissa Vargas a tu equipo, y reactivar a Marcela Vindas. Esto podría generarte hasta $310 adicionales esta semana."
-  ],
-};
 function askCoach(){
   const input = document.getElementById('coach-ask');
   const q = input.value.trim();
   const box = document.getElementById('coach-answer');
   if(!q){ input.focus(); return; }
-  box.innerHTML = `<div class="subtle" style="font-size:13px;display:flex;align-items:center;gap:8px;"><span class="pulse-dot" style="background:var(--burgundy);"></span>Analizando tu negocio...</div>`;
+  box.innerHTML = `<div class="subtle" style="font-size:13px;display:flex;align-items:center;gap:8px;"><span class="pulse-dot" style="background:var(--burgundy);"></span>Analyzing your business...</div>`;
   setTimeout(()=>{
     const responses = [
-      `Con base en tus datos: <b>Karla Jiménez</b> (87% probabilidad) y <b>Fabiola Rojas</b> (a $60 de VVIP) son tus prioridades. Contactarlas hoy podría sumar ~$180 en ventas.`,
-      `Tu red creció 12% este mes. Si reclutas a <b>Melissa Vargas</b> (94% match) alcanzarías el 60% de tu meta de rango Platinum.`,
-      `Detecté que 3 clientas no compran hace más de 10 días. Te sugiero enviarles el mensaje de reactivación desde AI Content Studio.`,
+      `Based on your data: <b>Karla Jimenez</b> (87% probability) and <b>Fabiola Rojas</b> (a $60 away from VVIP) are your top priorities. Reaching them today could add ~$180 in sales.`,
+      `Your network grew 12% this month. Recruiting <b>Melissa Vargas</b> (94% match) would get you 60% of the way to Platinum rank.`,
+      `I detected 3 customers who haven't ordered in over 10 days. I'd suggest sending them the reactivation message from AI Content Studio.`,
     ];
     box.innerHTML = `<div class="card" style="padding:16px;background:var(--blush);border:none;font-size:13.5px;line-height:1.55;">
       <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;"><i data-lucide="sparkles" style="width:14px;height:14px;color:var(--burgundy);"></i><b style="font-size:12px;color:var(--burgundy-dark);">AI Coach</b></div>
@@ -861,20 +983,82 @@ function askCoach(){
 }
 
 /* ============================================================
+   DISTRIBUTOR — AI AGENTS
+   ============================================================ */
+function viewAgents(){
+  return `
+  <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
+    ${aiRibbon('5 agents are working in the background right now, scanning trends, social signals, location data and your network health so you don\'t have to.')}
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;" id="agents-grid">
+      ${AGENTS.map(a=>agentCardHtml(a)).join('')}
+    </div>
+    <div class="card" style="padding:20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+      <div style="width:44px;height:44px;border-radius:12px;background:var(--blush);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i data-lucide="mic" style="width:20px;height:20px;color:var(--burgundy);"></i>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-weight:700;font-size:13.5px;">Prefer to just ask?</div>
+        <div class="subtle" style="font-size:12px;">Talk to your AI Voice Assistant — it can query every agent for you.</div>
+      </div>
+      <button class="btn btn-primary btn-sm" onclick="openVoiceAssistant()"><i data-lucide="mic"></i>Open Voice Assistant</button>
+    </div>
+  </div>`;
+}
+function agentCardHtml(a){
+  return `
+  <div class="card card-hover" style="padding:18px;" id="agent-card-${a.id}">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;">
+      <div style="width:38px;height:38px;border-radius:11px;background:${a.color}1a;display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <i data-lucide="${a.icon}" style="width:18px;height:18px;color:${a.color};"></i>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div style="font-weight:700;font-size:13.5px;">${a.name}</div>
+        <div style="display:flex;align-items:center;gap:5px;margin-top:2px;">
+          <span class="agent-status-dot on" id="agent-dot-${a.id}"></span>
+          <span class="subtle" style="font-size:11px;font-weight:600;" id="agent-status-${a.id}">Active</span>
+        </div>
+      </div>
+    </div>
+    <p class="subtle" style="font-size:12px;line-height:1.5;margin:0 0 12px;">${a.desc}</p>
+    <div class="card" style="padding:11px 13px;background:var(--blush);border:none;margin-bottom:12px;" id="agent-insight-${a.id}">
+      <div class="subtle" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;">Latest insight</div>
+      <div style="font-size:12.5px;font-weight:600;line-height:1.4;">${a.insights[0]}</div>
+    </div>
+    <button class="btn btn-outline btn-sm" style="width:100%;" onclick="runAgent('${a.id}')"><i data-lucide="refresh-cw"></i>Run analysis</button>
+  </div>`;
+}
+function runAgent(id){
+  const a = AGENTS.find(x=>x.id===id);
+  const dot = document.getElementById('agent-dot-'+id);
+  const status = document.getElementById('agent-status-'+id);
+  const insightBox = document.getElementById('agent-insight-'+id);
+  dot.classList.remove('on'); dot.classList.add('busy');
+  status.textContent = 'Analyzing...';
+  setTimeout(()=>{
+    dot.classList.remove('busy'); dot.classList.add('on');
+    status.textContent = 'Active';
+    const insight = a.insights[Math.floor(Math.random()*a.insights.length)];
+    insightBox.innerHTML = `
+      <div class="subtle" style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px;">Latest insight · just now</div>
+      <div style="font-size:12.5px;font-weight:600;line-height:1.4;">${insight}</div>`;
+    toast(`${a.name} finished a new analysis`, 'sparkles');
+  }, 900);
+}
+
+/* ============================================================
    DISTRIBUTOR — LEADS
    ============================================================ */
 const LEAD_STAGES = ['New','Contacted','Interested','Customer','VIP Customer'];
-const LEAD_STAGE_LABELS = {New:'Nuevo',Contacted:'Contactado',Interested:'Interesado',Customer:'Cliente','VIP Customer':'VIP'};
 function viewLeads(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:18px;">
-    ${aiRibbon('8 leads activos. Natalia Ureña (97 pts) está lista para upgrade VIP — el mejor momento de contacto es antes de las 5pm según su historial.')}
+    ${aiRibbon('8 active leads. Natalia Urena (97 pts) is ready for a VIP upgrade — her best contact window is before 5pm based on history.')}
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
       <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        <span class="chip ${state.leadView==='list'?'active':''}" onclick="setLeadView('list')"><i data-lucide="list" style="width:13px;height:13px;"></i>Lista</span>
+        <span class="chip ${state.leadView==='list'?'active':''}" onclick="setLeadView('list')"><i data-lucide="list" style="width:13px;height:13px;"></i>List</span>
         <span class="chip ${state.leadView==='kanban'?'active':''}" onclick="setLeadView('kanban')"><i data-lucide="columns-3" style="width:13px;height:13px;"></i>Pipeline</span>
       </div>
-      <button class="btn btn-primary btn-sm" onclick="toast('IA buscando nuevos leads en tu zona...','sparkles')"><i data-lucide="scan-search"></i>Buscar más leads con IA</button>
+      <button class="btn btn-primary btn-sm" onclick="toast('Geo-Prospecting Agent scanning your area...','sparkles')"><i data-lucide="scan-search"></i>Find more leads with AI</button>
     </div>
     <div id="leads-body"></div>
   </div>`;
@@ -883,7 +1067,7 @@ function setLeadView(v){ state.leadView=v; document.getElementById('leads-body')
 function leadsBodyHtml(){
   if(state.leadView==='list'){
     return `<div class="card" style="overflow-x:auto;"><table class="riman-table"><thead><tr>
-      <th>Nombre</th><th>Score IA</th><th>Interés</th><th>Prob. compra</th><th>Producto sugerido</th><th>Etapa</th>
+      <th>Name</th><th>AI Score</th><th>Interest</th><th>Buy probability</th><th>Suggested product</th><th>Stage</th>
       </tr></thead><tbody>
       ${LEADS.map(l=>`<tr onclick="openLeadModal('${l.id}')">
         <td style="display:flex;align-items:center;gap:10px;">${avatarOf(l.name,l.avatarColor,32)}<span style="font-weight:700;">${l.name}</span></td>
@@ -896,7 +1080,7 @@ function leadsBodyHtml(){
           </div>
         </td>
         <td class="subtle">${l.product}</td>
-        <td><span class="badge badge-burgundy">${LEAD_STAGE_LABELS[l.stage]}</span></td>
+        <td><span class="badge badge-burgundy">${l.stage}</span></td>
       </tr>`).join('')}
       </tbody></table></div>`;
   }
@@ -904,7 +1088,7 @@ function leadsBodyHtml(){
     ${LEAD_STAGES.map(stage=>`
       <div class="kanban-col">
         <div style="font-weight:800;font-size:12.5px;color:var(--burgundy-dark);margin-bottom:10px;padding:0 4px;display:flex;justify-content:space-between;">
-          <span>${LEAD_STAGE_LABELS[stage]}</span><span class="subtle">${LEADS.filter(l=>l.stage===stage).length}</span>
+          <span>${stage}</span><span class="subtle">${LEADS.filter(l=>l.stage===stage).length}</span>
         </div>
         ${LEADS.filter(l=>l.stage===stage).map(l=>`
           <div class="kanban-card" onclick="openLeadModal('${l.id}')">
@@ -914,7 +1098,7 @@ function leadsBodyHtml(){
               <span class="badge badge-gold">${l.score} pts</span>
               <span style="font-size:11px;font-weight:700;color:var(--burgundy);">${l.prob}%</span>
             </div>
-          </div>`).join('') || `<div class="subtle" style="font-size:11.5px;text-align:center;padding:14px 0;">Sin leads</div>`}
+          </div>`).join('') || `<div class="subtle" style="font-size:11.5px;text-align:center;padding:14px 0;">No leads</div>`}
       </div>`).join('')}
   </div>`;
 }
@@ -925,45 +1109,45 @@ function openLeadModal(id){
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
         ${avatarOf(l.name,l.avatarColor,52)}
         <div><div style="font-weight:800;font-size:17px;font-family:'Manrope';">${l.name}</div>
-        <span class="badge badge-burgundy">${LEAD_STAGE_LABELS[l.stage]}</span></div>
+        <span class="badge badge-burgundy">${l.stage}</span></div>
         <div style="margin-left:auto;text-align:center;">
           <div style="font-weight:800;font-size:22px;color:${scoreColor(l.score)};font-family:'Manrope';">${l.score}</div>
           <div class="subtle" style="font-size:10px;font-weight:700;">AI SCORE</div>
         </div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-        <div class="card" style="padding:12px;"><div class="subtle" style="font-size:11px;">Interés</div><div style="font-weight:700;font-size:13.5px;">${l.interest}</div></div>
-        <div class="card" style="padding:12px;"><div class="subtle" style="font-size:11px;">Prob. de compra</div><div style="font-weight:700;font-size:13.5px;">${l.prob}%</div></div>
-        <div class="card" style="padding:12px;grid-column:span 2;"><div class="subtle" style="font-size:11px;">Producto recomendado</div><div style="font-weight:700;font-size:13.5px;">${l.product}</div></div>
+        <div class="card" style="padding:12px;"><div class="subtle" style="font-size:11px;">Interest</div><div style="font-weight:700;font-size:13.5px;">${l.interest}</div></div>
+        <div class="card" style="padding:12px;"><div class="subtle" style="font-size:11px;">Buy probability</div><div style="font-weight:700;font-size:13.5px;">${l.prob}%</div></div>
+        <div class="card" style="padding:12px;grid-column:span 2;"><div class="subtle" style="font-size:11px;">Recommended product</div><div style="font-weight:700;font-size:13.5px;">${l.product}</div></div>
       </div>
       <div class="ai-ribbon" style="padding:14px 16px;margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;opacity:.85;margin-bottom:5px;">Próxima acción sugerida</div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;opacity:.85;margin-bottom:5px;">Suggested next action</div>
         <div style="font-size:13.5px;font-weight:600;">${l.next}</div>
       </div>
       <div id="lead-msg-box"></div>
       <div style="display:flex;gap:10px;margin-top:14px;">
-        <button class="btn btn-primary" style="flex:1;" onclick="generateLeadMessage('${l.id}')"><i data-lucide="wand-2"></i>Generar mensaje IA</button>
-        <button class="btn btn-outline" onclick="closeModal()">Cerrar</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="generateLeadMessage('${l.id}')"><i data-lucide="wand-2"></i>Generate AI message</button>
+        <button class="btn btn-outline" onclick="closeModal()">Close</button>
       </div>
     </div>`);
 }
 function generateLeadMessage(id){
   const l = LEADS.find(x=>x.id===id);
   const box = document.getElementById('lead-msg-box');
-  box.innerHTML = `<div class="subtle" style="font-size:12.5px;">Generando mensaje personalizado...</div>`;
+  box.innerHTML = `<div class="subtle" style="font-size:12.5px;">Generating personalized message...</div>`;
   setTimeout(()=>{
-    const msg = `Hola ${l.name.split(' ')[0]} 💕 Vi que te interesó ${l.product.toLowerCase()} — es perfecto para lo que buscas en ${l.interest.toLowerCase()}. Tengo disponibilidad para enviarte más info o una muestra. ¿Te gustaría?`;
+    const msg = `Hi ${l.name.split(' ')[0]} 💕 I saw you were interested in the ${l.product} — it's perfect for what you're looking for in ${l.interest.toLowerCase()}. I'd love to send more info or a sample. Would that be helpful?`;
     box.innerHTML = `<div class="card" style="padding:14px;background:var(--blush);border:none;">
-      <div class="subtle" style="font-size:11px;font-weight:700;margin-bottom:6px;">MENSAJE SUGERIDO (WhatsApp)</div>
+      <div class="subtle" style="font-size:11px;font-weight:700;margin-bottom:6px;">SUGGESTED MESSAGE (WhatsApp)</div>
       <div style="font-size:13.5px;line-height:1.5;">${msg}</div>
-      <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="copyText(this, \`${msg.replace(/`/g,"'")}\`)"><i data-lucide="copy"></i>Copiar mensaje</button>
+      <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="copyText(this, \`${msg.replace(/`/g,"'")}\`)"><i data-lucide="copy"></i>Copy message</button>
     </div>`;
     safeIcons();
   }, 600);
 }
 function copyText(btn, text){
   navigator.clipboard?.writeText(text).catch(()=>{});
-  toast('Mensaje copiado al portapapeles','copy');
+  toast('Message copied to clipboard','copy');
 }
 
 /* ============================================================
@@ -972,9 +1156,9 @@ function copyText(btn, text){
 function viewCustomers(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:18px;">
-    ${aiRibbon('Diana Castro no compra hace 20 días — riesgo de abandono alto (61%). Envíale un incentivo de reactivación hoy.')}
+    ${aiRibbon('Diana Castro hasn\'t ordered in 20 days — high churn risk (61%). Send her a reactivation incentive today.')}
     <div class="card" style="overflow-x:auto;"><table class="riman-table"><thead><tr>
-      <th>Clienta</th><th>Nivel</th><th>Gasto total</th><th>Órdenes</th><th>Última interacción</th><th>AI Score</th>
+      <th>Customer</th><th>Level</th><th>Total spend</th><th>Orders</th><th>Last interaction</th><th>AI Score</th>
       </tr></thead><tbody>
       ${CUSTOMERS.map(c=>`<tr onclick="openCustomerModal('${c.id}')">
         <td style="display:flex;align-items:center;gap:10px;">${avatarOf(c.name,c.avatarColor,32)}<span style="font-weight:700;">${c.name}</span></td>
@@ -997,20 +1181,20 @@ function openCustomerModal(id){
         <span class="badge ${c.level==='VVIP'?'badge-gold':c.level==='VIP'?'badge-burgundy':'badge-grey'}">${c.level}</span></div>
       </div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;">
-        <div class="card" style="padding:12px;"><div class="subtle" style="font-size:11px;">Gasto total</div><div style="font-weight:700;font-size:14px;">${fmt.money(c.spend)}</div></div>
-        <div class="card" style="padding:12px;"><div class="subtle" style="font-size:11px;">Órdenes</div><div style="font-weight:700;font-size:14px;">${c.orders}</div></div>
+        <div class="card" style="padding:12px;"><div class="subtle" style="font-size:11px;">Total spend</div><div style="font-weight:700;font-size:14px;">${fmt.money(c.spend)}</div></div>
+        <div class="card" style="padding:12px;"><div class="subtle" style="font-size:11px;">Orders</div><div style="font-weight:700;font-size:14px;">${c.orders}</div></div>
       </div>
       <div class="card" style="padding:13px;margin-bottom:10px;display:flex;align-items:center;gap:10px;">
         <i data-lucide="bell" style="width:16px;height:16px;color:var(--rose);flex-shrink:0;"></i>
         <div style="font-size:12.5px;font-weight:600;">${c.followup}</div>
       </div>
       <div class="ai-ribbon" style="padding:14px 16px;margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;opacity:.85;margin-bottom:5px;">Producto recomendado por IA</div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;opacity:.85;margin-bottom:5px;">AI recommended product</div>
         <div style="font-size:13.5px;font-weight:600;">${c.rec}</div>
       </div>
       <div style="display:flex;gap:10px;">
-        <button class="btn btn-primary" style="flex:1;" onclick="closeModal();toast('Recordatorio de seguimiento creado','bell')"><i data-lucide="calendar-plus"></i>Programar seguimiento</button>
-        <button class="btn btn-outline" onclick="closeModal()">Cerrar</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="closeModal();toast('Follow-up reminder created','bell')"><i data-lucide="calendar-plus"></i>Schedule follow-up</button>
+        <button class="btn btn-outline" onclick="closeModal()">Close</button>
       </div>
     </div>`);
 }
@@ -1034,23 +1218,40 @@ function viewNetwork(){
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             ${avatarOf(d.name,color,30)}
             <div style="min-width:0;flex:1;"><div style="font-weight:700;font-size:13px;">${d.name}</div>
-            <span class="badge ${d.active?'badge-green':'badge-grey'}" style="margin-top:2px;">${d.active?'Activa':'Inactiva'}</span></div>
+            <span class="badge ${d.active?'badge-green':'badge-grey'}" style="margin-top:2px;">${d.active?'Active':'Inactive'}</span></div>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:11.5px;" class="subtle">
-            <span>PV ${fmt.money(d.pv)}</span><span>GV ${fmt.money(d.gv)}</span><span>${d.recruits} recl.</span>
+            <span>PV ${fmt.money(d.pv)}</span><span>GV ${fmt.money(d.gv)}</span><span>${d.recruits} recruits</span>
           </div>
         </div>`).join('')}
       </div>
     </div>`;
   }
+  const atRisk = [...NETWORK.l1,...NETWORK.l2,...NETWORK.l3].filter(d=>!d.active);
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
+    ${aiRibbon('Network Health Agent: 2 distributors show declining activity — Diana Castro and Ingrid Salas. A quick check-in could prevent them from going inactive.', {label:'Open AI Agents', onclick:"go('agents')"})}
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;">
-      ${statCard({icon:'users',label:'Distribuidoras activas',value:totalActive})}
-      ${statCard({icon:'trending-up',label:'Ventas de equipo',value:fmt.money(totalSales),color:'var(--gold)'})}
-      ${statCard({icon:'network',label:'Niveles activos',value:'3'})}
+      ${statCard({icon:'users',label:'Active distributors',value:totalActive})}
+      ${statCard({icon:'trending-up',label:'Team sales',value:fmt.money(totalSales),color:'var(--gold)'})}
+      ${statCard({icon:'network',label:'Active levels',value:'3'})}
       ${statCard({icon:'award',label:'Top performer',value:top[0].name.split(' ')[0],color:'var(--rose)'})}
     </div>
+    ${atRisk.length? `
+    <div class="card" style="padding:18px;border:1.5px solid #f0d9a8;background:#FBF6EC;">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+        <i data-lucide="activity" style="width:16px;height:16px;color:#8a672c;"></i>
+        <h4 style="font-family:'Manrope';font-weight:800;margin:0;font-size:14px;color:#8a672c;">Network Health Agent — needs attention</h4>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px;">
+        ${atRisk.map(d=>`
+        <div style="display:flex;align-items:center;gap:10px;">
+          ${avatarOf(d.name,'#8a672c',28)}
+          <div style="flex:1;font-size:13px;font-weight:600;">${d.name} — no activity this cycle</div>
+          <button class="btn btn-outline btn-sm" onclick="toast('Support message sent to '+'${d.name}','check-circle')">Send support</button>
+        </div>`).join('')}
+      </div>
+    </div>` : ''}
     <div class="card" style="padding:22px;">
       <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 6px;">Top performers</h3>
       <div style="display:flex;flex-direction:column;gap:8px;margin-top:10px;">
@@ -1064,10 +1265,10 @@ function viewNetwork(){
       </div>
     </div>
     <div class="card" style="padding:22px;">
-      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Organización de red</h3>
-      ${levelBlock('Nivel 1 — Directas', NETWORK.l1, 'var(--burgundy)')}
-      ${levelBlock('Nivel 2', NETWORK.l2, 'var(--rose)')}
-      ${levelBlock('Nivel 3', NETWORK.l3, 'var(--gold)')}
+      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Network structure</h3>
+      ${levelBlock('Level 1 — Direct', NETWORK.l1, 'var(--burgundy)')}
+      ${levelBlock('Level 2', NETWORK.l2, 'var(--rose)')}
+      ${levelBlock('Level 3', NETWORK.l3, 'var(--gold)')}
     </div>
   </div>`;
 }
@@ -1076,27 +1277,26 @@ function viewNetwork(){
    DISTRIBUTOR — RECRUIT (AI RECRUITMENT)
    ============================================================ */
 const PROSPECT_STAGES = ['Prospect','Invited','Interested','Training','Active Distributor'];
-const PROSPECT_LABELS = {Prospect:'Prospecto',Invited:'Invitada',Interested:'Interesada',Training:'Capacitación','Active Distributor':'Distribuidora Activa'};
 function viewRecruit(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:18px;">
-    ${aiRibbon('Tatiana Brenes (97% match) tiene experiencia en ventas de belleza — es tu mejor prospecto este mes.')}
+    ${aiRibbon('Tatiana Brenes (97% match) has prior beauty sales experience — she\'s your strongest prospect this month.')}
     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
-      <h3 class="section-title" style="font-size:17px;">Pipeline de reclutamiento</h3>
-      <button class="btn btn-primary btn-sm" onclick="toast('IA analizando tu red de contactos...','sparkles')"><i data-lucide="scan-search"></i>Buscar prospectos con IA</button>
+      <h3 class="section-title" style="font-size:17px;">Recruitment pipeline</h3>
+      <button class="btn btn-primary btn-sm" onclick="toast('Geo-Prospecting Agent scanning your contacts...','sparkles')"><i data-lucide="scan-search"></i>Find prospects with AI</button>
     </div>
     <div class="kanban">
       ${PROSPECT_STAGES.map(stage=>`
         <div class="kanban-col">
           <div style="font-weight:800;font-size:12.5px;color:var(--burgundy-dark);margin-bottom:10px;padding:0 4px;display:flex;justify-content:space-between;">
-            <span>${PROSPECT_LABELS[stage]}</span><span class="subtle">${PROSPECTS.filter(p=>p.stage===stage).length}</span>
+            <span>${stage}</span><span class="subtle">${PROSPECTS.filter(p=>p.stage===stage).length}</span>
           </div>
           ${PROSPECTS.filter(p=>p.stage===stage).map(p=>`
             <div class="kanban-card" onclick="openProspectModal('${p.id}')">
               <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">${avatarOf(p.name,p.avatarColor,28)}<span style="font-weight:700;font-size:13px;">${p.name}</span></div>
               <div class="subtle" style="font-size:11.5px;margin-bottom:6px;">${p.profile}</div>
               <span class="badge badge-gold">${p.match}% match</span>
-            </div>`).join('') || `<div class="subtle" style="font-size:11.5px;text-align:center;padding:14px 0;">Vacío</div>`}
+            </div>`).join('') || `<div class="subtle" style="font-size:11.5px;text-align:center;padding:14px 0;">Empty</div>`}
         </div>`).join('')}
     </div>
   </div>`;
@@ -1108,33 +1308,33 @@ function openProspectModal(id){
       <div style="display:flex;align-items:center;gap:14px;margin-bottom:16px;">
         ${avatarOf(p.name,p.avatarColor,52)}
         <div><div style="font-weight:800;font-size:17px;font-family:'Manrope';">${p.name}</div>
-        <span class="badge badge-burgundy">${PROSPECT_LABELS[p.stage]}</span></div>
+        <span class="badge badge-burgundy">${p.stage}</span></div>
         <div style="margin-left:auto;text-align:center;">
           <div style="font-weight:800;font-size:22px;color:var(--gold);font-family:'Manrope';">${p.match}%</div>
           <div class="subtle" style="font-size:10px;font-weight:700;">AI MATCH</div>
         </div>
       </div>
       <div class="card" style="padding:13px;margin-bottom:16px;">
-        <div class="subtle" style="font-size:11px;margin-bottom:3px;">Perfil</div>
+        <div class="subtle" style="font-size:11px;margin-bottom:3px;">Profile</div>
         <div style="font-weight:600;font-size:13.5px;">${p.profile}</div>
       </div>
       <div id="prospect-msg-box"></div>
       <div style="display:flex;gap:10px;margin-top:14px;">
-        <button class="btn btn-primary" style="flex:1;" onclick="generateInviteMessage('${p.id}')"><i data-lucide="wand-2"></i>Generar invitación IA</button>
-        <button class="btn btn-outline" onclick="closeModal()">Cerrar</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="generateInviteMessage('${p.id}')"><i data-lucide="wand-2"></i>Generate AI invitation</button>
+        <button class="btn btn-outline" onclick="closeModal()">Close</button>
       </div>
     </div>`);
 }
 function generateInviteMessage(id){
   const p = PROSPECTS.find(x=>x.id===id);
   const box = document.getElementById('prospect-msg-box');
-  box.innerHTML = `<div class="subtle" style="font-size:12.5px;">Generando invitación personalizada...</div>`;
+  box.innerHTML = `<div class="subtle" style="font-size:12.5px;">Generating personalized invitation...</div>`;
   setTimeout(()=>{
-    const msg = `Hola ${p.name.split(' ')[0]} 💫 Te escribo porque admiro tu ${p.profile.toLowerCase().includes('influencer')?'presencia y conexión con tu comunidad':'iniciativa'}, y creo que serías increíble construyendo tu propio negocio con RIMAN. Contamos con una IA que te guía paso a paso cada día. ¿Tienes 15 minutos esta semana para contarte más?`;
+    const msg = `Hi ${p.name.split(' ')[0]} 💫 I'm reaching out because I admire your ${p.profile.toLowerCase().includes('influencer')?'presence and connection with your community':'initiative'}, and I think you'd be amazing building your own business with RIMAN. We have AI that guides you step by step every day. Do you have 15 minutes this week to hear more?`;
     box.innerHTML = `<div class="card" style="padding:14px;background:var(--blush);border:none;">
-      <div class="subtle" style="font-size:11px;font-weight:700;margin-bottom:6px;">INVITACIÓN SUGERIDA</div>
+      <div class="subtle" style="font-size:11px;font-weight:700;margin-bottom:6px;">SUGGESTED INVITATION</div>
       <div style="font-size:13.5px;line-height:1.5;">${msg}</div>
-      <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="copyText(this, \`${msg.replace(/`/g,"'")}\`)"><i data-lucide="copy"></i>Copiar invitación</button>
+      <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="copyText(this, \`${msg.replace(/`/g,"'")}\`)"><i data-lucide="copy"></i>Copy invitation</button>
     </div>`;
     safeIcons();
   }, 600);
@@ -1149,7 +1349,7 @@ function viewSales(){
     <div style="display:flex;gap:8px;flex-wrap:wrap;">
       <span class="chip active" data-tab="assistant" onclick="setSalesTab('assistant',this)">AI Sales Assistant</span>
       <span class="chip" data-tab="content" onclick="setSalesTab('content',this)">AI Content Studio</span>
-      <span class="chip" data-tab="objections" onclick="setSalesTab('objections',this)">Manejo de objeciones</span>
+      <span class="chip" data-tab="objections" onclick="setSalesTab('objections',this)">Objection Handling</span>
     </div>
     <div id="sales-tab-body"></div>
   </div>`;
@@ -1170,23 +1370,22 @@ function salesTabHtml(tab){
           <div style="font-size:13px;line-height:1.5;" class="subtle">${o.a}</div>
         </div>`).join('')}
     </div>`;
-  // default: assistant
   return `
     <div style="display:flex;flex-direction:column;gap:18px;">
-      ${aiRibbon('Sugerencia de upsell: las clientas que compran Serum Renovador tienen 68% más probabilidad de comprar Contorno de Ojos Diamond en los siguientes 30 días.')}
+      ${aiRibbon('Upsell tip: customers who buy the Collagen Renewal Serum are 68% more likely to buy the Diamond Eye Contour within 30 days.')}
       <div>
-        <h3 class="section-title" style="font-size:16px;margin-bottom:10px;">Bundles y upsells recomendados</h3>
+        <h3 class="section-title" style="font-size:16px;margin-bottom:10px;">Recommended bundles & upsells</h3>
         <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px;">
-          ${[['Kit Anti-edad',['Serum Renovador de Colágeno','Contorno de Ojos Diamond'],161,15],
-            ['Ritual Nocturno',['Set Limpieza Facial Ritual','Crema Radiance Gold 24K'],176,12],
-            ['Glow Protection',['Ampolletas Vitamina C+','Protector Solar Silk SPF50'],127,10]]
+          ${[['Anti-Aging Kit',['Collagen Renewal Serum','Diamond Eye Contour'],161,15],
+            ['Night Ritual',['Ritual Cleansing Set','24K Gold Radiance Cream'],176,12],
+            ['Glow Protection',['Vitamin C+ Ampoules','Silk Sunscreen SPF50'],127,10]]
             .map(([name,items,price,disc])=>`
             <div class="card card-hover" style="padding:16px;">
               <div style="font-weight:800;font-family:'Manrope';margin-bottom:6px;">${name}</div>
               <div class="subtle" style="font-size:12px;margin-bottom:10px;">${items.join(' + ')}</div>
               <div style="display:flex;justify-content:space-between;align-items:center;">
                 <div><span style="font-weight:800;font-size:15px;">${fmt.money(price)}</span> <span class="badge badge-green">-${disc}%</span></div>
-                <button class="btn btn-outline btn-sm" onclick="toast('Bundle agregado a tu catálogo activo','check-circle')">Promover</button>
+                <button class="btn btn-outline btn-sm" onclick="toast('Bundle added to your active catalog','check-circle')">Promote</button>
               </div>
             </div>`).join('')}
         </div>
@@ -1202,8 +1401,8 @@ function salesContentHtml(){
     </div>
     <div class="card" style="padding:20px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-        <h4 style="font-family:'Manrope';font-weight:800;margin:0;">Generar contenido: ${state.contentTopic}</h4>
-        <button class="btn btn-primary btn-sm" onclick="generateContent()"><i data-lucide="wand-2"></i>Generar con IA</button>
+        <h4 style="font-family:'Manrope';font-weight:800;margin:0;">Generate content: ${state.contentTopic}</h4>
+        <button class="btn btn-primary btn-sm" onclick="generateContent()"><i data-lucide="wand-2"></i>Generate with AI</button>
       </div>
       <div id="content-output" style="display:flex;flex-direction:column;gap:10px;"></div>
     </div>
@@ -1216,13 +1415,13 @@ function setContentTopic(t){
 }
 function generateContent(){
   const out = document.getElementById('content-output');
-  out.innerHTML = `<div class="subtle" style="font-size:12.5px;">Generando contenido...</div>`;
+  out.innerHTML = `<div class="subtle" style="font-size:12.5px;">Generating content...</div>`;
   setTimeout(()=>{
     const options = CONTENT_TOPICS[state.contentTopic];
     out.innerHTML = options.map(text=>`
       <div class="card" style="padding:14px;background:var(--blush);border:none;">
         <div style="font-size:13.5px;line-height:1.55;">${text}</div>
-        <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="copyText(this, \`${text.replace(/`/g,"'")}\`)"><i data-lucide="copy"></i>Copiar</button>
+        <button class="btn btn-outline btn-sm" style="margin-top:10px;" onclick="copyText(this, \`${text.replace(/`/g,"'")}\`)"><i data-lucide="copy"></i>Copy</button>
       </div>`).join('');
     safeIcons();
   }, 600);
@@ -1232,48 +1431,48 @@ function generateContent(){
    DISTRIBUTOR — COMMISSIONS + CALCULATOR
    ============================================================ */
 function viewCommissions(){
-  const paid = COMM_HISTORY.filter(c=>c.status==='Pagada').reduce((s,c)=>s+c.amount,0);
-  const pending = COMM_HISTORY.filter(c=>c.status==='Pendiente').reduce((s,c)=>s+c.amount,0);
+  const paid = COMM_HISTORY.filter(c=>c.status==='Paid').reduce((s,c)=>s+c.amount,0);
+  const pending = COMM_HISTORY.filter(c=>c.status==='Pending').reduce((s,c)=>s+c.amount,0);
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;">
-      ${statCard({icon:'shopping-bag',label:'Comisión al detalle',value:fmt.money(420)})}
-      ${statCard({icon:'network',label:'Comisión de equipo',value:fmt.money(560),color:'var(--rose)'})}
-      ${statCard({icon:'user-plus',label:'Bono reclutamiento',value:fmt.money(150),color:'var(--gold)'})}
-      ${statCard({icon:'award',label:'Bono de rango',value:fmt.money(150)})}
-      ${statCard({icon:'check-circle',label:'Pagadas',value:fmt.money(paid),color:'#1e7a47'})}
-      ${statCard({icon:'clock',label:'Pendientes',value:fmt.money(pending),color:'#8a672c'})}
+      ${statCard({icon:'shopping-bag',label:'Retail commission',value:fmt.money(420)})}
+      ${statCard({icon:'network',label:'Team commission',value:fmt.money(560),color:'var(--rose)'})}
+      ${statCard({icon:'user-plus',label:'Recruitment bonus',value:fmt.money(150),color:'var(--gold)'})}
+      ${statCard({icon:'award',label:'Rank bonus',value:fmt.money(150)})}
+      ${statCard({icon:'check-circle',label:'Paid',value:fmt.money(paid),color:'#1e7a47'})}
+      ${statCard({icon:'clock',label:'Pending',value:fmt.money(pending),color:'#8a672c'})}
     </div>
 
     <div class="card" style="padding:22px;">
-      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 4px;">Calculadora de potencial de ingresos</h3>
-      <p class="subtle" style="font-size:12.5px;margin:0 0 18px;">Ajusta las variables y descubre tu ingreso mensual estimado.</p>
+      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 4px;">Earning potential calculator</h3>
+      <p class="subtle" style="font-size:12.5px;margin:0 0 18px;">Adjust the variables to see your estimated monthly income.</p>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;" class="calc-grid">
         <div style="display:flex;flex-direction:column;gap:16px;">
-          ${calcSlider('calc-customers','Número de clientas',20,4,100,2)}
-          ${calcSlider('calc-avgorder','Compra promedio ($)',65,20,250,5)}
-          ${calcSlider('calc-personal','Ventas personales ($)',1500,300,8000,100)}
-          ${calcSlider('calc-distributors','Distribuidoras activas',6,0,40,1)}
-          ${calcSlider('calc-teamsales','Ventas de equipo ($)',9000,0,60000,500)}
-          ${calcSlider('calc-commission','% de comisión',15,5,30,1)}
+          ${calcSlider('calc-customers','Number of customers',20,4,100,2)}
+          ${calcSlider('calc-avgorder','Average order ($)',65,20,250,5)}
+          ${calcSlider('calc-personal','Personal sales ($)',1500,300,8000,100)}
+          ${calcSlider('calc-distributors','Active distributors',6,0,40,1)}
+          ${calcSlider('calc-teamsales','Team sales ($)',9000,0,60000,500)}
+          ${calcSlider('calc-commission','Commission %',15,5,30,1)}
         </div>
         <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:var(--blush);border-radius:18px;padding:24px;">
-          <div class="subtle" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Ingreso mensual estimado</div>
+          <div class="subtle" style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Estimated monthly income</div>
           <div id="calc-result" style="font-family:'Manrope';font-weight:800;font-size:38px;color:var(--burgundy);">$0</div>
           <div style="display:flex;gap:16px;font-size:12px;" class="subtle">
             <div style="text-align:center;"><div id="calc-retail" style="font-weight:800;color:var(--ink);"></div>Retail</div>
-            <div style="text-align:center;"><div id="calc-team" style="font-weight:800;color:var(--ink);"></div>Equipo</div>
+            <div style="text-align:center;"><div id="calc-team" style="font-weight:800;color:var(--ink);"></div>Team</div>
           </div>
         </div>
       </div>
     </div>
 
     <div class="card" style="overflow-x:auto;">
-      <table class="riman-table"><thead><tr><th>Fecha</th><th>Tipo</th><th>Monto</th><th>Estado</th></tr></thead><tbody>
+      <table class="riman-table"><thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead><tbody>
         ${COMM_HISTORY.map(c=>`<tr>
           <td class="subtle">${c.date}</td><td style="font-weight:600;">${c.type}</td>
           <td style="font-weight:700;">${fmt.money(c.amount)}</td>
-          <td><span class="badge ${c.status==='Pagada'?'badge-green':'badge-gold'}">${c.status}</span></td>
+          <td><span class="badge ${c.status==='Paid'?'badge-green':'badge-gold'}">${c.status}</span></td>
         </tr>`).join('')}
       </tbody></table>
     </div>
@@ -1315,16 +1514,16 @@ function viewRewards(){
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
     <div class="ai-ribbon" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
       <div>
-        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;opacity:.85;margin-bottom:4px;">Saldo actual</div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;opacity:.85;margin-bottom:4px;">Current balance</div>
         <div style="font-family:'Manrope';font-weight:800;font-size:32px;">${fmt.num(state.points)} <span style="font-size:16px;font-weight:600;opacity:.85;">RIMAN$</span></div>
       </div>
-      <button class="btn btn-gold" onclick="openRedeemModal()"><i data-lucide="gem"></i>Canjear puntos</button>
+      <button class="btn btn-gold" onclick="openRedeemModal()"><i data-lucide="gem"></i>Redeem points</button>
     </div>
 
     ${!isDist ? customerLevelsBlock() : ''}
 
     <div class="card" style="padding:22px;">
-      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Historial de RIMAN Dollars</h3>
+      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">RIMAN Dollars history</h3>
       <div style="display:flex;flex-direction:column;gap:2px;">
         ${REWARD_HISTORY.map(h=>`
         <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 4px;border-bottom:1px solid var(--line);">
@@ -1340,24 +1539,24 @@ function viewRewards(){
 }
 function customerLevelsBlock(){
   const levels = [
-    {name:'Customer', color:'#9AA0A6', disc:'5%', perk:'Envío estándar'},
-    {name:'VIP', color:'#8D2944', disc:'12%', perk:'Envío gratis + acceso anticipado'},
-    {name:'VVIP', color:'#CDA25F', disc:'20%', perk:'Regalo sorpresa + Asesora personal'},
+    {name:'Customer', color:'#9AA0A6', disc:'5%', perk:'Standard shipping'},
+    {name:'VIP', color:'#8D2944', disc:'12%', perk:'Free shipping + early access'},
+    {name:'VVIP', color:'#CDA25F', disc:'20%', perk:'Surprise gift + personal advisor'},
   ];
   return `
   <div class="card" style="padding:22px;">
-    <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Niveles de membresía</h3>
+    <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Membership levels</h3>
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;">
       ${levels.map(l=>`
       <div class="card" style="padding:16px;border:${state.customerLevel===l.name?'2px solid '+l.color:'1px solid var(--line)'};position:relative;">
-        ${state.customerLevel===l.name?'<span class="badge badge-gold" style="position:absolute;top:12px;right:12px;">Tu nivel</span>':''}
+        ${state.customerLevel===l.name?'<span class="badge badge-gold" style="position:absolute;top:12px;right:12px;">Your level</span>':''}
         <div style="font-family:'Manrope';font-weight:800;color:${l.color};margin-bottom:8px;">${l.name}</div>
-        <div style="font-size:12.5px;" class="subtle">Descuento <b style="color:var(--ink);">${l.disc}</b></div>
+        <div style="font-size:12.5px;" class="subtle">Discount <b style="color:var(--ink);">${l.disc}</b></div>
         <div style="font-size:12.5px;margin-top:4px;" class="subtle">${l.perk}</div>
       </div>`).join('')}
     </div>
     <div style="margin-top:16px;">
-      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:6px;"><span>Progreso a VVIP</span><span>${fmt.money(1120)} / $1,500</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;font-weight:700;margin-bottom:6px;"><span>Progress to VVIP</span><span>${fmt.money(1120)} / $1,500</span></div>
       <div class="progress-track"><div class="progress-fill progress-fill-gold" style="width:75%;"></div></div>
     </div>
   </div>`;
@@ -1365,8 +1564,8 @@ function customerLevelsBlock(){
 function openRedeemModal(){
   openModal(`
     <div style="padding:24px;">
-      <h3 class="section-title" style="margin:0 0 4px;">Canjear recompensas</h3>
-      <p class="subtle" style="font-size:12.5px;margin:0 0 16px;">Tienes <b style="color:var(--burgundy);">${fmt.num(state.points)} RIMAN$</b> disponibles.</p>
+      <h3 class="section-title" style="margin:0 0 4px;">Redeem rewards</h3>
+      <p class="subtle" style="font-size:12.5px;margin:0 0 16px;">You have <b style="color:var(--burgundy);">${fmt.num(state.points)} RIMAN$</b> available.</p>
       <div style="display:flex;flex-direction:column;gap:10px;">
         ${REDEEM_CATALOG.map(r=>`
         <div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:14px;">
@@ -1374,7 +1573,7 @@ function openRedeemModal(){
             <i data-lucide="${r.icon}" style="width:17px;height:17px;color:var(--burgundy);"></i>
           </div>
           <div style="flex:1;"><div style="font-weight:700;font-size:13.5px;">${r.name}</div><div class="subtle" style="font-size:11.5px;">${fmt.num(r.cost)} RIMAN$</div></div>
-          <button class="btn btn-sm ${state.points>=r.cost?'btn-primary':'btn-ghost'}" ${state.points<r.cost?'disabled':''} onclick="redeemItem('${r.id}')">Canjear</button>
+          <button class="btn btn-sm ${state.points>=r.cost?'btn-primary':'btn-ghost'}" ${state.points<r.cost?'disabled':''} onclick="redeemItem('${r.id}')">Redeem</button>
         </div>`).join('')}
       </div>
     </div>`);
@@ -1383,22 +1582,22 @@ function redeemItem(id){
   const r = REDEEM_CATALOG.find(x=>x.id===id);
   if(state.points<r.cost) return;
   state.points -= r.cost;
-  REWARD_HISTORY.unshift({date:'Hoy', desc:'Canje: '+r.name, delta:-r.cost});
+  REWARD_HISTORY.unshift({date:'Today', desc:'Redeemed: '+r.name, delta:-r.cost});
   saveState();
   closeModal();
   render();
-  toast(`Canjeaste "${r.name}"`, 'gift');
+  toast(`Redeemed "${r.name}"`, 'gift');
 }
 
 /* ============================================================
    ORDERS (shared)
    ============================================================ */
 function viewOrders(){
-  const statusColor = {Entregado:'badge-green','En camino':'badge-blue',Cancelado:'badge-grey'};
+  const statusColor = {Delivered:'badge-green','In transit':'badge-blue',Canceled:'badge-grey'};
   return `
   <div class="fade-view">
     <div class="card" style="overflow-x:auto;">
-      <table class="riman-table"><thead><tr><th>Orden</th><th>Fecha</th>${state.role==='distributor'?'<th>Clienta</th>':''}<th>Productos</th><th>Total</th><th>Estado</th></tr></thead><tbody>
+      <table class="riman-table"><thead><tr><th>Order</th><th>Date</th>${state.role==='distributor'?'<th>Customer</th>':''}<th>Products</th><th>Total</th><th>Status</th></tr></thead><tbody>
         ${ORDERS.map(o=>`<tr onclick="openOrderModal('${o.id}')">
           <td style="font-weight:700;">${o.id}</td><td class="subtle">${o.date}</td>
           ${state.role==='distributor'?`<td class="subtle">${o.customer}</td>`:''}
@@ -1411,20 +1610,20 @@ function viewOrders(){
 }
 function openOrderModal(id){
   const o = ORDERS.find(x=>x.id===id);
-  const statusColor = {Entregado:'badge-green','En camino':'badge-blue',Cancelado:'badge-grey'};
+  const statusColor = {Delivered:'badge-green','In transit':'badge-blue',Canceled:'badge-grey'};
   openModal(`
     <div style="padding:24px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
         <h3 class="section-title" style="margin:0;">${o.id}</h3><span class="badge ${statusColor[o.status]}">${o.status}</span>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px;">
-        <div style="display:flex;justify-content:space-between;"><span class="subtle">Fecha</span><span style="font-weight:600;">${o.date}</span></div>
-        <div style="display:flex;justify-content:space-between;"><span class="subtle">Clienta</span><span style="font-weight:600;">${o.customer}</span></div>
-        <div style="display:flex;justify-content:space-between;"><span class="subtle">Producto(s)</span><span style="font-weight:600;text-align:right;">${o.items}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span class="subtle">Date</span><span style="font-weight:600;">${o.date}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span class="subtle">Customer</span><span style="font-weight:600;">${o.customer}</span></div>
+        <div style="display:flex;justify-content:space-between;"><span class="subtle">Product(s)</span><span style="font-weight:600;text-align:right;">${o.items}</span></div>
         <hr class="line">
         <div style="display:flex;justify-content:space-between;font-size:15px;"><span style="font-weight:700;">Total</span><span style="font-weight:800;color:var(--burgundy);">${fmt.money(o.total)}</span></div>
       </div>
-      <button class="btn btn-outline" style="width:100%;margin-top:18px;" onclick="closeModal()">Cerrar</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:18px;" onclick="closeModal()">Close</button>
     </div>`);
 }
 
@@ -1435,39 +1634,42 @@ function viewReports(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;">
-      ${statCard({icon:'trending-up',label:'Crecimiento en ventas',value:'+18%',color:'#1e7a47'})}
-      ${statCard({icon:'users',label:'Crecimiento de equipo',value:'+12%',color:'var(--rose)'})}
-      ${statCard({icon:'sparkles',label:'Ingresos asistidos por IA',value:fmt.money(2140),color:'var(--gold)'})}
-      ${statCard({icon:'repeat',label:'Conversión de leads',value:'34%'})}
+      ${statCard({icon:'trending-up',label:'Sales growth',value:'+18%',color:'#1e7a47'})}
+      ${statCard({icon:'users',label:'Team growth',value:'+12%',color:'var(--rose)'})}
+      ${statCard({icon:'sparkles',label:'AI-assisted revenue',value:fmt.money(2140),color:'var(--gold)'})}
+      ${statCard({icon:'repeat',label:'Lead conversion',value:'34%'})}
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="home-grid">
-      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Crecimiento de ventas y equipo</h4><canvas id="chartReportGrowth" height="170"></canvas></div>
-      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Desempeño por producto</h4><canvas id="chartReportProducts" height="170"></canvas></div>
+      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Sales & team growth</h4><div class="chart-wrap"><canvas id="chartReportGrowth"></canvas></div></div>
+      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Product performance</h4><div class="chart-wrap"><canvas id="chartReportProducts"></canvas></div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="home-grid">
-      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Conversión de reclutamiento</h4><canvas id="chartReportRecruit" height="170"></canvas></div>
-      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Conversión de clientas</h4><canvas id="chartReportCustomers" height="170"></canvas></div>
+      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Recruitment conversion</h4><div class="chart-wrap sm"><canvas id="chartReportRecruit"></canvas></div></div>
+      <div class="card" style="padding:22px;"><h4 style="font-family:'Manrope';font-weight:800;margin:0 0 12px;">Customer conversion</h4><div class="chart-wrap sm"><canvas id="chartReportCustomers"></canvas></div></div>
     </div>
   </div>`;
 }
+let reportChartInstances = [];
 function initReportCharts(){
+  reportChartInstances.forEach(c=>{ try{c && c.destroy();}catch(e){} });
+  reportChartInstances = [];
   const c1 = document.getElementById('chartReportGrowth');
-  if(c1) safeChart(c1,{type:'bar',data:{labels:['Mar','Abr','May','Jun','Jul','Ago'],
-    datasets:[{label:'Ventas',data:[5200,5800,6400,7100,7800,8420],backgroundColor:'#8D2944',borderRadius:6},
-    {label:'Equipo',data:[14000,15200,16800,18500,19900,21400],backgroundColor:'#CDA25F',borderRadius:6}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:11}}}},scales:{y:{grid:{color:'#F1EEEC'}},x:{grid:{display:false}}}}});
+  if(c1) reportChartInstances.push(safeChart(c1,{type:'bar',data:{labels:['Mar','Apr','May','Jun','Jul','Aug'],
+    datasets:[{label:'Sales',data:[5200,5800,6400,7100,7800,8420],backgroundColor:'#8D2944',borderRadius:6},
+    {label:'Team',data:[14000,15200,16800,18500,19900,21400],backgroundColor:'#CDA25F',borderRadius:6}]},
+    options:{plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:11}}}},scales:{y:{grid:{color:'#F1EEEC'}},x:{grid:{display:false}}}}}));
   const c2 = document.getElementById('chartReportProducts');
-  if(c2) safeChart(c2,{type:'bar',data:{labels:['Serum','Crema Gold','Vitamina C+','Kit Inicio','Contorno Ojos'],
+  if(c2) reportChartInstances.push(safeChart(c2,{type:'bar',data:{labels:['Serum','Gold Cream','Vitamin C+','Starter Kit','Eye Contour'],
     datasets:[{data:[42,38,29,25,19],backgroundColor:['#8D2944','#B84C6B','#C98B9C','#CDA25F','#642033'],borderRadius:6}]},
-    options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{grid:{color:'#F1EEEC'}},y:{grid:{display:false}}}}});
+    options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'#F1EEEC'}},y:{grid:{display:false}}}}}));
   const c3 = document.getElementById('chartReportRecruit');
-  if(c3) safeChart(c3,{type:'doughnut',data:{labels:['Activas','Capacitación','Interesadas','Invitadas'],
+  if(c3) reportChartInstances.push(safeChart(c3,{type:'doughnut',data:{labels:['Active','Training','Interested','Invited'],
     datasets:[{data:[6,1,2,1],backgroundColor:['#8D2944','#B84C6B','#CDA25F','#C98B9C']}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:10.5}}}}}});
+    options:{plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:10.5}}}}}}));
   const c4 = document.getElementById('chartReportCustomers');
-  if(c4) safeChart(c4,{type:'doughnut',data:{labels:['VVIP','VIP','Customer'],
+  if(c4) reportChartInstances.push(safeChart(c4,{type:'doughnut',data:{labels:['VVIP','VIP','Customer'],
     datasets:[{data:[1,2,3],backgroundColor:['#CDA25F','#8D2944','#C98B9C']}]},
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:10.5}}}}}});
+    options:{plugins:{legend:{position:'bottom',labels:{usePointStyle:true,boxWidth:8,font:{size:10.5}}}}}}));
 }
 
 /* ============================================================
@@ -1479,17 +1681,17 @@ function viewProfile(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
     <div class="card" style="padding:26px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;">
-      ${avatarOf('Sandra Rodríguez','#8D2944',64)}
+      ${avatarOf('Sandra Rodriguez','#8D2944',64)}
       <div style="flex:1;min-width:180px;">
-        <div style="font-family:'Manrope';font-weight:800;font-size:19px;">Sandra Rodríguez</div>
-        <div class="subtle" style="font-size:12.5px;">Distribuidora desde marzo 2024 · San José, CR</div>
-        <span class="badge badge-gold" style="margin-top:6px;"><i data-lucide="award" style="width:11px;height:11px;"></i>Rango ${rank.name}</span>
+        <div style="font-family:'Manrope';font-weight:800;font-size:19px;">Sandra Rodriguez</div>
+        <div class="subtle" style="font-size:12.5px;">Distributor since March 2024 · San Jose, CR</div>
+        <span class="badge badge-gold" style="margin-top:6px;"><i data-lucide="award" style="width:11px;height:11px;"></i>${rank.name} rank</span>
       </div>
-      <button class="btn btn-outline btn-sm" onclick="toast('Perfil actualizado','check-circle')"><i data-lucide="pencil"></i>Editar perfil</button>
+      <button class="btn btn-outline btn-sm" onclick="toast('Profile updated','check-circle')"><i data-lucide="pencil"></i>Edit profile</button>
     </div>
 
     <div class="card" style="padding:22px;">
-      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 16px;">Progresión de rango</h3>
+      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 16px;">Rank progression</h3>
       <div style="display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;">
         ${RANKS.map(r=>`
         <div style="flex:1;min-width:110px;text-align:center;padding:14px 8px;border-radius:14px;background:${r.name===rank.name?'var(--blush)':'#fafafa'};border:${r.name===rank.name?'1.5px solid '+r.color:'1px solid var(--line)'};">
@@ -1499,17 +1701,17 @@ function viewProfile(){
         </div>`).join('')}
       </div>
       <div style="margin-top:18px;display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;">
-        <div class="card" style="padding:13px;"><div class="subtle" style="font-size:11px;">Volumen personal</div><div style="font-weight:700;">${fmt.money(pv)} / ${fmt.money(next.pv)}</div></div>
-        <div class="card" style="padding:13px;"><div class="subtle" style="font-size:11px;">Volumen de equipo</div><div style="font-weight:700;">${fmt.money(tv)} / ${fmt.money(next.tv)}</div></div>
-        <div class="card" style="padding:13px;"><div class="subtle" style="font-size:11px;">Reclutas activas</div><div style="font-weight:700;">${recruits} / ${next.recruits}</div></div>
-        <div class="card" style="padding:13px;"><div class="subtle" style="font-size:11px;">Tiempo estimado</div><div style="font-weight:700;">~5 semanas</div></div>
+        <div class="card" style="padding:13px;"><div class="subtle" style="font-size:11px;">Personal volume</div><div style="font-weight:700;">${fmt.money(pv)} / ${fmt.money(next.pv)}</div></div>
+        <div class="card" style="padding:13px;"><div class="subtle" style="font-size:11px;">Team volume</div><div style="font-weight:700;">${fmt.money(tv)} / ${fmt.money(next.tv)}</div></div>
+        <div class="card" style="padding:13px;"><div class="subtle" style="font-size:11px;">Active recruits</div><div style="font-weight:700;">${recruits} / ${next.recruits}</div></div>
+        <div class="card" style="padding:13px;"><div class="subtle" style="font-size:11px;">Estimated time</div><div style="font-weight:700;">~5 weeks</div></div>
       </div>
     </div>
 
     <div class="card" style="padding:22px;">
-      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Preferencias</h3>
+      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Preferences</h3>
       <div style="display:flex;flex-direction:column;gap:12px;">
-        ${['Notificaciones de AI Coach','Alertas de leads calientes','Resumen semanal por correo'].map((t,i)=>`
+        ${['AI Coach notifications','Hot lead alerts','Weekly email summary'].map((t,i)=>`
         <div style="display:flex;justify-content:space-between;align-items:center;">
           <span style="font-size:13.5px;font-weight:600;">${t}</span>
           <div class="toggle-switch" data-on="${i!==2?'true':'false'}" onclick="this.dataset.on = this.dataset.on==='true'?'false':'true'; this.querySelector('.ts-dot').style.transform = this.dataset.on==='true'?'translateX(16px)':'translateX(0)'; this.style.background = this.dataset.on==='true'?'var(--burgundy)':'#e2dcd9';" style="width:38px;height:22px;border-radius:99px;background:${i!==2?'var(--burgundy)':'#e2dcd9'};position:relative;cursor:pointer;transition:background .2s;">
@@ -1528,36 +1730,36 @@ function viewProfile(){
 function viewHomeCustomer(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:20px;">
-    ${aiRibbon('Tu piel mixta necesita más hidratación esta semana según tu último análisis. Te recomendamos el Aceite Facial Rose Gold.', {label:'Ver AI Beauty Advisor', onclick:"go('beauty')"})}
+    ${aiRibbon('Your combination skin needs more hydration this week based on your last analysis. We recommend the Rose Gold Facial Oil.', {label:'Open AI Beauty Advisor', onclick:"go('beauty')"})}
     <div style="display:grid;grid-template-columns:1.3fr 1fr;gap:16px;" class="home-grid">
       <div class="card" style="padding:22px;display:flex;align-items:center;gap:18px;">
         <div>
-          <span class="badge badge-burgundy">Nivel ${state.customerLevel}</span>
-          <div style="font-family:'Manrope';font-weight:800;font-size:20px;margin-top:8px;">¡Hola, Marcela! 👋</div>
-          <div class="subtle" style="font-size:12.5px;margin-top:2px;">Tienes ${fmt.num(state.points)} RIMAN$ disponibles</div>
-          <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="go('shop')"><i data-lucide="shopping-bag"></i>Ir a la tienda</button>
+          <span class="badge badge-burgundy">${state.customerLevel} level</span>
+          <div style="font-family:'Manrope';font-weight:800;font-size:20px;margin-top:8px;">Hi, Marcela! 👋</div>
+          <div class="subtle" style="font-size:12.5px;margin-top:2px;">You have ${fmt.num(state.points)} RIMAN$ available</div>
+          <button class="btn btn-primary btn-sm" style="margin-top:12px;" onclick="go('shop')"><i data-lucide="shopping-bag"></i>Go to shop</button>
         </div>
       </div>
       <div class="card" style="padding:20px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;">
-        ${ring({percent:75, size:88, label:'75%', sublabel:'a VVIP'})}
-        <div class="subtle" style="font-size:11.5px;">$380 más para VVIP</div>
+        ${ring({percent:75, size:88, label:'75%', sublabel:'to VVIP'})}
+        <div class="subtle" style="font-size:11.5px;">$380 more to reach VVIP</div>
       </div>
     </div>
     <div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
-        <h3 class="section-title" style="font-size:16px;">Recomendado para ti</h3>
-        <span class="subtle" style="font-size:12px;cursor:pointer;font-weight:700;" onclick="go('shop')">Ver todo →</span>
+        <h3 class="section-title" style="font-size:16px;">Recommended for you</h3>
+        <span class="subtle" style="font-size:12px;cursor:pointer;font-weight:700;" onclick="go('shop')">View all →</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;">
         ${PRODUCTS.slice(0,4).map(p=>productCard(p)).join('')}
       </div>
     </div>
     <div class="card" style="padding:22px;">
-      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 12px;">Pedidos recientes</h3>
+      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 12px;">Recent orders</h3>
       ${ORDERS.slice(0,3).map(o=>`
       <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 4px;border-bottom:1px solid var(--line);cursor:pointer;" onclick="openOrderModal('${o.id}')">
         <div><div style="font-weight:700;font-size:13px;">${o.items}</div><div class="subtle" style="font-size:11.5px;">${o.date}</div></div>
-        <span class="badge ${o.status==='Entregado'?'badge-green':o.status==='En camino'?'badge-blue':'badge-grey'}">${o.status}</span>
+        <span class="badge ${o.status==='Delivered'?'badge-green':o.status==='In transit'?'badge-blue':'badge-grey'}">${o.status}</span>
       </div>`).join('')}
     </div>
   </div>`;
@@ -1582,7 +1784,7 @@ function productCard(p){
   </div>`;
 }
 function viewShop(){
-  const cats = ['Todos', ...new Set(PRODUCTS.map(p=>p.cat))];
+  const cats = ['All', ...new Set(PRODUCTS.map(p=>p.cat))];
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:16px;">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
@@ -1590,7 +1792,7 @@ function viewShop(){
         ${cats.map((c,i)=>`<span class="chip ${i===0?'active':''}" onclick="filterShop('${c}',this)">${c}</span>`).join('')}
       </div>
       <button class="btn btn-outline btn-sm" onclick="openCartModal()" style="position:relative;">
-        <i data-lucide="shopping-cart"></i>Carrito ${state.cart.length?`<span class="badge badge-burgundy" style="margin-left:2px;">${state.cart.reduce((s,c)=>s+c.qty,0)}</span>`:''}
+        <i data-lucide="shopping-cart"></i>Cart ${state.cart.length?`<span class="badge badge-burgundy" style="margin-left:2px;">${state.cart.reduce((s,c)=>s+c.qty,0)}</span>`:''}
       </button>
     </div>
     <div id="shop-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px;">
@@ -1601,7 +1803,7 @@ function viewShop(){
 function filterShop(cat, el){
   document.querySelectorAll('#shop-cats .chip').forEach(c=>c.classList.remove('active'));
   el.classList.add('active');
-  const list = cat==='Todos'?PRODUCTS:PRODUCTS.filter(p=>p.cat===cat);
+  const list = cat==='All'?PRODUCTS:PRODUCTS.filter(p=>p.cat===cat);
   document.getElementById('shop-grid').innerHTML = list.map(p=>productCard(p)).join('');
   safeIcons();
 }
@@ -1610,7 +1812,7 @@ function addToCart(id){
   const existing = state.cart.find(c=>c.id===id);
   if(existing) existing.qty++; else state.cart.push({id, qty:1});
   saveState();
-  toast(`${p.name} agregado al carrito`, 'shopping-cart');
+  toast(`${p.name} added to cart`, 'shopping-cart');
   if(state.view==='shop'){ document.getElementById('view').innerHTML = viewShop(); safeIcons(); }
 }
 function openProductModal(id){
@@ -1624,12 +1826,12 @@ function openProductModal(id){
       <p style="font-size:13.5px;line-height:1.5;color:var(--grey);margin:0 0 14px;">${p.desc}</p>
       <div style="font-weight:800;font-size:22px;font-family:'Manrope';color:var(--burgundy);margin-bottom:16px;">${fmt.money(p.price)}</div>
       <div class="ai-ribbon" style="padding:12px 14px;margin-bottom:16px;">
-        <div style="font-size:11px;font-weight:800;text-transform:uppercase;opacity:.85;margin-bottom:4px;">IA sugiere combinar con</div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;opacity:.85;margin-bottom:4px;">AI suggests pairing with</div>
         <div style="font-size:13px;font-weight:600;">${addon.img} ${addon.name}</div>
       </div>
       <div style="display:flex;gap:10px;">
-        <button class="btn btn-primary" style="flex:1;" onclick="addToCart('${p.id}');closeModal();"><i data-lucide="shopping-cart"></i>Agregar al carrito</button>
-        <button class="btn btn-outline" onclick="closeModal()">Cerrar</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="addToCart('${p.id}');closeModal();"><i data-lucide="shopping-cart"></i>Add to cart</button>
+        <button class="btn btn-outline" onclick="closeModal()">Close</button>
       </div>
     </div>`);
 }
@@ -1638,32 +1840,32 @@ function openCartModal(){
   const total = items.reduce((s,i)=>s+i.price*i.qty,0);
   openModal(`
     <div style="padding:24px;">
-      <h3 class="section-title" style="margin:0 0 16px;">Tu carrito</h3>
-      ${items.length===0?'<p class="subtle">Tu carrito está vacío.</p>':`
+      <h3 class="section-title" style="margin:0 0 16px;">Your cart</h3>
+      ${items.length===0?'<p class="subtle">Your cart is empty.</p>':`
       <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;">
         ${items.map(i=>`
         <div style="display:flex;align-items:center;gap:10px;">
           <div style="width:40px;height:40px;border-radius:10px;background:var(--blush);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">${i.img}</div>
-          <div style="flex:1;"><div style="font-weight:700;font-size:13px;">${i.name}</div><div class="subtle" style="font-size:11.5px;">Cant: ${i.qty}</div></div>
+          <div style="flex:1;"><div style="font-weight:700;font-size:13px;">${i.name}</div><div class="subtle" style="font-size:11.5px;">Qty: ${i.qty}</div></div>
           <div style="font-weight:700;">${fmt.money(i.price*i.qty)}</div>
         </div>`).join('')}
       </div>
       <hr class="line">
       <div style="display:flex;justify-content:space-between;font-size:15px;margin:14px 0 18px;"><span style="font-weight:700;">Total</span><span style="font-weight:800;color:var(--burgundy);">${fmt.money(total)}</span></div>
-      <button class="btn btn-primary" style="width:100%;" onclick="checkoutCart()"><i data-lucide="credit-card"></i>Finalizar compra</button>
+      <button class="btn btn-primary" style="width:100%;" onclick="checkoutCart()"><i data-lucide="credit-card"></i>Checkout</button>
       `}
-      <button class="btn btn-outline" style="width:100%;margin-top:10px;" onclick="closeModal()">${items.length?'Seguir comprando':'Cerrar'}</button>
+      <button class="btn btn-outline" style="width:100%;margin-top:10px;" onclick="closeModal()">${items.length?'Keep shopping':'Close'}</button>
     </div>`);
 }
 function checkoutCart(){
   const total = state.cart.reduce((s,c)=>{const p=PRODUCTS.find(x=>x.id===c.id);return s+p.price*c.qty;},0);
   const earned = Math.round(total);
   state.points += earned;
-  ORDERS.unshift({id:'RM-'+Math.floor(10500+Math.random()*400), date:'Hoy', customer:'Tú', items:state.cart.map(c=>PRODUCTS.find(p=>p.id===c.id).name).join(', '), total, status:'En camino'});
+  ORDERS.unshift({id:'RM-'+Math.floor(10500+Math.random()*400), date:'Today', customer:'You', items:state.cart.map(c=>PRODUCTS.find(p=>p.id===c.id).name).join(', '), total, status:'In transit'});
   state.cart = [];
   saveState();
   closeModal();
-  toast(`¡Compra realizada! Ganaste ${earned} RIMAN$`, 'gift');
+  toast(`Order placed! You earned ${earned} RIMAN$`, 'gift');
   render();
 }
 
@@ -1673,17 +1875,17 @@ function checkoutCart(){
 function viewBeauty(){
   return `
   <div class="fade-view" style="display:flex;flex-direction:column;gap:18px;">
-    ${aiRibbon('Tu Asesora de Belleza IA analiza tu piel, hábitos y clima local para recomendarte el ritual perfecto.')}
+    ${aiRibbon('Your AI Beauty Advisor analyzes your skin, habits and local climate to recommend the perfect ritual.')}
     <div class="card" style="padding:22px;text-align:center;">
       <div style="width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--burgundy),var(--rose));display:flex;align-items:center;justify-content:center;margin:0 auto 14px;">
         <i data-lucide="wand-2" style="width:28px;height:28px;color:#fff;"></i>
       </div>
-      <h3 style="font-family:'Manrope';font-weight:800;margin:0 0 6px;">Descubre tu ritual ideal</h3>
-      <p class="subtle" style="font-size:13px;margin:0 0 16px;">Responde 1 pregunta rápida y la IA arma tu rutina personalizada.</p>
+      <h3 style="font-family:'Manrope';font-weight:800;margin:0 0 6px;">Discover your ideal ritual</h3>
+      <p class="subtle" style="font-size:13px;margin:0 0 16px;">Answer one quick question and the AI builds your personalized routine.</p>
       <div style="display:flex;flex-direction:column;gap:8px;max-width:340px;margin:0 auto;">
-        <button class="btn btn-outline" onclick="runBeautyQuiz(0)">Mi piel brilla en la zona T</button>
-        <button class="btn btn-outline" onclick="runBeautyQuiz(1)">Mi piel se siente reseca</button>
-        <button class="btn btn-outline" onclick="runBeautyQuiz(2)">Me preocupan las líneas de expresión</button>
+        <button class="btn btn-outline" onclick="runBeautyQuiz(0)">My skin gets shiny in the T-zone</button>
+        <button class="btn btn-outline" onclick="runBeautyQuiz(1)">My skin feels dry</button>
+        <button class="btn btn-outline" onclick="runBeautyQuiz(2)">I'm concerned about fine lines</button>
       </div>
     </div>
     <div id="beauty-result"></div>
@@ -1691,13 +1893,13 @@ function viewBeauty(){
 }
 function runBeautyQuiz(i){
   const box = document.getElementById('beauty-result');
-  box.innerHTML = `<div class="subtle" style="font-size:13px;text-align:center;padding:20px;">Analizando tu perfil de piel...</div>`;
+  box.innerHTML = `<div class="subtle" style="font-size:13px;text-align:center;padding:20px;">Analyzing your skin profile...</div>`;
   setTimeout(()=>{
     const r = BEAUTY_QUIZ_RESULTS[i];
     const recProducts = r.recs.map(id=>PRODUCTS.find(p=>p.id===id));
     box.innerHTML = `
     <div class="card" style="padding:22px;">
-      <span class="badge badge-burgundy" style="margin-bottom:10px;">Diagnóstico IA</span>
+      <span class="badge badge-burgundy" style="margin-bottom:10px;">AI diagnosis</span>
       <h4 style="font-family:'Manrope';font-weight:800;margin:0 0 8px;">${r.tone}</h4>
       <p class="subtle" style="font-size:13px;line-height:1.5;margin:0 0 16px;">${r.tip}</p>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;">
@@ -1718,26 +1920,112 @@ function viewAccount(){
       ${avatarOf('Marcela Vindas','#B84C6B',64)}
       <div style="flex:1;min-width:180px;">
         <div style="font-family:'Manrope';font-weight:800;font-size:19px;">Marcela Vindas</div>
-        <div class="subtle" style="font-size:12.5px;">Clienta desde enero 2025 · San José, CR</div>
-        <span class="badge badge-burgundy" style="margin-top:6px;">Nivel ${state.customerLevel}</span>
+        <div class="subtle" style="font-size:12.5px;">Customer since January 2025 · San Jose, CR</div>
+        <span class="badge badge-burgundy" style="margin-top:6px;">${state.customerLevel} level</span>
       </div>
-      <button class="btn btn-outline btn-sm" onclick="toast('Perfil actualizado','check-circle')"><i data-lucide="pencil"></i>Editar</button>
+      <button class="btn btn-outline btn-sm" onclick="toast('Profile updated','check-circle')"><i data-lucide="pencil"></i>Edit</button>
     </div>
     <div class="card" style="padding:22px;">
-      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Información</h3>
+      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Information</h3>
       <div style="display:flex;flex-direction:column;gap:12px;font-size:13.5px;">
-        <div style="display:flex;justify-content:space-between;"><span class="subtle">Correo</span><span style="font-weight:600;">marcela.vindas@email.com</span></div>
-        <div style="display:flex;justify-content:space-between;"><span class="subtle">Teléfono</span><span style="font-weight:600;">+506 8888-0000</span></div>
-        <div style="display:flex;justify-content:space-between;"><span class="subtle">Distribuidora asignada</span><span style="font-weight:600;">Sandra Rodríguez</span></div>
-        <div style="display:flex;justify-content:space-between;"><span class="subtle">Dirección</span><span style="font-weight:600;">San José, Costa Rica</span></div>
+        <div style="display:flex;justify-content:space-between;"><span class="subtle">Email</span><span style="font-weight:600;">marcela.vindas@email.com</span></div>
+        <div style="display:flex;justify-content:space-between;"><span class="subtle">Phone</span><span style="font-weight:600;">+506 8888-0000</span></div>
+        <div style="display:flex;justify-content:space-between;"><span class="subtle">Assigned distributor</span><span style="font-weight:600;">Sandra Rodriguez</span></div>
+        <div style="display:flex;justify-content:space-between;"><span class="subtle">Address</span><span style="font-weight:600;">San Jose, Costa Rica</span></div>
       </div>
     </div>
     <div class="card" style="padding:22px;">
-      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">¿Quieres vender productos RIMAN?</h3>
-      <p class="subtle" style="font-size:13px;margin:0 0 12px;">Conviértete en distribuidora y deja que la IA te ayude a construir tu propio negocio.</p>
-      <button class="btn btn-primary btn-sm" onclick="switchRole('distributor');toast('¡Bienvenida al modo Distribuidora!','sparkles')"><i data-lucide="rocket"></i>Explorar modo distribuidora</button>
+      <h3 style="font-family:'Manrope';font-weight:800;font-size:16px;margin:0 0 14px;">Want to sell RIMAN products?</h3>
+      <p class="subtle" style="font-size:13px;margin:0 0 12px;">Become a distributor and let AI help you build your own business.</p>
+      <button class="btn btn-primary btn-sm" onclick="switchRole('distributor');toast('Welcome to Distributor mode!','sparkles')"><i data-lucide="rocket"></i>Explore distributor mode</button>
     </div>
   </div>`;
+}
+</script>
+<script>
+/* ============================================================
+   VOICE ASSISTANT — uses Web Speech API (SpeechRecognition + SpeechSynthesis)
+   Degrades gracefully to text input + no speech if unsupported.
+   ============================================================ */
+function speak(text){
+  try{
+    if('speechSynthesis' in window){
+      window.speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = 'en-US'; u.rate = 1.02; u.pitch = 1.03;
+      window.speechSynthesis.speak(u);
+    }
+  }catch(e){}
+}
+function openVoiceAssistant(){
+  const supportsSTT = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  const supportsTTS = 'speechSynthesis' in window;
+  openModal(`
+    <div style="padding:26px;text-align:center;">
+      <div class="voice-orb" id="voice-orb"><i data-lucide="mic" style="width:34px;height:34px;"></i></div>
+      <h3 style="font-family:'Manrope';font-weight:800;margin:16px 0 4px;">AI Voice Assistant</h3>
+      <p class="subtle" style="font-size:12.5px;margin:0 0 6px;" id="voice-status">
+        ${supportsSTT ? 'Tap the mic and ask a question.' : 'Voice input isn\'t supported in this browser — type your question instead.'}
+      </p>
+      ${!supportsTTS ? '<p class="subtle" style="font-size:11px;margin:0 0 14px;">Spoken responses aren\'t supported here — you\'ll see the answer as text.</p>':''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:14px 0;">
+        <span class="chip" onclick="askVoice('Who should I contact today?')">Who should I contact today?</span>
+        <span class="chip" onclick="askVoice('How are my sales this month?')">How are my sales?</span>
+        <span class="chip" onclick="askVoice('Any hot leads?')">Any hot leads?</span>
+      </div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;">
+        <input class="input" id="voice-text-input" placeholder="Type or use the mic...">
+        <button class="btn ${supportsSTT?'btn-primary':'btn-ghost'} btn-sm" id="voice-mic-btn" onclick="toggleListening()" ${supportsSTT?'':'disabled'}><i data-lucide="mic"></i></button>
+      </div>
+      <button class="btn btn-outline" style="width:100%;" onclick="askVoiceFromInput()">Ask</button>
+      <div id="voice-answer" style="margin-top:16px;text-align:left;"></div>
+      <button class="btn btn-ghost btn-sm" style="margin-top:10px;" onclick="closeModal()">Close</button>
+    </div>`);
+}
+function askVoiceFromInput(){
+  const val = document.getElementById('voice-text-input').value.trim();
+  if(val) askVoice(val);
+}
+function toggleListening(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR) return;
+  const orb = document.getElementById('voice-orb');
+  const statusEl = document.getElementById('voice-status');
+  if(state.voice.listening){
+    state.voice.recognition && state.voice.recognition.stop();
+    return;
+  }
+  try{
+    const rec = new SR();
+    rec.lang = 'en-US'; rec.interimResults = false; rec.maxAlternatives = 1;
+    rec.onstart = ()=>{ state.voice.listening = true; orb && orb.classList.add('listening'); if(statusEl) statusEl.textContent = 'Listening...'; };
+    rec.onerror = ()=>{ state.voice.listening = false; orb && orb.classList.remove('listening'); if(statusEl) statusEl.textContent = 'Didn\'t catch that — try typing instead.'; };
+    rec.onend = ()=>{ state.voice.listening = false; orb && orb.classList.remove('listening'); };
+    rec.onresult = (e)=>{
+      const transcript = e.results[0][0].transcript;
+      const input = document.getElementById('voice-text-input');
+      if(input) input.value = transcript;
+      askVoice(transcript);
+    };
+    state.voice.recognition = rec;
+    rec.start();
+  }catch(e){}
+}
+function askVoice(question){
+  const box = document.getElementById('voice-answer');
+  const orb = document.getElementById('voice-orb');
+  if(!box) return;
+  box.innerHTML = `<div class="subtle" style="font-size:12.5px;display:flex;align-items:center;gap:8px;justify-content:center;"><span class="voice-bars"><span></span><span></span><span></span><span></span><span></span></span>Thinking...</div>`;
+  setTimeout(()=>{
+    const answer = VOICE_RESPONSES[Math.floor(Math.random()*VOICE_RESPONSES.length)];
+    box.innerHTML = `
+      <div class="card" style="padding:14px;background:var(--blush);border:none;">
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;"><i data-lucide="sparkles" style="width:14px;height:14px;color:var(--burgundy);"></i><b style="font-size:12px;color:var(--burgundy-dark);">AI Coach</b></div>
+        <div style="font-size:13.5px;line-height:1.55;">${answer}</div>
+      </div>`;
+    safeIcons();
+    speak(answer);
+  }, 750);
 }
 </script>
 <script>
@@ -1746,7 +2034,7 @@ function viewAccount(){
    ============================================================ */
 const VIEW_RENDERERS = {
   distributor:{
-    home:viewHomeDistributor, coach:viewCoach, leads:viewLeads, customers:viewCustomers,
+    home:viewHomeDistributor, coach:viewCoach, agents:viewAgents, leads:viewLeads, customers:viewCustomers,
     network:viewNetwork, recruit:viewRecruit, sales:viewSales, commissions:viewCommissions,
     rewards:viewRewards, orders:viewOrders, reports:viewReports, profile:viewProfile,
   },
@@ -1787,13 +2075,14 @@ document.querySelectorAll('.role-btn').forEach(b=>{
 document.getElementById('notif-btn').addEventListener('click', ()=>{
   openModal(`
     <div style="padding:22px;">
-      <h3 class="section-title" style="margin:0 0 14px;">Notificaciones</h3>
+      <h3 class="section-title" style="margin:0 0 14px;">Notifications</h3>
       <div style="display:flex;flex-direction:column;gap:10px;">
         ${[
-          ['sparkles','AI Coach','Tienes 3 nuevas recomendaciones para hoy'],
-          ['user-plus','Reclutamiento','Tatiana Brenes completó su capacitación'],
-          ['gem','Recompensas','Ganaste 112 RIMAN$ por tu última compra'],
-          ['trending-up','Ventas','Fabiola Rojas realizó una compra de $224'],
+          ['sparkles','AI Coach','You have 3 new recommendations for today'],
+          ['bot','AI Agents','Trend Analysis Agent found a new opportunity'],
+          ['user-plus','Recruitment','Tatiana Brenes completed her training'],
+          ['gem','Rewards','You earned 112 RIMAN$ from your last purchase'],
+          ['trending-up','Sales','Fabiola Rojas placed a $224 order'],
         ].map(([icon,t,d])=>`
         <div style="display:flex;gap:12px;padding:12px;border-radius:13px;background:var(--blush);">
           <div style="width:34px;height:34px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;"><i data-lucide="${icon}" style="width:16px;height:16px;color:var(--burgundy);"></i></div>
@@ -1803,9 +2092,21 @@ document.getElementById('notif-btn').addEventListener('click', ()=>{
     </div>`);
   document.getElementById('notif-dot').style.display='none';
 });
-document.getElementById('coach-ask') // no-op guard
 document.addEventListener('keydown', e=>{
-  if(e.key==='Enter' && document.activeElement && document.activeElement.id==='coach-ask'){ askCoach(); }
+  if(e.key==='Enter' && document.activeElement){
+    if(document.activeElement.id==='coach-ask'){ askCoach(); }
+    if(document.activeElement.id==='voice-text-input'){ askVoiceFromInput(); }
+  }
+});
+/* Recompute chart layout when the modal or sheet closes / viewport changes, without letting
+   the charts grow unbounded (heights are fixed by .chart-wrap, see CSS). */
+let resizeT = null;
+window.addEventListener('resize', ()=>{
+  clearTimeout(resizeT);
+  resizeT = setTimeout(()=>{
+    if(homeChartInstance) try{homeChartInstance.resize();}catch(e){}
+    reportChartInstances.forEach(c=>{ try{c && c.resize();}catch(e){} });
+  }, 150);
 });
 
 render();
