@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculadora Enterprise — AI Humans</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+<style>
+:root{
+  --bg:#F6F7FC; --bg-alt:#EEF0FB; --surface:#FFFFFF; --glass:rgba(255,255,255,0.62);
+  --ink:#13152B; --ink-soft:#52546E; --ink-faint:#8688A3;
+  --line:rgba(19,21,43,0.09); --line-strong:rgba(19,21,43,0.16);
+  --violet:#5B4FE9; --violet-dark:#4038B6; --violet-pale:#EEEBFD;
+  --teal:#0FC7B0; --teal-pale:#E3FBF6; --pink:#FF6FC6;
+  --grad-brand:linear-gradient(120deg, var(--violet) 0%, #8B6BF0 45%, var(--teal) 100%);
+  --grad-soft:linear-gradient(160deg, var(--violet-pale) 0%, var(--bg) 45%, var(--teal-pale) 100%);
+  --font-display:'Space Grotesk','Inter',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  --radius-sm:10px; --radius-md:18px; --radius-lg:28px;
+  --shadow-soft:0 20px 60px -20px rgba(37,29,110,0.18); --shadow-tight:0 8px 24px -10px rgba(37,29,110,0.16);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body); background:var(--bg); color:var(--ink); line-height:1.6; -webkit-font-smoothing:antialiased;}
+a{color:inherit; text-decoration:none;} button{font-family:inherit; cursor:pointer;}
+:focus-visible{outline:2.5px solid var(--violet); outline-offset:3px; border-radius:4px;}
+.wrap{max-width:1180px; margin:0 auto; padding:0 28px;}
+h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; letter-spacing:-0.02em; color:var(--ink);}
+.eyebrow{font-family:var(--font-mono); font-size:12.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--violet-dark); display:inline-flex; align-items:center; gap:8px; font-weight:600;}
+.eyebrow::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--grad-brand); box-shadow:0 0 0 4px var(--violet-pale);}
+
+/* Nav (reduced) */
+.nav{position:sticky; top:0; z-index:1000; background:rgba(246,247,252,0.85); backdrop-filter:blur(14px) saturate(160%); border-bottom:1px solid var(--line); padding:14px 0;}
+.nav-inner{display:flex; align-items:center; justify-content:space-between; gap:20px;}
+.brand{display:flex; align-items:center; gap:10px; font-family:var(--font-display); font-weight:700; font-size:18px;}
+.brand .mark{width:32px; height:32px; border-radius:10px; background:var(--grad-brand); display:flex; align-items:center; justify-content:center;}
+.brand .mark svg{width:17px; height:17px;}
+.nav-back{font-size:13.5px; font-weight:600; color:var(--ink-soft); display:flex; align-items:center; gap:6px;}
+.nav-back:hover{color:var(--violet-dark);}
+
+/* Buttons */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:9px; padding:14px 26px; border-radius:100px; font-weight:600; font-size:14.5px; border:1px solid transparent; transition:transform .3s, box-shadow .3s, background .3s, color .3s; white-space:nowrap;}
+.btn-primary{background:var(--ink); color:#fff; box-shadow:var(--shadow-tight);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:0 14px 30px -10px rgba(19,21,43,0.4);}
+.btn-grad{background:var(--grad-brand); color:#fff; box-shadow:0 14px 32px -12px rgba(91,79,233,0.55);}
+.btn-grad:hover{transform:translateY(-2px); box-shadow:0 20px 40px -12px rgba(91,79,233,0.65);}
+.btn-ghost{background:var(--glass); color:var(--ink); border-color:var(--line-strong);}
+.btn-ghost:hover{border-color:var(--violet); color:var(--violet-dark);}
+.btn-block{width:100%;}
+
+/* Hero */
+.hero-mini{padding:64px 0 40px;}
+.hero-mini h1{font-size:clamp(30px,4.4vw,46px); line-height:1.1; margin:16px 0 14px; max-width:720px;}
+.hero-mini p{color:var(--ink-soft); font-size:16.5px; max-width:600px;}
+.base-chip{display:inline-flex; align-items:center; gap:10px; margin-top:22px; padding:10px 18px; border-radius:100px; background:var(--surface); border:1px solid var(--line-strong); box-shadow:var(--shadow-tight); font-family:var(--font-mono); font-size:13px; font-weight:600;}
+.base-chip .amt{color:var(--violet-dark);}
+
+/* Layout */
+.calc-layout{display:grid; grid-template-columns:1fr 360px; gap:36px; align-items:start; padding-bottom:100px;}
+@media (max-width:980px){.calc-layout{grid-template-columns:1fr;}}
+
+/* Category cards */
+.cat-card{background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md); padding:26px 26px 8px; margin-bottom:22px;}
+.cat-head{display:flex; align-items:flex-start; gap:14px; margin-bottom:6px;}
+.cat-icon{width:42px; height:42px; flex-shrink:0; border-radius:12px; background:var(--grad-soft); border:1px solid var(--line); display:flex; align-items:center; justify-content:center;}
+.cat-icon svg{width:20px; height:20px; color:var(--violet-dark);}
+.cat-head h3{font-size:17.5px; margin-bottom:3px;}
+.cat-head p{font-size:13.5px; color:var(--ink-soft);}
+.cat-included{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); margin:8px 0 14px 56px;}
+
+.item-row{display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 0; border-top:1px dashed var(--line);}
+.item-info h4{font-size:14.5px; font-weight:600; margin-bottom:2px;}
+.item-info span{font-size:12.5px; color:var(--ink-faint); font-family:var(--font-mono);}
+
+/* Stepper */
+.stepper{display:flex; align-items:center; gap:0; border:1px solid var(--line-strong); border-radius:100px; overflow:hidden; flex-shrink:0;}
+.stepper button{width:34px; height:34px; background:var(--surface); border:none; font-size:15px; color:var(--ink); display:flex; align-items:center; justify-content:center; transition:background .2s;}
+.stepper button:hover{background:var(--violet-pale); color:var(--violet-dark);}
+.stepper button:disabled{opacity:.35; cursor:default;}
+.stepper button:hover:disabled{background:var(--surface); color:var(--ink);}
+.stepper .qty{width:34px; text-align:center; font-family:var(--font-mono); font-weight:600; font-size:14px;}
+
+/* Toggle switch */
+.switch{position:relative; width:46px; height:26px; flex-shrink:0;}
+.switch input{opacity:0; width:0; height:0;}
+.slider{position:absolute; inset:0; background:var(--line-strong); border-radius:100px; transition:background .25s; cursor:pointer;}
+.slider::before{content:""; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform .25s; box-shadow:0 2px 6px rgba(0,0,0,.2);}
+.switch input:checked + .slider{background:var(--violet);}
+.switch input:checked + .slider::before{transform:translateX(20px);}
+
+/* Radio pills (SLA) */
+.pill-group{display:flex; flex-wrap:wrap; gap:10px; padding:14px 0; border-top:1px dashed var(--line);}
+.pill{border:1px solid var(--line-strong); border-radius:100px; padding:10px 16px; font-size:13px; font-weight:600; color:var(--ink-soft); transition:all .2s; display:flex; align-items:center; gap:8px;}
+.pill input{display:none;}
+.pill .price-tag{font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint);}
+.pill.active{background:var(--violet); color:#fff; border-color:var(--violet);}
+.pill.active .price-tag{color:rgba(255,255,255,0.75);}
+
+/* Sticky summary */
+.summary{position:sticky; top:92px; background:var(--ink); color:#fff; border-radius:var(--radius-lg); padding:30px 26px; box-shadow:0 30px 70px -22px rgba(19,21,43,0.5);}
+.summary h3{color:#fff; font-size:16px; margin-bottom:4px;}
+.summary .sub{font-size:12.5px; color:rgba(255,255,255,0.55); margin-bottom:20px;}
+.summary-list{list-style:none; padding:0; margin:0 0 18px; max-height:260px; overflow-y:auto;}
+.summary-list li{display:flex; justify-content:space-between; gap:10px; font-size:13px; padding:9px 0; border-bottom:1px dashed rgba(255,255,255,0.14); color:rgba(255,255,255,0.85);}
+.summary-list li span:last-child{font-family:var(--font-mono); color:#fff; flex-shrink:0;}
+.summary-empty{font-size:12.5px; color:rgba(255,255,255,0.45); padding:10px 0;}
+.summary-total{border-top:1px solid rgba(255,255,255,0.18); padding-top:18px; margin-bottom:22px;}
+.summary-total .row{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px;}
+.summary-total .label{font-size:13px; color:rgba(255,255,255,0.6);}
+.summary-total .amt{font-family:var(--font-mono); font-size:32px; font-weight:600;}
+.summary-total .per{font-size:12.5px; color:rgba(255,255,255,0.55);}
+.summary-total .annual{font-size:12px; color:rgba(255,255,255,0.45); font-family:var(--font-mono);}
+.summary-actions{display:flex; flex-direction:column; gap:10px;}
+.summary-actions .btn-ghost{background:rgba(255,255,255,0.08); border-color:rgba(255,255,255,0.22); color:#fff;}
+.summary-actions .btn-ghost:hover{border-color:rgba(255,255,255,0.4);}
+
+.note{font-size:12px; color:var(--ink-faint); margin-top:18px; line-height:1.5;}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="index.html" class="brand">
+      <span class="mark"><svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12c1-4 2-6 3-6s2 8 3 8 2-10 3-10 2 8 3 8 2-6 3-6" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      AI Humans
+    </a>
+    <a href="index.html#planes" class="nav-back"><i class="fa-solid fa-arrow-left"></i> Volver a planes</a>
+  </div>
+</nav>
+
+<section class="hero-mini">
+  <div class="wrap">
+    <span class="eyebrow">Enterprise · A medida</span>
+    <h1>Arma tu plan Enterprise con las funcionalidades que tu operación necesita.</h1>
+    <p>Empieza desde la base Enterprise y agrega minutos, avatares, canales, almacenamiento, integraciones o soporte adicional. El total se actualiza al instante.</p>
+    <span class="base-chip"><i class="fa-solid fa-layer-group" style="color:var(--teal);"></i> Base Enterprise desde <span class="amt">$3,500/mes</span></span>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="calc-layout">
+
+    <!-- ===== CATEGORÍAS ===== -->
+    <div>
+
+      <!-- MINUTOS -->
+      <div class="cat-card">
+        <div class="cat-head">
+          <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 3a4 4 0 0 1 4 4v3a4 4 0 1 1-8 0V7a4 4 0 0 1 4-4Z"/><path d="M6 11a6 6 0 0 0 12 0M12 17v3M9 20h6"/></svg></div>
+          <div><h3>Minutos conversacionales</h3><p>Tiempo real de diálogo entre tus usuarios y tu humano digital, por voz o texto.</p></div>
+        </div>
+        <div class="cat-included">Incluye 5,000 min/mes en la base</div>
+        <div class="item-row" data-item="minutos" data-price="350">
+          <div class="item-info"><h4>Paquete adicional</h4><span>+2,500 min/mes · $350/mes c/u</span></div>
+          <div class="stepper" data-max="10"></div>
+        </div>
+      </div>
+
+      <!-- AVATARES -->
+      <div class="cat-card">
+        <div class="cat-head">
+          <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="8" r="3.4"/><path d="M5 20c1.2-4 4-6 7-6s5.8 2 7 6"/></svg></div>
+          <div><h3>Avatares / humanos digitales</h3><p>Cada avatar puede tener apariencia, voz y personalidad propias.</p></div>
+        </div>
+        <div class="cat-included">Incluye 5 avatares en la base</div>
+        <div class="item-row" data-item="avatares" data-price="150">
+          <div class="item-info"><h4>Avatar adicional</h4><span>$150/mes c/u</span></div>
+          <div class="stepper" data-max="20"></div>
+        </div>
+      </div>
+
+      <!-- CANALES -->
+      <div class="cat-card">
+        <div class="cat-head">
+          <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="6" y="3" width="12" height="18" rx="2"/><path d="M10 7h4M9 17h6"/></svg></div>
+          <div><h3>Canales y presencia física</h3><p>Lleva tu humano digital fuera de la web: puntos de venta, ferias y espacios físicos.</p></div>
+        </div>
+        <div class="cat-included">Incluye canal Web en la base</div>
+        <div class="item-row" data-item="kiosco" data-price="450">
+          <div class="item-info"><h4>Kiosco IA / tótem interactivo</h4><span>$450/mes c/u</span></div>
+          <div class="stepper" data-max="10"></div>
+        </div>
+        <div class="item-row" data-item="pantalla" data-price="220">
+          <div class="item-info"><h4>Pantalla inteligente / TV</h4><span>$220/mes c/u</span></div>
+          <div class="stepper" data-max="10"></div>
+        </div>
+        <div class="item-row" data-item="whatsapp" data-price="180">
+          <div class="item-info"><h4>Línea de WhatsApp Business adicional</h4><span>$180/mes c/u</span></div>
+          <div class="stepper" data-max="10"></div>
+        </div>
+      </div>
+
+      <!-- ALMACENAMIENTO -->
+      <div class="cat-card">
+        <div class="cat-head">
+          <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 7c0-2 3.6-3 8-3s8 1 8 3-3.6 3-8 3-8-1-8-3Z"/><path d="M4 7v10c0 2 3.6 3 8 3s8-1 8-3V7M4 12c0 2 3.6 3 8 3s8-1 8-3"/></svg></div>
+          <div><h3>Almacenamiento en la nube</h3><p>Bases de conocimiento, transcripciones y material multimedia.</p></div>
+        </div>
+        <div class="cat-included">Incluye 50 GB en la base</div>
+        <div class="item-row" data-item="storage" data-price="120">
+          <div class="item-info"><h4>Paquete adicional</h4><span>+50 GB · $120/mes c/u</span></div>
+          <div class="stepper" data-max="20"></div>
+        </div>
+      </div>
+
+      <!-- INTEGRACIONES -->
+      <div class="cat-card">
+        <div class="cat-head">
+          <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 17a4 4 0 0 1 1-7.9A5 5 0 0 1 15 7a4.5 4.5 0 0 1 1 8.9"/><path d="M9 17v3m6-3v3m-3-3v5"/></svg></div>
+          <div><h3>Integraciones</h3><p>Conecta tu humano digital con las herramientas que ya usa tu equipo.</p></div>
+        </div>
+        <div class="item-row" data-item="crm" data-price="300">
+          <div class="item-info"><h4>CRM (HubSpot, Salesforce, etc.)</h4><span>$300/mes</span></div>
+          <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+        </div>
+        <div class="item-row" data-item="sap" data-price="900">
+          <div class="item-info"><h4>SAP Business One</h4><span>$900/mes · implementación se cotiza aparte</span></div>
+          <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+        </div>
+        <div class="item-row" data-item="erp" data-price="650">
+          <div class="item-info"><h4>ERP personalizado</h4><span>$650/mes</span></div>
+          <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+        </div>
+      </div>
+
+      <!-- IDIOMAS, SLA Y SOPORTE -->
+      <div class="cat-card">
+        <div class="cat-head">
+          <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 4 6 4 9s-1.5 6.4-4 9c-2.5-2.6-4-6-4-9s1.5-6.4 4-9Z"/></svg></div>
+          <div><h3>Idiomas, SLA y soporte</h3><p>Cobertura de idiomas, tiempos de respuesta y acompañamiento dedicado.</p></div>
+        </div>
+        <div class="cat-included">Incluye español y SLA estándar (24h) en la base</div>
+        <div class="item-row" data-item="idiomas" data-price="150">
+          <div class="item-info"><h4>Idioma adicional</h4><span>$150/mes c/u</span></div>
+          <div class="stepper" data-max="10"></div>
+        </div>
+
+        <div class="pill-group" data-radio="sla">
+          <label class="pill active"><input type="radio" name="sla" value="0" checked>Estándar 24h <span class="price-tag">incluido</span></label>
+          <label class="pill"><input type="radio" name="sla" value="300">Avanzado 4h <span class="price-tag">+$300/mes</span></label>
+          <label class="pill"><input type="radio" name="sla" value="700">Premium 15 min <span class="price-tag">+$700/mes</span></label>
+        </div>
+
+        <div class="item-row" data-item="cuenta" data-price="550">
+          <div class="item-info"><h4>Gerente de cuenta dedicado</h4><span>$550/mes</span></div>
+          <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+        </div>
+        <div class="item-row" data-item="sede" data-price="400">
+          <div class="item-info"><h4>Sede adicional (multi-sucursal)</h4><span>$400/mes c/u</span></div>
+          <div class="stepper" data-max="20"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===== RESUMEN ===== -->
+    <aside class="summary" id="summary">
+      <h3>Tu plan Enterprise</h3>
+      <div class="sub">Facturación anual · actualizado en tiempo real</div>
+      <ul class="summary-list" id="summaryList">
+        <li><span>Base Enterprise</span><span>$3,500</span></li>
+      </ul>
+      <div class="summary-total">
+        <div class="row"><span class="label">Total</span><span class="amt" id="totalAmt">$3,500</span><span class="per">/mes</span></div>
+        <div class="annual" id="annualAmt">Facturado anual · $42,000/año</div>
+      </div>
+      <div class="summary-actions">
+        <a class="btn btn-grad btn-block" id="ctaAgendar" href="agendar.html">Agendar demo con esta configuración</a>
+        <a class="btn btn-ghost btn-block" id="ctaWhatsapp" href="#" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Enviar por WhatsApp</a>
+      </div>
+      <p class="note">Cotización referencial. El precio final se confirma con nuestro equipo según volumen e implementación.</p>
+    </aside>
+
+  </div>
+</section>
+
+<script>
+const BASE_PRICE = 3500;
+const ITEMS = {}; // itemKey -> {price, qty, label}
+
+document.querySelectorAll('.item-row[data-item]').forEach(row => {
+  const key = row.dataset.item;
+  const price = parseInt(row.dataset.price, 10);
+  const label = row.querySelector('.item-info h4').textContent;
+  ITEMS[key] = { price, qty: 0, label, kind: null };
+
+  const stepperEl = row.querySelector('.stepper');
+  const switchEl = row.querySelector('.switch input');
+
+  if (stepperEl) {
+    ITEMS[key].kind = 'stepper';
+    const max = parseInt(stepperEl.dataset.max, 10);
+    stepperEl.innerHTML = `<button type="button" class="dec" aria-label="Reducir">−</button><span class="qty">0</span><button type="button" class="inc" aria-label="Aumentar">+</button>`;
+    const qtyEl = stepperEl.querySelector('.qty');
+    const decBtn = stepperEl.querySelector('.dec');
+    const incBtn = stepperEl.querySelector('.inc');
+    decBtn.disabled = true;
+    const update = () => {
+      qtyEl.textContent = ITEMS[key].qty;
+      decBtn.disabled = ITEMS[key].qty <= 0;
+      incBtn.disabled = ITEMS[key].qty >= max;
+      recalc();
+    };
+    decBtn.addEventListener('click', () => { if (ITEMS[key].qty > 0) { ITEMS[key].qty--; update(); } });
+    incBtn.addEventListener('click', () => { if (ITEMS[key].qty < max) { ITEMS[key].qty++; update(); } });
+  }
+
+  if (switchEl) {
+    ITEMS[key].kind = 'toggle';
+    switchEl.addEventListener('change', () => { ITEMS[key].qty = switchEl.checked ? 1 : 0; recalc(); });
+  }
+});
+
+// SLA radio pills
+let slaExtra = 0;
+document.querySelectorAll('.pill-group[data-radio="sla"] .pill').forEach(pill => {
+  const input = pill.querySelector('input');
+  pill.addEventListener('click', () => {
+    document.querySelectorAll('.pill-group[data-radio="sla"] .pill').forEach(p => p.classList.remove('active'));
+    pill.classList.add('active');
+    input.checked = true;
+    slaExtra = parseInt(input.value, 10);
+    recalc();
+  });
+});
+
+const summaryList = document.getElementById('summaryList');
+const totalAmt = document.getElementById('totalAmt');
+const annualAmt = document.getElementById('annualAmt');
+const ctaAgendar = document.getElementById('ctaAgendar');
+const ctaWhatsapp = document.getElementById('ctaWhatsapp');
+
+function fmt(n){ return '$' + n.toLocaleString('en-US'); }
+
+function recalc(){
+  let total = BASE_PRICE;
+  const lines = [`Base Enterprise — ${fmt(BASE_PRICE)}`];
+
+  Object.entries(ITEMS).forEach(([key, item]) => {
+    if (item.qty > 0) {
+      const subtotal = item.price * item.qty;
+      total += subtotal;
+      const qtyLabel = item.kind === 'stepper' ? ` ×${item.qty}` : '';
+      lines.push(`${item.label}${qtyLabel} — ${fmt(subtotal)}`);
+    }
+  });
+
+  if (slaExtra > 0) {
+    total += slaExtra;
+    const slaLabel = slaExtra === 300 ? 'SLA Avanzado 4h' : 'SLA Premium 15 min';
+    lines.push(`${slaLabel} — ${fmt(slaExtra)}`);
+  }
+
+  summaryList.innerHTML = lines.map(l => {
+    const parts = l.split(' — ');
+    return `<li><span>${parts[0]}</span><span>${parts[1]}</span></li>`;
+  }).join('');
+
+  totalAmt.textContent = fmt(total);
+  annualAmt.textContent = `Facturado anual · ${fmt(total * 12)}/año`;
+
+  ctaAgendar.href = `agendar.html?plan=enterprise&total=${total}`;
+
+  const waText = encodeURIComponent(
+    `Hola, armé una configuración Enterprise en la calculadora de AI Humans:\n` +
+    lines.map(l => '• ' + l).join('\n') +
+    `\n\nTotal estimado: ${fmt(total)}/mes.\n¿Podemos agendar una demo?`
+  );
+  ctaWhatsapp.href = `https://api.whatsapp.com/send/?phone=50660514917&text=${waText}`;
+}
+
+recalc();
+</script>
+
+</body>
+</html>
