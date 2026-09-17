@@ -285,6 +285,7 @@ h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; letter-spacing:-0.
   display:flex; align-items:center; justify-content:center; margin-bottom:20px;
 }
 .feat-icon svg{width:23px; height:23px; color:var(--violet-dark);}
+.feat-icon i{color:var(--violet-dark); font-size:19px;}
 .feat-card h3{font-size:18px; margin-bottom:10px;}
 .feat-card p{font-size:14.5px; color:var(--ink-soft);}
 .feat-card .feat-link{display:inline-flex; align-items:center; gap:6px; margin-top:16px; font-size:13.5px; font-weight:600; color:var(--violet-dark);}
@@ -467,6 +468,25 @@ footer{background:var(--ink); color:rgba(255,255,255,0.6); padding-top:70px;}
   transition:opacity .3s, transform .3s; box-shadow:var(--shadow-tight);
 }
 .to-top.show{opacity:1; pointer-events:auto; transform:translateY(0);}
+
+/* === Qué son / casos de uso === */
+.usecase-icon-wrap{display:flex; align-items:center; justify-content:center;}
+
+/* === Demo gallery === */
+.demo-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
+.demo-card{
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-md);
+  overflow:hidden; box-shadow:var(--shadow-tight);
+  transition:transform .4s cubic-bezier(.2,.8,.2,1), box-shadow .4s, border-color .4s;
+}
+.demo-card:hover{transform:translateY(-6px); box-shadow:var(--shadow-soft); border-color:var(--line-strong);}
+.demo-media{position:relative; aspect-ratio:4/5; background:#000;}
+.demo-media video, .demo-media img{width:100%; height:100%; object-fit:cover; display:block;}
+.demo-media iframe{position:absolute; inset:0; width:100%; height:100%; border:0; display:block;}
+.demo-caption{padding:18px 20px;}
+.demo-caption h4{font-size:16px; margin-bottom:6px; color:var(--ink);}
+.demo-caption p{font-size:13.5px; color:var(--ink-soft);}
+@media (max-width:860px){.demo-grid{grid-template-columns:1fr;}}
 </style>
 
         <!-- Google tag (gtag.js) -->
@@ -478,6 +498,15 @@ footer{background:var(--ink); color:rgba(255,255,255,0.6); padding-top:70px;}
 
   gtag('config', 'G-LLN6913GLD');
 </script>
+
+  <script
+   src="https://bit.ly/grupochess-server"
+   data-sm-api-key="eyJzb3VsSWQiOiJkZG5hLWd1YWRhbC1nZGwtb3JnLS1leHBsb3JlcmdoaWEiLCJhdXRoU2VydmVyIjoiaHR0cHM6Ly9kaC5zb3VsbWFjaGluZXMuY2xvdWQvYXBpL2p3dCIsImF1dGhUb2tlbiI6ImFwaWtleV92MV83M2NjMGEwMS04MmYzLTQ4ZWMtYTdmOC01OGVjMzg0OTBiNTAifQ=="
+   data-sm-position="bottomRight"
+   data-sm-greeting="Saluda a Avi"
+   data-sm-layout="fullFrame"  
+   data-sm-profile-picture="https://i.ibb.co/0P3cQgM/Background-bg-Metahuman-2048x1024-1.png" 
+ ></script>
     
 </head>
 <body>
@@ -502,13 +531,15 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
 /></noscript>
 <!-- End Meta Pixel Code -->
 
-<script async src='https://d2mpatx37cqexb.cloudfront.net/delightchat-whatsapp-widget/embeds/embed.min.js'></script>
-        <script>
+<script>
           var wa_btnSetting = {"btnColor":"#16BE45","ctaText":"Contáctanos","cornerRadius":40,"marginBottom":20,"marginLeft":20,"marginRight":20,"btnPosition":"left","whatsAppNumber":"50660514917","welcomeMessage":"Hola saluda a Leo nuestro agente IA","zIndex":999999,"btnColorScheme":"light"};
-          window.onload = () => {
-            _waEmbed(wa_btnSetting);
-          };
+          function initWaWidget(){
+            if (typeof _waEmbed === 'function') {
+              try { _waEmbed(wa_btnSetting); } catch(e) { console.warn('No se pudo iniciar el widget de WhatsApp:', e); }
+            }
+          }
         </script>
+        <script src='https://d2mpatx37cqexb.cloudfront.net/delightchat-whatsapp-widget/embeds/embed.min.js' onload="initWaWidget()" onerror="console.warn('No se pudo cargar el widget de WhatsApp (bloqueado o sin conexión).')"></script>
 
 
 <!-- ===== NAV ===== -->
@@ -521,6 +552,7 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
       AI Humans
     </a>
     <ul class="nav-links" id="navLinks">
+      <li><a href="#que-son">¿Qué son?</a></li>
       <li><a href="#producto">Producto</a></li>
       <li><a href="#planes">Planes</a></li>
       <li><a href="#casos">Casos de éxito</a></li>
@@ -551,7 +583,7 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
       <p>Suscríbete a la plataforma de metahumanos de AI Humans: minutos conversacionales, avatares, personalización de marca y contenido en la nube, todo en un solo plan.</p>
       <div class="hero-actions">
         <a href="#planes" class="btn btn-grad">Explorar planes <i class="fa-solid fa-arrow-right"></i></a>
-        <a href="#producto" class="btn btn-ghost">Ver la plataforma</a>
+        <a href="#que-son" class="btn btn-ghost">¿Qué es un humano digital?</a>
       </div>
       <div class="hero-partner">
         <span class="gcp-badge">
@@ -587,8 +619,62 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
   </div>
 </div>
 
+<!-- ===== QUÉ SON LOS HUMANOS DIGITALES ===== -->
+<section class="section" id="que-son">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">¿Qué son?</span>
+      <h2>Humanos digitales: la cara conversacional de tu marca.</h2>
+      <p>Un humano digital —o metahumano— es un avatar hiperrealista impulsado por inteligencia artificial conversacional (NLP + LLMs) que ve, escucha, habla y responde en tiempo real, con la voz, el tono y el conocimiento de tu marca. No es un video grabado: cada conversación es única, se adapta a lo que la persona pregunta y aprende de tu sitio web, tus documentos y tu catálogo.</p>
+    </div>
+
+    <div class="feat-grid reveal-stagger">
+      <div class="feat-card reveal" style="--i:0">
+        <div class="feat-icon"><i class="fa-solid fa-headset"></i></div>
+        <h3>Atención al cliente</h3>
+        <p>Resuelve dudas frecuentes, agenda citas y escala a una persona real cuando lo amerita, todos los días del año.</p>
+      </div>
+      <div class="feat-card reveal" style="--i:1">
+        <div class="feat-icon"><i class="fa-solid fa-graduation-cap"></i></div>
+        <h3>Capacitación y educación</h3>
+        <p>Explica procesos, entrena colaboradores nuevos y refuerza contenidos con un instructor disponible siempre.</p>
+      </div>
+      <div class="feat-card reveal" style="--i:2">
+        <div class="feat-icon"><i class="fa-solid fa-store"></i></div>
+        <h3>Punto de venta y ferias</h3>
+        <p>Desde un tótem o kiosco, recibe visitantes, presenta productos y genera contactos sin depender de personal fijo.</p>
+      </div>
+      <div class="feat-card reveal" style="--i:3">
+        <div class="feat-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+        <h3>Salud y bienestar</h3>
+        <p>Orienta pacientes sobre tratamientos, responde preguntas frecuentes y prepara la consulta con un especialista.</p>
+      </div>
+      <div class="feat-card reveal" style="--i:4">
+        <div class="feat-icon"><i class="fa-solid fa-scale-balanced"></i></div>
+        <h3>Gobierno y justicia</h3>
+        <p>Guía trámites, explica procesos legales y hace más accesible la información institucional a la ciudadanía.</p>
+      </div>
+      <div class="feat-card reveal" style="--i:5">
+        <div class="feat-icon"><i class="fa-solid fa-building-columns"></i></div>
+        <h3>Educación superior</h3>
+        <p>Acompaña a estudiantes en admisiones, dudas académicas y vida universitaria, en cualquier horario.</p>
+      </div>
+      <div class="feat-card reveal" style="--i:6">
+        <div class="feat-icon"><i class="fa-solid fa-cart-shopping"></i></div>
+        <h3>Retail y e-commerce</h3>
+        <p>Recomienda productos, resuelve dudas de tallas o inventario y acompaña la compra en tienda física u online.</p>
+      </div>
+      <div class="feat-card reveal" style="--i:7">
+        <div class="feat-icon"><i class="fa-solid fa-plane-departure"></i></div>
+        <h3>Turismo y aeropuertos</h3>
+        <p>Informa horarios, orienta a pasajeros y ofrece recomendaciones personalizadas en varios idiomas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ===== PRODUCTO / FEATURES ===== -->
-<section class="section" id="producto">
+<section class="section section-alt" id="producto">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow">La plataforma</span>
@@ -626,7 +712,7 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
 </section>
 
 <!-- ===== CÓMO FUNCIONA ===== -->
-<section class="section section-alt">
+<section class="section">
   <div class="wrap">
     <div class="section-head reveal">
       <span class="eyebrow">Cómo empezar</span>
@@ -637,6 +723,68 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
       <div class="how-step reveal"><div class="how-mark">01</div><h3>Sube tus datos</h3><p>Conecta tu web, documentos, PDFs y catálogo. La plataforma los indexa automáticamente como base de conocimiento.</p></div>
       <div class="how-step reveal" style="transition-delay:.1s"><div class="how-mark">02</div><h3>Personaliza tu avatar</h3><p>Elige apariencia, voz y tono de marca desde el panel, sin código y sin depender de un equipo técnico.</p></div>
       <div class="how-step reveal" style="transition-delay:.2s"><div class="how-mark">03</div><h3>Entrena y publica</h3><p>Tu metahumano aprende de tu contenido en minutos y queda listo para conversar en todos tus canales.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NUESTROS DEMOS =====
+     Estos son embeds de YouTube, no archivos de video propios.
+     Para cada demo, usa la URL de EMBED de YouTube: https://www.youtube.com/embed/ID_DEL_VIDEO
+     El ID es lo que va después de "v=", después de "youtu.be/", o después de "/shorts/" en el link normal.
+     Ejemplo: https://youtube.com/shorts/HNMz6Yy01YQ  →  https://www.youtube.com/embed/HNMz6Yy01YQ
+     Si el video es horizontal usa aspect-ratio:16/9 en .demo-media; si es vertical (Short) usa 9/16.
+     Para agregar más demos, copia un bloque .demo-card completo dentro de .demo-grid. -->
+<section class="section section-alt" id="demo-contenido">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <span class="eyebrow">Míralo en acción</span>
+      <h2>Nuestros humanos digitales, en video.</h2>
+      <p>Una muestra real de cómo conversan, responden y se comportan nuestros metahumanos en distintos sectores y canales.</p>
+    </div>
+
+    <div class="demo-grid reveal-stagger">
+      <!-- DEMO 1 — reemplaza ID_DEL_VIDEO_1 por el ID real del video de YouTube -->
+      <div class="demo-card reveal" style="--i:0">
+        <div class="demo-media">
+          <iframe
+            src="https://www.youtube.com/embed/0zBCKnw-SRA?si=LOB4JL-YPP7I7wkm"
+            title="Turing — Tribunal de justicia"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+        <div class="demo-caption">
+          <h4>Turing — Tribunal de justicia</h4>
+          <p>Metahumano orientando a usuarios dentro de un tribunal en México.</p>
+        </div>
+      </div>
+
+      <!-- DEMO 2 — reemplaza ID_DEL_VIDEO_2 por el ID real del video de YouTube -->
+      <div class="demo-card reveal" style="--i:1">
+        <div class="demo-media">
+          <iframe
+            src="https://www.youtube.com/embed/0zBCKnw-SRA?si=LOB4JL-YPP7I7wkm"
+            title="MD Pharma — Experta en microbiota"
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen></iframe>
+        </div>
+        <div class="demo-caption">
+          <h4>MD Pharma — Experta en microbiota</h4>
+          <p>Conversación en vivo sobre salud digestiva y probióticos.</p>
+        </div>
+      </div>
+
+      <!-- DEMO 3 — esta es una imagen, no un video -->
+      <div class="demo-card reveal" style="--i:2">
+        <div class="demo-media">
+          <img src="https://i.ibb.co/nD5vRsn/telco.png" alt="Demo UNEDIA 2025">
+        </div>
+        <div class="demo-caption">
+          <h4>UNEDIA 2025 — Universidad pública</h4>
+          <p>Primer metahumano desplegado en una universidad pública en Costa Rica.</p>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -914,9 +1062,9 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
       <div class="foot-col">
         <h6>Producto</h6>
         <ul>
+          <li><a href="#que-son">¿Qué son?</a></li>
           <li><a href="#producto">Agentes virtuales</a></li>
           <li><a href="#producto">Kiosco IA</a></li>
-          <li><a href="#producto">Humanos digitales</a></li>
           <li><a href="#planes">Planes y precios</a></li>
         </ul>
       </div>
