@@ -355,6 +355,101 @@ h1,h2,h3,h4{font-family:var(--font-display); font-weight:600; letter-spacing:-0.
 @media (max-width:1080px){.pricing-grid{grid-template-columns:repeat(2,1fr);}}
 @media (max-width:600px){.pricing-grid{grid-template-columns:1fr;}}
 
+/* === Calculadora de minutos adicionales === */
+.calc-block{margin-top:110px; scroll-margin-top:90px;}
+.calc-card{
+  display:grid; grid-template-columns:1.1fr 0.9fr;
+  background:var(--surface); border:1px solid var(--line); border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-soft); overflow:hidden; max-width:1040px; margin:0 auto;
+}
+.calc-controls{padding:40px;}
+.calc-field{margin-bottom:32px;}
+.calc-label{display:block; font-family:var(--font-display); font-weight:600; font-size:15px; margin-bottom:12px; color:var(--ink);}
+.calc-note{font-size:12.5px; color:var(--ink-faint); line-height:1.55;}
+.calc-note a{color:var(--violet-dark); font-weight:600; text-decoration:underline; text-underline-offset:3px;}
+
+.plan-picker{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+.pick{position:relative; display:block; cursor:pointer;}
+.pick input{position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:pointer;}
+.pick-body{
+  display:block; padding:14px 14px 13px; border:1px solid var(--line-strong); border-radius:var(--radius-sm);
+  background:var(--surface); transition:border-color .25s, background .25s, box-shadow .25s;
+}
+.pick-body strong{display:block; font-family:var(--font-display); font-size:16px; font-weight:600; color:var(--ink);}
+.pick-body small{display:block; font-family:var(--font-mono); font-size:11.5px; color:var(--ink-faint); margin-top:2px;}
+.pick:hover .pick-body{border-color:var(--violet);}
+.pick input:checked + .pick-body{border-color:var(--violet); background:var(--violet-pale); box-shadow:inset 0 0 0 1px var(--violet);}
+.pick input:focus-visible + .pick-body{outline:2.5px solid var(--violet); outline-offset:3px;}
+
+.minutes-row{display:flex; align-items:center; gap:18px;}
+.calc-range{flex:1; min-width:0; height:28px; accent-color:var(--violet); cursor:pointer;}
+.num-box{
+  display:flex; align-items:center; gap:8px; width:150px; flex-shrink:0; padding:0 14px;
+  border:1px solid var(--line-strong); border-radius:var(--radius-sm); background:var(--bg);
+  transition:border-color .25s, box-shadow .25s;
+}
+.num-box:focus-within{border-color:var(--violet); box-shadow:0 0 0 3px var(--violet-pale);}
+.num-box input{
+  width:100%; min-width:0; border:0; background:transparent; outline:none; padding:11px 0;
+  font-family:var(--font-mono); font-size:18px; font-weight:600; color:var(--ink);
+  -moz-appearance:textfield; appearance:textfield;
+}
+.num-box input::-webkit-outer-spin-button, .num-box input::-webkit-inner-spin-button{-webkit-appearance:none; margin:0;}
+.num-box span{font-family:var(--font-mono); font-size:12.5px; color:var(--ink-faint);}
+.calc-chips{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+.calc-chips button{
+  padding:7px 14px; border-radius:100px; border:1px solid var(--line-strong); background:var(--surface);
+  font-family:var(--font-mono); font-size:12.5px; font-weight:600; color:var(--ink-soft);
+  transition:border-color .25s, color .25s, background .25s;
+}
+.calc-chips button:hover{border-color:var(--violet); color:var(--violet-dark);}
+
+.calc-result{
+  position:relative; overflow:hidden; display:flex; flex-direction:column;
+  background:var(--ink); color:#fff; padding:40px 36px;
+}
+.calc-result::before{
+  content:""; position:absolute; width:340px; height:340px; border-radius:50%;
+  background:var(--grad-brand); filter:blur(90px); opacity:.3; top:-140px; right:-120px; pointer-events:none;
+}
+.calc-result > *{position:relative;}
+.calc-tag{font-family:var(--font-mono); font-size:12px; color:rgba(255,255,255,0.55); text-transform:uppercase; letter-spacing:.08em;}
+.calc-rate{display:flex; align-items:baseline; gap:6px; margin:10px 0 10px;}
+.calc-rate .amt{font-family:var(--font-mono); font-size:48px; font-weight:600; line-height:1;}
+.calc-rate .per{font-size:14px; color:rgba(255,255,255,0.55);}
+.calc-save{display:flex; align-items:center; flex-wrap:wrap; gap:10px; font-size:13px; color:rgba(255,255,255,0.65); margin-bottom:26px;}
+.calc-save s{color:rgba(255,255,255,0.5);}
+.calc-lines{border-top:1px solid rgba(255,255,255,0.12);}
+.calc-lines li{
+  display:flex; justify-content:space-between; gap:16px; padding:11px 0; font-size:14px;
+  color:rgba(255,255,255,0.72); border-bottom:1px dashed rgba(255,255,255,0.14);
+}
+.calc-lines li b{font-family:var(--font-mono); font-weight:600; color:#fff; white-space:nowrap;}
+.calc-total{display:flex; justify-content:space-between; align-items:baseline; gap:16px; padding-top:18px;}
+.calc-total span{font-size:14px; color:rgba(255,255,255,0.75);}
+.calc-total b{font-family:var(--font-mono); font-size:32px; font-weight:600; color:#fff;}
+.calc-foot{font-family:var(--font-mono); font-size:12px; color:rgba(255,255,255,0.5); margin-top:6px; text-align:right;}
+.calc-tip{
+  margin-top:20px; padding:13px 15px; border-radius:var(--radius-sm); font-size:13.5px; line-height:1.5;
+  background:rgba(15,199,176,0.12); border:1px solid rgba(15,199,176,0.38); color:rgba(255,255,255,0.88);
+}
+.calc-tip[hidden]{display:none;}
+.calc-tip button{
+  display:block; margin-top:8px; padding:0; border:0; background:none; color:var(--teal);
+  font-size:13px; font-weight:600; text-decoration:underline; text-underline-offset:3px;
+}
+.calc-cta{margin-top:auto; padding-top:26px;}
+
+@media (max-width:900px){
+  .calc-card{grid-template-columns:1fr;}
+  .calc-controls{padding:30px 24px;}
+  .calc-result{padding:32px 24px;}
+}
+@media (max-width:480px){
+  .minutes-row{flex-direction:column; align-items:stretch; gap:10px;}
+  .num-box{width:100%;}
+}
+
 /* === Cases === */
 .case-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:22px;}
 .case-card{
@@ -816,7 +911,8 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
         <div class="plan-billing">Facturado anual · $9,000/año</div>
         <a href="agendar.html" class="btn btn-ghost btn-block">Empezar</a>
         <ul class="plan-feats">
-          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> 500 min conversacionales/mes</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> 350 min conversacionales/mes</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> <span>Minutos adicionales a <b data-extra-rate="starter">$1.82</b>/min</span></li>
          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Respuestas conversacionales</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> 1 avatar incluido</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Canal web</li>
@@ -840,6 +936,7 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
         <a href="agendar.html" class="btn btn-grad btn-block">Empezar</a>
         <ul class="plan-feats">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> 2,000 min conversacionales/mes</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> <span>Minutos adicionales a <b data-extra-rate="pro">$0.59</b>/min</span></li>
          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Respuestas conversacionales & Multimedia</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> 3 avatares incluidos</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Canal Web </li>
@@ -861,6 +958,7 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
         <a href="agendar.html" class="btn btn-ghost btn-block">Empezar</a>
         <ul class="plan-feats">
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> 6,000 min conversacionales/mes</li>
+          <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> <span>Minutos adicionales a <b data-extra-rate="business">$0.39</b>/min</span></li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Respuestas conversacionales & Multimedia</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> 10 Avatares incluidos</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Todos los canales + Kiosco IA</li>
@@ -889,6 +987,83 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Integración GCP dedicada</li>
           <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M20 6 9 17l-5-5"/></svg> Gerente de cuenta y SLA</li>
         </ul>
+      </div>
+    </div>
+
+    <!-- ===== CALCULADORA DE MINUTOS ADICIONALES ===== -->
+    <div class="calc-block" id="calculadora">
+      <div class="section-head reveal" style="margin-left:auto; margin-right:auto; text-align:center;">
+        <span class="eyebrow">Minutos adicionales</span>
+        <h2>Calcula cuánto cuesta crecer sobre tu plan.</h2>
+        <p>Si superas los minutos incluidos, cada minuto adicional cuesta entre 15% y 20% menos que la tarifa por minuto de tu plan.</p>
+      </div>
+
+      <div class="calc-card reveal">
+        <div class="calc-controls">
+          <div class="calc-field">
+            <span class="calc-label" id="calcPlanLabel">Tu plan</span>
+            <div class="plan-picker" role="radiogroup" aria-labelledby="calcPlanLabel">
+              <label class="pick">
+                <input type="radio" name="calcPlan" value="starter" checked>
+                <span class="pick-body"><strong>Starter</strong><small>350 min</small><small>$750/mes</small></span>
+              </label>
+              <label class="pick">
+                <input type="radio" name="calcPlan" value="pro">
+                <span class="pick-body"><strong>Pro</strong><small>2,000 min</small><small>$1,450/mes</small></span>
+              </label>
+              <label class="pick">
+                <input type="radio" name="calcPlan" value="business">
+                <span class="pick-body"><strong>Business</strong><small>6,000 min</small><small>$2,900/mes</small></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="calc-field">
+            <label class="calc-label" for="calcNum">Minutos adicionales al mes</label>
+            <div class="minutes-row">
+              <input type="range" class="calc-range" id="calcRange" min="0" max="10000" step="50" value="500" aria-label="Minutos adicionales al mes (control deslizante)">
+              <div class="num-box"><input type="number" id="calcNum" min="0" max="10000" step="50" value="500" inputmode="numeric"><span>min</span></div>
+            </div>
+            <div class="calc-chips" id="calcChips">
+              <button type="button" data-val="250">250</button>
+              <button type="button" data-val="500">500</button>
+              <button type="button" data-val="1000">1,000</button>
+              <button type="button" data-val="2000">2,000</button>
+              <button type="button" data-val="5000">5,000</button>
+              <button type="button" data-val="10000">10,000</button>
+            </div>
+          </div>
+
+          <p class="calc-note">Valores en USD por mes. ¿Necesitas más volumen, varias sedes o tótems? <a href="personalized.html">Cotiza un plan Enterprise</a>.</p>
+        </div>
+
+        <div class="calc-result">
+          <span class="calc-tag">Minuto adicional · Plan <span id="rPlanName">Starter</span></span>
+          <div class="calc-rate"><span class="amt" id="rRate">$1.82</span><span class="per">/min</span></div>
+          <div class="calc-save">
+            <span class="save-chip" id="rDisc">15% menos</span>
+            <span><s id="rBase">$2.143</s> por minuto incluido en tu plan</span>
+          </div>
+
+          <ul class="calc-lines">
+            <li><span id="rPlanLine">Plan Starter · 350 min incluidos</span><b id="rPlanCost">$750</b></li>
+            <li><span id="rExtraLine">500 min adicionales</span><b id="rExtraCost">$910</b></li>
+          </ul>
+          <div class="calc-total" aria-live="polite">
+            <span>Total mensual estimado</span>
+            <b id="rTotal">$1,660</b>
+          </div>
+          <p class="calc-foot" id="rFoot">850 min en total · $1.953/min promedio</p>
+
+          <div class="calc-tip" id="rTip" hidden>
+            <span id="rTipText"></span>
+            <button type="button" id="rTipBtn"></button>
+          </div>
+
+          <div class="calc-cta">
+            <a href="agendar.html" onclick="if(window.fbq)fbq('track','AgendarAsesoria');" class="btn btn-grad btn-block">Agendar demo</a>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1005,6 +1180,10 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
         <div class="faq-body">Cada minuto es tiempo real de diálogo entre un usuario y tu humano digital, por voz o texto, en cualquiera de tus canales activos. Los minutos no usados no se acumulan al siguiente mes.</div>
       </details>
       <details class="faq-item">
+        <summary>¿Qué pasa si necesito más minutos de los incluidos en mi plan? <span class="plus"></span></summary>
+        <div class="faq-body">Puedes sumar minutos adicionales con una tarifa por minuto entre 15% y 20% menor a la de tu plan: <span data-extra-rate="starter">$1.82</span> en Starter, <span data-extra-rate="pro">$0.59</span> en Pro y <span data-extra-rate="business">$0.39</span> en Business. Estima tu costo mensual en la <a href="#calculadora" style="color:var(--violet-dark); font-weight:600; text-decoration:underline; text-underline-offset:3px;">calculadora de minutos adicionales</a>.</div>
+      </details>
+      <details class="faq-item">
         <summary>¿Puedo cambiar de plan en cualquier momento? <span class="plus"></span></summary>
         <div class="faq-body">Sí. Puedes subir o bajar de plan cuando lo necesites; el cambio se refleja en tu siguiente ciclo de facturación de forma proporcional.</div>
       </details>
@@ -1066,6 +1245,7 @@ src="https://www.facebook.com/tr?id=1058173062931518&ev=PageView&noscript=1"
           <li><a href="#producto">Agentes virtuales</a></li>
           <li><a href="#producto">Kiosco IA</a></li>
           <li><a href="#planes">Planes y precios</a></li>
+          <li><a href="#calculadora">Minutos adicionales</a></li>
         </ul>
       </div>
       <div class="foot-col">
@@ -1166,6 +1346,128 @@ function showSlide(i) {
   dotsWrap.children[testiIndex].classList.add('active');
 }
 setInterval(() => showSlide((testiIndex + 1) % slides.length), 5500);
+
+/* Calculadora de minutos adicionales
+   ------------------------------------------------------------
+   Para cambiar precios, minutos incluidos o la tarifa del minuto
+   adicional, edita SOLO este objeto: la calculadora, las tarjetas
+   de planes y el FAQ leen de aquí.
+   extraRate = tarifa por minuto adicional (USD). Objetivo: 15%–20%
+   por debajo de la tarifa incluida (price / included).
+     Starter : 750 / 350   = $2.143/min  → $1.82 (−15%)
+     Pro     : 1450 / 2000 = $0.725/min  → $0.59 (−19%)
+     Business: 2900 / 6000 = $0.483/min  → $0.39 (−19%)
+   MAX_EXTRA = tope de minutos adicionales que admite la calculadora.
+*/
+(() => {
+  const PLANS = {
+    starter:  { name:'Starter',  price:750,  included:350,  extraRate:1.82 },
+    pro:      { name:'Pro',      price:1450, included:2000, extraRate:0.59 },
+    business: { name:'Business', price:2900, included:6000, extraRate:0.39 }
+  };
+  const MAX_EXTRA = 10000;
+
+  const $ = id => document.getElementById(id);
+  const round2 = n => Math.round(n * 100) / 100;
+  const money = n => {
+    n = round2(n);
+    return '$' + (Number.isInteger(n)
+      ? n.toLocaleString('en-US')
+      : n.toLocaleString('en-US', {minimumFractionDigits:2, maximumFractionDigits:2}));
+  };
+  const mins = n => n.toLocaleString('en-US');
+  const rate2 = n => '$' + n.toFixed(2);
+  const rate3 = n => '$' + n.toFixed(3);
+
+  const state = { plan:'starter', extra:500 };
+  const range = $('calcRange'), num = $('calcNum');
+  const tip = $('rTip'), tipText = $('rTipText'), tipBtn = $('rTipBtn');
+
+  /* Tarifas visibles en tarjetas de planes y FAQ (misma fuente de datos) */
+  document.querySelectorAll('[data-extra-rate]').forEach(el => {
+    const p = PLANS[el.getAttribute('data-extra-rate')];
+    if (p) el.textContent = rate2(p.extraRate);
+  });
+
+  const totalCost = (key, totalMin) => {
+    const p = PLANS[key];
+    return round2(p.price + Math.max(0, totalMin - p.included) * p.extraRate);
+  };
+
+  function render() {
+    const p = PLANS[state.plan];
+    const baseRate = p.price / p.included;
+    const disc = Math.round((1 - p.extraRate / baseRate) * 100);
+    const extraCost = round2(state.extra * p.extraRate);
+    const total = round2(p.price + extraCost);
+    const totalMin = p.included + state.extra;
+
+    $('rPlanName').textContent = p.name;
+    $('rRate').textContent = rate2(p.extraRate);
+    $('rDisc').textContent = disc + '% menos';
+    $('rBase').textContent = rate3(baseRate);
+    $('rPlanLine').textContent = 'Plan ' + p.name + ' · ' + mins(p.included) + ' min incluidos';
+    $('rPlanCost').textContent = money(p.price);
+    $('rExtraLine').textContent = mins(state.extra) + ' min adicionales × ' + rate2(p.extraRate);
+    $('rExtraCost').textContent = money(extraCost);
+    $('rTotal').textContent = money(total);
+    $('rFoot').textContent = mins(totalMin) + ' min en total · ' + rate3(total / totalMin) + '/min promedio';
+
+    /* ¿Otro plan cubre el mismo total de minutos por menos dinero? */
+    let best = state.plan, bestCost = total;
+    Object.keys(PLANS).forEach(k => {
+      const c = totalCost(k, totalMin);
+      if (c < bestCost - 0.005) { best = k; bestCost = c; }
+    });
+    if (best !== state.plan) {
+      tipText.textContent = 'Con ' + mins(totalMin) + ' minutos en total, el plan ' + PLANS[best].name +
+        ' te sale más económico: ' + money(bestCost) + '/mes (ahorras ' + money(total - bestCost) + ').';
+      tipBtn.textContent = 'Ver con el plan ' + PLANS[best].name;
+      tipBtn.dataset.plan = best;
+      tip.hidden = false;
+    } else {
+      tip.hidden = true;
+    }
+  }
+
+  function setExtra(v, fromRange) {
+    v = parseInt(v, 10);
+    if (!Number.isFinite(v) || v < 0) v = 0;
+    if (v > MAX_EXTRA) v = MAX_EXTRA;
+    state.extra = v;
+    if (!fromRange) range.value = v;
+    if (fromRange || document.activeElement !== num) num.value = v;
+    render();
+  }
+
+  function setPlan(key) {
+    state.plan = key;
+    range.value = state.extra;
+    const radio = document.querySelector('input[name="calcPlan"][value="' + key + '"]');
+    if (radio) radio.checked = true;
+    render();
+  }
+
+  document.querySelectorAll('input[name="calcPlan"]').forEach(r =>
+    r.addEventListener('change', () => setPlan(r.value)));
+  range.addEventListener('input', () => setExtra(range.value, true));
+  num.addEventListener('input', () => setExtra(num.value, false));
+  num.addEventListener('blur', () => { num.value = state.extra; });
+  $('calcChips').addEventListener('click', e => {
+    const b = e.target.closest('button[data-val]');
+    if (b) setExtra(b.dataset.val, false);
+  });
+  tipBtn.addEventListener('click', () => {
+    /* Cambia de plan manteniendo el mismo total de minutos */
+    const totalMin = PLANS[state.plan].included + state.extra;
+    const key = tipBtn.dataset.plan;
+    state.extra = Math.max(0, totalMin - PLANS[key].included);
+    num.value = state.extra;
+    setPlan(key);
+  });
+
+  setPlan('starter');
+})();
 
 /* Hero canvas — animated voice-wave mesh (video fallback / ambient layer) */
 const canvas = document.getElementById('heroCanvas');
