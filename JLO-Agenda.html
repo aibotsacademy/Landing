@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Flight JL01006 · Jenireé & Leandro · Athens, 6 October</title>
-<meta name="description" content="Wedding day timeline of Jenireé & Leandro, Island Gallery, Athens, 6 October.">
+<title>Vuelo JL1006 · Jenireé & Leandro · Atenas, 6 de octubre</title>
+<meta name="description" content="Itinerario del día de la boda de Jenireé y Leandro, Island Gallery, Atenas.">
+<meta property="og:title" content="Vuelo JL1006 · Jenireé & Leandro">
+<meta property="og:description" content="Island Gallery, Atenas, 6 de octubre de 2026">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&family=Cormorant+Garamond:ital,wght@1,500;1,600&display=swap" rel="stylesheet">
@@ -107,15 +109,16 @@ a{ color:inherit; }
 .board-top{ display:flex; justify-content:space-between; align-items:baseline; font-family:var(--sign); font-weight:600; letter-spacing:.06em; padding:0 4px 10px; font-size:14px; color:var(--gate); }
 .board-top b{ font-weight:600; color:#fff; font-size:18px; letter-spacing:.1em; }
 .brow{
-  display:grid; grid-template-columns:5.2em 6.2em 1fr 7.4em; gap:.6em; align-items:center;
+  display:grid; grid-template-columns:5.2em 6.2em 1fr 8.8em; gap:.6em; align-items:center;
   width:100%; padding:6px 4px; border:0; background:none; text-align:left; cursor:pointer;
   border-top:1px solid rgba(255,255,255,.06); border-radius:4px;
 }
 .brow:hover{ background:rgba(255,255,255,.05); }
-.brow.hd{ cursor:default; font-family:var(--sign); font-weight:500; font-size:12px; letter-spacing:.1em; color:rgba(255,255,255,.55); border-top:0; }
+.brow.hd span{ font-size:12px; }
+.brow.hd{ cursor:default; font-family:var(--sign); font-weight:500; letter-spacing:.1em; color:rgba(255,255,255,.55); border-top:0; }
 .brow.hd:hover{ background:none; }
 @media (max-width:640px){
-  .brow{ grid-template-columns:4.1em 1fr 5.4em; gap:.45em; }
+  .brow{ grid-template-columns:4.1em 1fr 6.4em; gap:.45em; }
   .brow .fno{ display:none; }
   .board{ font-size:clamp(13px,4vw,18px); padding:10px 8px 6px; }
 }
@@ -270,6 +273,23 @@ footer{ text-align:center; padding:0 16px 40px; font-family:var(--sign); letter-
   html{ scroll-behavior:auto; }
   .names span{ opacity:1; transform:none; }
 }
+
+/* ---------- language switch ---------- */
+.bar{ padding-right:144px; }
+.lang{
+  position:fixed; z-index:50; top:calc(env(safe-area-inset-top,0px) + 7px); right:12px;
+  display:flex; padding:3px; gap:2px; border-radius:999px;
+  background:rgba(4,14,38,.78); backdrop-filter:blur(10px); -webkit-backdrop-filter:blur(10px);
+  box-shadow:0 6px 18px rgba(0,0,0,.2), inset 0 0 0 1px rgba(255,255,255,.12);
+}
+.lang button{
+  border:0; background:none; color:#fff; cursor:pointer; border-radius:999px;
+  font-family:var(--sign); font-weight:600; letter-spacing:.08em; font-size:14px; padding:6px 12px; line-height:1;
+  display:flex; align-items:center; gap:6px; transition:background-color .25s, color .25s;
+}
+.lang button[aria-pressed="true"]{ background:var(--gate); color:var(--ink); }
+.lang svg{ width:14px; height:14px; }
+.cue{ background:none; border:0; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -278,9 +298,15 @@ footer{ text-align:center; padding:0 16px 40px; font-family:var(--sign); letter-
   <symbol id="plane" viewBox="0 0 24 24"><path fill="currentColor" d="M21 16v-2l-8-5V3.5A1.5 1.5 0 0 0 11.5 2 1.5 1.5 0 0 0 10 3.5V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5l8 2.5z"/></symbol>
   <symbol id="note" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3v10.55A4 4 0 1 0 14 17V7h4V3h-6z"/></symbol>
   <symbol id="chev" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6"/></symbol>
+  <symbol id="globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></g></symbol>
 </svg>
 
-<header class="bar" id="bar" aria-label="Flight progress">
+<nav class="lang" aria-label="Idioma / Language">
+  <button type="button" data-lang="es" aria-pressed="true"><svg><use href="#globe"/></svg>ES</button>
+  <button type="button" data-lang="en" aria-pressed="false">EN</button>
+</nav>
+
+<header class="bar" id="bar">
   <span>ATH</span>
   <div class="track" aria-hidden="true"><div class="fill" id="fill"></div><svg class="plane" id="plane"><use href="#plane"/></svg></div>
   <span>∞</span>
@@ -289,182 +315,272 @@ footer{ text-align:center; padding:0 16px 40px; font-family:var(--sign); letter-
 </header>
 
 <section class="hero" id="top">
-  <p class="where">Island Gallery, Athens, 6 October 2026</p>
+  <p class="where" data-i18n="where"></p>
   <h1 class="names"><span>Jenireé</span><span>&amp;</span><span>Leandro</span></h1>
 
-  <div class="board" role="navigation" aria-label="Wedding day departures">
-    <div class="board-top"><b>Departures</b><span>Gate Island</span></div>
-    <div class="brow hd" aria-hidden="true"><span>Time</span><span class="fno">Flight</span><span>Destination</span><span>Remarks</span></div>
+  <div class="board" role="navigation" data-i18n-label="boardLabel">
+    <div class="board-top"><b data-i18n="departures"></b><span data-i18n="gateIsland"></span></div>
+    <div class="brow hd" aria-hidden="true"><span data-i18n="hTime"></span><span class="fno" data-i18n="hFlight"></span><span data-i18n="hDest"></span><span data-i18n="hRemarks"></span></div>
     <div id="boardRows"></div>
   </div>
 
   <div class="countdown" id="countdown" aria-live="polite"></div>
 
-  <a class="cue" href="#pass">Scroll to board
-    <svg width="22" height="22"><use href="#chev"/></svg></a>
+  <button type="button" class="cue" data-go="pass"><span data-i18n="cue"></span>
+    <svg width="22" height="22"><use href="#chev"/></svg></button>
 </section>
 
 <section class="passzone" id="pass">
-  <h2>Your boarding pass</h2>
+  <h2 data-i18n="passTitle"></h2>
   <div class="pass" id="passCard">
     <div class="pmain">
       <div class="pband">
         <span class="logo"><svg width="22" height="22" style="transform:rotate(45deg)"><use href="#plane"/></svg>JL Airways</span>
-        <span>Boarding pass</span>
+        <span data-i18n="passBand"></span>
       </div>
       <div class="pbody">
         <div class="route">
-          <div><div class="code">ATH</div><div class="city">Athens, as fiancés</div></div>
+          <div><div class="code">ATH</div><div class="city" data-i18n="fromCity"></div></div>
           <div class="mid"><svg><use href="#plane"/></svg></div>
-          <div class="r"><div class="code">∞</div><div class="city">Forever, as spouses</div></div>
+          <div class="r"><div class="code">∞</div><div class="city" data-i18n="toCity"></div></div>
         </div>
         <div class="fields">
-          <div class="f wide"><span>Passengers</span><b>Jenireé &amp; Leandro</b></div>
-          <div class="f"><span>Flight</span><b>JL1006</b></div>
-          <div class="f"><span>Date</span><b>06 Oct</b></div>
-          <div class="f"><span>Boarding</span><b>16:00</b></div>
-          <div class="f"><span>Departure</span><b>17:00</b></div>
-          <div class="f"><span>Gate</span><b>Island</b></div>
-          <div class="f"><span>Arrival</span><b>02:00</b></div>
+          <div class="f wide"><span data-i18n="fPax"></span><b>Jenireé &amp; Leandro</b></div>
+          <div class="f"><span data-i18n="fFlight"></span><b>JL1006</b></div>
+          <div class="f"><span data-i18n="fDate"></span><b>06 Oct</b></div>
+          <div class="f"><span data-i18n="fBoard"></span><b>16:00</b></div>
+          <div class="f"><span data-i18n="fDep"></span><b>17:00</b></div>
+          <div class="f"><span data-i18n="fGate"></span><b>Island</b></div>
+          <div class="f"><span data-i18n="fArr"></span><b>02:00</b></div>
         </div>
       </div>
     </div>
     <div class="pstub">
-      <div class="stubtop">JL1006, ATH to ∞</div>
+      <div class="stubtop" data-i18n="stubRoute"></div>
       <div class="stub-seat">1A 1B</div>
-      <div class="stub-small">First class, together</div>
+      <div class="stub-small" data-i18n="stubClass"></div>
       <svg class="barcode" id="barcode" preserveAspectRatio="none" aria-hidden="true"></svg>
     </div>
-    <div class="stamp" aria-hidden="true">Boarded<small>06 OCT, ATHENS</small></div>
+    <div class="stamp" aria-hidden="true"><span data-i18n="stamp"></span><small>06 OCT, ATHENS</small></div>
   </div>
   <button class="tear" id="tearBtn" aria-pressed="false">
-    <svg width="20" height="20" style="transform:rotate(45deg)"><use href="#plane"/></svg><span>Tear the stub to board</span>
+    <svg width="20" height="20" style="transform:rotate(45deg)"><use href="#plane"/></svg><span id="tearTxt"></span>
   </button>
 </section>
 
 <main id="timeline"></main>
 
-<section class="landing" id="landing" data-sky="#030A1C" data-fg="#FFFFFF" data-name="Arrived" data-t="02:00">
+<section class="landing" id="landing" data-sky="#030A1C" data-fg="#FFFFFF" data-t="02:00">
   <div class="stars" id="stars" aria-hidden="true"></div>
-  <div class="flaps y" id="arrivedFlap" aria-label="Arrived"></div>
-  <h2>Welcome to forever.</h2>
-  <p>02:00 local time, Athens. Official wedding closing.</p>
+  <div class="flaps y" id="arrivedFlap"></div>
+  <h2 data-i18n="landTitle"></h2>
+  <p data-i18n="landSub"></p>
   <div class="acts">
-    <button class="primary" id="shareBtn">Share this itinerary</button>
-    <a href="#top">Back to departures</a>
+    <button class="primary" id="shareBtn" data-i18n="share"></button>
+    <button type="button" data-go="top" data-i18n="backTop"></button>
   </div>
   <p class="toast" id="toast" aria-live="polite"></p>
 </section>
-<footer>Flight JL1006, operated with love by Jenireé &amp; Leandro</footer>
+<footer data-i18n="footer"></footer>
 
 <script>
 (function(){
 const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const mobile = matchMedia('(max-width:640px)').matches;
+let lang = 'es';
+const T = v => (v && typeof v === 'object' && !Array.isArray(v)) ? (v[lang] ?? v.en) : v;
+const L = (es, en) => ({ es, en });
 
-/* ================= data ================= */
+/* ================= interface text ================= */
+const UI = {
+  title:      L('Vuelo JL1006 · Jenireé & Leandro · Atenas, 6 de octubre','Flight JL1006 · Jenireé & Leandro · Athens, 6 October'),
+  desc:       L('Itinerario del día de la boda de Jenireé y Leandro, Island Gallery, Atenas.','Wedding day itinerary of Jenireé & Leandro, Island Gallery, Athens.'),
+  where:      L('Island Gallery, Atenas, 6 de octubre de 2026','Island Gallery, Athens, 6 October 2026'),
+  boardLabel: L('Salidas del día de la boda','Wedding day departures'),
+  departures: L('Salidas','Departures'),
+  gateIsland: L('Puerta Island','Gate Island'),
+  hTime: L('Hora','Time'), hFlight: L('Vuelo','Flight'), hDest: L('Destino','Destination'), hRemarks: L('Estado','Remarks'),
+  cue:        L('Desliza para abordar','Scroll to board'),
+  passTitle:  L('Tu pase de abordar','Your boarding pass'),
+  passBand:   L('Pase de abordar','Boarding pass'),
+  fromCity:   L('Atenas, como prometidos','Athens, as fiancés'),
+  toCity:     L('Para siempre, como esposos','Forever, as spouses'),
+  fPax: L('Pasajeros','Passengers'), fFlight: L('Vuelo','Flight'), fDate: L('Fecha','Date'), fBoard: L('Abordaje','Boarding'),
+  fDep: L('Salida','Departure'), fGate: L('Puerta','Gate'), fArr: L('Llegada','Arrival'),
+  stubRoute:  L('JL1006, ATH a ∞','JL1006, ATH to ∞'),
+  stubClass:  L('Primera clase, juntos','First class, together'),
+  stamp:      L('Abordado','Boarded'),
+  tear:       L('Rasga el talón para abordar','Tear the stub to board'),
+  torn:       L('Bienvenidos a bordo. Reimprimir pase','Welcome aboard. Reprint pass'),
+  landTitle:  L('Bienvenidos a para siempre.','Welcome to forever.'),
+  landSub:    L('02:00 hora local de Atenas. Cierre oficial de la boda.','02:00 local time, Athens. Official wedding closing.'),
+  share:      L('Compartir itinerario','Share this itinerary'),
+  backTop:    L('Volver a salidas','Back to departures'),
+  footer:     L('Vuelo JL1006, operado con amor por Jenireé y Leandro','Flight JL1006, operated with love by Jenireé & Leandro'),
+  copied:     L('Enlace copiado. Pégalo donde quieras.','Link copied. Paste it anywhere.'),
+  copyFail:   L('Copia la dirección desde la barra del navegador para compartir.','Copy the address from your browser bar to share.'),
+  shareText:  L('Nuestro itinerario de boda, Atenas, 6 de octubre.','Our wedding day itinerary, Athens, 6 October.'),
+  ife:        L('Entretenimiento a bordo, {n} canciones','In-flight entertainment, {n} songs'),
+  spotify:    L('Abrir la playlist de la fiesta en Spotify','Open the party playlist on Spotify'),
+  meta:       L('{a} a {b}, Puerta Island','{a} to {b}, Gate Island'),
+  until:      L('a {b}','to {b}'),
+  now: L('Ahora','Now'), next: L('Sigue','Next'),
+  wheels:     L('¡Despegamos!','Wheels up'),
+  goTo:       L('ir a la sección','go to section'),
+  cdBefore:   L('Salida en','Departure in'),
+  cdStatus:   L('Estado del vuelo','Flight status'),
+  inAir:      L('EN EL AIRE','IN THE AIR'),
+  married:    L('RECIÉN CASADOS','JUST MARRIED'),
+  arrived:    L('LLEGADA','ARRIVED'),
+  onTime:     L('A TIEMPO','ON TIME'),
+  boarding:   L('EMBARQUE','BOARDING'),
+  departed:   L('DESPEGÓ','DEPARTED'),
+  landed:     L('ATERRIZÓ','LANDED'),
+  passName:   L('Pase de abordar','Boarding pass'),
+  arrivalName:L('Llegada','Arrival'),
+};
+
+/* ================= timeline data ================= */
 const PHASES = [
- { id:'checkin', dest:'CHECK-IN', sub:'Getting ready', sky:'#F2F6FB', fg:'#0A1F44', legs:[
-  ['09:00','Bride & bridal party start getting ready at Island'],
-  ['10:00','Bridal detail photography','Dress, shoes, jewelry, rings, invitations, arras and sand ceremony items.'],
-  ['11:30','Bridesmaids getting-ready photos & content'],
-  ['12:30','Light lunch & hydration'],
-  ['13:00','Groom & groomsmen start getting ready'],
-  ['13:30','Bride final hair & makeup'],
-  ['14:00','Bride gets dressed'],
-  ['14:15','Bridal portraits'],
-  ['14:30','Groom portraits with groomsmen & best men'],
-  ['14:45','Final venue, ceremony and technical check'],
+ { id:'checkin', dest:L('PREPARACIÓN','CHECK-IN'), sub:L('Preparativos','Getting ready'), sky:'#F2F6FB', fg:'#0A1F44', legs:[
+  ['09:00', L('La novia y las damas comienzan a arreglarse en Island','Bride & bridal party start getting ready at Island')],
+  ['10:00', L('Fotografía de detalles de la novia','Bridal detail photography'), L('Vestido, zapatos, joyas, anillos, invitaciones, arras y elementos de la ceremonia de arena.','Dress, shoes, jewelry, rings, invitations, arras and sand ceremony items.')],
+  ['11:30', L('Fotos y contenido de las damas arreglándose','Bridesmaids getting-ready photos & content')],
+  ['12:30', L('Almuerzo ligero e hidratación','Light lunch & hydration')],
+  ['13:00', L('El novio y los groomsmen comienzan a arreglarse','Groom & groomsmen start getting ready')],
+  ['13:30', L('Peinado y maquillaje final de la novia','Bride final hair & makeup')],
+  ['14:00', L('La novia se viste','Bride gets dressed')],
+  ['14:15', L('Retratos de la novia','Bridal portraits')],
+  ['14:30', L('Retratos del novio con groomsmen y best men','Groom portraits with groomsmen & best men')],
+  ['14:45', L('Revisión final del lugar, la ceremonia y la parte técnica','Final venue, ceremony and technical check')],
  ]},
- { id:'firstlook', dest:'FIRST LOOK', sub:'First look & pre-ceremony content', sky:'#E6F0FB', fg:'#0A1F44', legs:[
-  ['15:00','Groomsmen & padrinos arrive, fully ready at Island'],
-  ['15:05','Content creation','Bride, groom, bridesmaids, best men & groomsmen.'],
-  ['15:25','First look area cleared'],
-  ['15:30','Jenireé & Leandro first look',null,{key:1}],
-  ['15:35','Couple portraits'],
-  ['15:50','Couple moves away from guest arrival areas'],
+ { id:'firstlook', dest:L('FIRST LOOK','FIRST LOOK'), sub:L('First look y contenido previo','First look & pre-ceremony content'), sky:'#E6F0FB', fg:'#0A1F44', legs:[
+  ['15:00', L('Groomsmen y padrinos llegan listos a Island','Groomsmen & padrinos arrive, fully ready at Island')],
+  ['15:05', L('Creación de contenido','Content creation'), L('Novia, novio, damas, best men y groomsmen.','Bride, groom, bridesmaids, best men & groomsmen.')],
+  ['15:25', L('Se despeja el área del first look','First look area cleared')],
+  ['15:30', L('First look de Jenireé y Leandro','Jenireé & Leandro first look'), null, {key:1}],
+  ['15:35', L('Retratos de la pareja','Couple portraits')],
+  ['15:50', L('La pareja se retira de las áreas de llegada de invitados','Couple moves away from guest arrival areas')],
  ]},
- { id:'boarding', dest:'BOARDING', sub:'Guest arrival', sky:'#D6E8F8', fg:'#0A1F44', legs:[
-  ['16:00','Guests begin arriving'],
-  ['16:00–16:30','Welcome drinks','Elegant background playlist.',{ife:[
+ { id:'boarding', dest:L('EMBARQUE','BOARDING'), sub:L('Llegada de invitados','Guest arrival'), sky:'#D6E8F8', fg:'#0A1F44', legs:[
+  ['16:00', L('Comienzan a llegar los invitados','Guests begin arriving')],
+  ['16:00–16:30', L('Bebidas de bienvenida','Welcome drinks'), L('Playlist elegante de fondo.','Elegant background playlist.'), {ife:[
     ["I'm Yours","Jason Mraz"],["Come Away With Me","Norah Jones"],["Put Your Records On","Corinne Bailey Rae"],
-    ["Viva la Vida","Coldplay, acoustic/instrumental"],["Fly Me to the Moon","Frank Sinatra"],["Underdog","Alicia Keys"],
-    ["All of Me","John Legend, instrumental"],["Photograph","Ed Sheeran, acoustic"],["Fields of Gold","Sting"],["Isn't She Lovely","Stevie Wonder"]]}],
-  ['16:30','Live violin & cello begins',null,{ife:[
+    ["Viva la Vida",L('Coldplay, acústica/instrumental','Coldplay, acoustic/instrumental')],["Fly Me to the Moon","Frank Sinatra"],["Underdog","Alicia Keys"],
+    ["All of Me","John Legend, instrumental"],["Photograph",L('Ed Sheeran, acústica','Ed Sheeran, acoustic')],["Fields of Gold","Sting"],["Isn't She Lovely","Stevie Wonder"]]}],
+  ['16:30', L('Comienzan el violín y el chelo en vivo','Live violin & cello begins'), null, {ife:[
     ["La Vie en Rose"],["Can't Help Falling in Love"],["A Thousand Years"],["All of Me"],["Until I Found You"],["Make You Feel My Love"],
     ["Shallow"],["What a Wonderful World"],["Stand by Me"],["Halo"],["Thinking Out Loud"],["At Last"]]}],
-  ['16:50','InEventive team begins seating guests'],
-  ['17:00','Wedding processional begins','Celebrant ready.'],
+  ['16:50', L('El equipo de InEventive comienza a sentar a los invitados','InEventive team begins seating guests')],
+  ['17:00', L('Comienza la procesión','Wedding processional begins'), L('Celebrante lista.','Celebrant ready.')],
  ]},
- { id:'ceremony', dest:'CEREMONY', sub:'Takeoff', sky:'#F6E9CF', fg:'#2A1D0A', legs:[
-  ['17:00','Groom enters with his mothers','Gladdys Cock & Marlen González.',{song:'Fly Me to the Moon'}],
-  ['17:03','Wedding party processional',null,{song:'Die With a Smile, Bruno Mars'}],
-  ['17:07','Bride enters with Pedro de Verona',null,{key:1,song:'I Get to Love You, Ruelle, violin & cello'}],
-  ['17:10','Rocío Córdoba welcomes guests and begins the ceremony'],
-  ['17:14','Marriage reflection & our story'],
-  ['17:18','Arras ceremony'],
-  ['17:21','Sand ceremony'],
-  ['17:25','Maid of honor & man of honor words'],
-  ['17:29','Transition to personal vows'],
-  ['17:30',"Jenireé's vows",null,{key:1}],
-  ['17:33',"Leandro's vows",null,{key:1}],
-  ['17:36','Ring exchange',null,{key:1}],
-  ['17:40','Legal marriage signing'],
-  ['17:45','Declaration of marriage & the kiss',null,{key:1,wheels:1}],
-  ['17:47','Newlywed recessional'],
+ { id:'ceremony', dest:L('CEREMONIA','CEREMONY'), sub:L('Despegue','Takeoff'), sky:'#F6E9CF', fg:'#2A1D0A', legs:[
+  ['17:00', L('El novio entra con sus madres','Groom enters with his mothers'), L('Gladdys Cock y Marlen González.','Gladdys Cock & Marlen González.'), {song:'Fly Me to the Moon'}],
+  ['17:03', L('Procesión del cortejo','Wedding party processional'), null, {song:'Die With a Smile, Bruno Mars'}],
+  ['17:07', L('Entrada de la novia con Pedro de Verona','Bride enters with Pedro de Verona'), null, {key:1, song:L('I Get to Love You, Ruelle, violín y chelo','I Get to Love You, Ruelle, violin & cello')}],
+  ['17:10', L('Rocío Córdoba da la bienvenida e inicia la ceremonia','Rocío Córdoba welcomes guests and begins the ceremony')],
+  ['17:14', L('Reflexión sobre el matrimonio y nuestra historia','Marriage reflection & our story')],
+  ['17:18', L('Ceremonia de las arras','Arras ceremony')],
+  ['17:21', L('Ceremonia de la arena','Sand ceremony')],
+  ['17:25', L('Palabras de la dama de honor y el hombre de honor','Maid of honor & man of honor words')],
+  ['17:29', L('Transición a los votos personales','Transition to personal vows')],
+  ['17:30', L('Votos de Jenireé',"Jenireé's vows"), null, {key:1}],
+  ['17:33', L('Votos de Leandro',"Leandro's vows"), null, {key:1}],
+  ['17:36', L('Intercambio de anillos','Ring exchange'), null, {key:1}],
+  ['17:40', L('Firma legal del matrimonio','Legal marriage signing')],
+  ['17:45', L('Declaración de matrimonio y el beso','Declaration of marriage & the kiss'), null, {key:1, wheels:1}],
+  ['17:47', L('Salida de los recién casados','Newlywed recessional')],
  ]},
- { id:'cocktail', dest:'COCKTAILS', sub:'Cocktail hour & photos', sky:'#F2C9A0', fg:'#2A1508', legs:[
-  ['17:50','Cocktail hour begins'],
-  ['17:50–18:50','Electric violin performance',null,{ife:[
+ { id:'cocktail', dest:L('CÓCTEL','COCKTAILS'), sub:L('Cóctel y fotos','Cocktail hour & photos'), sky:'#F2C9A0', fg:'#2A1508', legs:[
+  ['17:50', L('Comienza el cóctel','Cocktail hour begins')],
+  ['17:50–18:50', L('Violín eléctrico en vivo','Electric violin performance'), null, {ife:[
     ["golden hour"],["Beyond"],["Your Song"],["Birds of a Feather"],["Adore You"],["Kiss of Life"],["Put Your Records On"],["Sway"],
     ["Can't Take My Eyes Off You"],["Treasure"],["Electric Love"],["Dancing in the Moonlight"],["You Are the Best Thing"],["Levitating"],
     ["Rather Be"],["Love on Top"],["Symphony"],["A Sky Full of Stars"]]}],
-  ['17:55–18:05','Couple portraits'],
-  ['18:05–18:15','Parents photographs'],
-  ['18:15–18:25','Immediate family photographs'],
-  ['18:25–18:35','Wedding party photographs'],
-  ['18:35–18:45','Friends & spontaneous group photographs'],
-  ['18:45–18:55','Private break for bride & groom'],
-  ['18:50','Guests invited toward the dinner area'],
+  ['17:55–18:05', L('Retratos de la pareja','Couple portraits')],
+  ['18:05–18:15', L('Fotos con los padres','Parents photographs')],
+  ['18:15–18:25', L('Fotos con la familia cercana','Immediate family photographs')],
+  ['18:25–18:35', L('Fotos con el cortejo','Wedding party photographs')],
+  ['18:35–18:45', L('Fotos con amigos y grupos espontáneos','Friends & spontaneous group photographs')],
+  ['18:45–18:55', L('Pausa privada para los novios','Private break for bride & groom')],
+  ['18:50', L('Los invitados pasan al área de cena','Guests invited toward the dinner area')],
  ]},
- { id:'dinner', dest:'DINNER', sub:'In-flight dinner service', sky:'#2C3F78', fg:'#FFFFFF', legs:[
-  ['19:00','Guests seated'],
-  ['19:05','Grand entrance of Jenireé & Leandro',null,{key:1,song:'Mi Bendición, Juan Luis Guerra'}],
-  ['19:10','Bride & groom welcome speech'],
-  ['19:15','Toast from Paola & Victor'],
-  ['19:20',"Mothers' words"],
-  ['19:30–20:50','Dinner service','DJ with elegant wedding background music, in this order:',{ife:[
+ { id:'dinner', dest:L('CENA','DINNER'), sub:L('Servicio de cena a bordo','In-flight dinner service'), sky:'#2C3F78', fg:'#FFFFFF', legs:[
+  ['19:00', L('Invitados sentados','Guests seated')],
+  ['19:05', L('Gran entrada de Jenireé y Leandro','Grand entrance of Jenireé & Leandro'), null, {key:1, song:'Mi Bendición, Juan Luis Guerra'}],
+  ['19:10', L('Palabras de bienvenida de los novios','Bride & groom welcome speech')],
+  ['19:15', L('Brindis de Paola y Victor','Toast from Paola & Victor')],
+  ['19:20', L('Palabras de las madres',"Mothers' words")],
+  ['19:30–20:50', L('Servicio de cena','Dinner service'), L('DJ con música elegante de fondo, en este orden:','DJ with elegant wedding background music, in this order:'), {ife:[
     ["Tú Sí Sabes Quererme","Natalia Lafourcade"],["So Easy (To Fall In Love)","Olivia Dean"],["Te Mando Flores","Fonseca"],
     ["Lovely Day","Bill Withers"],["Bachata Rosa","Juan Luis Guerra"],["You Are the Best Thing","Ray LaMontagne"],
-    ["Mi Persona Favorita","Alejandro Sanz & Camila Cabello"],["Just the Two of Us","Grover Washington Jr. & Bill Withers"],
+    ["Mi Persona Favorita",L('Alejandro Sanz y Camila Cabello','Alejandro Sanz & Camila Cabello')],["Just the Two of Us",L('Grover Washington Jr. y Bill Withers','Grover Washington Jr. & Bill Withers')],
     ["Es Por Ti","Juanes"],["L-O-V-E","Nat King Cole"],["Darte un Beso","Prince Royce"],["Man I Need","Olivia Dean"],
-    ["Fly Me to the Moon","Frank Sinatra"],["Robarte un Beso","Carlos Vives & Sebastián Yatra"],["Let's Stay Together","Al Green"],
+    ["Fly Me to the Moon","Frank Sinatra"],["Robarte un Beso",L('Carlos Vives y Sebastián Yatra','Carlos Vives & Sebastián Yatra')],["Let's Stay Together","Al Green"],
     ["Me Enamoré","Juanes"],["Bailar Contigo","Monsieur Periné"]]}],
-  ['20:40','Production team prepares cake, fireworks & first dance'],
-  ['20:55','Guests invited around the dance floor'],
+  ['20:40', L('Producción prepara pastel, fuegos artificiales y primer baile','Production team prepares cake, fireworks & first dance')],
+  ['20:55', L('Los invitados pasan alrededor de la pista','Guests invited around the dance floor')],
  ]},
- { id:'celebration', dest:'CELEBRATION', sub:'Seatbelt sign off', sky:'#142A5E', fg:'#FFFFFF', legs:[
-  ['21:00','Cake cutting',null,{key:1}],
-  ['21:05','Fireworks',null,{key:1}],
-  ['21:12','First dance','4-minute custom mix.',{key:1}],
-  ['21:17','Bridesmaids & best men join the choreographed dance','4-minute custom mix.'],
-  ['21:22–23:22','Rosana performance','Official party opening.',{key:1}],
-  ['23:22','Hora loca, bouquet & liga',null,{song:'Sal y Perrea, Sech · Dichavate'}],
+ { id:'celebration', dest:L('CELEBRACIÓN','CELEBRATION'), sub:L('Se apaga la señal de cinturones','Seatbelt sign off'), sky:'#142A5E', fg:'#FFFFFF', legs:[
+  ['21:00', L('Corte del pastel','Cake cutting'), null, {key:1}],
+  ['21:05', L('Fuegos artificiales','Fireworks'), null, {key:1}],
+  ['21:12', L('Primer baile','First dance'), L('Mix personalizado de 4 minutos.','4-minute custom mix.'), {key:1}],
+  ['21:17', L('Damas y best men se unen al baile coreografiado','Bridesmaids & best men join the choreographed dance'), L('Mix personalizado de 4 minutos.','4-minute custom mix.')],
+  ['21:22–23:22', L('Show de Rosana','Rosana performance'), L('Apertura oficial de la fiesta.','Official party opening.'), {key:1}],
+  ['23:22', L('Hora loca, ramo y liga','Hora loca, bouquet & liga'), null, {song:'Sal y Perrea, Sech · Dichavate'}],
  ]},
- { id:'party', dest:'AFTER PARTY', sub:'Night flight', sky:'#081636', fg:'#FFFFFF', spotify:true, legs:[
-  ['23:40–00:15','Reggaeton golden era'],
-  ['00:15–00:45','Dancehall & international'],
-  ['00:45–01:15','Current Latin & reggaeton'],
-  ['01:15–01:40','Salsa, merengue & Latin anthems'],
-  ['01:40–01:55','Final party run'],
-  ['01:55','Last song'],
-  ['02:00','Official wedding closing',null,{key:1}],
+ { id:'party', dest:L('FIESTA','AFTER PARTY'), sub:L('Vuelo nocturno','Night flight'), sky:'#081636', fg:'#FFFFFF', spotify:true, legs:[
+  ['23:40–00:15', L('Época dorada del reggaetón','Reggaeton golden era')],
+  ['00:15–00:45', L('Dancehall e internacional','Dancehall & international')],
+  ['00:45–01:15', L('Latino y reggaetón actual','Current Latin & reggaeton')],
+  ['01:15–01:40', L('Salsa, merengue e himnos latinos','Salsa, merengue & Latin anthems')],
+  ['01:40–01:55', L('Última tanda de fiesta','Final party run')],
+  ['01:55', L('Última canción','Last song')],
+  ['02:00', L('Cierre oficial de la boda','Official wedding closing'), null, {key:1}],
  ]},
 ];
 const SPOTIFY = 'https://open.spotify.com/playlist/7I3ctamTenw9gnR2XWYEpU?si=GyO_1JiRR8q1QwVYAL7SjQ&utm_source=copy-link&pi=znyB1FuNQnmTl';
 
+/* ================= routes: #/es/ceremonia, #/en/ceremony ================= */
+const ROUTES = {
+  'top':            L('',''),
+  'pass':           L('pase-de-abordar','boarding-pass'),
+  'ph-checkin':     L('preparativos','getting-ready'),
+  'ph-firstlook':   L('first-look','first-look'),
+  'ph-boarding':    L('llegada-invitados','guest-arrival'),
+  'ph-ceremony':    L('ceremonia','ceremony'),
+  'ph-cocktail':    L('coctel','cocktail-hour'),
+  'ph-dinner':      L('cena','dinner'),
+  'ph-celebration': L('celebracion','celebration'),
+  'ph-party':       L('fiesta','party'),
+  'landing':        L('llegada','arrival'),
+};
+function parseRoute(){
+  const parts = location.hash.replace(/^#\/?/,'').split('/').filter(Boolean);
+  let l = null, slug = null;
+  if (parts[0] === 'es' || parts[0] === 'en'){ l = parts[0]; slug = parts[1]; }
+  else slug = parts[0];
+  if (!l){ const q = new URLSearchParams(location.search).get('lang'); if (q === 'en' || q === 'es') l = q; }
+  let id = null;
+  if (slug) for (const [k,v] of Object.entries(ROUTES)) if (v.es === slug || v.en === slug){ id = k; break; }
+  return { lang: l || 'es', id };
+}
+let currentId = 'top';
+function writeRoute(){
+  const slug = ROUTES[currentId] ? ROUTES[currentId][lang] : '';
+  const h = '#/' + lang + (slug ? '/' + slug : '');
+  if (location.hash !== h) history.replaceState(null, '', location.pathname + location.search + h);
+}
+function go(id, instant){
+  const el = document.getElementById(id); if (!el) return;
+  el.scrollIntoView({ behavior: (reduce || instant) ? 'auto' : 'smooth' });
+}
+document.addEventListener('click', e => { const g = e.target.closest('[data-go]'); if (g) go(g.dataset.go); });
+
 const toMin = s => { const [h,m] = s.split('–')[0].split(':').map(Number); let v = h*60+m; if (h < 8) v += 1440; return v; };
 const endOf = s => s.includes('–') ? toMin(s.split('–')[1]) : null;
 const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const fmt = (s, o) => s.replace(/\{(\w+)\}/g, (_,k) => o[k]);
 
 /* ================= split flap ================= */
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789:-';
@@ -477,74 +593,105 @@ function flap(el, text, len, opts={}){
     el.innerHTML = '';
     for (let i=0;i<len;i++){ const c=document.createElement('i'); c.setAttribute('aria-hidden','true'); el.appendChild(c); }
   }
-  const cells = [...el.children];
-  cells.forEach((c,i)=>{
+  const token = (el._tok = (el._tok || 0) + 1);
+  [...el.children].forEach((c,i)=>{
     const target = text[i];
     c.classList.toggle('sp', target === ' ');
     if (reduce || opts.instant){ c.textContent = target; return; }
     let n = target === ' ' ? 2 : 5 + Math.floor(Math.random()*10) + i;
     const step = () => {
+      if (el._tok !== token) return;
       c.classList.remove('tick'); void c.offsetWidth; c.classList.add('tick');
       if (--n <= 0){ c.textContent = target; return; }
       c.textContent = CHARS[Math.floor(Math.random()*CHARS.length)];
-      setTimeout(step, 55 + (opts.delay||0));
+      setTimeout(step, 55);
     };
     setTimeout(step, (opts.start||0) + i*25);
   });
 }
 
+/* ================= static text ================= */
+function applyStatic(){
+  document.documentElement.lang = lang;
+  document.title = T(UI.title);
+  document.querySelector('meta[name="description"]').content = T(UI.desc);
+  document.querySelectorAll('[data-i18n]').forEach(el => el.textContent = T(UI[el.dataset.i18n]));
+  document.querySelectorAll('[data-i18n-label]').forEach(el => el.setAttribute('aria-label', T(UI[el.dataset.i18nLabel])));
+  document.getElementById('tearTxt').textContent = T(passCard.classList.contains('torn') ? UI.torn : UI.tear);
+  document.querySelectorAll('.lang button').forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  document.getElementById('toast').textContent = '';
+}
+
 /* ================= departure board ================= */
 const boardRows = document.getElementById('boardRows');
-const boardData = PHASES.map(p => ({ id:p.id, time:p.legs[0][0].split('–')[0], dest:p.dest }));
-boardData.push({ id:'landing', time:'02:00', dest:'FOREVER' });
-const mobile = matchMedia('(max-width:640px)').matches;
-boardData.forEach((r,idx)=>{
+const REM_LEN = mobile ? 8 : 10, DEST_LEN = mobile ? 11 : 12;
+const boardData = PHASES.map(p => ({ id:'ph-'+p.id, time:p.legs[0][0].split('–')[0], dest:p.dest }));
+boardData.push({ id:'landing', time:'02:00', dest:L('ETERNIDAD','FOREVER') });
+boardData.forEach(r => {
   const b = document.createElement('button');
-  b.className = 'brow'; b.type='button';
-  b.setAttribute('aria-label', `${r.time} ${r.dest.toLowerCase()}, go to section`);
-  b.innerHTML = `<span class="t"></span><span class="fno"></span><span class="d"></span><span class="rm"></span>`;
-  b.addEventListener('click', ()=> document.getElementById(r.id === 'landing' ? 'landing' : 'ph-'+r.id).scrollIntoView({behavior: reduce?'auto':'smooth'}));
+  b.className = 'brow'; b.type = 'button'; b.dataset.go = r.id;
+  b.innerHTML = `<span class="t"></span><span class="fno"></span><span class="d"></span><span class="rm y"></span>`;
   boardRows.appendChild(b);
-  const st = 300 + idx*140;
-  flap(b.querySelector('.t'), r.time, 5, {start:st});
-  if (!mobile) flap(b.querySelector('.fno'), 'JL'+r.time.replace(':',''), 6, {start:st});
-  flap(b.querySelector('.d'), r.dest, mobile ? 11 : 12, {start:st});
-  r.rm = b.querySelector('.rm'); r.rm.classList.add('y');
-  flap(r.rm, 'ON TIME', mobile ? 7 : 9, {start:st+200});
+  r.el = b; r.rm = b.querySelector('.rm');
+  flap(b.querySelector('.t'), r.time, 5, {instant:true});
+  if (!mobile) flap(b.querySelector('.fno'), 'JL'+r.time.replace(':',''), 6, {instant:true});
 });
+function renderBoard(first){
+  boardData.forEach((r,idx) => {
+    const st = first ? 300 + idx*140 : idx*60;
+    r.el.setAttribute('aria-label', `${r.time} ${T(r.dest).toLowerCase()}, ${T(UI.goTo)}`);
+    if (first){
+      flap(r.el.querySelector('.t'), r.time, 5, {start:st});
+      if (!mobile) flap(r.el.querySelector('.fno'), 'JL'+r.time.replace(':',''), 6, {start:st});
+    }
+    flap(r.el.querySelector('.d'), T(r.dest), DEST_LEN, {start:st});
+    r.last = null;
+  });
+}
 
-/* ================= timeline render ================= */
+/* ================= timeline ================= */
 const tl = document.getElementById('timeline');
-PHASES.forEach(p=>{
-  const first = p.legs[0][0].split('–')[0];
-  const lastLeg = p.legs[p.legs.length-1][0];
-  const last = lastLeg.includes('–') ? lastLeg.split('–')[1] : lastLeg;
+const legIO = new IntersectionObserver(entries => {
+  entries.forEach(en => { if (en.isIntersecting) clock.textContent = en.target.dataset.t; });
+},{ rootMargin:'-50% 0px -50% 0px' });
+PHASES.forEach(p => {
   const sec = document.createElement('section');
   sec.className = 'phase'; sec.id = 'ph-'+p.id;
-  Object.assign(sec.dataset, { sky:p.sky, fg:p.fg, name:p.sub, t:first });
-  let html = `<div class="inner"><header class="ph-head">
-    <h2 class="sr">${esc(p.sub)}</h2>
-    <div class="ph-flap" data-text="${p.dest}" aria-hidden="true"></div>
-    <p class="ph-sub" aria-hidden="true">${esc(p.sub)}</p>
-    <p class="ph-meta">${first} to ${last}, Gate Island</p></header><ol class="legs">`;
-  p.legs.forEach(([t,title,note,o])=>{
-    o = o || {};
-    const range = t.includes('–');
-    const tHtml = range ? `${t.split('–')[0]}<small>to ${t.split('–')[1]}</small>` : t;
-    html += `<li class="leg${o.key?' key':''}${o.wheels?' wheels':''}" data-start="${toMin(t)}" data-end="${endOf(t)||''}" data-t="${t.split('–')[0]}">
-      <time>${tHtml}</time><div>
-      <h3>${esc(title)}${o.wheels?'<span class="tag">Wheels up</span>':''}<span class="status"></span></h3>
-      ${note?`<p>${esc(note)}</p>`:''}
-      ${o.song?`<span class="song"><svg width="16" height="16"><use href="#note"/></svg>${esc(o.song)}</span>`:''}
-      ${o.ife?`<div class="ife"><button type="button" aria-expanded="false"><svg width="16" height="16"><use href="#note"/></svg>In-flight entertainment, ${o.ife.length} songs<svg class="chev" width="16" height="16"><use href="#chev"/></svg></button><ol>${o.ife.map(s=>`<li><div>${esc(s[0])}${s[1]?`<br><span>${esc(s[1])}</span>`:''}</div></li>`).join('')}</ol></div>`:''}
-      </div></li>`;
-  });
-  html += `</ol>${p.spotify?`<a class="spotify" href="${SPOTIFY}" target="_blank" rel="noopener"><svg width="18" height="18"><use href="#note"/></svg>Open the party playlist on Spotify</a>`:''}</div>`;
-  sec.innerHTML = html;
+  Object.assign(sec.dataset, { sky:p.sky, fg:p.fg, t:p.legs[0][0].split('–')[0] });
   tl.appendChild(sec);
 });
-
-tl.addEventListener('click', e=>{
+function renderTimeline(){
+  legIO.disconnect();
+  PHASES.forEach(p => {
+    const sec = document.getElementById('ph-'+p.id);
+    const first = p.legs[0][0].split('–')[0];
+    const lastLeg = p.legs[p.legs.length-1][0];
+    const last = lastLeg.includes('–') ? lastLeg.split('–')[1] : lastLeg;
+    let html = `<div class="inner"><header class="ph-head">
+      <h2 class="sr">${esc(T(p.sub))}</h2>
+      <div class="ph-flap" aria-hidden="true"></div>
+      <p class="ph-sub" aria-hidden="true">${esc(T(p.sub))}</p>
+      <p class="ph-meta">${fmt(T(UI.meta),{a:first,b:last})}</p></header><ol class="legs">`;
+    p.legs.forEach(([t,title,note,o]) => {
+      o = o || {};
+      const range = t.includes('–');
+      const tHtml = range ? `${t.split('–')[0]}<small>${fmt(T(UI.until),{b:t.split('–')[1]})}</small>` : t;
+      html += `<li class="leg${o.key?' key':''}${o.wheels?' wheels':''}" data-start="${toMin(t)}" data-end="${endOf(t)||''}" data-t="${t.split('–')[0]}">
+        <time>${tHtml}</time><div>
+        <h3>${esc(T(title))}${o.wheels?`<span class="tag">${esc(T(UI.wheels))}</span>`:''}<span class="status"></span></h3>
+        ${note?`<p>${esc(T(note))}</p>`:''}
+        ${o.song?`<span class="song"><svg width="16" height="16"><use href="#note"/></svg>${esc(T(o.song))}</span>`:''}
+        ${o.ife?`<div class="ife"><button type="button" aria-expanded="false"><svg width="16" height="16"><use href="#note"/></svg>${fmt(T(UI.ife),{n:o.ife.length})}<svg class="chev" width="16" height="16"><use href="#chev"/></svg></button><ol>${o.ife.map(s=>`<li><div>${esc(s[0])}${s[1]?`<br><span>${esc(T(s[1]))}</span>`:''}</div></li>`).join('')}</ol></div>`:''}
+        </div></li>`;
+    });
+    html += `</ol>${p.spotify?`<a class="spotify" href="${SPOTIFY}" target="_blank" rel="noopener"><svg width="18" height="18"><use href="#note"/></svg>${esc(T(UI.spotify))}</a>`:''}</div>`;
+    sec.innerHTML = html;
+    const f = sec.querySelector('.ph-flap');
+    if (seen.has(sec.id)) flap(f, T(p.dest)); else f.dataset.text = T(p.dest);
+  });
+  document.querySelectorAll('.leg, #landing').forEach(l => legIO.observe(l));
+}
+tl.addEventListener('click', e => {
   const btn = e.target.closest('.ife button'); if (!btn) return;
   const box = btn.parentElement, list = box.querySelector('ol');
   const open = btn.getAttribute('aria-expanded') !== 'true';
@@ -556,33 +703,42 @@ tl.addEventListener('click', e=>{
 /* ================= sky, flaps & bar ================= */
 const body = document.body, bar = document.getElementById('bar');
 const phName = document.getElementById('phName'), clock = document.getElementById('clock');
+const passZone = document.getElementById('pass'), heroEl = document.getElementById('top'), landing = document.getElementById('landing');
+Object.assign(passZone.dataset, { sky:'#F2F6FB', fg:'#0A1F44', t:'09:00' });
+Object.assign(heroEl.dataset, { sky:'#F2F6FB', fg:'#0A1F44', t:'09:00' });
+const seen = new Set();
+function sectionName(id){
+  if (id === 'pass') return T(UI.passName);
+  if (id === 'landing') return T(UI.arrivalName);
+  const p = PHASES.find(x => 'ph-'+x.id === id);
+  return p ? T(p.sub) : '';
+}
 function setSky(el){
   body.style.setProperty('--sky', el.dataset.sky);
   body.style.setProperty('--fg', el.dataset.fg);
   body.style.setProperty('--line', el.dataset.fg === '#FFFFFF' ? 'rgba(255,255,255,.18)' : 'rgba(10,31,68,.18)');
   body.classList.toggle('night', el.id === 'landing' || el.id === 'ph-party');
-  phName.hidden = false; phName.textContent = el.dataset.name;
+  const n = sectionName(el.id);
+  phName.hidden = !n; phName.textContent = n;
 }
-const passZone = document.getElementById('pass');
-passZone.dataset.sky = '#F2F6FB'; passZone.dataset.fg = '#0A1F44'; passZone.dataset.name = 'Boarding pass'; passZone.dataset.t = '09:00';
-const flapped = new WeakSet();
-const phaseIO = new IntersectionObserver(entries=>{
-  entries.forEach(en=>{
+const phaseIO = new IntersectionObserver(entries => {
+  entries.forEach(en => {
     if (!en.isIntersecting) return;
-    setSky(en.target);
-    const f = en.target.querySelector('.ph-flap');
-    if (f && !flapped.has(f)){ flapped.add(f); flap(f, f.dataset.text); }
-    if (en.target.id === 'landing' && !flapped.has(en.target)){ flapped.add(en.target); flap(document.getElementById('arrivedFlap'), 'ARRIVED'); }
+    const s = en.target;
+    currentId = s.id;
+    if (s.id !== 'top') setSky(s);
+    writeRoute();
+    if (!seen.has(s.id)){
+      seen.add(s.id);
+      const f = s.querySelector('.ph-flap');
+      if (f) flap(f, f.dataset.text || '');
+      if (s.id === 'landing') flap(document.getElementById('arrivedFlap'), T(UI.arrived));
+    }
   });
 },{ rootMargin:'-45% 0px -45% 0px' });
-[passZone, ...document.querySelectorAll('.phase'), document.getElementById('landing')].forEach(s=>phaseIO.observe(s));
+[heroEl, passZone, ...document.querySelectorAll('.phase'), landing].forEach(s => phaseIO.observe(s));
 
-const legIO = new IntersectionObserver(entries=>{
-  entries.forEach(en=>{ if (en.isIntersecting) clock.textContent = en.target.dataset.t; });
-},{ rootMargin:'-50% 0px -50% 0px' });
-document.querySelectorAll('.leg, #landing').forEach(l=>legIO.observe(l));
-
-const fill = document.getElementById('fill'), plane = document.getElementById('plane'), heroEl = document.getElementById('top');
+const fill = document.getElementById('fill'), plane = document.getElementById('plane');
 const passCard = document.getElementById('passCard');
 let tiltX = 0, tiltY = 0, ticking = false;
 function onScroll(){
@@ -593,25 +749,23 @@ function onScroll(){
   const p = Math.min(1, Math.max(0, (y - start) / (end - start)));
   fill.style.width = (p*100)+'%';
   plane.style.left = (p*100)+'%';
-  // climb after takeoff, level at cruise, descend at the end
   const cer = document.getElementById('ph-ceremony').offsetTop;
   const rot = p > .93 ? 110 : (y > cer - vh*.3 && y < cer + vh*.9 ? 70 : 90);
   plane.style.transform = `translate(-50%,-50%) rotate(${rot}deg)`;
-  // boarding pass tilts up into place
   const r = passCard.getBoundingClientRect();
   const q = Math.min(1, Math.max(0, 1 - (r.top - vh*.15) / (vh*.75)));
   if (!reduce) passCard.style.transform = `rotateX(${(1-q)*38 + tiltY}deg) rotateY(${tiltX}deg) scale(${.88 + q*.12})`;
 }
-addEventListener('scroll', ()=>{ if (!ticking){ ticking = true; requestAnimationFrame(onScroll); } }, {passive:true});
+addEventListener('scroll', () => { if (!ticking){ ticking = true; requestAnimationFrame(onScroll); } }, {passive:true});
 addEventListener('resize', onScroll);
 if (!reduce){
-  passCard.addEventListener('pointermove', e=>{
+  passCard.addEventListener('pointermove', e => {
     const r = passCard.getBoundingClientRect();
     tiltX = ((e.clientX - r.left)/r.width - .5) * 12;
     tiltY = -((e.clientY - r.top)/r.height - .5) * 10;
     onScroll();
   });
-  passCard.addEventListener('pointerleave', ()=>{ tiltX = tiltY = 0; onScroll(); });
+  passCard.addEventListener('pointerleave', () => { tiltX = tiltY = 0; onScroll(); });
 }
 
 /* ================= barcode ================= */
@@ -631,11 +785,11 @@ if (!reduce){
 
 /* ================= tear the stub ================= */
 const tearBtn = document.getElementById('tearBtn');
-tearBtn.addEventListener('click', ()=>{
+tearBtn.addEventListener('click', () => {
   const torn = !passCard.classList.contains('torn');
   passCard.classList.toggle('torn', torn);
   tearBtn.setAttribute('aria-pressed', torn);
-  tearBtn.querySelector('span').textContent = torn ? 'Welcome aboard. Reprint pass' : 'Tear the stub to board';
+  document.getElementById('tearTxt').textContent = T(torn ? UI.torn : UI.tear);
   if (torn && !reduce) confetti();
 });
 function confetti(){
@@ -659,53 +813,69 @@ function confetti(){
   }
 }
 
-/* ================= live flight status (Athens time) ================= */
-const DEP = Date.UTC(2026,9,6,14,0);          // 17:00 in Athens (UTC+3)
-const DAY0 = Date.UTC(2026,9,5,21,0);         // 00:00 on 6 Oct in Athens
+/* ================= live flight status (Athens time, UTC+3 on 6 Oct) ================= */
+const DEP = Date.UTC(2026,9,6,14,0);   // 17:00 Athens
+const DAY0 = Date.UTC(2026,9,5,21,0);  // 00:00 6 Oct Athens
 const cd = document.getElementById('countdown');
-let cdFlap;
-function tick(){
+let cdFlap = null;
+function tick(animateCd){
   const now = Date.now();
-  const mins = (now - DAY0) / 60000;           // minutes since midnight 6 Oct, Athens
+  const mins = (now - DAY0) / 60000;
   const legs = [...document.querySelectorAll('.leg')];
   const live = mins >= 8*60 && mins <= 1440 + 150;
-  legs.forEach(l => { l.classList.remove('now','next','done'); l.querySelector('.status').textContent=''; });
+  legs.forEach(l => { l.classList.remove('now','next','done'); l.querySelector('.status').textContent = ''; });
   if (live){
     let cur = -1;
-    legs.forEach((l,i)=>{ if (+l.dataset.start <= mins) cur = i; });
-    legs.forEach((l,i)=>{
+    legs.forEach((l,i) => { if (+l.dataset.start <= mins) cur = i; });
+    legs.forEach((l,i) => {
       if (i < cur && !(l.dataset.end && +l.dataset.end > mins)) l.classList.add('done');
-      if (i === cur || (l.dataset.end && +l.dataset.start <= mins && +l.dataset.end > mins)){ l.classList.add('now'); l.querySelector('.status').textContent='Now'; }
+      if (i === cur || (l.dataset.end && +l.dataset.start <= mins && +l.dataset.end > mins)){ l.classList.add('now'); l.querySelector('.status').textContent = T(UI.now); }
     });
-    if (legs[cur+1]){ legs[cur+1].classList.add('next'); legs[cur+1].querySelector('.status').textContent='Next'; }
+    if (legs[cur+1]){ legs[cur+1].classList.add('next'); legs[cur+1].querySelector('.status').textContent = T(UI.next); }
   }
-  // board remarks
-  boardData.forEach((r,i)=>{
-    let txt = 'ON TIME';
+  boardData.forEach((r,i) => {
+    let key = 'onTime';
     if (live){
       const s = toMin(r.time), n = boardData[i+1] ? toMin(boardData[i+1].time) : s + 1;
-      txt = mins >= n ? 'DEPARTED' : mins >= s ? 'BOARDING' : 'ON TIME';
-    } else if (mins > 1440 + 150) txt = 'LANDED';
-    const len = mobile ? 7 : 9;
-    if (r.last !== txt){ const first = !r.last; r.last = txt; if (!first) flap(r.rm, mobile && txt==='DEPARTED' ? 'GONE' : txt, len); }
+      key = mins >= n ? 'departed' : mins >= s ? 'boarding' : 'onTime';
+    } else if (mins > 1440 + 150) key = 'landed';
+    const txt = T(UI[key]);
+    if (r.last !== txt){ r.last = txt; flap(r.rm, txt, REM_LEN, {start: animateCd ? 600 + i*140 : i*60}); }
   });
-  // countdown
   let label, value;
   if (now < DEP){
     const d = Math.floor((DEP-now)/864e5), h = Math.floor((DEP-now)%864e5/36e5), m = Math.floor((DEP-now)%36e5/6e4);
-    label = 'Departure in'; value = `${String(d).padStart(2,'0')}D ${String(h).padStart(2,'0')}H ${String(m).padStart(2,'0')}M`;
-  } else if (mins <= 1440 + 120){ label = 'Flight status'; value = 'IN THE AIR'; }
-  else { label = 'Flight status'; value = 'JUST MARRIED'; }
+    label = T(UI.cdBefore); value = `${String(d).padStart(2,'0')}D ${String(h).padStart(2,'0')}H ${String(m).padStart(2,'0')}M`;
+  } else if (mins <= 1440 + 120){ label = T(UI.cdStatus); value = T(UI.inAir); }
+  else { label = T(UI.cdStatus); value = T(UI.married); }
   if (!cdFlap){
-    cd.innerHTML = `<div>${label}</div><div class="flaps y" id="cdf"></div>`;
-    cdFlap = document.getElementById('cdf');
-    flap(cdFlap, value, 12, {start:1400});
-  } else {
-    cd.firstElementChild.textContent = label;
-    flap(cdFlap, value, 12, {instant:true});
+    cd.innerHTML = `<div></div><div class="flaps y"></div>`;
+    cdFlap = cd.lastElementChild;
   }
+  cd.firstElementChild.textContent = label;
+  flap(cdFlap, value, 14, animateCd ? {start:1400} : {instant: cdFlap.getAttribute('aria-label') === value.trim()});
 }
-tick(); setInterval(tick, 30000);
+
+/* ================= language ================= */
+function setLang(l, first){
+  lang = l;
+  applyStatic();
+  renderBoard(first);
+  renderTimeline();
+  if (seen.has('landing')) flap(document.getElementById('arrivedFlap'), T(UI.arrived));
+  tick(first);
+  writeRoute();
+}
+document.querySelectorAll('.lang button').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.lang === lang) return;
+  setLang(b.dataset.lang);
+  try { localStorage.setItem('jl1006-lang', lang); } catch(e){}
+}));
+addEventListener('hashchange', () => {
+  const r = parseRoute();
+  if (r.lang !== lang) setLang(r.lang);
+  if (r.id && r.id !== currentId) go(r.id);
+});
 
 /* ================= stars & share ================= */
 (function(){
@@ -714,19 +884,33 @@ tick(); setInterval(tick, 30000);
   s.innerHTML = h;
 })();
 const toast = document.getElementById('toast');
-document.getElementById('shareBtn').addEventListener('click', async ()=>{
-  const data = { title:'Flight JL1006, Jenireé & Leandro', text:'Our wedding day itinerary, Athens, 6 October.', url:location.href };
+document.getElementById('shareBtn').addEventListener('click', async () => {
+  const data = { title:T(UI.title), text:T(UI.shareText), url:location.href };
   try {
     if (navigator.share){ await navigator.share(data); return; }
     await navigator.clipboard.writeText(location.href);
-    toast.textContent = 'Link copied. Paste it anywhere.';
+    toast.textContent = T(UI.copied);
   } catch(e){
     if (e && e.name === 'AbortError') return;
-    toast.textContent = 'Copy the address from your browser bar to share.';
+    toast.textContent = T(UI.copyFail);
   }
 });
 
+/* ================= boot ================= */
+const start = parseRoute();
+let startLang = start.lang;
+if (!/^#\/?(es|en)\b/.test(location.hash) && !new URLSearchParams(location.search).get('lang')){
+  try { const saved = localStorage.getItem('jl1006-lang'); if (saved === 'en' || saved === 'es') startLang = saved; } catch(e){}
+}
+if (start.id) currentId = start.id;
+setLang(startLang, true);
+setInterval(() => tick(false), 30000);
 onScroll();
+if (start.id && start.id !== 'top'){
+  currentId = start.id;
+  const jump = () => go(start.id, true);
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => requestAnimationFrame(jump));
+}
 })();
 </script>
 </body>
