@@ -176,6 +176,19 @@ h2{font-family:var(--display);font-weight:400;font-size:clamp(36px,5vw,60px);lin
 .seat.taken{background:var(--egeo);border-color:var(--egeo)}
 .seat.mine{background:var(--oro);border-color:var(--oro);animation:pop .6s ease}
 .seat.none{visibility:hidden}
+button.seat{cursor:pointer;padding:0;font-family:var(--sign);font-weight:700;font-size:11px;line-height:1;color:var(--egeo);transition:background .15s,border-color .15s,transform .15s}
+button.seat:hover{background:#EEF4FC;border-color:var(--azul);transform:translateY(-1px)}
+.seat.mine{color:#fff;font-family:var(--sign);font-weight:700;font-size:11px;line-height:24px;text-align:center}
+button.seat.mine:hover{background:var(--oro);border-color:var(--oro)}
+.seat.lost{animation:shake .45s}
+@keyframes shake{25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}
+.bus.locked button.seat{cursor:default}
+.seat-status{display:flex;justify-content:space-between;align-items:center;gap:8px 16px;flex-wrap:wrap;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--marmol);font-size:15.5px;color:var(--egeo)}
+.seat-status.ok{background:#FBF5E6}
+.seat-status b{font-weight:600}
+.linkbtn{background:none;border:0;padding:4px 0;color:var(--azul);font-family:var(--sign);font-weight:600;font-size:17px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.linkbtn+.linkbtn{margin-left:14px}
+.pax-item span.has-seat{border-style:solid;border-color:var(--oro);background:#FBF5E6;color:var(--egeo);font-weight:700}
 @keyframes pop{40%{transform:scale(1.35)}}
 .legend{list-style:none;display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;margin-top:14px;font-size:14px;color:var(--gris)}
 .legend li{display:flex;align-items:center;gap:6px}
@@ -198,7 +211,7 @@ input:focus,textarea:focus,select:focus{outline:none;border-color:var(--azul);bo
 .pax-list{display:grid;gap:10px;margin-top:14px}
 .pax-item{display:grid;grid-template-columns:44px 1fr;align-items:center;gap:10px}
 .pax-item span{font-family:var(--sign);font-weight:600;font-size:15px;color:var(--gris);text-align:center;border:1.5px dashed var(--linea);border-radius:8px;padding:10px 0}
-.paygrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.paygrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .paycard{position:relative;cursor:pointer}
 .paycard input{position:absolute;opacity:0;pointer-events:none}
 .paycard .pc{display:block;height:100%;border:2px solid var(--linea);border-radius:14px;padding:14px 14px 12px;transition:border-color .2s,background .2s}
@@ -361,7 +374,7 @@ footer p{color:rgba(255,255,255,.7);font-family:var(--sign);font-size:19px;margi
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><div><b>Tour privado de 5 horas</b>, de 10:00 a 15:00, por los íconos de la Atenas clásica.</div></li>
         <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="M12 21s7-6.1 7-11.5A7 7 0 0 0 5 9.5C5 14.9 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg><div><b>Salida y regreso en Plaka</b>, a pasos de donde nos hospedamos.</div></li>
       </ul>
-      <p class="ticket-pay">Pagas por transferencia, SINPE Móvil o PayPal. Con PayPal la tarifa es de €150 por persona, porque incluye la comisión de la plataforma.</p>
+      <p class="ticket-pay">Pagas por transferencia, SINPE Móvil, PayPal o en efectivo (euros). Con PayPal la tarifa es de €150 por persona, porque incluye la comisión de la plataforma.</p>
     </div>
   </div>
 </section>
@@ -435,12 +448,12 @@ footer p{color:rgba(255,255,255,.7);font-family:var(--sign);font-size:19px;margi
   <div class="wrap checkin-grid">
     <div class="seats-col">
       <h2>Check-in</h2>
-      <p class="lead">Confirma a más tardar el <span data-deadline></span>. Los asientos se asignan en orden de reserva.</p>
+      <p class="lead">Confirma a más tardar el <span data-deadline></span>. Toca los asientos libres para elegir el tuyo y el de quienes viajan contigo.</p>
       <div class="load">
         <p id="loadTxt">Consultando asientos disponibles…</p>
         <div class="loadbar"><i id="loadFill"></i></div>
       </div>
-      <div class="bus" id="bus" role="img" aria-label="Mapa de asientos del autobús"></div>
+      <div class="bus" id="bus" role="group" aria-label="Mapa de asientos del autobús. Toca un asiento libre para elegirlo."></div>
       <ul class="legend">
         <li><span class="seat"></span>Libre</li>
         <li><span class="seat taken"></span>Reservado</li>
@@ -480,6 +493,10 @@ footer p{color:rgba(255,255,255,.7);font-family:var(--sign);font-size:19px;margi
           </div>
           <p class="hint">Escribe el nombre de cada pasajero como aparecerá en su pase.</p>
           <div class="pax-list" id="paxList"></div>
+          <div class="seat-status" id="seatBox" aria-live="polite">
+            <span id="seatStatus">Elige 1 asiento en el mapa.</span>
+            <span><button type="button" class="linkbtn" id="seatGo">Ver el mapa</button><button type="button" class="linkbtn" id="seatAuto">Elegir por mí</button></span>
+          </div>
         </div>
 
         <fieldset class="field" style="border:0">
@@ -488,6 +505,7 @@ footer p{color:rgba(255,255,255,.7);font-family:var(--sign);font-size:19px;margi
             <label class="paycard"><input type="radio" name="pay" value="transfer"><span class="pc"><b>Transferencia</b><em>€120 por persona</em></span></label>
             <label class="paycard"><input type="radio" name="pay" value="sinpe"><span class="pc"><b>SINPE Móvil</b><em>€120 por persona, en colones</em></span></label>
             <label class="paycard"><input type="radio" name="pay" value="paypal"><span class="pc"><b>PayPal</b><em>€150 por persona, incluye comisión</em></span></label>
+            <label class="paycard"><input type="radio" name="pay" value="cash"><span class="pc"><b>Efectivo</b><em>€120 por persona, en euros</em></span></label>
           </div>
         </fieldset>
 
@@ -580,7 +598,7 @@ footer p{color:rgba(255,255,255,.7);font-family:var(--sign);font-size:19px;margi
    CONFIGURACIÓN: edita estos valores antes de publicar
    ========================================================= */
 var CONFIG = {
-  SCRIPT_URL: '',                      // URL /exec del Apps Script. Vacío = modo demostración
+  SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbxeFsTEMPTKMfXEMtbRfbNopzSJmjK2Y4G7lpmqSLaOxs2ncF8nK0RFXoOg8TAb_RMM9Q/exec',                      // URL /exec del Apps Script. Vacío = modo demostración
   CAPACITY: 50,
   PRICE: 120,
   PRICE_PAYPAL: 150,
@@ -592,26 +610,31 @@ var CONFIG = {
   PAYMENT: {
     transfer: {
       label: 'Transferencia bancaria',
-      rows: [['Banco','NOMBRE DEL BANCO'],['Titular','NOMBRE DEL TITULAR'],['IBAN','CR00 0000 0000 0000 0000 00'],['Cédula','0-0000-0000']],
-      note: 'Puedes transferir en euros o el equivalente en tu moneda.'
+      rows: [['Banco','Banco Nacional de Costa Rica'],['IBAN','CR54015107820020062079'],['Moneda','Dólares (USD)'],['A nombre de','Leandro Camacho']],
+      note: 'La cuenta es en dólares: transfiere el equivalente en USD del monto en euros, al tipo de cambio del día.'
     },
     sinpe: {
       label: 'SINPE Móvil',
-      rows: [['Número','8888-8888'],['A nombre de','NOMBRE DEL TITULAR']],
+      rows: [['Número','60514917'],['A nombre de','Leandro Camacho']],
       note: 'Paga el equivalente en colones al tipo de cambio de venta del día.'
     },
     paypal: {
       label: 'PayPal',
-      link: 'https://paypal.me/TUUSUARIO',
-      rows: [['Cuenta','correo@ejemplo.com']],
-      note: 'La tarifa con PayPal es de €150 por persona porque incluye la comisión.'
+      link: '',
+      rows: [['Cuenta PayPal','leandrocg@consultant.com']],
+      note: 'Envía el pago a esa cuenta desde PayPal. La tarifa con PayPal es de €150 por persona porque incluye la comisión.'
+    },
+    cash: {
+      label: 'Efectivo en euros',
+      rows: [['Cuándo','El día del tour, sábado 3 de octubre'],['Cómo','En mano, en euros']],
+      note: 'Lleva el monto exacto en euros el día del evento, idealmente en un sobre con tu código de reserva.'
     }
   }
 };
 
 var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 var PLANE = 'M12 2c.8 0 1.5.7 1.5 1.5V9l7.5 4.5v2L13.5 13v5l2.5 1.8V21L12 20l-4 1v-1.2l2.5-1.8v-5L3 15.5v-2L10.5 9V3.5C10.5 2.7 11.2 2 12 2z';
-var METHOD_SHORT = {transfer:'Transferencia', sinpe:'SINPE Móvil', paypal:'PayPal'};
+var METHOD_SHORT = {transfer:'Transferencia', sinpe:'SINPE Móvil', paypal:'PayPal', cash:'Efectivo'};
 
 var STOPS = [
   {min:0,   time:'10:00', board:'PLAKA',         tag:'Salida',                   title:'Plaza Filomousou Eterias, Plaka', text:'Llega a las 09:45 para abordar con calma. A las 10:00 en punto cerramos puertas y despegamos.'},
@@ -692,6 +715,9 @@ function demoConfirm(d){
       if (ex) return resolve({ok:true, existing:true, booking:ex});
       var taken = demoStatus().taken, free = SEATS.filter(function(s){ return taken.indexOf(s) < 0; });
       if (free.length < d.pax.length) return resolve({ok:false, error:'sin_cupo', remaining:free.length});
+      var clash = (d.seats || []).filter(function(x){ return taken.indexOf(x) >= 0; });
+      if (clash.length) return resolve({ok:false, error:'seat_taken', seats:clash, taken:taken});
+      if (d.seats && d.seats.length === d.pax.length) free = d.seats;
       var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789', code = 'JLO-';
       for (var i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
       var unit = d.method === 'paypal' ? CONFIG.PRICE_PAYPAL : CONFIG.PRICE;
@@ -818,7 +844,7 @@ function initTracker(){
 }
 
 /* ---------- asientos ---------- */
-var state = {taken: [], remaining: CONFIG.CAPACITY, mine: [], booking: null, statusKnown: false};
+var state = {taken: [], remaining: CONFIG.CAPACITY, mine: [], picked: [], booking: null, statusKnown: false};
 function renderBus(){
   var bus = $('#bus'), html = '<div class="bus-front"><span>Frente</span><span class="wheel" aria-hidden="true"></span></div>';
   var rows = Math.ceil(SEATS.length / 4);
@@ -828,18 +854,61 @@ function renderBus(){
       if (!L){ html += '<span></span>'; return; }
       var lab = r + L;
       if (SEATS.indexOf(lab) < 0){ html += '<span class="seat none"></span>'; return; }
-      var cls = state.mine.indexOf(lab) >= 0 ? 'mine' : (state.taken.indexOf(lab) >= 0 ? 'taken' : '');
-      html += '<span class="seat ' + cls + '" title="Asiento ' + lab + '"></span>';
+      if (state.mine.indexOf(lab) >= 0){ html += '<span class="seat mine" title="Tu asiento ' + lab + '">' + lab + '</span>'; return; }
+      if (state.taken.indexOf(lab) >= 0){ html += '<span class="seat taken" title="Asiento ' + lab + ' reservado"></span>'; return; }
+      if (state.booking){ html += '<span class="seat" title="Asiento ' + lab + ' libre"></span>'; return; }
+      var on = state.picked.indexOf(lab) >= 0;
+      html += '<button type="button" class="seat' + (on ? ' mine' : '') + '" data-seat="' + lab + '" aria-pressed="' + on + '" aria-label="Asiento ' + lab + (on ? ', elegido' : ', libre') + '">' + (on ? lab : '') + '</button>';
     });
     html += '</div>';
   }
   bus.innerHTML = html;
-  var n = state.taken.length;
-  bus.setAttribute('aria-label', 'Mapa de asientos: ' + n + ' reservados de ' + CONFIG.CAPACITY);
+  bus.classList.toggle('locked', !!state.booking);
+}
+
+/* elegir asientos */
+function seatSort(a, b){ return SEATS.indexOf(a) - SEATS.indexOf(b); }
+function toggleSeat(lab){
+  var i = state.picked.indexOf(lab);
+  if (i >= 0) state.picked.splice(i, 1);
+  else if (state.picked.length < pax) state.picked.push(lab);
+  else if (pax === 1) state.picked = [lab];
+  else { setSeatStatus('Ya elegiste ' + pax + ' asientos. Toca uno elegido para liberarlo o agrega un pasajero.', false); return; }
+  renderBus(); updateSeatUI(); showError('');
+  var again = $('#bus [data-seat="' + lab + '"]'); if (again) again.focus();
+}
+function autoPick(){
+  var need = pax - state.picked.length;
+  if (need <= 0) return;
+  var free = SEATS.filter(function(s){ return state.taken.indexOf(s) < 0 && state.picked.indexOf(s) < 0; });
+  // prioriza asientos juntos en la misma fila
+  var rows = {}, chosen = null;
+  free.forEach(function(s){ var r = parseInt(s, 10); (rows[r] = rows[r] || []).push(s); });
+  Object.keys(rows).sort(function(a, b){ return a - b; }).some(function(r){ if (rows[r].length >= need){ chosen = rows[r].slice(0, need); return true; } return false; });
+  state.picked = state.picked.concat(chosen || free.slice(0, need));
+  renderBus(); updateSeatUI(); showError('');
+}
+function setSeatStatus(html, ok){ var box = $('#seatBox'); $('#seatStatus').innerHTML = html; box.classList.toggle('ok', !!ok); }
+function updateSeatUI(){
+  if (state.picked.length > pax) state.picked = state.picked.slice(0, pax);
+  var n = state.picked.length, left = pax - n;
+  if (left === 0) setSeatStatus((pax === 1 ? 'Asiento elegido: ' : 'Asientos elegidos: ') + '<b>' + state.picked.join(', ') + '</b>', true);
+  else setSeatStatus('Elige ' + left + (left === 1 ? ' asiento' : ' asientos') + (n ? ' más' : '') + ' en el mapa.' + (n ? ' Llevas <b>' + state.picked.join(', ') + '</b>.' : ''), false);
+  $$('#paxList .pax-item span').forEach(function(sp, i){
+    var seat = state.picked[i];
+    sp.textContent = seat || 'P' + (i + 1);
+    sp.classList.toggle('has-seat', !!seat);
+  });
+  $('#seatAuto').hidden = left === 0;
 }
 function applyStatus(s){
   state.statusKnown = true;
   state.taken = (s && s.taken) || [];
+  var lost = state.booking ? [] : state.picked.filter(function(x){ return state.taken.indexOf(x) >= 0; });
+  if (lost.length){
+    state.picked = state.picked.filter(function(x){ return lost.indexOf(x) < 0; });
+    showError((lost.length === 1 ? 'El asiento ' + lost[0] + ' se acaba de reservar' : 'Los asientos ' + lost.join(', ') + ' se acaban de reservar') + '. Elige otro en el mapa.');
+  }
   var cap = (s && s.capacity) || CONFIG.CAPACITY;
   state.remaining = Math.max(0, cap - state.taken.length);
   $('#loadFill').style.width = Math.min(100, state.taken.length / cap * 100) + '%';
@@ -847,6 +916,7 @@ function applyStatus(s){
     ? '<b>' + state.taken.length + '</b> de ' + cap + ' asientos reservados. Quedan <b>' + state.remaining + '</b>.'
     : '<b>Vuelo completo.</b> Los ' + cap + ' asientos están reservados.';
   renderBus(); syncStepper();
+  lost.forEach(function(x){ var el = $('#bus [title="Asiento ' + x + ' reservado"]'); if (el) el.classList.add('lost'); });
   if (state.remaining <= 0 && !state.booking) showFull();
 }
 function loadStatus(){
@@ -885,6 +955,7 @@ function renderPax(){
     (function(i){ inp.addEventListener('input', function(){ paxEdited[i] = true; inp.removeAttribute('aria-invalid'); }); })(i);
     list.appendChild(row);
   }
+  updateSeatUI();
 }
 function method(){ var r = $('input[name=pay]:checked'); return r ? r.value : ''; }
 function updateSummary(){
@@ -895,7 +966,11 @@ function updateSummary(){
 function showError(msg){ var e = $('#formError'); e.textContent = msg; e.hidden = !msg; }
 function initForm(){
   renderPax(); syncStepper();
-  $('#paxMinus').addEventListener('click', function(){ if (pax > 1){ pax--; renderPax(); syncStepper(); } });
+  $('#paxMinus').addEventListener('click', function(){ if (pax > 1){ pax--; renderPax(); syncStepper(); renderBus(); } });
+  $('#bus').addEventListener('click', function(e){ var b = e.target.closest('button[data-seat]'); if (b && !state.booking) toggleSeat(b.getAttribute('data-seat')); });
+  $('#seatAuto').addEventListener('click', autoPick);
+  $('#seatGo').addEventListener('click', function(){ $('#bus').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'center'}); var f = $('#bus button[data-seat]'); if (f) setTimeout(function(){ f.focus({preventScroll:true}); }, 350); });
+  setInterval(function(){ if (!document.hidden && !state.booking && CONFIG.SCRIPT_URL) loadStatus(); }, 30000);
   $('#paxPlus').addEventListener('click', function(){ if (pax < maxPax()){ pax++; renderPax(); syncStepper(); var ins = $$('#paxList input'); ins[ins.length - 1].focus(); } });
   $('#fName').addEventListener('input', function(){ var first = $('#paxList input'); if (first && !paxEdited[0]) first.value = this.value; this.removeAttribute('aria-invalid'); });
   ['#fEmail','#fPhone'].forEach(function(s){ $(s).addEventListener('input', function(){ this.removeAttribute('aria-invalid'); }); });
@@ -910,6 +985,7 @@ function collect(){
     phone: $('#fPhone').value.trim(),
     pax: $$('#paxList input').map(function(i){ return i.value.trim(); }),
     method: method(),
+    seats: state.picked.slice(),
     notes: $('#fNotes').value.trim()
   };
 }
@@ -919,6 +995,7 @@ function validate(d){
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(d.email)) return {el:$('#fEmail'), msg:'Revisa tu correo: parece incompleto.'};
   var ins = $$('#paxList input');
   for (var i = 0; i < d.pax.length; i++) if (!d.pax[i]) return {el:ins[i], msg:'Falta el nombre del pasajero ' + (i + 1) + '.'};
+  if (d.seats.length !== d.pax.length){ var left = d.pax.length - d.seats.length; return {el:$('#seatGo'), msg:'Elige ' + left + (left === 1 ? ' asiento' : ' asientos') + ' más en el mapa del autobús, o toca "Elegir por mí".'}; }
   if (!d.method) return {el:$('input[name=pay]'), msg:'Elige cómo vas a pagar.'};
   if (!$('#fTerms').checked) return {el:$('#fTerms'), msg:'Marca la casilla para confirmar que pagarás antes de la fecha límite.'};
   return null;
@@ -931,7 +1008,11 @@ function onSubmit(e){
   var req = CONFIG.SCRIPT_URL ? jsonp({action:'confirm', payload: JSON.stringify(d)}, 25000) : demoConfirm(d);
   req.then(function(res){
     if (!res || !res.ok){
-      if (res && res.error === 'sin_cupo'){
+      if (res && res.error === 'seat_taken'){
+        applyStatus({ok:true, capacity:CONFIG.CAPACITY, taken:res.taken || state.taken.concat(res.seats || [])});
+        showError(((res.seats || []).length === 1 ? 'El asiento ' + res.seats[0] + ' se acaba de reservar' : 'Los asientos ' + (res.seats || []).join(', ') + ' se acaban de reservar') + '. Elige otro en el mapa y vuelve a confirmar.');
+        $('#bus').scrollIntoView({behavior: RM ? 'auto' : 'smooth', block:'center'});
+      } else if (res && res.error === 'sin_cupo'){
         showError(res.remaining > 0 ? 'Solo quedan ' + res.remaining + ' asientos. Ajusta el número de pasajeros y vuelve a confirmar.' : 'Se acaban de reservar los últimos asientos.');
         loadStatus();
       } else if (res && res.error === 'busy'){
@@ -960,12 +1041,13 @@ function fillPass(i){
 function issue(b, existing){
   state.booking = b;
   state.mine = b.pax.map(function(p){ return p.seat; });
+  state.picked = [];
   $('#form').hidden = true;
   var box = $('#issued'); box.hidden = false;
   var seats = state.mine.join(', ');
   $('#issuedMsg').innerHTML = (existing ? 'Ya tenías una reserva con este correo; aquí está tu pase. ' : 'Tu asiento está apartado. ') +
     (b.pax.length > 1 ? 'Asientos <b>' + esc(seats) + '</b>. ' : 'Asiento <b>' + esc(seats) + '</b>. ') +
-    'Completa el pago antes del ' + esc(CONFIG.DEADLINE_TEXT) + ' para confirmarlo. Código de reserva <b>' + esc(b.code) + '</b>.';
+    (b.method === 'cash' ? 'Lleva el efectivo en euros el día del tour. ' : 'Completa el pago antes del ' + esc(CONFIG.DEADLINE_TEXT) + ' para confirmarlo. ') + 'Código de reserva <b>' + esc(b.code) + '</b>.';
   var sel = $('#paxSel'); sel.innerHTML = b.pax.map(function(p, i){ return '<option value="' + i + '">' + esc(p.name) + ' (' + esc(p.seat) + ')</option>'; }).join('');
   $('#paxPick').hidden = b.pax.length < 2;
   sel.onchange = function(){ fillPass(+sel.value); };
@@ -979,15 +1061,17 @@ function issue(b, existing){
 }
 function renderPayment(b){
   var P = CONFIG.PAYMENT[b.method] || {rows:[]};
-  var rows = P.rows.concat([['Monto', eur(b.total)], ['Descripción', b.code]]);
-  var html = '<h3>Paga ' + eur(b.total) + ' por ' + esc(P.label) + '</h3>' +
-    '<p>' + b.pax.length + (b.pax.length === 1 ? ' pasajero' : ' pasajeros') + ' × ' + eur(b.unit) + '. Escribe el código <b>' + esc(b.code) + '</b> en la descripción del pago para identificarlo.</p>' +
+  var rows = P.rows.concat([['Monto', eur(b.total)], [b.method === 'cash' ? 'Código' : 'Descripción', b.code]]);
+  var cash = b.method === 'cash';
+  var html = '<h3>Paga ' + eur(b.total) + (cash ? ' en efectivo (euros)' : ' por ' + esc(P.label)) + '</h3>' +
+    '<p>' + b.pax.length + (b.pax.length === 1 ? ' pasajero' : ' pasajeros') + ' × ' + eur(b.unit) + '. ' +
+    (cash ? 'Menciona tu código <b>' + esc(b.code) + '</b> al entregar el dinero.' : 'Escribe el código <b>' + esc(b.code) + '</b> en la descripción del pago para identificarlo.') + '</p>' +
     '<dl class="payrows">' + rows.map(function(r){
       return '<div class="payrow"><dt>' + esc(r[0]) + '</dt><dd>' + esc(r[1]) + '</dd><button type="button" class="copy" data-copy="' + esc(r[1]) + '">Copiar</button></div>';
     }).join('') + '</dl>';
   if (b.method === 'paypal' && P.link) html += '<a class="btn btn-dark" target="_blank" rel="noopener" href="' + esc(P.link.replace(/\/$/, '') + '/' + b.total + 'EUR') + '">Pagar ' + eur(b.total) + ' en PayPal</a>';
   if (P.note) html += '<p class="paynote">' + esc(P.note) + '</p>';
-  html += '<a class="btn btn-soft" style="margin-left:0" target="_blank" rel="noopener" href="https://wa.me/' + CONFIG.WHATSAPP_COMPROBANTES + '?text=' +
+  if (!cash) html += '<a class="btn btn-soft" style="margin-left:0" target="_blank" rel="noopener" href="https://wa.me/' + CONFIG.WHATSAPP_COMPROBANTES + '?text=' +
     encodeURIComponent('Hola, envío el comprobante de pago del tour de Atenas del sábado 3 de octubre. Código ' + b.code + ', a nombre de ' + b.name + '.') + '">Enviar comprobante por WhatsApp</a>';
   var box = $('#paybox'); box.innerHTML = html;
   $$('.copy', box).forEach(function(btn){
@@ -1001,7 +1085,7 @@ function renderPayment(b){
 }
 function fallbackCopy(t){ var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try{ document.execCommand('copy'); }catch(e){} document.body.removeChild(ta); }
 function resetForm(){
-  state.booking = null; state.mine = [];
+  state.booking = null; state.mine = []; state.picked = [];
   $('#issued').hidden = true; $('#form').hidden = false;
   $('#form').reset(); pax = 1; paxEdited = []; $('#paxList').innerHTML = ''; renderPax(); syncStepper(); renderBus();
   $('#fName').focus();
