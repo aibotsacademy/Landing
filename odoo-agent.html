@@ -1,0 +1,2254 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0A101E">
+<title>Eurolab Group · AI Revenue Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A101E; --bg-2:#0D1526; --panel:#111A2D; --panel-2:#16213A; --panel-3:#1C2946;
+  --line:rgba(150,172,212,.13); --line-2:rgba(150,172,212,.07);
+  --text:#E8EDF6; --muted:#95A2BA; --faint:#66738E;
+  --accent:#6CD5C7; --accent-2:#43B7A8; --gold:#E2BF7C; --violet:#A08FF6;
+  --t-reorder:#E8B55C; --t-cross:#6CD5C7; --t-upsell:#93A5FF; --t-equip:#DB8FC9; --t-dormant:#A3ADBF; --t-risk:#F27D7D;
+  --ok:#5ED39A; --bad:#F27D7D; --warn:#E8B55C;
+  --r-s:8px; --r-m:14px; --r-l:20px;
+  --shadow:0 24px 60px rgba(0,0,0,.45);
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --dock-w:410px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font-family:Manrope,"Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.5;color:var(--text);-webkit-font-smoothing:antialiased;font-variant-numeric:tabular-nums;
+  background:radial-gradient(1100px 620px at 88% -8%,rgba(108,213,199,.08),transparent 62%),radial-gradient(900px 520px at 8% 4%,rgba(160,143,246,.07),transparent 60%),var(--bg);background-attachment:fixed}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+::selection{background:rgba(108,213,199,.3)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:rgba(150,172,212,.18);border-radius:10px;border:2px solid transparent;background-clip:padding-box}
+.app{display:grid;grid-template-columns:260px 1fr;min-height:100vh}
+
+/* ---------- Orb (agent presence) ---------- */
+.orb{--s:38px;position:relative;width:var(--s);height:var(--s);border-radius:50%;flex:none;overflow:hidden;box-shadow:0 0 0 1px rgba(255,255,255,.08),0 0 26px rgba(108,213,199,.28)}
+.orb::before{content:"";position:absolute;inset:-30%;background:conic-gradient(from 0deg,#6CD5C7,#A08FF6,#E2BF7C,#6CD5C7);animation:spin 9s linear infinite;filter:blur(2px)}
+.orb::after{content:"";position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(255,255,255,.85) 0 7%,rgba(255,255,255,.1) 26%,transparent 46%),radial-gradient(circle at 60% 75%,rgba(10,16,30,.35),transparent 60%)}
+.orb.sm{--s:26px}.orb.xs{--s:20px}.orb.lg{--s:64px}.orb.xl{--s:84px}
+.orb.busy{animation:breathe 1.1s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes breathe{50%{box-shadow:0 0 0 1px rgba(255,255,255,.12),0 0 44px rgba(108,213,199,.6)}}
+.pulse{width:8px;height:8px;border-radius:50%;background:var(--ok);display:inline-block;position:relative;flex:none}
+.pulse::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--ok);opacity:0;animation:ping 1.8s ease-out infinite}
+@keyframes ping{0%{transform:scale(.4);opacity:.8}100%{transform:scale(1.6);opacity:0}}
+
+/* ---------- Sidebar ---------- */
+.sidebar{background:linear-gradient(180deg,#080D19,#0A1120);border-right:1px solid var(--line);position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column;padding:24px 14px 16px;z-index:40}
+.brand{padding:2px 10px 22px}
+.brand .wm{font-weight:800;font-size:15.5px;letter-spacing:.2em;color:#fff;display:flex;align-items:center;gap:11px}
+.brand .sub{font-family:var(--display);font-size:15px;color:var(--gold);margin-top:5px;padding-left:37px;font-style:italic;font-weight:400}
+.nav-group{margin:18px 0 6px;padding:0 12px;font-size:10.5px;font-weight:700;letter-spacing:.16em;color:var(--faint)}
+.nav button{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;color:#AEB9CD;padding:9px 12px;border-radius:var(--r-s);cursor:pointer;text-align:left;font-weight:500;position:relative;transition:background .15s,color .15s}
+.nav button svg{width:17px;height:17px;flex:none;opacity:.75}
+.nav button:hover{background:rgba(255,255,255,.04);color:#fff}
+.nav button.active{background:linear-gradient(90deg,rgba(108,213,199,.14),rgba(108,213,199,.03));color:#fff;font-weight:600}
+.nav button.active svg{opacity:1;color:var(--accent)}
+.nav button.active::before{content:"";position:absolute;left:-14px;top:9px;bottom:9px;width:3px;border-radius:0 3px 3px 0;background:var(--accent);box-shadow:0 0 12px var(--accent)}
+.nav .count{margin-left:auto;font-size:11px;background:rgba(108,213,199,.12);color:var(--accent);border-radius:10px;padding:1px 8px;font-weight:700}
+.side-agent{margin-top:auto;border:1px solid var(--line);border-radius:var(--r-m);padding:14px;background:linear-gradient(160deg,rgba(108,213,199,.08),rgba(160,143,246,.05));cursor:pointer;text-align:left;width:100%;color:inherit}
+.side-agent:hover{border-color:rgba(108,213,199,.35)}
+.side-agent .top{display:flex;gap:11px;align-items:center}
+.side-agent b{display:block;font-size:13.5px;color:#fff}
+.side-agent small{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px}
+.side-agent .meta{display:flex;justify-content:space-between;gap:8px;margin-top:12px;font-size:11.5px;color:var(--muted)}
+.side-agent .meta b{display:inline;color:var(--text);font-size:12px}
+
+/* ---------- Main / topbar ---------- */
+.main{min-width:0;display:flex;flex-direction:column;transition:padding-right .25s ease}
+.app.dock-open .main{padding-right:var(--dock-w)}
+.topbar{position:sticky;top:0;z-index:30;background:rgba(10,16,30,.78);backdrop-filter:blur(14px) saturate(1.2);-webkit-backdrop-filter:blur(14px) saturate(1.2);border-bottom:1px solid var(--line);display:flex;align-items:center;gap:14px;padding:12px 30px;padding-top:max(12px,env(safe-area-inset-top))}
+.crumb{font-weight:600;color:var(--muted);white-space:nowrap}
+.spacer{flex:1}
+.menu-btn{display:none;border:1px solid var(--line);background:var(--panel);border-radius:var(--r-s);width:38px;height:36px;cursor:pointer;place-items:center}
+.ticker{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--muted);min-width:0;max-width:440px;border:1px solid var(--line);border-radius:20px;padding:5px 13px 5px 11px;background:rgba(17,26,45,.7)}
+.ticker .lt-a{color:var(--accent);font-weight:700;white-space:nowrap}
+.ticker .lt-n{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chip-btn{display:inline-flex;align-items:center;gap:7px;font-size:12px;font-weight:700;letter-spacing:.05em;padding:6px 12px;border-radius:20px;border:1px solid var(--line);white-space:nowrap;cursor:pointer;background:rgba(17,26,45,.7);color:var(--muted)}
+.chip-btn:hover{color:#fff;border-color:rgba(108,213,199,.4)}
+.chip-btn.live{color:var(--ok);border-color:rgba(94,211,154,.4);background:rgba(94,211,154,.08)}
+.talk-btn{display:inline-flex;align-items:center;gap:9px;border:1px solid rgba(108,213,199,.35);background:linear-gradient(135deg,rgba(108,213,199,.16),rgba(160,143,246,.12));color:#fff;border-radius:22px;padding:4px 14px 4px 5px;font-weight:600;cursor:pointer;white-space:nowrap}
+.talk-btn:hover{border-color:var(--accent)}
+.view{padding:28px 30px 70px;max-width:1500px;width:100%;margin:0 auto}
+
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.page-head h1{margin:0;font-family:var(--display);font-weight:500;font-size:34px;line-height:1.1;letter-spacing:-.01em;color:#fff}
+.page-head p{margin:8px 0 0;color:var(--muted);max-width:72ch}
+.page-head-right{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.src{display:inline-flex;align-items:center;gap:7px;font-size:12px;color:var(--ok);border:1px solid rgba(94,211,154,.4);padding:4px 11px;border-radius:20px}
+
+/* ---------- Panels ---------- */
+.panel{background:linear-gradient(180deg,rgba(22,33,58,.72),rgba(17,26,45,.72));border:1px solid var(--line);border-radius:var(--r-m);padding:20px 22px;min-width:0;position:relative}
+.panel-h{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:14px;flex-wrap:wrap}
+.panel-h h2{margin:0;font-size:14.5px;font-weight:700;color:#fff;letter-spacing:.01em;display:flex;align-items:center;gap:9px}
+.panel-h .hint{font-size:12.5px;color:var(--muted)}
+.grid{display:grid;gap:18px;margin-bottom:18px}
+.g-2-1{grid-template-columns:minmax(0,1.65fr) minmax(0,1fr)}
+.g-1-1{grid-template-columns:1fr 1fr}
+.mt{margin-top:18px}
+.muted{color:var(--muted)}
+.row-flex{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+
+/* ---------- Hero (agent briefing) ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(300px,1fr);border:1px solid var(--line);border-radius:var(--r-l);overflow:hidden;margin-bottom:18px;background:linear-gradient(120deg,rgba(108,213,199,.10),rgba(160,143,246,.07) 45%,rgba(17,26,45,.6) 80%)}
+.hero-main{padding:30px 32px;display:flex;gap:22px;align-items:flex-start}
+.hero-k{font-size:12.5px;color:var(--accent);font-weight:700;display:flex;gap:8px;align-items:center}
+.hero-h{font-family:var(--display);font-weight:400;font-size:clamp(26px,2.5vw,35px);line-height:1.2;margin:10px 0 12px;color:#fff;letter-spacing:-.01em;max-width:32ch}
+.hero-p{color:#C3CCDC;margin:0 0 20px;max-width:64ch}
+.hero-side{border-left:1px solid var(--line);padding:24px 24px 20px;background:rgba(10,16,30,.45)}
+.hero-side h3{margin:0 0 4px;font-size:13px;color:var(--muted);font-weight:600;display:flex;gap:8px;align-items:center}
+.big-count{font-family:var(--display);font-size:40px;color:#fff;line-height:1.1}
+.big-count small{font-family:Manrope,sans-serif;font-size:13px;color:var(--muted);margin-left:6px}
+.cur{font-size:13px;color:var(--muted);margin:2px 0 14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cur b{color:var(--text);font-weight:600}
+.agent-rows{list-style:none;margin:0;padding:0}
+.agent-rows li{display:grid;grid-template-columns:12px 1fr auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line-2);font-size:13px}
+.ag-dot{width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:.55;display:inline-block}
+.ag-dot.blink{animation:blink 1s ease-out}
+@keyframes blink{0%{opacity:1;box-shadow:0 0 0 0 rgba(108,213,199,.9)}100%{opacity:.55;box-shadow:0 0 0 10px rgba(108,213,199,0)}}
+.agent-rows .ag-count{color:var(--muted);font-size:12px}
+
+/* ---------- KPIs ---------- */
+.kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:var(--r-m);margin-bottom:18px;background:rgba(17,26,45,.6);overflow:hidden}
+.kpi{padding:18px 18px 16px;border-left:1px solid var(--line-2);min-width:0}
+.kpi:first-child{border-left:0}
+.kpi .l{font-size:12px;color:var(--muted);font-weight:600}
+.kpi .v{font-family:var(--display);font-size:28px;color:#fff;line-height:1.15;margin-top:4px;white-space:nowrap;letter-spacing:-.01em}
+.kpi .s{font-size:12px;color:var(--faint);margin-top:3px}
+.kpi .s.up{color:var(--ok)}.kpi .s.down{color:var(--bad)}
+.kpi.gold .v{color:var(--gold)}
+.kpi .bar{height:3px;border-radius:2px;background:var(--line);margin-top:10px;overflow:hidden}
+.kpi .bar span{display:block;height:100%;background:var(--c,var(--accent))}
+
+/* ---------- Chips, score, tables ---------- */
+.chip{display:inline-block;font-size:11.5px;font-weight:700;padding:2px 9px;border-radius:20px;white-space:nowrap;color:var(--c);background:color-mix(in srgb,var(--c) 13%,transparent);border:1px solid color-mix(in srgb,var(--c) 32%,transparent)}
+.t-reorder{--c:var(--t-reorder)}.t-cross{--c:var(--t-cross)}.t-upsell{--c:var(--t-upsell)}.t-equip{--c:var(--t-equip)}.t-dormant{--c:var(--t-dormant)}.t-risk{--c:var(--t-risk)}
+.score{display:inline-flex;align-items:center;gap:8px}
+.score b{font-weight:800;min-width:22px;text-align:right;color:#fff}
+.score i{display:block;width:40px;height:4px;border-radius:3px;background:var(--line);position:relative;overflow:hidden}
+.score i::after{content:"";position:absolute;inset:0 auto 0 0;width:var(--v);background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:3px}
+.risk-h{color:var(--bad);font-weight:700}.risk-m{color:var(--warn);font-weight:700}.risk-l{color:var(--ok);font-weight:600}
+.tbl-wrap{overflow-x:auto;margin:0 -22px;padding:0 22px}
+.tbl{width:100%;border-collapse:collapse;font-size:13.5px}
+.tbl th{font-size:11.5px;color:var(--faint);font-weight:700;text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);white-space:nowrap;letter-spacing:.03em}
+.tbl td{padding:12px 10px;border-bottom:1px solid var(--line-2);vertical-align:top}
+.tbl tbody tr{transition:background .12s}
+.tbl tbody tr:hover td{background:rgba(108,213,199,.04)}
+.tbl .num{text-align:right;white-space:nowrap}
+.tbl .click{cursor:pointer}
+.tbl .cust{font-weight:700;color:#fff}
+.tbl .sub{font-size:12px;color:var(--muted)}
+.tbl .reason{max-width:34ch;color:#C9D1DF}
+.tbl .action{color:var(--muted);max-width:28ch}
+.money{color:var(--gold);font-weight:700}
+.linkish{background:none;border:0;padding:0;color:#fff;font-weight:700;cursor:pointer;text-align:left}
+.linkish:hover{color:var(--accent);text-decoration:underline;text-underline-offset:3px}
+
+/* ---------- Buttons & forms ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--text);padding:8px 15px;border-radius:var(--r-s);font-weight:600;cursor:pointer;white-space:nowrap;transition:border-color .15s,background .15s}
+.btn:hover{border-color:rgba(150,172,212,.4);background:rgba(255,255,255,.06)}
+.btn.primary{background:linear-gradient(135deg,var(--accent),#57BFD2);border-color:transparent;color:#06222A}
+.btn.primary:hover{filter:brightness(1.07)}
+.btn.gold{background:linear-gradient(135deg,#EACB8E,#C99D52);border-color:transparent;color:#2A1C05}
+.btn.sm{padding:5px 11px;font-size:12.5px}
+.btn.done{border-color:rgba(94,211,154,.4);color:var(--ok);background:rgba(94,211,154,.08);cursor:default}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label{font-size:12px;font-weight:600;color:var(--muted)}
+.field .help{font-size:12px;color:var(--faint)}
+input[type=text],input[type=url],input[type=password],input[type=number],input[type=search],select,textarea{border:1px solid var(--line);background:rgba(10,16,30,.6);border-radius:var(--r-s);padding:9px 11px;width:100%;min-width:0;color:var(--text)}
+select option{background:#111A2D}
+input:focus,select:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-1px;border-color:transparent}
+input[type=range]{accent-color:var(--accent);width:100%}
+.filters{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,1.2fr) minmax(0,1fr) auto;gap:10px;align-items:end;margin-bottom:12px}
+.results-line{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:6px 0 12px;flex-wrap:wrap;color:var(--muted)}
+.results-line b{color:#fff}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:20px;overflow:hidden;padding:2px;gap:2px}
+.seg button{border:0;background:none;padding:5px 12px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-radius:16px}
+.seg button.on{background:rgba(108,213,199,.16);color:#fff}
+
+/* ---------- Charts ---------- */
+.chart svg{width:100%;height:auto;display:block}
+.chart .gl{stroke:var(--line-2)}.chart .al{font-size:11px;fill:var(--faint)}
+.donut-wrap{display:grid;grid-template-columns:170px 1fr;gap:18px;align-items:center}
+.donut-wrap svg{width:170px;height:170px}
+.legend-rows{list-style:none;margin:0;padding:0}
+.legend-rows li{display:grid;grid-template-columns:10px 1fr auto auto;gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line-2);font-size:13px}
+.legend-rows li:first-child{border-top:0}
+.legend-rows .sw{width:10px;height:10px;border-radius:3px;background:var(--c)}
+.legend-rows .n{color:var(--muted);font-size:12px}
+.spark{width:100%;height:60px;display:block}
+
+/* ---------- Priority, feed, patterns ---------- */
+.priority{list-style:none;margin:0;padding:0}
+.priority li{display:grid;grid-template-columns:46px 1fr auto;gap:14px;padding:13px 0;border-top:1px solid var(--line-2);align-items:start}
+.priority li:first-child{border-top:0;padding-top:2px}
+.ring{--v:50;width:42px;height:42px;border-radius:50%;background:conic-gradient(var(--accent) calc(var(--v)*1%),rgba(150,172,212,.12) 0);display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff;position:relative}
+.ring::before{content:"";position:absolute;inset:4px;border-radius:50%;background:#131D32}
+.ring span{position:relative}
+.priority .t{font-weight:700;color:#fff}
+.priority .r{font-size:12.5px;color:var(--muted);margin-top:3px}
+.priority .p{text-align:right;white-space:nowrap}
+.priority .by{font-size:11.5px;color:var(--accent);font-weight:600}
+.live-feed{list-style:none;margin:0;padding:0;overflow:hidden}
+.fi{display:grid;grid-template-columns:62px 1fr 30px;gap:10px;padding:10px 0;border-top:1px solid var(--line-2);font-size:12.8px;align-items:start}
+.fi:first-child{border-top:0}
+.fi.new{animation:slidein .45s ease}
+@keyframes slidein{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.fi-t{color:var(--faint);font-size:11.5px;padding-top:1px}
+.fi-a{font-size:11px;font-weight:700;color:var(--accent);letter-spacing:.02em;margin-right:4px}
+.fi.risk .fi-a{color:var(--bad)}.fi.ok .fi-a{color:var(--faint)}
+.fi-c{color:var(--faint);font-size:11.5px}
+.fi-x{color:#C0C9D8}
+.fi-s{font-weight:800;text-align:right;color:var(--gold)}
+.fi-s.ok{color:var(--ok)}
+.fi .linkish{font-weight:600}
+.patterns{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.pattern{border:1px solid var(--line);border-radius:var(--r-m);padding:16px 18px;background:rgba(10,16,30,.35);display:flex;flex-direction:column;gap:8px}
+.pattern .ph{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.pattern .by{font-size:11.5px;font-weight:700;color:var(--accent)}
+.pattern h3{margin:2px 0 0;font-size:15px;color:#fff;font-weight:700;line-height:1.3}
+.pattern .k{font-family:var(--display);font-size:26px;line-height:1;color:#fff;white-space:nowrap}
+.pattern.up .k{color:var(--ok)}.pattern.down .k{color:var(--bad)}
+.pattern p{margin:0;color:var(--muted);font-size:13px}
+.pattern .btn{align-self:flex-start;margin-top:auto}
+.insights{list-style:none;margin:0;padding:0}
+.insights li{padding:11px 0 11px 18px;border-top:1px solid var(--line-2);position:relative;color:#D3DAE6}
+.insights li:first-child{border-top:0}
+.insights li::before{content:"";position:absolute;left:0;top:18px;width:7px;height:7px;border-radius:50%;background:var(--gold);box-shadow:0 0 10px var(--gold)}
+.citylist{list-style:none;margin:10px 0 0;padding:0}
+.citylist li{display:flex;justify-content:space-between;padding:7px 0;border-top:1px solid var(--line-2);cursor:pointer}
+.citylist li:hover{color:var(--accent)}
+
+/* ---------- Map ---------- */
+.map-wrap{display:flex;justify-content:center}
+.map-wrap svg{width:100%;max-width:410px;height:auto}
+.land{fill:url(#landGrad);stroke:rgba(108,213,199,.45);stroke-width:1}
+.map-wrap .tick{stroke:var(--faint)}.map-wrap .tick-l{font-size:10.5px;fill:var(--faint)}
+.city{cursor:pointer}
+.city circle:first-child{fill:rgba(226,191,124,.2);stroke:var(--gold);stroke-width:1.2;transition:fill .15s}
+.city .dot{fill:var(--gold)}
+.city:hover circle:first-child,.city:focus circle:first-child{fill:rgba(226,191,124,.38)}
+.city.sel circle:first-child{fill:rgba(108,213,199,.3);stroke:var(--accent);stroke-width:2}
+.city.sel .dot{fill:var(--accent)}
+.city text{font-size:12px;fill:#D6DDE9;paint-order:stroke;stroke:#0D1526;stroke-width:3px}
+.city .cn{font-weight:700}.city .cv{fill:var(--gold);font-weight:600}
+.map-mini .city text{font-size:11px}
+.geo{display:grid;grid-template-columns:minmax(300px,430px) 1fr;gap:18px;align-items:start;margin-bottom:18px}
+.cityhead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.cityhead h2{margin:0;font-family:var(--display);font-weight:500;font-size:30px;color:#fff}
+.minikpis{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:16px 0}
+.minikpis div{padding:11px 12px 11px 0}
+.minikpis .l{font-size:12px;color:var(--muted)}.minikpis .v{font-family:var(--display);font-size:22px;color:#fff}
+.pen .row{display:grid;grid-template-columns:140px 1fr 96px;gap:10px;align-items:center;padding:6px 0;font-size:13px}
+.pen .track{height:8px;background:var(--line);border-radius:5px;position:relative}
+.pen .track span{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--accent-2),var(--accent));border-radius:5px}
+.pen .track i{position:absolute;top:-4px;bottom:-4px;width:2px;background:#fff;border-radius:1px}
+.pen .row.low .track span{background:var(--t-risk)}
+.pen .v{text-align:right;color:var(--muted);font-size:12px}
+.legend{font-size:12px;color:var(--muted);display:flex;gap:14px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.legend .sw{display:inline-block;width:10px;height:10px;border-radius:3px;background:var(--accent);margin-right:5px;vertical-align:-1px}
+.legend .mk{display:inline-block;width:2px;height:12px;background:#fff;margin-right:6px;vertical-align:-2px}
+.insight-strip{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));background:rgba(17,26,45,.6);border:1px solid var(--line);border-radius:var(--r-m);margin-bottom:18px}
+.insight-strip p{margin:0;padding:16px 18px;border-left:1px solid var(--line-2);font-size:13.5px;color:#D3DAE6}
+.insight-strip p:first-child{border-left:0}
+.bars .row{display:grid;grid-template-columns:150px 1fr 60px 80px;gap:10px;align-items:center;padding:7px 0}
+.bars .bar{height:8px;border-radius:5px;background:var(--line);overflow:hidden}
+.bars .bar span{display:block;height:100%;background:linear-gradient(90deg,var(--accent-2),var(--accent));border-radius:5px}
+.bars .n{text-align:right;color:var(--muted);font-size:12.5px}.bars .m{text-align:right;font-weight:700;color:var(--gold)}
+
+/* ---------- Agents page ---------- */
+.agents{display:grid;grid-template-columns:repeat(auto-fill,minmax(330px,1fr));gap:16px}
+.agent{border:1px solid var(--line);border-radius:var(--r-m);padding:18px 20px;display:flex;flex-direction:column;gap:12px;background:linear-gradient(180deg,rgba(22,33,58,.72),rgba(17,26,45,.72))}
+.agent-h{display:flex;gap:13px;align-items:flex-start}
+.agent-ic{width:40px;height:40px;border-radius:11px;background:rgba(108,213,199,.1);border:1px solid rgba(108,213,199,.25);color:var(--accent);display:grid;place-items:center;flex:none}
+.agent-ic svg{width:19px;height:19px}
+.agent h3{margin:0;font-size:15.5px;color:#fff;display:flex;gap:8px;align-items:center}
+.agent p{margin:3px 0 0;color:var(--muted);font-size:13px}
+.agent .stats{display:flex;gap:22px;font-size:12px;color:var(--muted)}
+.agent .stats b{display:block;font-family:var(--display);font-weight:500;font-size:22px;color:#fff}
+.ag-live{font-size:12.5px;color:var(--muted);border-left:2px solid var(--accent);padding:2px 0 2px 10px;min-height:38px}
+.ag-live b{color:var(--text)}
+.agent-log{background:#060B16;border:1px solid var(--line);color:#A9BAD0;border-radius:var(--r-s);padding:10px 12px;font-size:12px;line-height:1.65;max-height:170px;overflow:auto;display:none;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.agent-log.on{display:block}
+.agent-log .ok{color:var(--ok)}
+.agent-res{list-style:none;margin:0;padding:0;font-size:13px}
+.agent-res li{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-top:1px solid var(--line-2)}
+.agent .foot{margin-top:auto;display:flex;justify-content:space-between;align-items:center;gap:10px;padding-top:4px}
+.agent .when{font-size:12px;color:var(--faint)}
+.statline{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:var(--r-m);margin-bottom:18px;background:rgba(17,26,45,.6)}
+.statline div{padding:16px 18px;border-left:1px solid var(--line-2)}
+.statline div:first-child{border-left:0}
+.statline .l{font-size:12px;color:var(--muted)}.statline .v{font-family:var(--display);font-size:26px;color:#fff}
+
+/* ---------- Chat (shared by dock and Copilot page) ---------- */
+.msgs{display:flex;flex-direction:column;gap:14px}
+.msg.user{align-self:flex-end;max-width:82%;background:linear-gradient(135deg,rgba(108,213,199,.22),rgba(160,143,246,.18));border:1px solid rgba(108,213,199,.3);color:#fff;padding:9px 14px;border-radius:16px 16px 4px 16px}
+.msg.ai{display:grid;grid-template-columns:26px minmax(0,1fr);gap:10px;align-items:start}
+.msg.ai .body{min-width:0;background:rgba(22,33,58,.7);border:1px solid var(--line);border-radius:4px 16px 16px 16px;padding:11px 14px;color:#D9E0EC}
+.msg.ai.alert .body{border-color:rgba(226,191,124,.45);background:linear-gradient(135deg,rgba(226,191,124,.1),rgba(22,33,58,.7))}
+.msg.ai p{margin:0 0 8px}.msg.ai p:last-child{margin-bottom:0}
+.msg.ai ol,.msg.ai ul{margin:4px 0 10px;padding-left:18px}
+.msg.ai li{margin:5px 0}
+.msg.ai b{color:#fff}
+.msg.ai .srcl{font-size:11.5px;color:var(--faint);margin-top:8px}
+.msg.ai .tbl{font-size:12.5px;margin:6px 0}
+.msg.ai .tbl td{padding:7px 8px}.msg.ai .tbl th{padding:6px 8px}
+.msg.ai .tbl-wrap{margin:0;padding:0}
+.msg .row-flex{margin-top:8px}
+.steps{list-style:none;margin:0;padding:0;font-size:12.5px;color:var(--muted)}
+.steps li{display:flex;gap:8px;align-items:center;padding:2px 0;opacity:.35;transition:opacity .2s}
+.steps li.on{opacity:1}.steps li.done{opacity:.8}
+.steps li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--faint);flex:none}
+.steps li.on::before{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.steps li.done::before{background:var(--ok)}
+.suggest{display:flex;gap:7px;flex-wrap:wrap}
+.suggest button{border:1px solid var(--line);background:rgba(255,255,255,.03);border-radius:16px;padding:5px 12px;font-size:12.5px;cursor:pointer;color:#C9D2E2}
+.suggest button:hover{border-color:var(--accent);color:#fff}
+.composer-form{display:flex;gap:8px}
+.composer-form input{border-radius:22px;padding:10px 16px}
+.send{width:42px;height:42px;border-radius:50%;border:0;background:linear-gradient(135deg,var(--accent),var(--violet));color:#06222A;cursor:pointer;display:grid;place-items:center;flex:none}
+
+/* Dock */
+.dock{position:fixed;top:0;right:0;height:100%;width:var(--dock-w);max-width:100%;background:linear-gradient(180deg,#0F1729,#0B1222);border-left:1px solid var(--line);z-index:55;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);box-shadow:-20px 0 60px rgba(0,0,0,.35)}
+.dock.on{transform:none}
+.dock-h{padding:16px 18px;padding-top:max(16px,env(safe-area-inset-top));border-bottom:1px solid var(--line);display:flex;gap:12px;align-items:center}
+.dock-h .who{flex:1;min-width:0}
+.dock-h b{display:block;color:#fff;font-size:15px}
+.dock-h small{display:flex;align-items:center;gap:7px;color:var(--muted);font-size:12px;white-space:nowrap;overflow:hidden}
+.dock-h small span:last-child{overflow:hidden;text-overflow:ellipsis}
+.icon-btn{width:34px;height:34px;border-radius:var(--r-s);border:1px solid var(--line);background:rgba(255,255,255,.03);color:var(--muted);cursor:pointer;display:grid;place-items:center;flex:none}
+.icon-btn:hover{color:#fff;border-color:rgba(150,172,212,.4)}
+.dock-chat{flex:1;overflow-y:auto;padding:18px}
+.dock-foot{border-top:1px solid var(--line);padding:12px 14px;padding-bottom:max(12px,env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:10px;background:rgba(10,16,30,.6)}
+.dock-foot .suggest{max-height:66px;overflow:hidden}
+.orb-btn{position:fixed;right:22px;bottom:max(22px,env(safe-area-inset-bottom));z-index:50;border:0;background:none;cursor:pointer;padding:0;border-radius:50%;transition:transform .2s,opacity .2s}
+.orb-btn:hover{transform:scale(1.06)}
+.orb-btn.hide{opacity:0;pointer-events:none;transform:scale(.6)}
+.orb-btn .badge{position:absolute;top:-2px;right:-2px;min-width:20px;height:20px;border-radius:10px;background:var(--gold);color:#2A1C05;font-size:11px;font-weight:800;display:none;place-items:center;padding:0 5px;border:2px solid var(--bg)}
+.orb-btn .badge.on{display:grid}
+.orb-btn .bubble{position:absolute;right:76px;bottom:12px;background:var(--panel-2);border:1px solid rgba(226,191,124,.4);color:#fff;padding:9px 13px;border-radius:14px 14px 4px 14px;font-size:12.5px;width:max-content;max-width:260px;text-align:left;box-shadow:var(--shadow);display:none}
+.orb-btn .bubble.on{display:block;animation:slidein .3s ease}
+
+/* Copilot page */
+.copilot{display:grid;grid-template-columns:280px 1fr;gap:18px;height:calc(100vh - 200px);min-height:520px}
+.cp-side{display:flex;flex-direction:column;gap:14px;min-height:0;overflow:auto}
+.agent-card{text-align:center}
+.agent-card .orb{margin:4px auto 14px}
+.agent-card h3{margin:0;font-family:var(--display);font-weight:500;font-size:22px;color:#fff}
+.agent-card p{margin:6px 0 0;color:var(--muted);font-size:13px}
+.cap{list-style:none;margin:0;padding:0;font-size:13px}
+.cap li{padding:8px 0;border-top:1px solid var(--line-2);color:#C9D2E2}
+.cap li:first-child{border-top:0}
+.cap b{color:var(--accent);font-weight:700}
+.cp-main{display:grid;grid-template-rows:1fr auto;border:1px solid var(--line);border-radius:var(--r-m);overflow:hidden;background:rgba(13,21,38,.7);min-height:0}
+.cp-chat{overflow-y:auto;padding:22px}
+.cp-foot{border-top:1px solid var(--line);padding:12px 14px;display:flex;flex-direction:column;gap:10px;background:rgba(10,16,30,.6)}
+
+/* Connect */
+.conn{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+.form-grid{display:grid;gap:13px}
+.conn-log{background:#060B16;border:1px solid var(--line);color:#B6C4D8;border-radius:var(--r-s);padding:12px 14px;font-size:12.5px;line-height:1.7;min-height:170px;max-height:360px;overflow:auto;white-space:pre-wrap;word-break:break-word;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.conn-log .e{color:#FF9D9D}.conn-log .o{color:var(--ok)}.conn-log .m{color:var(--faint)}
+.note{font-size:13px;color:var(--muted);background:rgba(10,16,30,.4);border:1px solid var(--line-2);border-radius:var(--r-s);padding:11px 13px}
+.note b{color:#fff}
+.check{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted)}
+
+/* Drawer, modal, toast */
+.overlay{position:fixed;inset:0;background:rgba(3,6,14,.6);backdrop-filter:blur(2px);z-index:60;opacity:0;pointer-events:none;transition:opacity .2s}
+.overlay.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;height:100%;width:min(780px,100%);background:var(--bg-2);border-left:1px solid var(--line);z-index:70;transform:translateX(100%);transition:transform .28s cubic-bezier(.2,.8,.2,1);display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.drawer.on{transform:none}
+.drawer-h{border-bottom:1px solid var(--line);padding:20px 24px;padding-top:max(20px,env(safe-area-inset-top));display:flex;justify-content:space-between;gap:12px;align-items:flex-start;background:linear-gradient(120deg,rgba(108,213,199,.08),transparent)}
+.drawer-h h2{margin:0;font-family:var(--display);font-weight:500;font-size:26px;color:#fff}
+.drawer-h p{margin:4px 0 0;color:var(--muted);font-size:13px}
+.drawer-b{overflow-y:auto;padding:20px 24px 44px;padding-bottom:max(44px,env(safe-area-inset-bottom))}
+.drawer-b .panel{margin-top:16px}
+.nbx{display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(226,191,124,.4);border-radius:var(--r-m);background:linear-gradient(135deg,rgba(226,191,124,.1),rgba(17,26,45,.4));margin:16px 0}
+.nbx div{padding:15px 17px}
+.nbx div+div{border-left:1px solid rgba(226,191,124,.25)}
+.nbx .l{font-size:12px;font-weight:700;color:var(--gold)}
+.nbx .v{font-weight:700;color:#fff;margin-top:3px}
+.agent-note{display:flex;gap:12px;align-items:flex-start;border:1px solid var(--line);border-radius:var(--r-m);padding:14px 16px;background:rgba(108,213,199,.05);color:#D3DAE6;font-size:13.5px}
+.agent-note p{margin:0}
+.modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-46%);width:min(560px,calc(100% - 28px));max-height:calc(100% - 40px);overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m);z-index:80;box-shadow:var(--shadow);padding:24px;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s}
+.modal.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%)}
+.modal h3{margin:0 0 6px;font-family:var(--display);font-weight:500;font-size:22px;color:#fff}
+.modal .kv{display:grid;grid-template-columns:140px 1fr;gap:7px 12px;font-size:13px;margin:16px 0;padding:14px;background:rgba(10,16,30,.5);border-radius:var(--r-s);border:1px solid var(--line-2)}
+.modal .kv dt{color:var(--muted);font-weight:600}.modal .kv dd{margin:0;word-break:break-word}
+.modal .acts{display:flex;justify-content:flex-end;gap:8px;margin-top:18px;flex-wrap:wrap}
+.modal .err{color:var(--bad);font-size:13px;margin-top:8px}
+.toast{position:fixed;left:50%;bottom:max(24px,env(safe-area-inset-bottom));z-index:90;background:var(--panel-3);border:1px solid var(--line);color:#fff;padding:12px 18px;border-radius:var(--r-s);box-shadow:var(--shadow);font-weight:600;transform:translate(-50%,20px);opacity:0;transition:all .22s;pointer-events:none;max-width:calc(100% - 40px)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast.ok{border-color:rgba(94,211,154,.5);background:#123028}.toast.bad{border-color:rgba(242,125,125,.5);background:#35161B}
+.empty{padding:34px 10px;text-align:center;color:var(--muted)}
+.scrim{display:none}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1500px){.app.dock-open .main{padding-right:0}}
+@media (max-width:1320px){
+  .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .kpi{border-top:1px solid var(--line-2)}
+  .kpi:nth-child(-n+4){border-top:0}
+  .kpi:nth-child(4n+1){border-left:0}
+  .filters{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:1100px){
+  .g-2-1,.g-1-1,.geo,.conn,.hero,.copilot{grid-template-columns:1fr}
+  .hero-side{border-left:0;border-top:1px solid var(--line)}
+  .copilot{height:auto}
+  .cp-side{display:none}
+  .cp-main{height:calc(100vh - 190px)}
+  .statline{grid-template-columns:1fr 1fr}
+  .statline div:nth-child(3){border-left:0;border-top:1px solid var(--line-2)}
+  .statline div:nth-child(4){border-top:1px solid var(--line-2)}
+}
+@media (max-width:900px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:fixed;left:0;top:0;width:278px;transform:translateX(-100%);transition:transform .22s;padding-top:max(24px,env(safe-area-inset-top))}
+  .sidebar.open{transform:none;box-shadow:var(--shadow)}
+  .scrim.on{display:block;position:fixed;inset:0;background:rgba(3,6,14,.55);z-index:35}
+  .menu-btn{display:inline-grid}
+  .topbar{padding:10px 14px}
+  .ticker,.crumb{display:none}
+  .view{padding:20px 16px 100px}
+  .hero-main{padding:22px 20px;flex-direction:column;gap:14px}
+}
+@media (max-width:700px){
+  .kpis{grid-template-columns:1fr 1fr}
+  .kpi:nth-child(n){border-left:1px solid var(--line-2);border-top:1px solid var(--line-2)}
+  .kpi:nth-child(odd){border-left:0}
+  .kpi:nth-child(-n+2){border-top:0}
+  .kpi .v{font-size:24px}
+  .filters{grid-template-columns:1fr 1fr}
+  .minikpis{grid-template-columns:1fr 1fr}
+  .nbx{grid-template-columns:1fr}
+  .nbx div+div{border-left:0;border-top:1px solid rgba(226,191,124,.25)}
+  .donut-wrap{grid-template-columns:1fr;justify-items:center}
+  .bars .row{grid-template-columns:110px 1fr 70px}.bars .n{display:none}
+  .page-head h1{font-size:28px}
+  .talk-btn span.t{display:none}
+  .talk-btn{padding:4px}
+  .tbl.cards thead{display:none}
+  .tbl.cards,.tbl.cards tbody,.tbl.cards tr,.tbl.cards td{display:block;width:100%}
+  .tbl.cards tr{border:1px solid var(--line);border-radius:var(--r-m);margin-bottom:10px;padding:6px 14px;background:rgba(10,16,30,.35)}
+  .tbl.cards td{border:0;padding:6px 0;display:flex;justify-content:space-between;gap:12px;text-align:right}
+  .tbl.cards td::before{content:attr(data-l);color:var(--faint);font-size:12px;font-weight:600;text-align:left;flex:none}
+  .tbl.cards td.reason,.tbl.cards td.action{max-width:none}
+  .tbl-wrap{margin:0;padding:0}
+  .dock{width:100%}
+  .modal .kv{grid-template-columns:1fr}
+  .orb-btn .bubble{max-width:200px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="landGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1B2A47"/><stop offset="1" stop-color="#14203A"/></linearGradient><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#6CD5C7" stop-opacity=".38"/><stop offset="1" stop-color="#6CD5C7" stop-opacity="0"/></linearGradient><linearGradient id="bg1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6CD5C7"/><stop offset="1" stop-color="#E2BF7C"/></linearGradient></defs></svg>
+<div class="app" id="app">
+  <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+    <div class="brand">
+      <div class="wm"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v3H7.5v3.5H17v3H7.5V17H20v3H4z" fill="url(#bg1)"/></svg>EUROLAB GROUP</div>
+      <div class="sub">AI Revenue Intelligence</div>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <button class="side-agent" data-action="open-dock" aria-label="Talk to Eurolab AI">
+      <div class="top"><span class="orb sm"></span><div><b>Eurolab AI</b><small><span class="pulse" style="width:6px;height:6px"></span>6 agentes activos</small></div></div>
+      <div class="meta"><span>Cuentas auditadas <b class="live-count">0</b></span><span id="sideSrc"></span></div>
+    </button>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <main class="main" id="main">
+    <header class="topbar">
+      <button class="menu-btn" id="menuBtn" aria-label="Open menu"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <span class="crumb" id="crumb"></span>
+      <span class="spacer"></span>
+      <span class="ticker" id="liveTicker" aria-live="off"><span class="pulse"></span><span class="lt-a">Agents</span><span class="lt-n">Iniciando auditoría…</span></span>
+      <button class="chip-btn" id="odooChip" data-route="connect"></button>
+      <button class="talk-btn" data-action="open-dock"><span class="orb xs"></span><span class="t">Ask Eurolab AI</span></button>
+    </header>
+    <div class="view" id="view"></div>
+  </main>
+</div>
+<button class="orb-btn" id="orbBtn" data-action="open-dock" aria-label="Open Eurolab AI"><span class="orb lg"></span><span class="badge" id="orbBadge"></span><span class="bubble" id="orbBubble"></span></button>
+<aside class="dock" id="dock" aria-label="Eurolab AI agent" aria-hidden="true">
+  <div class="dock-h">
+    <span class="orb" id="dockOrb"></span>
+    <div class="who"><b>Eurolab AI</b><small><span class="pulse" style="width:6px;height:6px"></span><span id="dockStatus">Auditando cuentas en tiempo real</span></small></div>
+    <button class="icon-btn" data-route="copilot" title="Pantalla completa" aria-label="Open full screen"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button>
+    <button class="icon-btn" data-action="close-dock" title="Minimizar" aria-label="Minimize"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 12h12"/></svg></button>
+  </div>
+  <div class="dock-chat" id="dockChat"><div class="msgs chat-box"></div></div>
+  <div class="dock-foot">
+    <div class="suggest" id="dockSuggest"></div>
+    <form class="composer-form" data-composer><input type="text" placeholder="Pregunta sobre cuentas, ciudades, productos…" aria-label="Message to Eurolab AI" autocomplete="off"><button class="send" type="submit" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form>
+  </div>
+</aside>
+<div class="overlay" id="overlay"></div>
+<aside class="drawer" id="drawer" aria-label="Customer 360" aria-hidden="true"></aside>
+<div class="modal" id="modal" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+'use strict';
+/* =========================================================
+   Helpers
+   ========================================================= */
+const DAY = 864e5;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = s => String(s || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const sum = (a, f = x => x) => a.reduce((s, x) => s + (f(x) || 0), 0);
+const median = a => { if (!a.length) return 0; const s = [...a].sort((x, y) => x - y); const m = s.length >> 1; return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; };
+const startOfDay = t => { const d = new Date(t); d.setHours(0, 0, 0, 0); return d.getTime(); };
+const fmtDate = t => t ? new Date(t).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '—';
+const fmtTime = t => new Date(t).toLocaleString('en-GB', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+const pct = v => Math.round((v || 0) * 100) + '%';
+const plural = (n, a, b) => n === 1 ? a : (b || a + 's');
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('eurolab.ari.' + k); return v ? JSON.parse(v) : d; } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('eurolab.ari.' + k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } },
+  del(k) { try { localStorage.removeItem('eurolab.ari.' + k); } catch (e) { /* ignore */ } }
+};
+function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+
+function money(v, compact = false) {
+  const clp = S.settings.currency === 'CLP';
+  const x = clp ? v * S.settings.clpRate : v;
+  const sym = clp ? 'CLP ' : '$';
+  if (compact) {
+    const a = Math.abs(x);
+    if (a >= 1e9) return sym + (x / 1e9).toFixed(1).replace(/\.0$/, '') + 'B';
+    if (a >= 1e6) return sym + (x / 1e6).toFixed(a >= 1e7 ? 1 : 2).replace(/\.?0+$/, '') + 'M';
+    if (a >= 1e3) return sym + Math.round(x / 1e3) + 'K';
+    return sym + Math.round(x);
+  }
+  return sym + Math.round(x).toLocaleString('en-US');
+}
+
+/* =========================================================
+   Constants
+   ========================================================= */
+const TYPES = {
+  'REORDER': { label: 'Reorder', cls: 't-reorder' },
+  'CROSS-SELL': { label: 'Cross-sell', cls: 't-cross' },
+  'UPSELL': { label: 'Upsell', cls: 't-upsell' },
+  'EQUIPMENT': { label: 'Equipment', cls: 't-equip' },
+  'DORMANT ACCOUNT': { label: 'Dormant account', cls: 't-dormant' },
+  'CUSTOMER RISK': { label: 'Customer risk', cls: 't-risk' }
+};
+const TYPE_KEYS = Object.keys(TYPES);
+
+/* City geography (lat/lon) and label placement on the map */
+const CITY_GEO = {
+  'Santiago': { lat: -33.45, lon: -70.66, anchor: 'start', dy: 0 },
+  'Viña del Mar': { lat: -33.02, lon: -71.55, anchor: 'end', dy: -9 },
+  'Valparaíso': { lat: -33.05, lon: -71.62, anchor: 'end', dy: 9 },
+  'Concepción': { lat: -36.82, lon: -73.05, anchor: 'end', dy: 0 },
+  'Antofagasta': { lat: -23.65, lon: -70.40, anchor: 'end', dy: 0 },
+  'La Serena': { lat: -29.90, lon: -71.25, anchor: 'end', dy: 0 },
+  'Temuco': { lat: -38.74, lon: -72.60, anchor: 'start', dy: 0 },
+  'Puerto Montt': { lat: -41.47, lon: -72.94, anchor: 'start', dy: 0 },
+  'Rancagua': { lat: -34.17, lon: -70.74, anchor: 'start', dy: 6 },
+  'Talca': { lat: -35.43, lon: -71.66, anchor: 'start', dy: 0 },
+  'Iquique': { lat: -20.21, lon: -70.15, anchor: 'end', dy: 0 },
+  'Arica': { lat: -18.48, lon: -70.31, anchor: 'end', dy: 0 },
+  'Calama': { lat: -22.46, lon: -68.93, anchor: 'start', dy: 0 },
+  'Copiapó': { lat: -27.37, lon: -70.33, anchor: 'start', dy: 0 },
+  'Coquimbo': { lat: -29.95, lon: -71.34, anchor: 'end', dy: 12 },
+  'Curicó': { lat: -34.98, lon: -71.24, anchor: 'start', dy: 0 },
+  'Chillán': { lat: -36.61, lon: -72.10, anchor: 'start', dy: 0 },
+  'Los Ángeles': { lat: -37.47, lon: -72.35, anchor: 'start', dy: 0 },
+  'Valdivia': { lat: -39.81, lon: -73.24, anchor: 'end', dy: 0 },
+  'Osorno': { lat: -40.57, lon: -73.13, anchor: 'end', dy: 0 },
+  'San Antonio': { lat: -33.59, lon: -71.61, anchor: 'end', dy: 12 }
+};
+const SANTIAGO_COMMUNES = ['santiago', 'las condes', 'vitacura', 'providencia', 'nunoa', 'lo barnechea', 'la reina', 'maipu', 'puente alto', 'la florida', 'penalolen', 'huechuraba', 'recoleta', 'estacion central', 'san miguel', 'macul', 'colina', 'chicureo'];
+function normalizeCity(raw) {
+  const n = norm(raw);
+  if (!n) return 'Sin ciudad';
+  if (SANTIAGO_COMMUNES.some(c => n === c || n.startsWith(c + ' ') || n.includes(c + ',')) || n.includes('region metropolitana')) return 'Santiago';
+  if (n.startsWith('vina')) return 'Viña del Mar';
+  if (n.startsWith('valpara')) return 'Valparaíso';
+  if (n.startsWith('concep')) return 'Concepción';
+  for (const k of Object.keys(CITY_GEO)) if (norm(k) === n) return k;
+  return raw.trim().replace(/\s+/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+}
+
+/* Catalog — Merz Aesthetics portfolio distributed by Eurolab Group */
+const DEMO_PRODUCTS = [
+  { id: 'XEO50', sku: 'MZ-XEO-050', name: 'Xeomin 50U', category: 'Neurotoxin', price: 210, family: 'XEO', upsellTo: 'XEO100', baseQty: 2 },
+  { id: 'XEO100', sku: 'MZ-XEO-100', name: 'Xeomin 100U', category: 'Neurotoxin', price: 340, family: 'XEO', baseQty: 2 },
+  { id: 'RAD15', sku: 'MZ-RAD-150', name: 'Radiesse 1.5cc', category: 'Biostimulator', price: 265, family: 'RAD', upsellTo: 'RADP15', baseQty: 2 },
+  { id: 'RADP15', sku: 'MZ-RADP-150', name: 'Radiesse (+) 1.5cc', category: 'Biostimulator', price: 295, family: 'RAD', baseQty: 2 },
+  { id: 'BELBAL', sku: 'MZ-BEL-BAL', name: 'Belotero Balance 1ml', category: 'HA Filler', price: 185, baseQty: 2 },
+  { id: 'BELSOFT', sku: 'MZ-BEL-SFT', name: 'Belotero Soft 1ml', category: 'HA Filler', price: 175, baseQty: 2 },
+  { id: 'BELVOL', sku: 'MZ-BEL-VOL', name: 'Belotero Volume 1ml', category: 'HA Filler', price: 215, baseQty: 2 },
+  { id: 'BELINT', sku: 'MZ-BEL-INT', name: 'Belotero Intense 1ml', category: 'HA Filler', price: 205, baseQty: 2 },
+  { id: 'BELLIPS', sku: 'MZ-BEL-LIP', name: 'Belotero Lips Contour 0.6ml', category: 'HA Filler', price: 195, baseQty: 1 },
+  { id: 'BELREV', sku: 'MZ-BEL-REV', name: 'Belotero Revive 1ml', category: 'Skin Booster', price: 160, baseQty: 2 },
+  { id: 'ULTTX', sku: 'MZ-ULT-TX45', name: 'Ultherapy Transducer DS 4-4.5', category: 'Device Consumables', price: 1150, requires: 'ULTPRIME', baseQty: 1 },
+  { id: 'CELKIT', sku: 'MZ-CEL-KIT', name: 'Cellfina Treatment Kit', category: 'Device Consumables', price: 880, requires: 'CELSYS', baseQty: 1 },
+  { id: 'CANKIT', sku: 'EL-CAN-25G', name: 'Microcannula Kit 25G x20', category: 'Accessories', price: 95, baseQty: 2 },
+  { id: 'ANEST', sku: 'EL-ANE-030', name: 'Topical Anesthetic Cream 30g', category: 'Accessories', price: 38, baseQty: 2 },
+  { id: 'ULTPRIME', sku: 'MZ-ULT-PRM', name: 'Ultherapy PRIME System', category: 'Equipment', price: 68000, equipment: true },
+  { id: 'CELSYS', sku: 'MZ-CEL-SYS', name: 'Cellfina System', category: 'Equipment', price: 39500, equipment: true }
+];
+const DEMO_CITIES = [
+  ['Santiago', 18], ['Viña del Mar', 7], ['Valparaíso', 4], ['Concepción', 7], ['Antofagasta', 4],
+  ['La Serena', 4], ['Temuco', 3], ['Puerto Montt', 3], ['Rancagua', 3], ['Talca', 3]
+];
+const REP_BY_CITY = {
+  'Santiago': ['Camila Reyes', 'Matías Soto'], 'Rancagua': ['Matías Soto'],
+  'Viña del Mar': ['Valentina Pérez'], 'Valparaíso': ['Valentina Pérez'],
+  'La Serena': ['Javiera Núñez'], 'Antofagasta': ['Javiera Núñez'],
+  'Concepción': ['Diego Morales'], 'Talca': ['Diego Morales'],
+  'Temuco': ['Ignacio Vargas'], 'Puerto Montt': ['Ignacio Vargas']
+};
+const CITY_BIAS = { 'Antofagasta': { radiesse: 0.2, growth: 1.35, tierA: 0.15 }, 'Concepción': { tierA: 0.38, growth: 1.1 }, 'Viña del Mar': { revive: 0.05 }, 'Santiago': { tierA: 0.28 } };
+
+/* =========================================================
+   State
+   ========================================================= */
+const DEFAULT_SETTINGS = { currency: 'USD', clpRate: 940, reorderFactor: 0.9, dormantDays: 150, riskDrop: 0.4, equipMin: 30000, crossMin: 0.45, seed: 2026 };
+const S = {
+  mode: 'demo', data: null, odoo: null,
+  settings: Object.assign({}, DEFAULT_SETTINGS, store.get('settings', {})),
+  conn: store.get('conn', { url: '', db: '', username: '', proxy: '' }),
+  audit: store.get('audit', []),
+  opps: [], cs: new Map(), cityStats: [], prodStats: [], kpi: {}, monthly: [], insights: [],
+  filters: { city: '', product: '', type: '', rep: '', minScore: 0, minRev: 0, q: '' },
+  oppLimit: 40, custQuery: '', custSort: 'rev', custCity: '',
+  geoMetric: 'potential', geoCity: null,
+  chat: [], agentRuns: {}, route: 'dashboard', lastAnalyzed: null
+};
+
+function audit(cat, event, detail = '', status = 'info') {
+  S.audit.unshift({ t: Date.now(), cat, event, detail: String(detail).slice(0, 400), status, mode: S.mode });
+  if (S.audit.length > 500) S.audit.length = 500;
+  store.set('audit', S.audit);
+}
+
+/* =========================================================
+   Local commercial dataset (used until Odoo is connected)
+   ========================================================= */
+function genDemo(seed) {
+  const R = mulberry32(seed);
+  const rnd = (a, b) => a + R() * (b - a);
+  const ri = (a, b) => Math.floor(rnd(a, b + 1));
+  const pick = a => a[Math.floor(R() * a.length)];
+  const shuffle = a => { const b = [...a]; for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(R() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+  const today = startOfDay(Date.now());
+  const products = DEMO_PRODUCTS.map(p => ({ ...p }));
+  const P = Object.fromEntries(products.map(p => [p.id, p]));
+
+  const prefixes = ['Clínica', 'Centro Médico', 'Dermoclínica', 'Instituto', 'Clínica Estética', 'Centro de Medicina Estética', 'Medical Spa', 'Clínica Dermatológica'];
+  const cores = ['Alma', 'Lumière', 'Andes', 'Pacífico', 'Vitalis', 'Renova', 'Dermavida', 'Esencia', 'Aurora', 'Nativa', 'Cumbre', 'Bahía', 'Ámbar', 'Mirador', 'Austral', 'Magnolia', 'Piel Sana', 'Skin Lab', 'Derma Plus', 'Vértice', 'Equilibrio', 'Origen', 'Nova', 'Kora', 'Lyra', 'Oasis', 'Dra. Fuentes', 'Dr. Rivas', 'Dra. Contreras', 'Dr. Sepúlveda', 'Dra. Muñoz', 'Dr. Araya', 'Dra. Rojas', 'Dr. Valenzuela', 'Dra. Bravo', 'Dr. Espinoza', 'Dra. Carrasco', 'Dr. Tapia', 'Belle Peau', 'Integral', 'Armonía', 'Lienzo'];
+  const hoods = ['Las Condes', 'Vitacura', 'Providencia', 'Lo Barnechea', 'Ñuñoa', 'La Reina'];
+  const names = new Set();
+  const customers = [], orders = [], lines = [];
+  let cid = 0, oid = 0;
+
+  for (const [city, count] of DEMO_CITIES) {
+    const bias = CITY_BIAS[city] || {};
+    for (let i = 0; i < count; i++) {
+      let name, guard = 0;
+      do {
+        name = pick(prefixes) + ' ' + pick(cores);
+        if (city === 'Santiago' && R() < 0.5) name += ' ' + pick(hoods);
+        guard++;
+      } while (names.has(name) && guard < 50);
+      names.add(name);
+      const tr = R();
+      const tierA = bias.tierA ?? 0.2;
+      const tier = tr < tierA ? 'A' : tr < tierA + 0.5 ? 'B' : 'C';
+      const br = R();
+      const behavior = br < 0.55 ? 'normal' : br < 0.77 ? 'overdue' : br < 0.9 ? 'risk' : 'dormant';
+      const rep = pick(REP_BY_CITY[city]);
+      const id = 'C' + String(++cid).padStart(3, '0');
+      const slug = norm(name).replace(/^(clinica|centro medico|dermoclinica|instituto|clinica estetica|centro de medicina estetica|medical spa|clinica dermatologica)\s+/, '').replace(/[^a-z0-9]+/g, '');
+      customers.push({ id, name, city, rep, tier, email: 'contacto@' + slug.slice(0, 18) + '.cl', phone: '+56 9 ' + ri(5000, 9999) + ' ' + ri(1000, 9999) });
+
+      // Portfolio
+      const port = [];
+      port.push(tier === 'C' || R() < 0.3 ? 'XEO50' : 'XEO100');
+      if (R() < (bias.radiesse ?? (tier === 'A' ? 0.9 : 0.62))) port.push(R() < 0.4 ? 'RADP15' : 'RAD15');
+      shuffle(['BELBAL', 'BELSOFT', 'BELVOL', 'BELINT']).slice(0, ri(1, tier === 'A' ? 3 : 2)).forEach(p => port.push(p));
+      if (R() < 0.4) port.push('BELLIPS');
+      if (R() < (bias.revive ?? 0.35)) port.push('BELREV');
+      if (R() < 0.55) port.push('CANKIT');
+      if (R() < 0.6) port.push('ANEST');
+      const ownsULT = tier === 'A' ? R() < 0.35 : tier === 'B' ? R() < 0.07 : false;
+      const ownsCEL = tier === 'A' && R() < 0.15;
+      const disc = tier === 'A' ? 0.1 : tier === 'B' ? 0.05 : 0;
+      const tierMul = tier === 'A' ? 2.5 : tier === 'B' ? 1.5 : 1;
+
+      const addOrder = (date, items) => {
+        const oname = 'S' + String(10000 + (++oid));
+        let total = 0;
+        for (const [pid, qty] of items) {
+          const p = P[pid];
+          const unit = p.equipment ? p.price : Math.round(p.price * (1 - disc));
+          const subtotal = unit * qty;
+          total += subtotal;
+          lines.push({ orderId: oname, customerId: id, productId: pid, qty, subtotal, date });
+        }
+        orders.push({ id: oname, name: oname, customerId: id, date, rep, total });
+      };
+      if (ownsULT) { port.push('ULTTX'); addOrder(today - ri(420, 700) * DAY, [['ULTPRIME', 1]]); }
+      if (ownsCEL) { port.push('CELKIT'); addOrder(today - ri(420, 700) * DAY, [['CELSYS', 1]]); }
+
+      const cycle = ri(tier === 'A' ? 26 : 34, tier === 'C' ? 62 : 50);
+      let d = today - ri(470, 560) * DAY;
+      const end = behavior === 'overdue' ? today - Math.round(cycle * rnd(1.35, 1.9)) * DAY
+        : behavior === 'dormant' ? today - ri(165, 320) * DAY : today;
+      const growth = bias.growth || 1;
+      while (d <= end) {
+        const recent = d > today - 182 * DAY;
+        const trend = 0.55 + 0.9 * Math.max(0, (d - (today - 560 * DAY)) / (560 * DAY));
+        const qm = tierMul * trend * (recent && behavior === 'risk' ? 0.42 : 1) * (recent ? growth : 1);
+        const items = [];
+        for (const pid of port) {
+          const p = P[pid];
+          const prob = p.family === 'XEO' ? 0.95 : p.requires ? 0.5 : 0.78;
+          if (R() > prob) continue;
+          let qty = Math.max(1, Math.round(p.baseQty * qm * rnd(0.7, 1.3)));
+          if (p.requires) qty = Math.min(qty, 3);
+          items.push([pid, qty]);
+        }
+        if (!items.length) items.push([port[0], Math.max(1, Math.round(2 * qm))]);
+        addOrder(d, items);
+        const step = cycle * rnd(0.8, 1.2) * (recent && behavior === 'risk' ? 1.7 : 1);
+        d += Math.round(step) * DAY;
+      }
+    }
+  }
+  return { source: 'demo', today, customers, products, orders, lines, leads: [], activities: [], loadedAt: Date.now() };
+}
+
+/* =========================================================
+   OpportunityEngine + Geographic Revenue Engine
+   ========================================================= */
+const OpportunityEngine = {
+  run() {
+    const D = S.data, st = S.settings, today = D.today;
+    const P = new Map(D.products.map(p => [String(p.id), p]));
+    const cs = new Map();
+    for (const c of D.customers) cs.set(String(c.id), { c, orderDates: new Set(), rev12: 0, rev6: 0, revPrev6: 0, revAll: 0, prods: new Map(), owns: new Set(), monthly: new Array(12).fill(0), opps: [] });
+    const now = new Date(today); const curKey = now.getFullYear() * 12 + now.getMonth();
+    const monthly = new Array(12).fill(0);
+    const prodAgg = new Map();
+
+    for (const l of D.lines) {
+      const s = cs.get(String(l.customerId)); const p = P.get(String(l.productId));
+      if (!s || !p) continue;
+      const age = (today - l.date) / DAY;
+      s.orderDates.add(startOfDay(l.date));
+      s.revAll += l.subtotal;
+      if (age < 365) s.rev12 += l.subtotal;
+      if (age < 182) s.rev6 += l.subtotal; else if (age < 365) s.revPrev6 += l.subtotal;
+      const dt = new Date(l.date); const mk = curKey - (dt.getFullYear() * 12 + dt.getMonth());
+      if (mk >= 0 && mk < 12) { s.monthly[11 - mk] += l.subtotal; monthly[11 - mk] += l.subtotal; }
+      if (p.equipment) s.owns.add(String(p.id));
+      if (p.requires) s.owns.add(String(p.requires));
+      const pk = String(p.id);
+      let pr = s.prods.get(pk);
+      if (!pr) { pr = { p, dates: new Set(), qty: 0, v12: 0, vAll: 0, q12: 0 }; s.prods.set(pk, pr); }
+      pr.dates.add(startOfDay(l.date)); pr.qty += l.qty; pr.vAll += l.subtotal;
+      if (age < 365) { pr.v12 += l.subtotal; pr.q12 += l.qty; }
+      let pa = prodAgg.get(pk);
+      if (!pa) { pa = { rev12: 0, rev6: 0, prev6: 0, qty12: 0, buyers: new Set() }; prodAgg.set(pk, pa); }
+      if (age < 365) { pa.rev12 += l.subtotal; pa.qty12 += l.qty; pa.buyers.add(String(l.customerId)); }
+      if (age < 182) pa.rev6 += l.subtotal; else if (age < 365) pa.prev6 += l.subtotal;
+    }
+
+    for (const s of cs.values()) {
+      const ds = [...s.orderDates].sort((a, b) => a - b);
+      s.dates = ds; s.nOrders = ds.length;
+      s.firstDate = ds[0] || null; s.lastDate = ds.length ? ds[ds.length - 1] : null;
+      s.daysSince = s.lastDate != null ? Math.round((today - s.lastDate) / DAY) : null;
+      s.orders12 = ds.filter(t => today - t < 365 * DAY).length;
+      s.cycle = ds.length > 1 ? Math.round((ds[ds.length - 1] - ds[0]) / (ds.length - 1) / DAY) : null;
+      for (const pr of s.prods.values()) {
+        const pd = [...pr.dates].sort((a, b) => a - b);
+        pr.n = pd.length; pr.last = pd[pd.length - 1];
+        pr.since = Math.round((today - pr.last) / DAY);
+        pr.cycle = pr.n > 1 ? Math.round((pd[pd.length - 1] - pd[0]) / (pr.n - 1) / DAY) : null;
+        pr.avgValue = pr.vAll / pr.n; pr.avgQty = pr.qty / pr.n;
+        pr.n12 = pd.filter(t => today - t < 365 * DAY).length;
+      }
+      s.active = s.rev12 > 0;
+      s.injRev12 = sum([...s.prods.values()].filter(x => !x.p.equipment), x => x.v12);
+    }
+
+    // Tiers for live data (local dataset already has tiers)
+    const activeList = [...cs.values()].filter(s => s.active);
+    const revSorted = activeList.map(s => s.rev12).sort((a, b) => a - b);
+    const pctRank = v => { if (!revSorted.length) return 0; let i = 0; while (i < revSorted.length && revSorted[i] <= v) i++; return i / revSorted.length; };
+    for (const s of cs.values()) { if (!s.c.tier) { const r = pctRank(s.rev12); s.c.tier = r >= 0.8 ? 'A' : r >= 0.3 ? 'B' : 'C'; } }
+
+    // Product affinity (who buys A also buys B)
+    const buyers = new Map();
+    for (const s of activeList) for (const [pid, pr] of s.prods) {
+      if (pr.p.equipment) continue;
+      if (!buyers.has(pid)) buyers.set(pid, new Set());
+      buyers.get(pid).add(String(s.c.id));
+    }
+    const annualByProd = new Map();
+    for (const [pid, set] of buyers) annualByProd.set(pid, median([...set].map(id => cs.get(id).prods.get(pid).v12).filter(v => v > 0)));
+    const equipProducts = D.products.filter(p => p.equipment).sort((a, b) => b.price - a.price);
+
+    const tierBonus = { A: 6, B: 3, C: 0 }, tierScale = { A: 1.5, B: 1, C: 0.6 };
+    const opps = []; let oid = 0;
+    const add = (s, o) => {
+      const c = s.c;
+      const op = Object.assign({ id: 'OP-' + String(++oid).padStart(4, '0'), customerId: String(c.id), customer: c.name, city: c.city, rep: c.rep || 'Unassigned', productId: null, product: '' }, o);
+      op.score = Math.round(clamp(op.score, 1, 99));
+      op.potential = Math.max(0, Math.round(op.potential));
+      opps.push(op); s.opps.push(op);
+    };
+
+    for (const s of cs.values()) {
+      if (!s.nOrders) continue;
+      const c = s.c, tb = tierBonus[c.tier] || 0;
+      // DORMANT ACCOUNT
+      if (s.daysSince >= st.dormantDays && s.nOrders >= 3) {
+        const spanDays = Math.max(90, (s.lastDate - s.firstDate) / DAY);
+        const annual = s.revAll / (spanDays / 365);
+        add(s, {
+          type: 'DORMANT ACCOUNT',
+          score: 45 + Math.min(30, annual / 3000) + (s.nOrders >= 8 ? 8 : 0) - clamp((s.daysSince - st.dormantDays) / 30, 0, 10),
+          potential: annual * 0.5,
+          reason: `No orders in ${s.daysSince} days; previously ordered every ${s.cycle || '—'} days (${money(annual, true)} per year).`,
+          action: `Reactivation visit by ${c.rep || 'the account rep'}; offer a reorder incentive.`,
+          meta: { annual, days: s.daysSince }
+        });
+        continue;
+      }
+      // REORDER
+      for (const [pid, pr] of s.prods) {
+        if (pr.p.equipment || pr.n < 3 || !pr.cycle) continue;
+        const r = pr.since / pr.cycle;
+        if (r >= st.reorderFactor && pr.since < st.dormantDays) {
+          const overdue = pr.since - pr.cycle;
+          add(s, {
+            type: 'REORDER', productId: pid, product: pr.p.name,
+            score: 52 + (r - st.reorderFactor) * 40 + Math.min(pr.n, 12) * 1.2 + tb,
+            potential: pr.avgValue,
+            reason: `Average reorder cycle ${pr.cycle} days; last purchase ${pr.since} days ago.`,
+            action: r >= 1.5 ? `Call today: reorder overdue by ${overdue} days (usual order ${Math.round(pr.avgQty)} units).` : `Contact customer for reorder (usual order ${Math.round(pr.avgQty)} units).`,
+            meta: { ratio: r, overdue, cycle: pr.cycle, since: pr.since }
+          });
+        }
+      }
+      // CUSTOMER RISK
+      if (s.revPrev6 >= 2500 && s.rev6 < s.revPrev6 * (1 - st.riskDrop)) {
+        const drop = 1 - s.rev6 / s.revPrev6;
+        add(s, {
+          type: 'CUSTOMER RISK',
+          score: 48 + drop * 45 + Math.min(10, s.revPrev6 / 5000),
+          potential: s.revPrev6 - s.rev6,
+          reason: `Revenue down ${pct(drop)} in the last 6 months (${money(s.rev6, true)} vs ${money(s.revPrev6, true)} the 6 months before).`,
+          action: 'Account review call: confirm the cause of the decline (competitor, stock, patient demand).',
+          meta: { drop }
+        });
+      }
+      // UPSELL
+      for (const [pid, pr] of s.prods) {
+        const to = pr.p.upsellTo && P.get(String(pr.p.upsellTo));
+        if (!to || s.prods.has(String(to.id)) || pr.n12 < 3) continue;
+        add(s, {
+          type: 'UPSELL', productId: String(to.id), product: to.name,
+          score: 50 + pr.n12 * 2.2 + tb,
+          potential: pr.v12 * 0.3 + (to.price - pr.p.price) * pr.q12,
+          reason: `Ordered ${pr.p.name} ${pr.n12} times in 12 months; ${to.name} is the next tier in the same line.`,
+          action: `Present the ${to.name} upgrade with volume pricing.`,
+          meta: { from: pr.p.name }
+        });
+      }
+      // CROSS-SELL
+      if (s.active) {
+        const owned = [...s.prods.keys()].filter(k => !s.prods.get(k).p.equipment);
+        const fams = new Set(owned.map(k => s.prods.get(k).p.family || k));
+        const cands = [];
+        for (const [pid, set] of buyers) {
+          if (s.prods.has(pid)) continue;
+          const p = P.get(pid);
+          if (!p || fams.has(p.family || pid)) continue;
+          if (p.requires && !s.owns.has(String(p.requires))) continue;
+          let best = 0, from = null;
+          for (const a of owned) {
+            const bA = buyers.get(a); if (!bA || bA.size < 5) continue;
+            let both = 0; for (const x of bA) if (set.has(x)) both++;
+            const cp = both / bA.size;
+            if (cp > best) { best = cp; from = a; }
+          }
+          if (best >= st.crossMin && from) cands.push({ pid, p, best, from });
+        }
+        cands.sort((a, b) => b.best - a.best).slice(0, 2).forEach(k => {
+          const fromP = P.get(k.from);
+          add(s, {
+            type: 'CROSS-SELL', productId: k.pid, product: k.p.name,
+            score: 30 + k.best * 60 + tb,
+            potential: (annualByProd.get(k.pid) || k.p.price * 6) * (tierScale[c.tier] || 1) * 0.5,
+            reason: `Buys ${fromP.name}; ${pct(k.best)} of clinics that buy it also buy ${k.p.name}.`,
+            action: `Offer a ${k.p.name} trial with the next ${fromP.name} order.`,
+            meta: { affinity: k.best, from: fromP.name }
+          });
+        });
+      }
+      // EQUIPMENT
+      if (s.injRev12 >= st.equipMin && s.orders12 >= 5) {
+        const target = equipProducts.find(e => !s.owns.has(String(e.id)));
+        if (target) {
+          const growth = s.revPrev6 ? s.rev6 / s.revPrev6 - 1 : 0;
+          const r = pctRank(s.rev12);
+          const atRisk = s.opps.some(o => o.type === 'CUSTOMER RISK');
+          add(s, {
+            type: 'EQUIPMENT', productId: String(target.id), product: target.name,
+            score: 50 + (s.injRev12 / st.equipMin - 1) * 25 + (growth > 0.05 ? 8 : 0) + Math.min(s.orders12, 12) - (atRisk ? 12 : 0),
+            potential: target.price,
+            reason: `${money(s.injRev12, true)} in injectables over 12 months (top ${Math.max(1, Math.round((1 - r) * 100) + 1)}% of accounts), ${s.orders12} orders, ${growth >= 0 ? 'growing ' + pct(growth) : 'down ' + pct(-growth)}; no ${target.name} installed.`,
+            action: `Book an in-clinic ${target.name} evaluation with the medical director.`,
+            meta: { growth, injRev: s.injRev12 }
+          });
+        }
+      }
+    }
+
+    // Customer-level summaries
+    for (const s of cs.values()) {
+      s.opps.sort((a, b) => b.score - a.score);
+      s.potential = sum(s.opps, o => o.potential);
+      const riskO = s.opps.find(o => o.type === 'CUSTOMER RISK');
+      const dorm = s.opps.find(o => o.type === 'DORMANT ACCOUNT');
+      s.riskLevel = dorm || (riskO && riskO.score >= 70) ? 'High' : riskO ? 'Medium' : 'Low';
+      const prodOpp = s.opps.find(o => o.productId && ['CROSS-SELL', 'UPSELL', 'EQUIPMENT', 'REORDER'].includes(o.type));
+      s.nbp = prodOpp ? prodOpp.product : null;
+      s.nbpWhy = prodOpp ? TYPES[prodOpp.type].label : '';
+      s.nba = s.opps[0] ? s.opps[0].action : (s.active ? 'Keep regular contact; no open signals.' : 'No recent purchases to analyze.');
+    }
+    opps.sort((a, b) => b.score - a.score || b.potential - a.potential);
+
+    // Product stats
+    const activeCount = Math.max(1, activeList.length);
+    const prodStats = D.products.map(p => {
+      const pk = String(p.id), pa = prodAgg.get(pk) || { rev12: 0, rev6: 0, prev6: 0, qty12: 0, buyers: new Set() };
+      const po = opps.filter(o => o.productId === pk);
+      return {
+        p, id: pk, rev12: pa.rev12, qty12: pa.qty12, customers: pa.buyers.size, penetration: pa.buyers.size / activeCount,
+        growth: pa.prev6 ? pa.rev6 / pa.prev6 - 1 : null,
+        reorders: po.filter(o => o.type === 'REORDER').length, cross: po.filter(o => o.type === 'CROSS-SELL').length,
+        upsell: po.filter(o => o.type === 'UPSELL').length, equipment: po.filter(o => o.type === 'EQUIPMENT').length,
+        potential: sum(po, o => o.potential)
+      };
+    }).sort((a, b) => b.rev12 - a.rev12);
+
+    // Category penetration helpers
+    const catOf = s => { const set = new Set(); for (const pr of s.prods.values()) if (pr.v12 > 0 && !pr.p.equipment) set.add(pr.p.category); return set; };
+    const categories = [...new Set(D.products.filter(p => !p.equipment).map(p => p.category))];
+    const natCat = {};
+    for (const cat of categories) natCat[cat] = activeList.filter(s => catOf(s).has(cat)).length / activeCount;
+
+    // Geographic Revenue Engine
+    const cityMap = new Map();
+    for (const s of cs.values()) {
+      const name = s.c.city || 'Sin ciudad';
+      let g = cityMap.get(name);
+      if (!g) { g = { name, geo: CITY_GEO[name] || null, customers: 0, active: 0, rev12: 0, rev6: 0, revPrev6: 0, potential: 0, opps: 0, reorder: 0, cross: 0, upsell: 0, equip: 0, dormant: 0, risk: 0, riskRevenue: 0, prodRev: new Map(), members: [], reps: new Set() }; cityMap.set(name, g); }
+      g.customers++; if (s.active) g.active++;
+      g.rev12 += s.rev12; g.rev6 += s.rev6; g.revPrev6 += s.revPrev6; g.members.push(s);
+      if (s.c.rep) g.reps.add(s.c.rep);
+      for (const pr of s.prods.values()) if (pr.v12 > 0) g.prodRev.set(pr.p.name, (g.prodRev.get(pr.p.name) || 0) + pr.v12);
+      for (const o of s.opps) {
+        g.opps++; g.potential += o.potential;
+        if (o.type === 'REORDER') g.reorder++;
+        else if (o.type === 'CROSS-SELL') g.cross++;
+        else if (o.type === 'UPSELL') g.upsell++;
+        else if (o.type === 'EQUIPMENT') g.equip++;
+        else if (o.type === 'DORMANT ACCOUNT') { g.dormant++; g.riskRevenue += o.potential; }
+        else if (o.type === 'CUSTOMER RISK') { g.risk++; g.riskRevenue += o.potential; }
+      }
+    }
+    const cityStats = [...cityMap.values()].map(g => {
+      const act = g.members.filter(s => s.active);
+      g.atRisk = g.members.filter(s => s.riskLevel !== 'Low').length;
+      g.growth = g.revPrev6 ? g.rev6 / g.revPrev6 - 1 : null;
+      g.topProducts = [...g.prodRev.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3);
+      g.catPen = categories.map(cat => ({ cat, city: act.length ? act.filter(s => catOf(s).has(cat)).length / act.length : 0, nat: natCat[cat] }));
+      g.prodPen = D.products.filter(p => !p.equipment).map(p => {
+        const n = act.filter(s => { const pr = s.prods.get(String(p.id)); return pr && pr.v12 > 0; }).length;
+        return { p, city: act.length ? n / act.length : 0, nat: (prodAgg.get(String(p.id))?.buyers.size || 0) / activeCount, n, of: act.length };
+      });
+      return g;
+    }).sort((a, b) => b.potential - a.potential);
+
+    // KPIs
+    const k = {
+      rev12: sum([...cs.values()], s => s.rev12), rev6: sum([...cs.values()], s => s.rev6), prev6: sum([...cs.values()], s => s.revPrev6),
+      potential: sum(opps, o => o.potential), opps: opps.length,
+      customersWithOpps: [...cs.values()].filter(s => s.opps.length).length,
+      activeCustomers: activeList.length, customers: D.customers.length
+    };
+    k.growth = k.prev6 ? k.rev6 / k.prev6 - 1 : 0;
+    for (const t of TYPE_KEYS) { const l = opps.filter(o => o.type === t); k[t] = { n: l.length, pot: sum(l, o => o.potential) }; }
+    k.atRisk = [...cs.values()].filter(s => s.opps.some(o => o.type === 'CUSTOMER RISK' || o.type === 'DORMANT ACCOUNT'));
+    k.atRiskPot = sum(k.atRisk, s => sum(s.opps.filter(o => o.type === 'CUSTOMER RISK' || o.type === 'DORMANT ACCOUNT'), o => o.potential));
+
+    // Keep Odoo IDs of opportunities already created this session
+    const created = S.created || {};
+    for (const o of opps) { const key = o.customerId + '|' + o.type + '|' + (o.productId || ''); if (created[key]) o.odooId = created[key]; }
+
+    const months = [];
+    for (let i = 11; i >= 0; i--) { const d = new Date(now.getFullYear(), now.getMonth() - i, 1); { const m = d.toLocaleDateString('es-CL', { month: 'short' }).replace('.', ''); months.push(m.charAt(0).toUpperCase() + m.slice(1)); } }
+
+    Object.assign(S, { cs, opps, prodStats, cityStats, kpi: k, monthly, months, categories, natCat, lastAnalyzed: Date.now() });
+    S.insights = GeoEngine.insights();
+  }
+};
+const oppKey = o => o.customerId + '|' + o.type + '|' + (o.productId || '');
+
+const GeoEngine = {
+  insights() {
+    const C = S.cityStats.filter(c => c.name !== 'Sin ciudad' && c.customers > 0);
+    const out = [];
+    if (!C.length) return out;
+    const top = [...C].sort((a, b) => b.potential - a.potential)[0];
+    if (top.potential > 0) out.push({ city: top.name, text: `${top.name} concentra ${money(top.potential, true)} en oportunidades potenciales.` });
+    const eq = [...C].sort((a, b) => b.equip - a.equip)[0];
+    if (eq.equip > 0) out.push({ city: eq.name, text: `${eq.name} tiene ${eq.equip} ${eq.equip === 1 ? 'cuenta' : 'cuentas'} de alto consumo con potencial para equipos.` });
+    const ro = [...C].sort((a, b) => b.reorder - a.reorder)[0];
+    if (ro.reorder > 0) out.push({ city: ro.name, text: `${ro.name} presenta ${ro.reorder} ${ro.reorder === 1 ? 'oportunidad' : 'oportunidades'} de recompra.` });
+    let best = null;
+    for (const c of C) {
+      if (c.active < 3) continue;
+      for (const cp of c.catPen) {
+        const gap = cp.city - cp.nat;
+        const rank = ((c.growth || 0) > 0.02 ? 1 : 0) - gap;
+        if (cp.nat >= 0.2 && gap <= -0.15 && (!best || rank > best.rank)) best = { c, cp, gap, rank };
+      }
+    }
+    if (best) {
+      const g = best.c.growth;
+      out.push({ city: best.c.name, text: g != null && g > 0.02
+        ? `${best.c.name} muestra crecimiento (+${pct(g)}) pero baja penetración de ${best.cp.cat} (${pct(best.cp.city)} vs ${pct(best.cp.nat)} nacional).`
+        : `${best.c.name} tiene baja penetración de ${best.cp.cat} (${pct(best.cp.city)} vs ${pct(best.cp.nat)} nacional).` });
+    }
+    const rk = [...C].sort((a, b) => b.riskRevenue - a.riskRevenue)[0];
+    if (rk.riskRevenue > 0) out.push({ city: rk.name, text: `${rk.name} tiene ${money(rk.riskRevenue, true)} de revenue en riesgo en ${rk.risk + rk.dormant} ${rk.risk + rk.dormant === 1 ? 'cuenta' : 'cuentas'}.` });
+    return out;
+  }
+};
+
+/* =========================================================
+   PatternEngine — cross-account patterns from the loaded data
+   ========================================================= */
+const AGENT_OF = { 'REORDER': 'reorder', 'CROSS-SELL': 'cross', 'UPSELL': 'cross', 'EQUIPMENT': 'equip', 'CUSTOMER RISK': 'risk', 'DORMANT ACCOUNT': 'risk' };
+const AGENT_NAME = { hunter: 'Opportunity Hunter', reorder: 'Reorder Agent', cross: 'Cross-Sell Agent', equip: 'Equipment Agent', risk: 'Customer Risk Agent', geo: 'Geographic Agent' };
+
+const PatternEngine = {
+  run() {
+    const D = S.data, today = D.today, out = [];
+    const all = [...S.cs.values()], active = all.filter(s => s.active);
+    const N = Math.max(1, active.length);
+    const P = new Map(D.products.map(p => [String(p.id), p]));
+
+    // 1. Product affinity (highest lift pair)
+    const buyers = new Map();
+    for (const s of active) for (const [pid, pr] of s.prods) { if (pr.p.equipment || pr.v12 <= 0) continue; if (!buyers.has(pid)) buyers.set(pid, new Set()); buyers.get(pid).add(String(s.c.id)); }
+    let bestPair = null;
+    for (const [a, A] of buyers) for (const [b, B] of buyers) {
+      if (a === b || A.size < 8) continue;
+      const pa = P.get(a), pb = P.get(b);
+      if (pa.category === 'Accessories' || pb.category === 'Accessories') continue;
+      if ((pa.family && pa.family === pb.family)) continue;
+      let both = 0; for (const x of A) if (B.has(x)) both++;
+      const cp = both / A.size, lift = cp / (B.size / N);
+      if (cp >= 0.5 && lift > 1.05 && (!bestPair || lift * cp > bestPair.lift * bestPair.cp)) bestPair = { pa, pb, cp, lift, gap: A.size - both };
+    }
+    if (bestPair) out.push({
+      id: 'affinity', agent: 'cross', tone: 'up', kpi: pct(bestPair.cp),
+      title: `${bestPair.pa.name} lleva a ${bestPair.pb.name}`,
+      detail: `${pct(bestPair.cp)} de las clínicas que compran ${bestPair.pa.name} también compran ${bestPair.pb.name} (${bestPair.lift.toFixed(1)}× sobre el promedio). ${bestPair.gap} clínicas aún no lo hacen.`,
+      action: { label: 'Ver cross-sell', kind: 'filter', type: 'CROSS-SELL', product: String(bestPair.pb.id) }
+    });
+
+    // 2. Cadence slowdown
+    const slow = active.filter(s => {
+      if (s.dates.length < 6 || !s.cycle) return false;
+      const d = s.dates, k = d.length;
+      const recent = ((d[k - 1] - d[k - 4]) / 3) / DAY;
+      const sinceLast = (today - d[k - 1]) / DAY;
+      return Math.max(recent, sinceLast) > s.cycle * 1.35;
+    });
+    if (slow.length) out.push({
+      id: 'cadence', agent: 'risk', tone: 'down', kpi: String(slow.length),
+      title: 'Frecuencia de compra desacelerando',
+      detail: `${slow.length} ${slow.length === 1 ? 'cuenta espacia' : 'cuentas espacian'} sus pedidos más de un 35% por sobre su ciclo histórico. Representan ${money(sum(slow, s => s.rev12), true)} de revenue 12M.`,
+      action: { label: 'Ver cuentas', kind: 'ask', q: '¿Qué cuentas están desacelerando sus compras?' }, members: slow.map(s => String(s.c.id))
+    });
+
+    // 3. Revenue concentration
+    const byRev = [...active].sort((a, b) => b.rev12 - a.rev12);
+    const tot = sum(active, s => s.rev12) || 1;
+    const top10 = sum(byRev.slice(0, 10), s => s.rev12) / tot;
+    out.push({
+      id: 'concentration', agent: 'hunter', tone: top10 > 0.5 ? 'down' : 'neutral', kpi: pct(top10),
+      title: 'Concentración de revenue',
+      detail: `Las 10 cuentas principales generan ${pct(top10)} del revenue 12M. La principal es ${byRev[0] ? byRev[0].c.name : '—'} (${byRev[0] ? money(byRev[0].rev12, true) : '—'}).`,
+      action: { label: 'Ver clientes', kind: 'route', route: 'customers' }
+    });
+
+    // 4. City momentum
+    const cities = S.cityStats.filter(c => c.revPrev6 > 5000 && c.growth != null);
+    if (cities.length) {
+      const up = [...cities].sort((a, b) => b.growth - a.growth)[0];
+      if (up.growth > 0.03) out.push({ id: 'city-up', agent: 'geo', tone: 'up', kpi: '+' + pct(up.growth), title: `${up.name} acelera`, detail: `${up.name} crece ${pct(up.growth)} en los últimos 6 meses frente a los 6 anteriores, con ${up.opps} oportunidades abiertas por ${money(up.potential, true)}.`, action: { label: 'Analizar ciudad', kind: 'city', city: up.name } });
+      const dn = [...cities].sort((a, b) => a.growth - b.growth)[0];
+      if (dn.growth < -0.05 && dn !== up) out.push({ id: 'city-down', agent: 'geo', tone: 'down', kpi: '−' + pct(-dn.growth), title: `${dn.name} pierde ritmo`, detail: `${dn.name} cae ${pct(-dn.growth)} en los últimos 6 meses; ${dn.atRisk} ${dn.atRisk === 1 ? 'cuenta' : 'cuentas'} en riesgo y ${money(dn.riskRevenue, true)} expuestos.`, action: { label: 'Analizar ciudad', kind: 'city', city: dn.name } });
+    }
+
+    // 5. Category momentum
+    const cat = {};
+    for (const x of S.prodStats) { if (x.p.equipment) continue; const c = cat[x.p.category] || (cat[x.p.category] = { rev6: 0, prev6: 0 }); const pa = x.growth; c.rev6 += x.rev12 && pa != null ? x.rev12 * (1 + pa) / (2 + pa) : 0; c.prev6 += x.rev12 && pa != null ? x.rev12 / (2 + pa) : 0; }
+    const cats = Object.entries(cat).filter(([, v]) => v.prev6 > 3000).map(([k, v]) => ({ k, g: v.rev6 / v.prev6 - 1 })).sort((a, b) => b.g - a.g);
+    if (cats.length && cats[0].g > 0.03) out.push({ id: 'cat-up', agent: 'hunter', tone: 'up', kpi: '+' + pct(cats[0].g), title: `${cats[0].k} en alza`, detail: `La categoría ${cats[0].k} crece ${pct(cats[0].g)} semestre contra semestre, la más dinámica del portafolio.`, action: { label: 'Ver productos', kind: 'route', route: 'products' } });
+
+    // 6. Average ticket drift
+    const o6 = D.orders.filter(o => today - o.date < 182 * DAY), o12 = D.orders.filter(o => today - o.date >= 182 * DAY && today - o.date < 365 * DAY);
+    if (o6.length > 10 && o12.length > 10) {
+      const t6 = sum(o6, o => o.total) / o6.length, t12 = sum(o12, o => o.total) / o12.length, g = t6 / t12 - 1;
+      if (Math.abs(g) > 0.03) out.push({ id: 'ticket', agent: 'hunter', tone: g > 0 ? 'up' : 'down', kpi: (g > 0 ? '+' : '−') + pct(Math.abs(g)), title: `Ticket promedio ${g > 0 ? 'al alza' : 'a la baja'}`, detail: `El pedido promedio pasó de ${money(t12)} a ${money(t6)} en los últimos 6 meses (${o6.length} pedidos analizados).`, action: { label: 'Preguntar al agente', kind: 'ask', q: '¿Cómo va el revenue?' } });
+    }
+
+    // 7. Rep workload on overdue reorders
+    const overdue = S.opps.filter(o => o.type === 'REORDER' && o.meta && o.meta.ratio >= 1.3);
+    if (overdue.length >= 5) {
+      const byRep = {}; for (const o of overdue) byRep[o.rep] = (byRep[o.rep] || 0) + 1;
+      const [rep, n] = Object.entries(byRep).sort((a, b) => b[1] - a[1])[0];
+      out.push({ id: 'rep', agent: 'reorder', tone: 'down', kpi: String(n), title: `Recompras atrasadas en la cartera de ${rep}`, detail: `${rep} concentra ${n} de ${overdue.length} recompras atrasadas (${pct(n / overdue.length)}), por ${money(sum(overdue.filter(o => o.rep === rep), o => o.potential), true)}.`, action: { label: 'Ver recompras', kind: 'ask', q: `Recompras atrasadas de ${rep}` } });
+    }
+
+    // 8. Peak month
+    const m = S.monthly, avg = sum(m) / 12;
+    if (avg > 0) {
+      const i = m.indexOf(Math.max(...m.slice(0, 11)));
+      out.push({ id: 'season', agent: 'hunter', tone: 'neutral', kpi: S.months[i], title: `${S.months[i]}: el mes más fuerte`, detail: `${S.months[i]} cerró en ${money(m[i], true)}, ${pct(m[i] / avg - 1)} sobre el promedio mensual de los últimos 12 meses.`, action: { label: 'Ver dashboard', kind: 'route', route: 'dashboard' } });
+    }
+    S.patterns = out;
+  }
+};
+
+function analyze() { OpportunityEngine.run(); PatternEngine.run(); Live.rebuild(); }
+
+/* =========================================================
+   LiveAuditor — walks every account continuously and reports
+   ========================================================= */
+const Live = {
+  queue: [], idx: 0, audited: 0, feed: [], current: null, timer: null, lastProactive: 0, announced: new Set(), perAgent: {},
+  rebuild() {
+    const list = [...S.cs.values()].filter(s => s.nOrders);
+    this.queue = list.sort((a, b) => (b.opps[0]?.score || 0) - (a.opps[0]?.score || 0));
+    this.idx = 0;
+  },
+  start() { if (!this.timer) this.timer = setInterval(() => this.tick(), 1700); },
+  evaluate(s) {
+    const o = s.opps[0], c = s.c;
+    if (!o) return { agent: 'hunter', level: 'ok', cust: String(c.id), name: c.name, city: c.city, text: `Cuenta sana: ciclo ${s.cycle || '—'} días, última compra hace ${s.daysSince} días.` };
+    const m = o.meta || {};
+    let text;
+    switch (o.type) {
+      case 'REORDER': text = `${o.product}: ciclo ${m.cycle} días, última compra hace ${m.since} → recompra ${m.ratio >= 1.3 ? 'atrasada' : 'esperada'}.`; break;
+      case 'CROSS-SELL': text = `No compra ${o.product}; ${pct(m.affinity)} de afinidad con ${m.from}.`; break;
+      case 'UPSELL': text = `Candidata a ${o.product} (hoy compra ${m.from}).`; break;
+      case 'EQUIPMENT': text = `${money(m.injRev, true)} en inyectables 12M → candidata a ${o.product}.`; break;
+      case 'CUSTOMER RISK': text = `Compras −${pct(m.drop)} en los últimos 6 meses.`; break;
+      default: text = `Sin pedidos hace ${m.days} días.`;
+    }
+    const more = s.opps.length - 1;
+    return { agent: AGENT_OF[o.type], level: ['CUSTOMER RISK', 'DORMANT ACCOUNT'].includes(o.type) ? 'risk' : 'find', cust: String(c.id), name: c.name, city: c.city, text: text + (more > 0 ? ` +${more} ${more === 1 ? 'señal' : 'señales'}.` : ''), score: o.score, opp: o };
+  },
+  tick() {
+    if (!this.queue.length || document.hidden) return;
+    const s = this.queue[this.idx % this.queue.length]; this.idx++;
+    this.current = s; this.audited++;
+    const ev = Object.assign(this.evaluate(s), { t: Date.now() });
+    this.feed.unshift(ev); if (this.feed.length > 80) this.feed.length = 80;
+    const pa = this.perAgent[ev.agent] || (this.perAgent[ev.agent] = { n: 0, last: null }); pa.n++; pa.last = ev;
+    this.paint(ev);
+    // Proactive message for high-value findings, at most once a minute
+    if (ev.opp && ev.score >= 90 && !this.announced.has(ev.opp.id) && Date.now() - this.lastProactive > 60000 && S.chat.length > 1) {
+      this.announced.add(ev.opp.id); this.lastProactive = Date.now();
+      Agent.say(`<p><b>Hallazgo en tiempo real.</b> Acabo de auditar <b>${esc(ev.name)}</b> (${esc(ev.city)}): ${esc(ev.text)}</p><p>Score ${ev.score}/100, potencial ${money(ev.opp.potential)}. ${esc(ev.opp.action)}</p><div class="row-flex">${custBtn(ev.cust, 'Abrir Customer 360', 'btn sm')}${createBtn(ev.opp)}</div>`, { notify: true });
+    }
+  },
+  paint(ev) {
+    const t = $('#liveTicker'); if (t) t.innerHTML = `<span class="pulse"></span><span class="lt-a">${AGENT_NAME[ev.agent]}</span><span class="lt-n">${esc(ev.name)}</span>`;
+    $$('.live-count').forEach(e => e.textContent = this.audited.toLocaleString('es-CL'));
+    $$('.live-current').forEach(e => e.textContent = ev.name);
+    $$('.live-feed').forEach(ul => {
+      ul.insertAdjacentHTML('afterbegin', feedItem(ev, true));
+      while (ul.children.length > (+ul.dataset.max || 12)) ul.lastElementChild.remove();
+    });
+    $$(`.ag-live[data-agent="${ev.agent}"]`).forEach(e => { e.innerHTML = `<b>${esc(ev.name)}</b> · ${esc(ev.text)}`; });
+    $$(`.ag-count[data-agent="${ev.agent}"]`).forEach(e => { e.textContent = this.perAgent[ev.agent].n; });
+    $$(`.ag-dot[data-agent="${ev.agent}"]`).forEach(e => { e.classList.remove('blink'); void e.offsetWidth; e.classList.add('blink'); });
+    const ds = $('#dockStatus'); if (ds) ds.textContent = 'Auditando ' + ev.name;
+  }
+};
+function feedItem(ev, fresh) {
+  return `<li class="fi ${ev.level} ${fresh ? 'new' : ''}"><span class="fi-t">${new Date(ev.t).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}</span><span class="fi-b"><span class="fi-a">${AGENT_NAME[ev.agent]}</span> ${custBtn(ev.cust, ev.name)} <span class="fi-c">${esc(ev.city)}</span><br><span class="fi-x">${esc(ev.text)}</span></span>${ev.score ? `<span class="fi-s">${ev.score}</span>` : '<span class="fi-s ok">✓</span>'}</li>`;
+}
+
+/* =========================================================
+   Navigation
+   ========================================================= */
+const IC = {
+  dash: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 13h6V4H4zM14 20h6v-9h-6zM4 20h6v-3H4zM14 4v3h6V4z"/></svg>',
+  opp: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><circle cx="12" cy="12" r=".8" fill="currentColor"/></svg>',
+  cust: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V9l8-5 8 5v11M9 20v-6h6v6M12 8v3M10.5 9.5h3"/></svg>',
+  prod: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3h6M10 3v4l-4 3v10h12V10l-4-3V3M6 14h12"/></svg>',
+  geo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 21s-6-6.2-6-11a6 6 0 1 1 12 0c0 4.8-6 11-6 11z"/><circle cx="12" cy="10" r="2.2"/></svg>',
+  agent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="5" y="8" width="14" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01M9.5 16.5h5"/></svg>',
+  chat: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  plug: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 3v5M15 3v5M6 8h12v3a6 6 0 0 1-12 0zM12 17v4"/></svg>',
+  log: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3h9l4 4v14H6zM9 11h7M9 15h7M9 7h3"/></svg>',
+  gear: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/></svg>',
+  reorder: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12a8 8 0 0 1 14-5.3M20 12a8 8 0 0 1-14 5.3M18 3v4h-4M6 21v-4h4"/></svg>',
+  cross: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="4"/><circle cx="16" cy="16" r="4"/><path d="M11 11l2 2"/></svg>',
+  risk: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7l6 6 4-4 6 6M20 11v4h-4"/></svg>'
+};
+const NAV = [
+  { group: 'INTELLIGENCE', items: [['dashboard', 'Executive Dashboard', IC.dash], ['opportunities', 'AI Opportunities', IC.opp, () => S.opps.length], ['customers', 'Customers', IC.cust], ['products', 'Products', IC.prod], ['geo', 'Geographic Intelligence', IC.geo]] },
+  { group: 'AI AGENTS', items: [['agents', 'Revenue Agents', IC.agent, () => '6'], ['copilot', 'Eurolab AI Copilot', IC.chat]] },
+  { group: 'SYSTEM', items: [['connect', 'Connect Odoo', IC.plug], ['audit', 'Audit Log', IC.log], ['settings', 'Settings', IC.gear]] }
+];
+const ROUTE_TITLES = { dashboard: 'Executive Dashboard', opportunities: 'AI Opportunities', customers: 'Customers', products: 'Product Intelligence', geo: 'Geographic Intelligence', agents: 'Revenue Agents', copilot: 'Eurolab AI Copilot', connect: 'Connect Odoo', audit: 'Audit Log', settings: 'Settings' };
+
+function renderNav() {
+  $('#nav').innerHTML = NAV.map(g => `<div class="nav-group">${g.group}</div>` + g.items.map(([r, label, ic, cnt]) =>
+    `<button data-route="${r}" class="${S.route === r ? 'active' : ''}" ${S.route === r ? 'aria-current="page"' : ''}>${ic}<span>${label}</span>${cnt ? `<span class="count">${cnt()}</span>` : ''}</button>`).join('')).join('');
+  $('#sideSrc').textContent = S.mode === 'live' ? 'Odoo live' : S.data.customers.length + ' cuentas';
+  const chipEl = $('#odooChip');
+  chipEl.className = 'chip-btn' + (S.mode === 'live' ? ' live' : '');
+  chipEl.innerHTML = S.mode === 'live' ? '<span class="pulse" style="width:7px;height:7px"></span>ODOO LIVE' : IC.plug.replace('<svg ', '<svg width="14" height="14" ') + 'Connect Odoo';
+  chipEl.title = S.mode === 'live' ? 'Connected to ' + (S.odoo?.url || '') : 'Connect your Odoo database';
+  $('#crumb').textContent = ROUTE_TITLES[S.route] || '';
+}
+function go(route) { if (location.hash !== '#' + route) location.hash = route; else render(); }
+function render() {
+  const r = (location.hash || '#dashboard').slice(1);
+  S.route = VIEWS[r] ? r : 'dashboard';
+  renderNav();
+  $('#view').innerHTML = VIEWS[S.route]();
+  if (AFTER[S.route]) AFTER[S.route]();
+  $('#sidebar').classList.remove('open'); $('#scrim').classList.remove('on');
+  Agent.syncDockVisibility();
+  window.scrollTo(0, 0);
+}
+function rerenderKeepScroll() { const y = window.scrollY; $('#view').innerHTML = VIEWS[S.route](); if (AFTER[S.route]) AFTER[S.route](); renderNav(); window.scrollTo(0, y); }
+
+/* =========================================================
+   Shared UI pieces
+   ========================================================= */
+const srcTag = () => S.mode === 'live' ? `<span class="src"><span class="pulse" style="width:6px;height:6px"></span>Odoo · ${esc(S.odoo?.db || '')}</span>` : '';
+const pageHead = (t, sub, right = '') => `<div class="page-head"><div><h1>${t}</h1><p>${sub}</p></div><div class="page-head-right">${srcTag()}${right}</div></div>`;
+const chip = t => `<span class="chip ${TYPES[t].cls}">${TYPES[t].label}</span>`;
+const scoreEl = v => `<span class="score" title="AI Score ${v}/100"><b>${v}</b><i style="--v:${v}%"></i></span>`;
+const ring = v => `<span class="ring" style="--v:${v}"><span>${v}</span></span>`;
+const custBtn = (id, name, cls = 'linkish') => `<button class="${cls}" data-action="open-customer" data-id="${esc(id)}">${esc(name)}</button>`;
+function createBtn(o) {
+  if (o.odooId) return `<button class="btn sm done" disabled>✓ Odoo CRM #${esc(o.odooId)}</button>`;
+  return `<button class="btn sm" data-action="create" data-id="${o.id}">Create in Odoo</button>`;
+}
+const riskCls = r => r === 'High' ? 'risk-h' : r === 'Medium' ? 'risk-m' : 'risk-l';
+const TYPE_COLOR = { 'REORDER': '#E8B55C', 'CROSS-SELL': '#6CD5C7', 'UPSELL': '#93A5FF', 'EQUIPMENT': '#DB8FC9', 'DORMANT ACCOUNT': '#A3ADBF', 'CUSTOMER RISK': '#F27D7D' };
+
+function oppTable(list, opts = {}) {
+  if (!list.length) return `<div class="empty">No opportunities match these filters. Lower the minimum AI score or clear a filter.</div>`;
+  return `<div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>Score</th><th>Customer</th><th>Type</th><th>Product</th><th class="num">Potential</th><th>Reason</th><th>Recommended action</th>${opts.noCreate ? '' : '<th></th>'}</tr></thead><tbody>` +
+    list.map(o => `<tr>
+      <td data-l="AI Score">${scoreEl(o.score)}</td>
+      <td data-l="Customer"><div>${custBtn(o.customerId, o.customer)}</div><div class="sub">${esc(o.city)} · ${esc(o.rep)}</div></td>
+      <td data-l="Type">${chip(o.type)}</td>
+      <td data-l="Product">${esc(o.product || '—')}</td>
+      <td data-l="Potential" class="num money">${money(o.potential)}</td>
+      <td data-l="Reason" class="reason">${esc(o.reason)}</td>
+      <td data-l="Action" class="action">${esc(o.action)}</td>
+      ${opts.noCreate ? '' : `<td data-l="Odoo">${createBtn(o)}</td>`}
+    </tr>`).join('') + `</tbody></table></div>`;
+}
+
+/* ---------- Charts ---------- */
+function niceMax(v) { if (v <= 0) return 1; const p = Math.pow(10, Math.floor(Math.log10(v))); for (const m of [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10]) if (m * p >= v) return m * p; return 10 * p; }
+function areaChart(values, labels) {
+  const W = 680, H = 230, L = 54, B = 28, T = 16, R = 10;
+  const max = niceMax(Math.max(...values, 1));
+  const x = i => L + (W - L - R) * (i / (values.length - 1));
+  const y = v => T + (H - T - B) * (1 - v / max);
+  let g = '';
+  for (const f of [0, 0.5, 1]) { const yy = y(max * f); g += `<line class="gl" x1="${L}" x2="${W - R}" y1="${yy}" y2="${yy}"/><text class="al" x="${L - 10}" y="${yy + 4}" text-anchor="end">${money(max * f, true)}</text>`; }
+  // smooth path
+  const pts = values.map((v, i) => [x(i), y(v)]);
+  let d = `M${pts[0][0]},${pts[0][1]}`;
+  for (let i = 1; i < pts.length; i++) { const [x0, y0] = pts[i - 1], [x1, y1] = pts[i]; const cx = (x0 + x1) / 2; d += ` C${cx},${y0} ${cx},${y1} ${x1},${y1}`; }
+  const area = d + ` L${x(values.length - 1)},${H - B} L${x(0)},${H - B} Z`;
+  const dots = pts.map(([px, py], i) => `<circle cx="${px}" cy="${py}" r="${i === pts.length - 1 ? 5 : 3}" fill="${i === pts.length - 1 ? '#E2BF7C' : '#0D1526'}" stroke="${i === pts.length - 1 ? '#E2BF7C' : '#6CD5C7'}" stroke-width="2"><title>${labels[i]}: ${money(values[i])}</title></circle><text class="al" x="${px}" y="${H - 8}" text-anchor="middle">${labels[i]}</text>`).join('');
+  return `<div class="chart"><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly revenue">${g}<path d="${area}" fill="url(#areaGrad)"/><path d="${d}" fill="none" stroke="#6CD5C7" stroke-width="2.5"/>${dots}</svg></div>`;
+}
+function donut(rows) {
+  const total = sum(rows, r => r.pot) || 1, R = 70, r = 48, C = 85;
+  let a0 = -Math.PI / 2, segs = '';
+  for (const row of rows) {
+    if (!row.pot) continue;
+    const a1 = a0 + row.pot / total * Math.PI * 2 - 0.02;
+    const large = a1 - a0 > Math.PI ? 1 : 0;
+    const p = (ang, rad) => `${(C + rad * Math.cos(ang)).toFixed(2)},${(C + rad * Math.sin(ang)).toFixed(2)}`;
+    segs += `<path d="M${p(a0, R)} A${R},${R} 0 ${large} 1 ${p(a1, R)} L${p(a1, r)} A${r},${r} 0 ${large} 0 ${p(a0, r)}Z" fill="${TYPE_COLOR[row.t]}"><title>${TYPES[row.t].label}: ${money(row.pot)}</title></path>`;
+    a0 = a1 + 0.02;
+  }
+  return `<svg viewBox="0 0 170 170" role="img" aria-label="Potential by opportunity type">${segs}<text x="85" y="82" text-anchor="middle" style="font-family:var(--display);font-size:22px;fill:#fff">${money(total, true)}</text><text x="85" y="101" text-anchor="middle" style="font-size:10.5px;fill:#95A2BA">potential</text></svg>`;
+}
+function sparkline(values, color = '#6CD5C7') {
+  const W = 300, H = 60, max = Math.max(...values, 1);
+  const pts = values.map((v, i) => `${(i / (values.length - 1) * W).toFixed(1)},${(H - 4 - v / max * (H - 10)).toFixed(1)}`);
+  return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><polyline points="0,${H} ${pts.join(' ')} ${W},${H}" fill="url(#areaGrad)" stroke="none"/><polyline points="${pts.join(' ')}" fill="none" stroke="${color}" stroke-width="2" vector-effect="non-scaling-stroke"/></svg>`;
+}
+
+/* ---------- Chile map ---------- */
+const CHILE = [[-70.37, -18.35], [-70.3, -19.2], [-70.15, -20.2], [-70.2, -21.3], [-70.2, -22.1], [-70.55, -23.05], [-70.42, -23.65], [-70.5, -24.6], [-70.55, -25.4], [-70.85, -27.1], [-71.3, -28.5], [-71.35, -29.9], [-71.7, -30.9], [-71.5, -32.0], [-71.62, -33.05], [-71.7, -34.0], [-72.1, -35.2], [-72.6, -36.0], [-73.15, -36.7], [-73.65, -37.3], [-73.5, -38.2], [-73.3, -39.0], [-73.4, -39.9], [-73.75, -40.6], [-73.95, -41.5], [-74.1, -42.3], [-74.3, -43.4], [-74.4, -44.6],
+  [-71.65, -44.6], [-71.8, -43.5], [-71.7, -42.2], [-71.9, -41.0], [-71.6, -39.8], [-71.4, -38.8], [-71.0, -37.5], [-70.9, -36.3], [-70.4, -35.3], [-69.95, -34.3], [-70.05, -33.0], [-70.45, -31.8], [-70.0, -30.0], [-69.7, -28.5], [-68.8, -27.0], [-68.35, -25.5], [-68.5, -24.3], [-67.2, -23.2], [-67.9, -22.0], [-68.5, -20.8], [-68.8, -19.6], [-69.1, -18.6], [-69.5, -17.5], [-69.85, -17.6]];
+const metricVal = (c, m) => m === 'revenue' ? c.rev12 : m === 'opps' ? c.opps : m === 'risk' ? c.riskRevenue : c.potential;
+function chileMap({ w = 380, h = 640, metric = 'potential', selected = null, mini = false } = {}) {
+  const lat0 = -17.2, lat1 = -44.6, lon0 = -71.3;
+  const k = h / (lat0 - lat1), kx = k * Math.cos(31 * Math.PI / 180), cx = w / 2;
+  const X = lon => cx + (lon - lon0) * kx, Y = lat => (lat0 - lat) * k;
+  const d = CHILE.map((p, i) => (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ',' + Y(p[1]).toFixed(1)).join('') + 'Z';
+  const cities = S.cityStats.filter(c => c.geo && c.geo.lat <= lat0 && c.geo.lat >= lat1).sort((a, b) => metricVal(b, metric) - metricVal(a, metric));
+  const max = Math.max(1, ...cities.map(c => metricVal(c, metric)));
+  const labelSet = new Set(mini ? cities.slice(0, 6).map(c => c.name) : cities.map(c => c.name));
+  const rMax = mini ? 17 : 27;
+  let ticks = '';
+  if (!mini) for (let lat = -20; lat >= -44; lat -= 5) { const yy = Y(lat); ticks += `<line class="tick" x1="0" x2="10" y1="${yy}" y2="${yy}"/><text class="tick-l" x="14" y="${yy + 4}">${Math.abs(lat)}°S</text>`; }
+  const bubbles = cities.map(c => {
+    const x = X(c.geo.lon), y = Y(c.geo.lat), v = metricVal(c, metric);
+    const r = Math.max(3.5, rMax * Math.sqrt(v / max));
+    const anchor = c.geo.anchor || 'start';
+    const lx = x + (anchor === 'end' ? -(r + 5) : r + 5), ly = y + (c.geo.dy || 0) * (mini ? 0.8 : 1) + 4;
+    const lbl = metric === 'opps' ? v + ' opps' : money(v, true);
+    return `<g class="city ${selected === c.name ? 'sel' : ''}" data-action="set-city" data-city="${esc(c.name)}" tabindex="0" role="button" aria-label="${esc(c.name)}, ${lbl}"><title>${esc(c.name)}: ${lbl}</title><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r.toFixed(1)}"/><circle class="dot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="2"/>${labelSet.has(c.name) ? `<text x="${lx.toFixed(1)}" y="${ly.toFixed(1)}" text-anchor="${anchor}"><tspan class="cn">${esc(c.name)}</tspan>${mini ? '' : `<tspan class="cv" dx="5">${lbl}</tspan>`}</text>` : ''}</g>`;
+  }).join('');
+  return `<div class="map-wrap ${mini ? 'map-mini' : ''}"><svg viewBox="0 0 ${w} ${h}" role="group" aria-label="Map of Chile"><path class="land" d="${d}"/>${ticks}${bubbles}</svg></div>`;
+}
+
+function patternCard(p) {
+  const a = p.action || {};
+  const attrs = a.kind === 'filter' ? `data-action="filter-go" ${a.type ? `data-type="${esc(a.type)}"` : ''} ${a.product ? `data-product="${esc(a.product)}"` : ''}`
+    : a.kind === 'ask' ? `data-action="ask" data-q="${esc(a.q)}"` : a.kind === 'city' ? `data-action="set-city" data-city="${esc(a.city)}"` : `data-route="${esc(a.route || 'dashboard')}"`;
+  return `<article class="pattern ${p.tone}"><div class="ph"><div><div class="by">${AGENT_NAME[p.agent]}</div><h3>${esc(p.title)}</h3></div><span class="k">${esc(p.kpi)}</span></div><p>${esc(p.detail)}</p><button class="btn sm" ${attrs}>${esc(a.label || 'Ver')}</button></article>`;
+}
+function priorityList(n = 7) {
+  const seen = new Set();
+  const first = S.opps.filter(o => { if (seen.has(o.customerId)) return false; seen.add(o.customerId); return true; }).slice(0, n);
+  if (!first.length) return '<div class="empty">No open signals.</div>';
+  return `<ul class="priority">${first.map(o => `<li>${ring(o.score)}<div><div class="by">${AGENT_NAME[AGENT_OF[o.type]]}</div><div class="t">${custBtn(o.customerId, o.customer)} <span class="muted" style="font-weight:500">· ${esc(o.city)}</span></div><div style="margin-top:4px">${chip(o.type)} <span class="muted">${esc(o.product)}</span></div><div class="r">${esc(o.action)}</div></div><div class="p"><div class="money">${money(o.potential, true)}</div><div style="margin-top:8px">${createBtn(o)}</div></div></li>`).join('')}</ul>`;
+}
+function greeting() { const h = new Date().getHours(); return h < 12 ? 'Buenos días' : h < 20 ? 'Buenas tardes' : 'Buenas noches'; }
+
+/* =========================================================
+   Views
+   ========================================================= */
+const VIEWS = {};
+const AFTER = {};
+
+VIEWS.dashboard = () => {
+  const k = S.kpi, D = S.data;
+  const up = k.growth >= 0;
+  const typeRows = TYPE_KEYS.map(t => ({ t, ...k[t] }));
+  const overdue = S.opps.filter(o => o.type === 'REORDER' && o.meta && o.meta.ratio >= 1.3).length;
+  const attention = new Set(S.opps.filter(o => o.score >= 80).map(o => o.customerId)).size;
+  const dateTxt = new Date().toLocaleDateString('es-CL', { weekday: 'long', day: 'numeric', month: 'long' });
+  const agentsRows = ['hunter', 'reorder', 'cross', 'equip', 'risk'].map(a => `<li><span class="ag-dot" data-agent="${a}"></span><span>${AGENT_NAME[a]}</span><span class="ag-count" data-agent="${a}">${Live.perAgent[a]?.n || 0}</span></li>`).join('');
+  return `
+  <section class="hero">
+    <div class="hero-main">
+      <span class="orb xl"></span>
+      <div>
+        <div class="hero-k"><span class="pulse"></span>Eurolab AI · briefing del ${esc(dateTxt)}</div>
+        <h1 class="hero-h">${greeting()}. Hay ${money(k.potential, true)} en revenue potencial repartido en ${k.customersWithOpps} cuentas de Chile.</h1>
+        <p class="hero-p">${attention} ${plural(attention, 'cuenta requiere', 'cuentas requieren')} atención hoy, ${overdue} recompras están atrasadas y los agentes detectaron ${S.patterns.length} patrones en el comportamiento de compra.</p>
+        <div class="row-flex"><button class="btn primary" data-action="ask" data-q="¿A qué clientes debemos contactar hoy?">Prioridades de hoy</button><button class="btn" data-action="ask" data-q="Explícame los patrones detectados">Explicar patrones</button><button class="btn" data-route="opportunities">Ver ${k.opps} oportunidades</button></div>
+      </div>
+    </div>
+    <div class="hero-side">
+      <h3><span class="pulse"></span>Auditoría en tiempo real</h3>
+      <div class="big-count"><span class="live-count">${Live.audited.toLocaleString('es-CL')}</span><small>cuentas auditadas</small></div>
+      <div class="cur">Ahora: <b class="live-current">${esc(Live.current?.c.name || 'iniciando…')}</b></div>
+      <ul class="agent-rows">${agentsRows}</ul>
+    </div>
+  </section>
+  <section class="kpis" aria-label="Key figures">
+    <div class="kpi"><div class="l">Revenue 12M</div><div class="v">${money(k.rev12, true)}</div><div class="s ${up ? 'up' : 'down'}">${up ? '▲' : '▼'} ${pct(Math.abs(k.growth))} semestre</div></div>
+    <div class="kpi gold"><div class="l">Potential revenue</div><div class="v">${money(k.potential, true)}</div><div class="s">${pct(k.potential / Math.max(1, k.rev12))} del revenue actual</div></div>
+    <div class="kpi"><div class="l">AI opportunities</div><div class="v">${k.opps}</div><div class="s">${k.customersWithOpps} cuentas</div></div>
+    ${[['REORDER', 'Reorders'], ['CROSS-SELL', 'Cross-sell'], ['EQUIPMENT', 'Equipment']].map(([t, l]) => `<div class="kpi" style="--c:${TYPE_COLOR[t]}"><div class="l">${l}</div><div class="v">${k[t].n}</div><div class="s">${money(k[t].pot, true)}</div><div class="bar"><span style="width:${(k[t].pot / Math.max(1, k.potential) * 100).toFixed(0)}%"></span></div></div>`).join('')}
+    <div class="kpi" style="--c:var(--bad)"><div class="l">Accounts at risk</div><div class="v">${k.atRisk.length}</div><div class="s">${money(k.atRiskPot, true)} expuestos</div><div class="bar"><span style="width:${(k.atRisk.length / Math.max(1, k.activeCustomers) * 100).toFixed(0)}%"></span></div></div>
+  </section>
+  <div class="grid g-2-1">
+    <section class="panel"><div class="panel-h"><h2>Revenue mensual</h2><span class="hint">Pedidos confirmados, últimos 12 meses</span></div>${areaChart(S.monthly, S.months)}</section>
+    <section class="panel"><div class="panel-h"><h2>Mix de oportunidades</h2></div><div class="donut-wrap">${donut(typeRows)}<ul class="legend-rows">${typeRows.map(r => `<li style="--c:${TYPE_COLOR[r.t]}"><span class="sw"></span><span>${TYPES[r.t].label}</span><span class="n">${r.n}</span><span class="money">${money(r.pot, true)}</span></li>`).join('')}</ul></div></section>
+  </div>
+  <div class="grid g-2-1">
+    <section class="panel"><div class="panel-h"><h2>Cola de prioridad de los agentes</h2><button class="btn sm" data-route="opportunities">Todas</button></div>${priorityList(7)}</section>
+    <section class="panel"><div class="panel-h"><h2><span class="pulse"></span>Actividad en vivo</h2><span class="hint">Auditoría cuenta por cuenta</span></div><ul class="live-feed" data-max="9">${Live.feed.slice(0, 9).map(e => feedItem(e)).join('')}</ul></section>
+  </div>
+  <section class="panel" style="margin-bottom:18px"><div class="panel-h"><h2>Patrones detectados</h2><button class="btn sm" data-action="ask" data-q="Explícame los patrones detectados">Pedir explicación al agente</button></div><div class="patterns">${S.patterns.slice(0, 6).map(patternCard).join('')}</div></section>
+  <div class="grid g-1-1">
+    <section class="panel"><div class="panel-h"><h2>Chile</h2><button class="btn sm" data-route="geo">Abrir mapa</button></div>
+      <div class="donut-wrap" style="grid-template-columns:230px 1fr">${chileMap({ w: 280, h: 420, mini: true })}<ul class="citylist" style="margin:0;align-self:center">${S.cityStats.slice(0, 7).map(c => `<li data-action="set-city" data-city="${esc(c.name)}"><span>${esc(c.name)}</span><b class="money">${money(c.potential, true)}</b></li>`).join('')}</ul></div>
+    </section>
+    <section class="panel"><div class="panel-h"><h2>Geographic Intelligence Agent</h2><span class="hint">Insights por territorio</span></div>
+      <ul class="insights">${S.insights.map(i => `<li>${esc(i.text)}</li>`).join('') || '<li>Sin insights todavía.</li>'}</ul>
+    </section>
+  </div>`;
+};
+
+function filteredOpps() {
+  const f = S.filters, q = norm(f.q);
+  return S.opps.filter(o => (!f.city || o.city === f.city) && (!f.product || o.productId === f.product) && (!f.type || o.type === f.type) && (!f.rep || o.rep === f.rep) && o.score >= f.minScore && o.potential >= f.minRev && (!q || norm(o.customer + ' ' + o.product + ' ' + o.reason).includes(q)));
+}
+VIEWS.opportunities = () => {
+  const f = S.filters;
+  const cities = [...new Set(S.opps.map(o => o.city))].sort();
+  const reps = [...new Set(S.opps.map(o => o.rep))].sort();
+  const prods = S.data.products.filter(p => S.opps.some(o => o.productId === String(p.id)));
+  const opt = (v, l, sel) => `<option value="${esc(v)}" ${sel === v ? 'selected' : ''}>${esc(l)}</option>`;
+  return pageHead('AI Opportunities', 'Cada oportunidad encontrada por los agentes, con score 0–100, razón y acción recomendada. Envíala a Odoo CRM con un clic.', `<button class="btn sm" data-action="export-opps">Export CSV</button>`) +
+  `<div class="filters" id="filters">
+    <div class="field"><label for="fCity">City</label><select id="fCity" data-filter="city">${opt('', 'All cities', f.city)}${cities.map(c => opt(c, c, f.city)).join('')}</select></div>
+    <div class="field"><label for="fProd">Product</label><select id="fProd" data-filter="product">${opt('', 'All products', f.product)}${prods.map(p => opt(String(p.id), p.name, f.product)).join('')}</select></div>
+    <div class="field"><label for="fType">Opportunity</label><select id="fType" data-filter="type">${opt('', 'All types', f.type)}${TYPE_KEYS.map(t => opt(t, TYPES[t].label, f.type)).join('')}</select></div>
+    <div class="field"><label for="fRep">Sales rep</label><select id="fRep" data-filter="rep">${opt('', 'All reps', f.rep)}${reps.map(r => opt(r, r, f.rep)).join('')}</select></div>
+    <div class="field"><label for="fScore">Min AI score: <b id="fScoreV" style="color:#fff">${f.minScore}</b></label><input id="fScore" type="range" min="0" max="95" step="5" value="${f.minScore}" data-filter="minScore"></div>
+    <div class="field"><label for="fRev">Min revenue (USD)</label><input id="fRev" type="number" min="0" step="500" value="${f.minRev || ''}" placeholder="0" data-filter="minRev"></div>
+    <button class="btn" data-action="clear-filters">Clear</button>
+  </div>
+  <div class="field" style="margin-bottom:10px"><input type="search" id="fQ" placeholder="Buscar cliente, producto o razón" value="${esc(f.q)}" data-filter="q" aria-label="Search opportunities"></div>
+  <div id="oppResults">${oppResultsHtml(filteredOpps())}</div>`;
+};
+function oppResultsHtml(list) {
+  const shown = list.slice(0, S.oppLimit);
+  return `<div class="results-line"><span><b>${list.length}</b> ${plural(list.length, 'opportunity', 'opportunities')} · <b class="money">${money(sum(list, o => o.potential))}</b> potential</span><span>Ordenadas por AI score</span></div>
+  <section class="panel">${oppTable(shown)}${list.length > shown.length ? `<div class="row-flex mt" style="justify-content:center"><button class="btn" data-action="more-opps">Mostrar ${Math.min(40, list.length - shown.length)} más</button></div>` : ''}</section>`;
+}
+AFTER.opportunities = () => {
+  const upd = () => { $('#oppResults').innerHTML = oppResultsHtml(filteredOpps()); };
+  $$('[data-filter]').forEach(el => {
+    const ev = el.type === 'range' || el.type === 'search' || el.type === 'number' ? 'input' : 'change';
+    el.addEventListener(ev, () => {
+      const k = el.dataset.filter;
+      S.filters[k] = k === 'minScore' || k === 'minRev' ? Number(el.value) || 0 : el.value;
+      if (k === 'minScore') $('#fScoreV').textContent = el.value;
+      S.oppLimit = 40; upd();
+    });
+  });
+};
+
+VIEWS.customers = () => {
+  const cities = [...new Set(S.data.customers.map(c => c.city))].sort();
+  return pageHead('Customers', 'Customer 360 de cada clínica: patrón de compra, oportunidades abiertas, riesgo y la siguiente mejor acción según los agentes.') +
+  `<div class="filters" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr)">
+    <div class="field"><label for="cQ">Search</label><input type="search" id="cQ" placeholder="Clínica o ejecutivo" value="${esc(S.custQuery)}"></div>
+    <div class="field"><label for="cCity">City</label><select id="cCity"><option value="">All cities</option>${cities.map(c => `<option ${S.custCity === c ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select></div>
+    <div class="field"><label for="cSort">Sort by</label><select id="cSort">${[['rev', 'Revenue 12M'], ['pot', 'Potential revenue'], ['risk', 'Risk'], ['last', 'Days since last purchase']].map(([v, l]) => `<option value="${v}" ${S.custSort === v ? 'selected' : ''}>${l}</option>`).join('')}</select></div>
+  </div><section class="panel" id="custList">${custListHtml()}</section>`;
+};
+function custListHtml() {
+  const q = norm(S.custQuery);
+  let list = [...S.cs.values()].filter(s => (!S.custCity || s.c.city === S.custCity) && (!q || norm(s.c.name + ' ' + s.c.rep).includes(q)));
+  const rr = { High: 2, Medium: 1, Low: 0 };
+  list.sort(S.custSort === 'pot' ? (a, b) => b.potential - a.potential : S.custSort === 'risk' ? (a, b) => rr[b.riskLevel] - rr[a.riskLevel] || b.rev12 - a.rev12 : S.custSort === 'last' ? (a, b) => (b.daysSince ?? -1) - (a.daysSince ?? -1) : (a, b) => b.rev12 - a.rev12);
+  if (!list.length) return '<div class="empty">No hay clientes con ese filtro.</div>';
+  return `<div class="results-line"><span><b>${list.length}</b> ${plural(list.length, 'customer')}</span></div><div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>Customer</th><th>City</th><th>Rep</th><th>12M trend</th><th class="num">Revenue 12M</th><th class="num">Orders 12M</th><th>Last purchase</th><th class="num">Opps</th><th class="num">Potential</th><th>Risk</th></tr></thead><tbody>` +
+    list.map(s => `<tr class="click" data-action="open-customer" data-id="${esc(s.c.id)}"><td data-l="Customer"><span class="cust">${esc(s.c.name)}</span><div class="sub">Tier ${s.c.tier}</div></td><td data-l="City">${esc(s.c.city)}</td><td data-l="Rep">${esc(s.c.rep || '—')}</td><td data-l="Trend" style="width:110px">${sparkline(s.monthly, s.riskLevel === 'High' ? '#F27D7D' : '#6CD5C7').replace('class="spark"', 'class="spark" style="height:28px;width:100px"')}</td><td data-l="Revenue 12M" class="num">${money(s.rev12)}</td><td data-l="Orders 12M" class="num">${s.orders12}</td><td data-l="Last purchase">${s.daysSince != null ? s.daysSince + ' d' : '—'}</td><td data-l="Opps" class="num">${s.opps.length}</td><td data-l="Potential" class="num money">${money(s.potential)}</td><td data-l="Risk"><span class="${riskCls(s.riskLevel)}">${s.riskLevel}</span></td></tr>`).join('') + '</tbody></table></div>';
+}
+AFTER.customers = () => {
+  const upd = () => { $('#custList').innerHTML = custListHtml(); };
+  $('#cQ').addEventListener('input', e => { S.custQuery = e.target.value; upd(); });
+  $('#cCity').addEventListener('change', e => { S.custCity = e.target.value; upd(); });
+  $('#cSort').addEventListener('change', e => { S.custSort = e.target.value; upd(); });
+};
+
+function agentNarrative(s) {
+  const c = s.c, o = s.opps[0];
+  const trend = s.revPrev6 ? s.rev6 / s.revPrev6 - 1 : null;
+  let t = `${esc(c.name)} compra cada ${s.cycle || '—'} días en promedio y su última compra fue hace ${s.daysSince} días. `;
+  if (trend != null) t += `Su volumen ${trend >= 0 ? 'creció' : 'cayó'} ${pct(Math.abs(trend))} en el último semestre. `;
+  if (o) t += `La señal más fuerte es <b>${TYPES[o.type].label.toLowerCase()}${o.product ? ' de ' + esc(o.product) : ''}</b> (score ${o.score}). `;
+  else t += 'No hay señales abiertas: la cuenta se comporta según su patrón habitual.';
+  if (s.opps.length > 1) t += `En total veo ${s.opps.length} oportunidades por ${money(s.potential, true)}.`;
+  return t;
+}
+function openCustomer(id) {
+  const s = S.cs.get(String(id)); if (!s) return;
+  const c = s.c;
+  const prods = [...s.prods.values()].sort((a, b) => b.v12 - a.v12 || b.vAll - a.vAll);
+  const leads = (S.data.leads || []).filter(l => String(l.partnerId) === String(c.id));
+  $('#drawer').innerHTML = `<div class="drawer-h"><div><h2>${esc(c.name)}</h2><p>${esc(c.city)} · Rep ${esc(c.rep || 'unassigned')} · Tier ${c.tier}${c.email ? ' · ' + esc(c.email) : ''}${c.phone ? ' · ' + esc(c.phone) : ''}</p></div><button class="icon-btn x" data-action="close-drawer" aria-label="Close">✕</button></div>
+  <div class="drawer-b">
+    <div class="agent-note"><span class="orb sm"></span><div><p>${agentNarrative(s)}</p><div class="row-flex" style="margin-top:10px"><button class="btn sm" data-action="ask" data-q="Cuéntame sobre ${esc(c.name)}">Preguntar al agente</button></div></div></div>
+    <div class="minikpis">
+      <div><div class="l">Revenue 12M</div><div class="v">${money(s.rev12, true)}</div></div>
+      <div><div class="l">Frequency</div><div class="v">${s.cycle ? s.cycle + ' d' : '—'}</div></div>
+      <div><div class="l">Last purchase</div><div class="v">${s.daysSince != null ? s.daysSince + ' d' : '—'}</div></div>
+      <div><div class="l">Risk</div><div class="v ${riskCls(s.riskLevel)}">${s.riskLevel}</div></div>
+    </div>
+    <div class="panel-h"><h2>Compras mensuales</h2><span class="hint">${s.orders12} pedidos en 12 meses · último ${fmtDate(s.lastDate)}</span></div>
+    ${sparkline(s.monthly)}
+    <div class="nbx"><div><div class="l">Next Best Product</div><div class="v">${esc(s.nbp || 'Sin recomendación')}</div>${s.nbpWhy ? `<div class="muted" style="font-size:12.5px">Señal: ${esc(s.nbpWhy)}</div>` : ''}</div><div><div class="l">Next Best Action</div><div class="v">${esc(s.nba)}</div></div></div>
+    <section class="panel"><div class="panel-h"><h2>Oportunidades</h2><span class="money">${money(s.potential)}</span></div>
+      ${s.opps.length ? `<ul class="priority">${s.opps.map(o => `<li>${ring(o.score)}<div><div>${chip(o.type)} <b style="color:#fff">${esc(o.product)}</b></div><div class="r">${esc(o.reason)}</div><div class="r"><b style="color:#C9D2E2">Action:</b> ${esc(o.action)}</div><div style="margin-top:8px">${createBtn(o)}</div></div><span class="p money">${money(o.potential, true)}</span></li>`).join('')}</ul>` : '<div class="empty">Sin señales abiertas.</div>'}
+    </section>
+    ${S.mode === 'live' ? `<section class="panel"><div class="panel-h"><h2>Odoo CRM</h2></div>${leads.length ? leads.map(l => `<div>#${l.id} ${esc(l.name)} ${l.stage ? '· ' + esc(l.stage) : ''}</div>`).join('') : '<div class="muted">Sin oportunidades CRM abiertas para este partner.</div>'}</section>` : ''}
+    <section class="panel"><div class="panel-h"><h2>Productos comprados</h2><span class="hint">${prods.length} ${plural(prods.length, 'producto')}</span></div>
+      <div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>Product</th><th class="num">Purchases</th><th class="num">Units</th><th class="num">Revenue 12M</th><th class="num">Cycle</th><th>Last</th></tr></thead><tbody>
+      ${prods.map(pr => `<tr><td data-l="Product"><b style="color:#fff">${esc(pr.p.name)}</b><div class="sub">${esc(pr.p.category)}</div></td><td data-l="Purchases" class="num">${pr.n}</td><td data-l="Units" class="num">${pr.qty}</td><td data-l="Revenue 12M" class="num">${money(pr.v12)}</td><td data-l="Cycle" class="num">${pr.cycle ? pr.cycle + ' d' : '—'}</td><td data-l="Last">${pr.since} d</td></tr>`).join('')}
+      </tbody></table></div>
+    </section>
+  </div>`;
+  $('#drawer').classList.add('on'); $('#drawer').setAttribute('aria-hidden', 'false'); $('#overlay').classList.add('on');
+  setTimeout(() => $('#drawer .x')?.focus(), 50);
+}
+function closeDrawer() { $('#drawer').classList.remove('on'); $('#drawer').setAttribute('aria-hidden', 'true'); if (!$('#modal').classList.contains('on')) $('#overlay').classList.remove('on'); }
+
+VIEWS.products = () => {
+  const P = S.prodStats.filter(x => !x.p.equipment), E = S.prodStats.filter(x => x.p.equipment);
+  const cats = {};
+  for (const x of P) { const c = cats[x.p.category] || (cats[x.p.category] = { rev: 0, pen: S.natCat[x.p.category] || 0 }); c.rev += x.rev12; }
+  const catRows = Object.entries(cats).sort((a, b) => b[1].rev - a[1].rev);
+  const maxRev = Math.max(1, ...catRows.map(r => r[1].rev));
+  return pageHead('Product Intelligence', 'Revenue, alcance y oportunidades por producto y categoría. Penetración = % de clientes activos que lo compraron en 12 meses.') +
+  `<div class="grid g-1-1"><section class="panel"><div class="panel-h"><h2>Categorías</h2><span class="hint">Penetración · revenue 12M</span></div>
+    <div class="bars">${catRows.map(([cat, v]) => `<div class="row"><span style="color:#fff;font-weight:600">${esc(cat)}</span><div class="bar"><span style="width:${(v.rev / maxRev * 100).toFixed(1)}%"></span></div><span class="n">${pct(v.pen)}</span><span class="m">${money(v.rev, true)}</span></div>`).join('')}</div>
+  </section>
+  <section class="panel"><div class="panel-h"><h2>Equipment</h2><span class="hint">Base instalada y pipeline</span></div>
+    ${E.map(x => { const inst = [...S.cs.values()].filter(s => s.owns.has(x.id)).length; return `<div class="row-flex" style="justify-content:space-between;padding:10px 0;border-top:1px solid var(--line-2)"><div><b style="color:#fff">${esc(x.p.name)}</b><div class="muted" style="font-size:12.5px">${money(x.p.price)} list price</div></div><div style="text-align:right"><b style="color:#fff">${inst}</b> instalados<div class="muted" style="font-size:12.5px">${x.equipment} ${plural(x.equipment, 'candidata')} · <span class="money">${money(x.potential, true)}</span></div></div></div>`; }).join('') || '<div class="muted">Sin equipos en el catálogo.</div>'}
+    <button class="btn sm mt" data-action="filter-go" data-type="EQUIPMENT">Ver candidatas</button>
+  </section></div>
+  <section class="panel"><div class="panel-h"><h2>Productos</h2><span class="hint">Clic en un número para ver esas oportunidades</span></div>
+  <div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>Product</th><th class="num">Revenue 12M</th><th class="num">Trend</th><th class="num">Customers</th><th class="num">Penetration</th><th class="num">Reorders</th><th class="num">Cross-sell</th><th class="num">Upsell</th><th class="num">Potential</th></tr></thead><tbody>
+  ${P.map(x => `<tr><td data-l="Product"><b style="color:#fff">${esc(x.p.name)}</b><div class="sub">${esc(x.p.category)}${x.p.sku ? ' · ' + esc(x.p.sku) : ''}</div></td><td data-l="Revenue 12M" class="num">${money(x.rev12)}</td><td data-l="Trend" class="num ${x.growth == null ? '' : x.growth >= 0 ? 'risk-l' : 'risk-h'}">${x.growth == null ? '—' : (x.growth >= 0 ? '▲ ' : '▼ ') + pct(Math.abs(x.growth))}</td><td data-l="Customers" class="num">${x.customers}</td><td data-l="Penetration" class="num">${pct(x.penetration)}</td>
+    <td data-l="Reorders" class="num">${x.reorders ? `<button class="linkish" data-action="filter-go" data-product="${esc(x.id)}" data-type="REORDER">${x.reorders}</button>` : 0}</td>
+    <td data-l="Cross-sell" class="num">${x.cross ? `<button class="linkish" data-action="filter-go" data-product="${esc(x.id)}" data-type="CROSS-SELL">${x.cross}</button>` : 0}</td>
+    <td data-l="Upsell" class="num">${x.upsell ? `<button class="linkish" data-action="filter-go" data-product="${esc(x.id)}" data-type="UPSELL">${x.upsell}</button>` : 0}</td>
+    <td data-l="Potential" class="num money">${money(x.potential, true)}</td></tr>`).join('')}
+  </tbody></table></div></section>`;
+};
+
+VIEWS.geo = () => {
+  const C = S.cityStats;
+  if (!C.length) return pageHead('Geographic Intelligence — Chile', 'Sin datos cargados.') + '<div class="empty">No hay clientes para mapear.</div>';
+  const sel = C.find(c => c.name === S.geoCity) || C[0];
+  S.geoCity = sel.name;
+  const m = S.geoMetric;
+  const seg = [['potential', 'Potential'], ['revenue', 'Revenue'], ['opps', 'Opportunities'], ['risk', 'Risk']].map(([v, l]) => `<button class="${m === v ? 'on' : ''}" data-action="geo-metric" data-m="${v}" aria-pressed="${m === v}">${l}</button>`).join('');
+  const unmapped = C.filter(c => !c.geo);
+  const penRows = [...sel.prodPen].filter(x => x.nat > 0 || x.city > 0).sort((a, b) => (a.city - a.nat) - (b.city - b.nat));
+  return pageHead('Geographic Intelligence — Chile', 'Clientes, revenue y oportunidades agrupados por ciudad. Selecciona una ciudad en el mapa para analizarla.') +
+  `<div class="insight-strip">${S.insights.slice(0, 4).map(i => `<p>${esc(i.text)}</p>`).join('')}</div>
+  <div class="geo">
+    <section class="panel"><div class="panel-h"><h2>Mapa comercial</h2><div class="seg" role="group" aria-label="Map metric">${seg}</div></div>
+      ${chileMap({ metric: m, selected: sel.name })}
+      ${unmapped.length ? `<p class="muted" style="font-size:12.5px">Sin coordenadas: ${unmapped.map(c => `<button class="linkish" data-action="set-city" data-city="${esc(c.name)}">${esc(c.name)}</button>`).join(', ')}</p>` : ''}
+    </section>
+    <section class="panel">
+      <div class="cityhead"><div><h2>${esc(sel.name)}</h2><div class="muted">${sel.customers} ${plural(sel.customers, 'cliente')} · ${[...sel.reps].map(esc).join(', ') || 'Sin ejecutivo'}${sel.growth != null ? ` · <span class="${sel.growth >= 0 ? 'risk-l' : 'risk-h'}">${sel.growth >= 0 ? '▲' : '▼'} ${pct(Math.abs(sel.growth))}</span> semestre` : ''}</div></div>
+        <div class="row-flex"><button class="btn primary sm" data-action="filter-go" data-city="${esc(sel.name)}">Ver ${sel.opps} oportunidades</button><button class="btn sm" data-action="ask" data-q="Muéstrame las oportunidades en ${esc(sel.name)}">Preguntar al agente</button></div></div>
+      <div class="minikpis">
+        <div><div class="l">Revenue 12M</div><div class="v">${money(sel.rev12, true)}</div></div>
+        <div><div class="l">Potential revenue</div><div class="v" style="color:var(--gold)">${money(sel.potential, true)}</div></div>
+        <div><div class="l">AI opportunities</div><div class="v">${sel.opps}</div></div>
+        <div><div class="l">Accounts at risk</div><div class="v">${sel.atRisk}</div></div>
+        <div><div class="l">Reorders</div><div class="v">${sel.reorder}</div></div>
+        <div><div class="l">Cross-sell · upsell</div><div class="v">${sel.cross} · ${sel.upsell}</div></div>
+        <div><div class="l">Equipment candidates</div><div class="v">${sel.equip}</div></div>
+        <div><div class="l">Revenue at risk</div><div class="v">${money(sel.riskRevenue, true)}</div></div>
+      </div>
+      <div class="grid g-1-1" style="margin:0">
+        <div><div class="panel-h"><h2>Top products</h2></div>${sel.topProducts.map(([n, v], i) => `<div class="row-flex" style="justify-content:space-between;padding:7px 0;border-top:${i ? '1px solid var(--line-2)' : '0'}"><span>${esc(n)}</span><b class="money">${money(v, true)}</b></div>`).join('') || '<div class="muted">Sin compras en 12 meses.</div>'}</div>
+        <div><div class="panel-h"><h2>Penetración por categoría</h2></div><div class="pen">${sel.catPen.map(x => `<div class="row ${x.city < x.nat - 0.15 ? 'low' : ''}"><span>${esc(x.cat)}</span><div class="track"><span style="width:${(x.city * 100).toFixed(0)}%"></span><i style="left:calc(${(x.nat * 100).toFixed(0)}% - 1px)"></i></div><span class="v">${pct(x.city)} / ${pct(x.nat)}</span></div>`).join('')}</div>
+          <div class="legend"><span><span class="sw"></span>${esc(sel.name)}</span><span><span class="mk"></span>Nacional</span></div></div>
+      </div>
+      <div class="panel-h mt"><h2>Brechas de penetración por producto</h2><span class="hint">Mayor brecha vs nacional primero</span></div>
+      <div class="pen">${penRows.slice(0, 6).map(x => `<div class="row ${x.city < x.nat - 0.15 ? 'low' : ''}"><span>${esc(x.p.name)}</span><div class="track"><span style="width:${(x.city * 100).toFixed(0)}%"></span><i style="left:calc(${(x.nat * 100).toFixed(0)}% - 1px)"></i></div><span class="v">${x.n}/${x.of} · ${pct(x.nat)} nac.</span></div>`).join('')}</div>
+    </section>
+  </div>
+  <section class="panel"><div class="panel-h"><h2>Todas las ciudades</h2><span class="hint">Clic en una fila para analizarla</span></div>
+  <div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>City</th><th class="num">Customers</th><th class="num">Revenue 12M</th><th class="num">Potential</th><th class="num">Opportunities</th><th class="num">Reorders</th><th class="num">Cross-sell</th><th class="num">Equipment</th><th class="num">At risk</th><th>Top products</th></tr></thead><tbody>
+  ${C.map(c => `<tr class="click" data-action="set-city" data-city="${esc(c.name)}"><td data-l="City"><b style="color:#fff">${esc(c.name)}</b></td><td data-l="Customers" class="num">${c.customers}</td><td data-l="Revenue 12M" class="num">${money(c.rev12, true)}</td><td data-l="Potential" class="num money">${money(c.potential, true)}</td><td data-l="Opportunities" class="num">${c.opps}</td><td data-l="Reorders" class="num">${c.reorder}</td><td data-l="Cross-sell" class="num">${c.cross}</td><td data-l="Equipment" class="num">${c.equip}</td><td data-l="At risk" class="num">${c.atRisk}</td><td data-l="Top products" class="sub">${c.topProducts.map(t => esc(t[0])).join(', ')}</td></tr>`).join('')}
+  </tbody></table></div></section>`;
+};
+
+/* =========================================================
+   Eurolab AI — conversational agent (dock + Copilot page)
+   ========================================================= */
+const DOCK_SUGGEST = ['¿A quién contacto hoy?', 'Recompras atrasadas', 'Candidatos a equipos', '¿Qué ciudad tiene más potencial?', 'Cross-sell en Concepción', 'Baja penetración en Viña del Mar', 'Cuentas en riesgo', 'Explícame los patrones'];
+const SPEC_SUGGEST = ['What customers should we contact today?', 'Find overdue reorders.', 'Find potential equipment customers.', 'Show opportunities in Santiago.', 'Which city has the highest potential revenue?', 'Show cross-sell opportunities in Concepción.', 'Which products have low penetration in Viña del Mar?'];
+
+function msgHtml(m) {
+  if (m.role === 'user') return `<div class="msg user">${m.html}</div>`;
+  if (m.thinking) return `<div class="msg ai"><span class="orb sm busy"></span><div class="body"><ul class="steps">${m.steps.map((s, i) => `<li class="${i < m.step ? 'done' : i === m.step ? 'on' : ''}">${esc(s)}</li>`).join('')}</ul></div></div>`;
+  return `<div class="msg ai ${m.alert ? 'alert' : ''}"><span class="orb sm"></span><div class="body">${m.html}</div></div>`;
+}
+function renderChats() {
+  $$('.chat-box').forEach(box => { box.innerHTML = S.chat.map(msgHtml).join(''); const sc = box.parentElement; sc.scrollTop = sc.scrollHeight; });
+}
+
+const Agent = {
+  open: false, unread: 0,
+  visible() { return this.open || S.route === 'copilot'; },
+  openDock() {
+    if (S.route === 'copilot') return;
+    this.open = true; this.unread = 0; this.paintBadge();
+    $('#dock').classList.add('on'); $('#dock').setAttribute('aria-hidden', 'false'); $('#app').classList.add('dock-open');
+    this.syncDockVisibility(); renderChats();
+    setTimeout(() => { if (window.matchMedia('(min-width:901px)').matches) $('#dock input')?.focus({ preventScroll: true }); }, 280);
+  },
+  closeDock() {
+    this.open = false; $('#dock').classList.remove('on'); $('#dock').setAttribute('aria-hidden', 'true'); $('#app').classList.remove('dock-open');
+    this.syncDockVisibility();
+  },
+  syncDockVisibility() {
+    const onCp = S.route === 'copilot';
+    if (onCp && this.open) { this.open = false; $('#dock').classList.remove('on'); $('#app').classList.remove('dock-open'); }
+    $('#orbBtn').classList.toggle('hide', onCp || this.open);
+  },
+  paintBadge(text) {
+    const b = $('#orbBadge'); b.textContent = this.unread; b.classList.toggle('on', this.unread > 0);
+    const bb = $('#orbBubble');
+    if (text && this.unread > 0) { bb.textContent = text; bb.classList.add('on'); clearTimeout(this._bt); this._bt = setTimeout(() => bb.classList.remove('on'), 9000); }
+    else if (!this.unread) bb.classList.remove('on');
+  },
+  say(html, opts = {}) {
+    S.chat.push({ role: 'ai', html, alert: !!opts.notify });
+    renderChats();
+    if (opts.notify && !this.visible()) { this.unread++; this.paintBadge(opts.bubble || 'Tengo un hallazgo nuevo para ti'); }
+  },
+  think(steps, done, delay = 300) {
+    const m = { role: 'ai', thinking: true, steps, step: 0 };
+    S.chat.push(m); renderChats();
+    $$('.orb').forEach(o => o.id === 'dockOrb' && o.classList.add('busy'));
+    const tick = () => {
+      m.step++;
+      if (m.step < steps.length) { renderChats(); setTimeout(tick, delay); }
+      else { S.chat.splice(S.chat.indexOf(m), 1); $('#dockOrb')?.classList.remove('busy'); done(); }
+    };
+    setTimeout(tick, delay);
+  },
+  ask(q) {
+    if (!this.visible()) this.openDock();
+    S.chat.push({ role: 'user', html: esc(q) });
+    const es = isSpanish(q);
+    const steps = es ? ['Leyendo pedidos, clientes y productos', 'Cruzando ciclos de compra, geografía y afinidad', 'Priorizando por AI score'] : ['Reading orders, customers and products', 'Cross-checking purchase cycles, geography and affinity', 'Ranking by AI score'];
+    this.think(steps, () => {
+      let html;
+      try { html = copilotAnswer(q); } catch (err) { html = `<p>${es ? 'No pude completar el análisis' : 'The analysis failed'}: ${esc(err.message)}.</p>`; }
+      S.chat.push({ role: 'ai', html }); renderChats();
+      audit('copilot', 'Question answered', q, 'info');
+    }, 260);
+  },
+  brief(auto) {
+    const k = S.kpi;
+    const overdue = S.opps.filter(o => o.type === 'REORDER' && o.meta && o.meta.ratio >= 1.3).sort((a, b) => b.score - a.score)[0];
+    const risk = S.opps.filter(o => o.type === 'CUSTOMER RISK' || o.type === 'DORMANT ACCOUNT').sort((a, b) => b.potential - a.potential)[0];
+    const eq = S.opps.filter(o => o.type === 'EQUIPMENT')[0];
+    const cr = S.opps.filter(o => o.type === 'CROSS-SELL' || o.type === 'UPSELL')[0];
+    const items = [];
+    if (overdue) items.push(`<li><b>Recompra atrasada</b> · ${custBtn(overdue.customerId, overdue.customer)} (${esc(overdue.city)}): ${esc(overdue.product)}, compra cada ${overdue.meta.cycle} días y no pide hace ${overdue.meta.since}. <span class="money">${money(overdue.potential, true)}</span></li>`);
+    if (risk) items.push(`<li><b>${risk.type === 'DORMANT ACCOUNT' ? 'Cuenta dormida' : 'Cuenta en riesgo'}</b> · ${custBtn(risk.customerId, risk.customer)} (${esc(risk.city)}): ${risk.type === 'DORMANT ACCOUNT' ? `sin pedidos hace ${risk.meta.days} días` : `compras −${pct(risk.meta.drop)} en el semestre`}. <span class="money">${money(risk.potential, true)}</span> expuestos.</li>`);
+    if (eq) items.push(`<li><b>Equipo</b> · ${custBtn(eq.customerId, eq.customer)} (${esc(eq.city)}): ${money(eq.meta.injRev, true)} en inyectables al año, candidata a ${esc(eq.product)}. <span class="money">${money(eq.potential, true)}</span></li>`);
+    else if (cr) items.push(`<li><b>${TYPES[cr.type].label}</b> · ${custBtn(cr.customerId, cr.customer)}: ${esc(cr.product)}. <span class="money">${money(cr.potential, true)}</span></li>`);
+    const p = S.patterns[0];
+    const html = `<p><b>${greeting()}.</b> Soy Eurolab AI. Terminé la auditoría de ${S.data.customers.length} cuentas y ${S.data.lines.length.toLocaleString('es-CL')} líneas de venta${S.mode === 'live' ? ' sincronizadas desde Odoo' : ''}: hay <b>${money(k.potential, true)}</b> en revenue potencial.</p>
+      <p>Lo más importante hoy:</p><ol>${items.join('')}</ol>
+      ${p ? `<p>También detecté ${S.patterns.length} patrones. El más relevante: <b>${esc(p.title)}</b>. ${esc(p.detail)}</p>` : ''}
+      <p>Sigo auditando las cuentas en segundo plano y te aviso si aparece algo importante. ¿Por dónde empezamos?</p>`;
+    const steps = ['Conectando con los datos comerciales', `Auditando ${S.data.customers.length} cuentas`, 'Detectando patrones de compra', 'Preparando el briefing'];
+    this.think(steps, () => { this.say(html, { notify: auto, bubble: `${greeting()}. Tengo ${items.length} prioridades para hoy.` }); }, 420);
+  }
+};
+function isSpanish(q) { return /[¿¡ñáéíóú]|\b(que|cual|cuales|clientes?|ciudad|ciudades|muestra|muestrame|recompras?|hoy|donde|como|tiene|tienen|productos?|equipos?|riesgo|atrasad\w*|oportunidades|cuentas?|patron\w*|dame|quien|contacto|contactar|explica\w*|cuentame|baja|en riesgo|desaceler\w*|ventas|hola|buen\w*)\b/i.test(q); }
+
+/* =========================================================
+   Revenue Agents page
+   ========================================================= */
+const AGENTS = [
+  { id: 'hunter', name: 'Opportunity Hunter', desc: 'Busca revenue en todas las señales y las ordena por AI score.', types: TYPE_KEYS, ic: IC.opp },
+  { id: 'reorder', name: 'Reorder Agent', desc: 'Detecta recompras esperadas y atrasadas según el ciclo de cada clínica.', types: ['REORDER'], ic: IC.reorder },
+  { id: 'cross', name: 'Cross-Sell Agent', desc: 'Encuentra productos adicionales y upgrades para clientes actuales.', types: ['CROSS-SELL', 'UPSELL'], ic: IC.cross },
+  { id: 'equip', name: 'Equipment Agent', desc: 'Identifica clínicas de alto consumo listas para equipos.', types: ['EQUIPMENT'], ic: IC.prod },
+  { id: 'risk', name: 'Customer Risk Agent', desc: 'Detecta caídas de compra y cuentas dormidas.', types: ['CUSTOMER RISK', 'DORMANT ACCOUNT'], ic: IC.risk },
+  { id: 'geo', name: 'Geographic Intelligence Agent', desc: 'Ordena ciudades y territorios por revenue potencial.', types: null, ic: IC.geo }
+];
+function agentResult(a) {
+  if (!a.types) return { count: S.cityStats.length, potential: sum(S.cityStats, c => c.potential), items: S.cityStats.slice(0, 4).map(c => ({ l: `${c.name} · ${c.opps} opps`, r: money(c.potential, true), city: c.name })) };
+  const list = S.opps.filter(o => a.types.includes(o.type));
+  return { count: list.length, potential: sum(list, o => o.potential), items: list.slice(0, 4).map(o => ({ l: `${o.customer} · ${o.product || TYPES[o.type].label}`, r: `${o.score} · ${money(o.potential, true)}`, cust: o.customerId })) };
+}
+VIEWS.agents = () => pageHead('Revenue Agents', 'Seis agentes auditan las mismas cuentas desde ángulos distintos, de forma continua. Cada hallazgo alimenta la cola de prioridad y al Copilot.', '<button class="btn primary sm" data-action="run-all">Escaneo completo</button>') +
+  `<div class="statline">
+    <div><div class="l">Cuentas auditadas (sesión)</div><div class="v live-count">${Live.audited.toLocaleString('es-CL')}</div></div>
+    <div><div class="l">Hallazgos activos</div><div class="v">${S.opps.length}</div></div>
+    <div><div class="l">Patrones detectados</div><div class="v">${S.patterns.length}</div></div>
+    <div><div class="l">Último análisis</div><div class="v" style="font-size:20px">${new Date(S.lastAnalyzed).toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' })}</div></div>
+  </div>
+  <div class="agents">${AGENTS.map(a => { const r = agentResult(a), run = S.agentRuns[a.id], le = Live.perAgent[a.id]?.last; return `<article class="agent" id="ag-${a.id}">
+    <div class="agent-h"><span class="agent-ic">${a.ic}</span><div><h3>${a.name} <span class="ag-dot" data-agent="${a.id}"></span></h3><p>${a.desc}</p></div></div>
+    <div class="stats"><span><b>${r.count}</b>${a.types ? 'hallazgos' : 'ciudades'}</span><span><b class="money" style="font-family:var(--display);font-weight:500">${money(r.potential, true)}</b>potencial</span>${a.types ? `<span><b class="ag-count" data-agent="${a.id}">${Live.perAgent[a.id]?.n || 0}</b>auditorías</span>` : ''}</div>
+    ${a.types ? `<div class="ag-live" data-agent="${a.id}">${le ? `<b>${esc(le.name)}</b> · ${esc(le.text)}` : 'Esperando la siguiente cuenta…'}</div>` : `<div class="ag-live">${esc(S.insights[0]?.text || '')}</div>`}
+    <div class="agent-log ${run ? 'on' : ''}" id="log-${a.id}">${run ? run.log.join('<br>') : ''}</div>
+    <ul class="agent-res">${r.items.map(i => `<li><span>${i.cust ? custBtn(i.cust, i.l) : `<button class="linkish" data-action="set-city" data-city="${esc(i.city)}">${esc(i.l)}</button>`}</span><span class="muted">${esc(i.r)}</span></li>`).join('') || '<li class="muted">Sin hallazgos con la configuración actual.</li>'}</ul>
+    <div class="foot"><span class="when">${run ? 'Escaneo ' + fmtTime(run.at) : 'Monitoreo continuo'}</span><div class="row-flex">${a.types && a.types.length < 6 ? `<button class="btn sm" data-action="filter-go" data-type="${a.types[0]}">Ver todo</button>` : ''}<button class="btn sm" data-action="run-agent" data-id="${a.id}">Escanear</button></div></div>
+  </article>`; }).join('')}</div>
+  <div class="grid g-2-1 mt">
+    <section class="panel"><div class="panel-h"><h2>Patrones detectados</h2></div><div class="patterns">${S.patterns.map(patternCard).join('')}</div></section>
+    <section class="panel"><div class="panel-h"><h2><span class="pulse"></span>Actividad en vivo</h2></div><ul class="live-feed" data-max="16">${Live.feed.slice(0, 16).map(e => feedItem(e)).join('')}</ul></section>
+  </div>`;
+
+function runAgent(id) {
+  return new Promise(resolve => {
+    const a = AGENTS.find(x => x.id === id); if (!a) return resolve();
+    const D = S.data;
+    analyze();
+    const r = agentResult(a);
+    const lines = [
+      `<span style="color:#66738E">${fmtTime(Date.now())}</span> ${a.name} · escaneo completo${S.mode === 'live' ? ' sobre Odoo ' + esc(S.odoo?.db || '') : ''}`,
+      `Leídos ${D.customers.length} res.partner · ${D.orders.length} sale.order · ${D.lines.length.toLocaleString('es-CL')} sale.order.line · ${D.products.length} product.product`,
+      a.types ? `Señales evaluadas: ${a.types.map(t => TYPES[t].label).join(', ')}` : `${D.customers.length} clientes agrupados en ${S.cityStats.length} ciudades`,
+      `<span class="ok">✓ ${r.count} ${a.types ? 'hallazgos' : 'ciudades'} · ${money(r.potential, true)} potencial</span>`
+    ];
+    const el = $('#log-' + id), btn = $(`[data-action="run-agent"][data-id="${id}"]`);
+    if (btn) btn.disabled = true;
+    if (el) { el.classList.add('on'); el.innerHTML = ''; }
+    let i = 0;
+    const step = () => {
+      if (el) el.innerHTML += (i ? '<br>' : '') + lines[i];
+      i++;
+      if (i < lines.length) setTimeout(step, 300);
+      else {
+        S.agentRuns[id] = { at: Date.now(), log: lines };
+        audit('agent', a.name + ' scan', `${r.count} findings, ${money(r.potential)} potential`, 'ok');
+        setTimeout(() => { if (S.route === 'agents') rerenderKeepScroll(); resolve(); }, 350);
+      }
+    };
+    step();
+  });
+}
+
+/* =========================================================
+   Copilot answers — only from the loaded data (ES / EN)
+   ========================================================= */
+const CITY_ALIAS = { 'vina': 'Viña del Mar', 'valpo': 'Valparaíso', 'stgo': 'Santiago', 'conce': 'Concepción', 'pto montt': 'Puerto Montt' };
+function findCity(n) {
+  const names = S.cityStats.map(c => c.name).sort((a, b) => b.length - a.length);
+  for (const c of names) if (n.includes(norm(c))) return c;
+  for (const [k, v] of Object.entries(CITY_ALIAS)) if (new RegExp('\\b' + k + '\\b').test(n) && names.includes(v)) return v;
+  return null;
+}
+function findType(n) {
+  if (/cross|venta cruzada|cruzad/.test(n)) return 'CROSS-SELL';
+  if (/upsell|up-sell|upgrade/.test(n)) return 'UPSELL';
+  if (/equip|device|dispositivo|aparat|maquina/.test(n)) return 'EQUIPMENT';
+  if (/dormant|inactiv|dormid|reactiv/.test(n)) return 'DORMANT ACCOUNT';
+  if (/risk|riesgo|declin|caida|churn|drop|perdiendo/.test(n)) return 'CUSTOMER RISK';
+  if (/reorder|re-order|recompra|reposic|overdue|atrasad|vencid/.test(n)) return 'REORDER';
+  return null;
+}
+function findProducts(n) {
+  const exact = S.data.products.filter(p => n.includes(norm(p.name)));
+  if (exact.length) return exact.map(p => String(p.id));
+  const brands = [...new Set(S.data.products.map(p => norm(p.name).split(' ')[0]).filter(b => b.length >= 5))];
+  const hit = brands.filter(b => n.includes(b));
+  return hit.length ? S.data.products.filter(p => hit.includes(norm(p.name).split(' ')[0])).map(p => String(p.id)) : [];
+}
+function findCustomer(n) {
+  let best = null;
+  for (const s of S.cs.values()) { const cn = norm(s.c.name); if (n.includes(cn) && (!best || cn.length > norm(best.c.name).length)) best = s; }
+  return best;
+}
+function findRep(n) { const reps = [...new Set(S.data.customers.map(c => c.rep).filter(Boolean))]; return reps.find(r => n.includes(norm(r)) || n.includes(norm(r).split(' ')[0] + ' ')) || null; }
+
+function copilotAnswer(q) {
+  const n = norm(q), es = isSpanish(q), T = (a, b) => es ? a : b;
+  const TL = t => TYPES[t].label.toLowerCase();
+  const src = cnt => `<div class="srcl">${T('Fuente', 'Source')}: ${S.mode === 'live' ? 'Odoo · ' + esc(S.odoo?.db || '') : T('datos comerciales Eurolab', 'Eurolab commercial data')} · ${cnt} · ${fmtDate(S.data.today)}</div>`;
+  const oppTbl = list => `<div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>Score</th><th>${T('Cliente', 'Customer')}</th><th>${T('Tipo', 'Type')}</th><th>${T('Producto', 'Product')}</th><th class="num">${T('Potencial', 'Potential')}</th></tr></thead><tbody>${list.map(o => `<tr><td data-l="Score"><b style="color:#fff">${o.score}</b></td><td data-l="${T('Cliente', 'Customer')}">${custBtn(o.customerId, o.customer)}<div class="sub">${esc(o.city)}</div></td><td data-l="${T('Tipo', 'Type')}">${chip(o.type)}</td><td data-l="${T('Producto', 'Product')}">${esc(o.product || '—')}</td><td data-l="${T('Potencial', 'Potential')}" class="num money">${money(o.potential)}</td></tr>`).join('')}</tbody></table></div>`;
+  const filterBtn = f => `<button class="btn sm" data-action="filter-go" ${f.city ? `data-city="${esc(f.city)}"` : ''} ${f.type ? `data-type="${esc(f.type)}"` : ''}>${T('Abrir en AI Opportunities', 'Open in AI Opportunities')}</button>`;
+  if (!n) return `<p>${T('Pregúntame por clientes, productos, ciudades u oportunidades.', 'Ask me about customers, products, cities or opportunities.')}</p>`;
+
+  if (/^(hola|hi|hello|buenas|buenos dias|buen dia|hey)\b/.test(n) && n.length < 25) {
+    return `<p>${T(`Hola. Tengo ${S.opps.length} oportunidades activas por ${money(S.kpi.potential, true)} y sigo auditando cuentas en tiempo real. Puedo decirte a quién contactar hoy, qué recompras están atrasadas, qué clínicas están listas para equipos o qué ciudad tiene más potencial.`, `Hi. I'm tracking ${S.opps.length} open opportunities worth ${money(S.kpi.potential, true)} and auditing accounts in real time. Ask me who to contact today, overdue reorders, equipment candidates or the city with most potential.`)}</p>`;
+  }
+
+  // Patterns
+  if (/patron|pattern|tendencia|trend|insight|hallazgo/.test(n) && !findCity(n)) {
+    if (!S.patterns.length) return `<p>${T('Aún no hay patrones con suficiente evidencia.', 'No pattern has enough evidence yet.')}</p>`;
+    return `<p>${T(`Detecté ${S.patterns.length} patrones cruzando todas las cuentas:`, `I found ${S.patterns.length} cross-account patterns (described in Spanish below):`)}</p><ol>${S.patterns.map(p => `<li><b>${esc(p.title)}</b> <span class="muted">(${esc(p.kpi)} · ${AGENT_NAME[p.agent]})</span><br>${esc(p.detail)}</li>`).join('')}</ol>` + src(S.data.orders.length + T(' pedidos', ' orders'));
+  }
+
+  // Cadence slowdown
+  if (/desaceler|espaci|slowing|slow down|slowdown|frecuencia/.test(n)) {
+    const p = S.patterns.find(x => x.id === 'cadence');
+    if (!p) return `<p>${T('Ninguna cuenta muestra una desaceleración clara de su frecuencia de compra.', 'No account shows a clear slowdown in purchase frequency.')}</p>`;
+    const list = p.members.map(id => S.cs.get(id)).sort((a, b) => b.rev12 - a.rev12).slice(0, 10);
+    return `<p>${esc(p.detail)}</p><div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>${T('Cliente', 'Customer')}</th><th class="num">${T('Ciclo histórico', 'Usual cycle')}</th><th class="num">${T('Última compra', 'Last purchase')}</th><th class="num">Revenue 12M</th></tr></thead><tbody>${list.map(s => `<tr><td data-l="${T('Cliente', 'Customer')}">${custBtn(s.c.id, s.c.name)}<div class="sub">${esc(s.c.city)}</div></td><td data-l="${T('Ciclo', 'Cycle')}" class="num">${s.cycle} d</td><td data-l="${T('Última', 'Last')}" class="num">${s.daysSince} d</td><td data-l="Revenue" class="num">${money(s.rev12)}</td></tr>`).join('')}</tbody></table></div>` + src(p.members.length + T(' cuentas', ' accounts'));
+  }
+
+  const city = findCity(n), type = findType(n), prods = findProducts(n), cust = findCustomer(n), rep = findRep(n);
+  const overdue = /overdue|atrasad|vencid|late|tarde/.test(n);
+
+  // City ranking
+  if (!city && /which city|what city|que ciudad|cual ciudad|cities|ciudades|by city|por ciudad|territor|zona|region/.test(n)) {
+    const val = type ? (c => sum(S.opps.filter(o => o.city === c.name && o.type === type), o => o.potential)) : /revenue|venta|factur/.test(n) && !/potential|potencial/.test(n) ? (c => c.rev12) : (c => c.potential);
+    const ranked = S.cityStats.map(c => ({ c, v: val(c) })).sort((a, b) => b.v - a.v).filter(x => x.v > 0);
+    if (!ranked.length) return `<p>${T('Ninguna ciudad tiene valor para esa métrica.', 'No city has a value for that measure.')}</p>`;
+    const lead = ranked[0];
+    return `<p>${T(`<b>${esc(lead.c.name)}</b> lidera con <b class="money">${money(lead.v)}</b>${type ? ' en ' + TL(type) : ''}, con ${lead.c.opps} oportunidades en ${lead.c.customers} clientes.`, `<b>${esc(lead.c.name)}</b> leads with <b class="money">${money(lead.v)}</b>${type ? ' in ' + TL(type) + ' potential' : ''}, from ${lead.c.opps} opportunities across ${lead.c.customers} customers.`)}${ranked[1] ? T(` Le sigue ${esc(ranked[1].c.name)} con ${money(ranked[1].v, true)}.`, ` ${esc(ranked[1].c.name)} follows with ${money(ranked[1].v, true)}.`) : ''}</p>
+      <div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>${T('Ciudad', 'City')}</th><th class="num">${T('Valor', 'Value')}</th><th class="num">Opps</th><th class="num">${T('Clientes', 'Customers')}</th></tr></thead><tbody>${ranked.slice(0, 10).map(x => `<tr><td data-l="${T('Ciudad', 'City')}"><button class="linkish" data-action="set-city" data-city="${esc(x.c.name)}">${esc(x.c.name)}</button></td><td data-l="${T('Valor', 'Value')}" class="num money">${money(x.v)}</td><td data-l="Opps" class="num">${x.c.opps}</td><td data-l="${T('Clientes', 'Customers')}" class="num">${x.c.customers}</td></tr>`).join('')}</tbody></table></div>` + src(S.cityStats.length + T(' ciudades', ' cities'));
+  }
+
+  // Penetration
+  if (/penetrat|penetrac|coverage|cobertura|baja penetr/.test(n)) {
+    if (city) {
+      const g = S.cityStats.find(c => c.name === city);
+      const rows = g.prodPen.filter(x => x.nat >= 0.15).sort((a, b) => (a.city - a.nat) - (b.city - b.nat)).slice(0, 8);
+      const top = rows[0];
+      return `<p>${T(`En <b>${esc(city)}</b> (${g.active} clientes activos) estas son las mayores brechas frente al promedio nacional:`, `In <b>${esc(city)}</b> (${g.active} active customers), the biggest penetration gaps vs the national average:`)}</p>
+        <div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>${T('Producto', 'Product')}</th><th class="num">${esc(city)}</th><th class="num">${T('Nacional', 'National')}</th><th class="num">${T('Brecha', 'Gap')}</th></tr></thead><tbody>${rows.map(x => `<tr><td data-l="${T('Producto', 'Product')}">${esc(x.p.name)}</td><td data-l="${esc(city)}" class="num">${pct(x.city)}</td><td data-l="${T('Nacional', 'National')}" class="num">${pct(x.nat)}</td><td data-l="${T('Brecha', 'Gap')}" class="num ${x.city < x.nat ? 'risk-h' : 'risk-l'}">${x.city >= x.nat ? '+' : '−'}${Math.abs(Math.round((x.city - x.nat) * 100))} pts</td></tr>`).join('')}</tbody></table></div>
+        <p>${top && top.city < top.nat ? T(`Empezaría por <b>${esc(top.p.name)}</b>: ${top.of - top.n} clínicas activas en ${esc(city)} todavía no lo compran.`, `Start with <b>${esc(top.p.name)}</b>: ${top.of - top.n} active clinics in ${esc(city)} don't buy it yet.`) : T(`${esc(city)} está en o sobre el promedio nacional en todos los productos.`, `${esc(city)} is at or above the national average on every product.`)}</p>` + src(g.active + T(' clientes activos', ' active customers'));
+    }
+    const rows = S.prodStats.filter(x => !x.p.equipment).sort((a, b) => a.penetration - b.penetration).slice(0, 8);
+    return `<p>${T('Productos con menor penetración nacional:', 'Lowest-penetration products nationally:')}</p><div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>${T('Producto', 'Product')}</th><th class="num">${T('Penetración', 'Penetration')}</th><th class="num">${T('Clientes', 'Customers')}</th></tr></thead><tbody>${rows.map(x => `<tr><td data-l="${T('Producto', 'Product')}">${esc(x.p.name)}</td><td data-l="${T('Penetración', 'Penetration')}" class="num">${pct(x.penetration)}</td><td data-l="${T('Clientes', 'Customers')}" class="num">${x.customers}</td></tr>`).join('')}</tbody></table></div>` + src(S.prodStats.length + T(' productos', ' products'));
+  }
+
+  // Contact today
+  if (!type && !cust && /contact|call|llamar|contactar|contacto|today|hoy|priorit|visit|visitar|prioridad/.test(n)) {
+    const best = new Map();
+    for (const o of S.opps) {
+      if (city && o.city !== city) continue;
+      if (rep && o.rep !== rep) continue;
+      const pr = o.score + (o.type === 'REORDER' && o.meta && o.meta.ratio >= 1.3 ? 8 : 0) + (o.type === 'CUSTOMER RISK' ? 4 : 0);
+      const cur = best.get(o.customerId);
+      if (!cur || pr > cur.pr) best.set(o.customerId, { o, pr });
+    }
+    const list = [...best.values()].sort((a, b) => b.pr - a.pr).slice(0, 8);
+    if (!list.length) return `<p>${T('No hay clientes con señales abiertas en ese filtro.', 'No customers with open signals for that filter.')}</p>`;
+    const tot = sum(list, x => S.cs.get(x.o.customerId).potential);
+    return `<p>${T(`Estas son las <b>${list.length} cuentas</b> que contactaría hoy${city ? ' en ' + esc(city) : ''}${rep ? ' de ' + esc(rep) : ''}. Juntas suman <b class="money">${money(tot, true)}</b> en potencial. Prioricé por AI score y subí las recompras atrasadas y las cuentas que están cayendo.`, `These are the <b>${list.length} accounts</b> I'd contact today${city ? ' in ' + esc(city) : ''}. Together they hold <b class="money">${money(tot, true)}</b> in potential. Ranked by AI score, boosted for overdue reorders and declining accounts.`)}</p>
+      <ol>${list.map(({ o }) => `<li>${custBtn(o.customerId, o.customer)} <span class="muted">· ${esc(o.city)} · ${esc(o.rep)}</span><br>${chip(o.type)} ${esc(o.product)} <span class="muted">— ${esc(o.action)}</span></li>`).join('')}</ol><div class="row-flex">${filterBtn({ city })}</div>` + src(S.opps.length + T(' oportunidades', ' opportunities'));
+  }
+
+  // Customer lookup
+  if (cust) {
+    const s = cust;
+    return `<p>${agentNarrative(s)}</p><p>${T('Siguiente mejor producto', 'Next best product')}: <b>${esc(s.nbp || '—')}</b>. ${T('Siguiente mejor acción', 'Next best action')}: ${esc(s.nba)}</p>${s.opps.length ? oppTbl(s.opps.slice(0, 6)) : ''}<div class="row-flex">${custBtn(s.c.id, 'Customer 360', 'btn sm')}</div>` + src(s.nOrders + T(' pedidos', ' orders'));
+  }
+
+  // Filtered opportunities
+  if (type || city || prods.length || rep) {
+    let list = S.opps.filter(o => (!type || o.type === type) && (!city || o.city === city) && (!rep || o.rep === rep) && (!prods.length || prods.includes(o.productId)));
+    if (type === 'REORDER' && overdue) list = list.filter(o => o.meta && o.meta.ratio >= 1.2).sort((a, b) => b.meta.overdue - a.meta.overdue);
+    if (type === 'CUSTOMER RISK' && !/dormant|dormid|inactiv/.test(n)) list = list.concat(S.opps.filter(o => o.type === 'DORMANT ACCOUNT' && (!city || o.city === city) && (!rep || o.rep === rep))).sort((a, b) => b.score - a.score);
+    const where = `${city ? T(' en ', ' in ') + esc(city) : ''}${rep ? T(' de ', ' for ') + esc(rep) : ''}`;
+    if (!list.length) return `<p>${T(`No encontré ${type ? TL(type) : 'oportunidades'}${where}.`, `I found no ${type ? TL(type) : 'opportunities'}${where}.`)}</p>` + src(S.opps.length + T(' oportunidades', ' opportunities'));
+    const pot = sum(list, o => o.potential);
+    let intro;
+    if (type === 'REORDER' && overdue) intro = T(`<b>${list.length} recompras atrasadas</b>${where} (más de 1,2× el ciclo habitual de la clínica), por <b class="money">${money(pot)}</b>. La más atrasada es ${esc(list[0].customer)}: ${esc(list[0].product)}, ${list[0].meta.overdue} días sobre su ciclo.`, `<b>${list.length} overdue reorders</b>${where} (past 1.2× the clinic's usual cycle), worth <b class="money">${money(pot)}</b>. Most overdue: ${esc(list[0].customer)}, ${esc(list[0].product)}, ${list[0].meta.overdue} days past cycle.`);
+    else if (type === 'EQUIPMENT') intro = T(`<b>${list.length} ${plural(list.length, 'clínica')}</b>${where} compran suficientes inyectables para justificar un equipo: <b class="money">${money(pot)}</b> a precio lista. La mejor candidata es ${esc(list[0].customer)} (${money(list[0].meta.injRev, true)} al año).`, `<b>${list.length} ${plural(list.length, 'clinic')}</b>${where} buy enough injectables to justify equipment: <b class="money">${money(pot)}</b> at list price. Top candidate: ${esc(list[0].customer)} (${money(list[0].meta.injRev, true)} a year).`);
+    else if (type === 'CUSTOMER RISK') intro = T(`<b>${list.length} cuentas en riesgo o dormidas</b>${where}, con <b class="money">${money(pot)}</b> de revenue expuesto.`, `<b>${list.length} accounts at risk or dormant</b>${where}, with <b class="money">${money(pot)}</b> of revenue exposed.`);
+    else intro = T(`<b>${list.length} ${type ? TL(type) : 'oportunidades'}</b>${where}${prods.length ? ' para ' + esc([...new Set(prods.map(id => S.data.products.find(p => String(p.id) === id).name.split(' ')[0]))].join(', ')) : ''}, por <b class="money">${money(pot)}</b> en revenue potencial.`, `<b>${list.length} ${type ? TL(type) : 'opportunities'}</b>${where}, worth <b class="money">${money(pot)}</b> in potential revenue.`);
+    let extra = '';
+    if (!type) { const byType = TYPE_KEYS.map(t => [t, list.filter(o => o.type === t).length]).filter(x => x[1]); extra = `<p>${byType.map(([t, c]) => `${c} ${TL(t)}`).join(', ')}.</p>`; }
+    if (city && !type) { const g = S.cityStats.find(c => c.name === city); extra += `<p>${T(`${esc(city)}: ${g.customers} clientes, ${money(g.rev12, true)} de revenue 12M, ${g.atRisk} ${plural(g.atRisk, 'cuenta')} en riesgo.`, `${esc(city)}: ${g.customers} customers, ${money(g.rev12, true)} revenue 12M, ${g.atRisk} at risk.`)}</p>`; }
+    return `<p>${intro}</p>${extra}${oppTbl(list.slice(0, 8))}${list.length > 8 ? `<p class="muted">${T('Top 8 por AI score.', 'Top 8 by AI score.')}</p>` : ''}<div class="row-flex">${filterBtn({ city, type })}</div>` + src(list.length + T(' oportunidades', ' opportunities'));
+  }
+
+  if (/product|producto|best seller|mas vendid|top/.test(n)) {
+    const rows = S.prodStats.slice(0, 8);
+    return `<p>${T('Productos con más revenue en 12 meses:', 'Top products by 12-month revenue:')}</p><div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>${T('Producto', 'Product')}</th><th class="num">Revenue 12M</th><th class="num">${T('Clientes', 'Customers')}</th><th class="num">${T('Potencial', 'Potential')}</th></tr></thead><tbody>${rows.map(x => `<tr><td data-l="${T('Producto', 'Product')}">${esc(x.p.name)}</td><td data-l="Revenue" class="num">${money(x.rev12)}</td><td data-l="${T('Clientes', 'Customers')}" class="num">${x.customers}</td><td data-l="${T('Potencial', 'Potential')}" class="num money">${money(x.potential, true)}</td></tr>`).join('')}</tbody></table></div>` + src(S.prodStats.length + T(' productos', ' products'));
+  }
+
+  if (/revenue|summary|resumen|kpi|overview|venta|how are we|como vamos|como va|total|potential|potencial/.test(n)) {
+    const k = S.kpi;
+    return `<p>${T(`Revenue 12M: <b>${money(k.rev12)}</b> (${k.growth >= 0 ? '+' : '−'}${pct(Math.abs(k.growth))} último semestre vs anterior). Hay <b>${k.opps}</b> oportunidades por <b class="money">${money(k.potential)}</b>: ${TYPE_KEYS.map(t => `${k[t].n} ${TL(t)}`).join(', ')}.`, `Revenue 12M: <b>${money(k.rev12)}</b> (${k.growth >= 0 ? '+' : '−'}${pct(Math.abs(k.growth))} last 6 months vs prior). There are <b>${k.opps}</b> opportunities worth <b class="money">${money(k.potential)}</b>: ${TYPE_KEYS.map(t => `${k[t].n} ${TL(t)}`).join(', ')}.`)}</p>` + src(S.data.lines.length + T(' líneas de venta', ' order lines'));
+  }
+
+  return `<p>${T('Respondo solo con los datos comerciales cargados y no pude relacionar la pregunta con clientes, productos, ciudades o tipos de oportunidad.', 'I answer only from the loaded commercial data and could not match that to customers, products, cities or opportunity types.')}</p><p>${T('Prueba nombrando una ciudad', 'Try naming a city')} (${S.cityStats.slice(0, 3).map(c => esc(c.name)).join(', ')}), ${T('un producto', 'a product')} (${esc(S.prodStats[0]?.p.name || '')}), ${T('una clínica o un tipo: recompra, cross-sell, equipos, riesgo.', 'a clinic, or a type: reorder, cross-sell, equipment, risk.')}</p>`;
+}
+
+VIEWS.copilot = () => pageHead('Eurolab AI Copilot', 'Conversa con el agente en español o inglés. Responde solo con los datos cargados y muestra la fuente bajo cada respuesta.') +
+  `<div class="copilot">
+    <aside class="cp-side">
+      <section class="panel agent-card"><span class="orb xl"></span><h3>Eurolab AI</h3><p><span class="pulse" style="width:6px;height:6px;margin-right:6px"></span>Auditando <span class="live-current">${esc(Live.current?.c.name || '…')}</span></p><p style="margin-top:10px"><b class="live-count" style="color:#fff">${Live.audited.toLocaleString('es-CL')}</b> cuentas auditadas en esta sesión</p></section>
+      <section class="panel"><div class="panel-h"><h2>Try asking</h2></div><div class="suggest">${SPEC_SUGGEST.map(q => `<button data-action="ask" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div></section>
+      <section class="panel"><div class="panel-h"><h2>Qué hace cada agente</h2></div><ul class="cap">${AGENTS.map(a => `<li><b>${a.name}</b><br>${a.desc}</li>`).join('')}</ul></section>
+    </aside>
+    <div class="cp-main"><div class="cp-chat"><div class="msgs chat-box"></div></div>
+      <div class="cp-foot"><div class="suggest">${DOCK_SUGGEST.slice(0, 6).map(q => `<button data-action="ask" data-q="${esc(q)}">${esc(q)}</button>`).join('')}</div>
+      <form class="composer-form" data-composer><input type="text" placeholder="Pregunta sobre cuentas, ciudades, productos u oportunidades" aria-label="Message to Eurolab AI" autocomplete="off"><button class="send" type="submit" aria-label="Send"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></form></div>
+    </div>
+  </div>`;
+AFTER.copilot = () => { renderChats(); if (window.matchMedia('(min-width:901px)').matches) $('.cp-foot input')?.focus({ preventScroll: true }); };
+
+/* =========================================================
+   OdooClient — JSON-RPC over fetch
+   ========================================================= */
+class OdooError extends Error { constructor(kind, message) { super(message); this.kind = kind; } }
+class OdooClient {
+  constructor({ url, db, username, key, proxy }) {
+    this.url = String(url || '').trim().replace(/\/+$/, '').replace(/\/(web|odoo)(\/.*)?$/, '');
+    this.db = db; this.username = username; this.key = key; this.proxy = (proxy || '').trim(); this.uid = null;
+  }
+  endpoint() { const t = this.url + '/jsonrpc'; if (!this.proxy) return t; return this.proxy.endsWith('=') ? this.proxy + encodeURIComponent(t) : this.proxy + t; }
+  async rpc(service, method, args) {
+    const body = { jsonrpc: '2.0', method: 'call', params: { service, method, args }, id: Date.now() };
+    let res;
+    try { res = await fetch(this.endpoint(), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }); }
+    catch (e) { throw new OdooError('network', `The browser could not reach ${this.proxy ? 'the proxy' : this.url}. The usual cause is CORS: Odoo does not accept requests from a web page on another origin. Allow this origin on the Odoo server, or enter a proxy URL, then try again.`); }
+    if (!res.ok) throw new OdooError('http', `Odoo answered HTTP ${res.status}${res.status === 404 ? ': /jsonrpc was not found. Check the Odoo URL.' : '.'}`);
+    let j;
+    try { j = await res.json(); } catch (e) { throw new OdooError('parse', 'The response was not JSON. Check that the URL points to the Odoo server itself.'); }
+    if (j.error) throw new OdooError('odoo', (j.error.data && j.error.data.message) || j.error.message || 'Odoo returned an error.');
+    return j.result;
+  }
+  async authenticate() {
+    const uid = await this.rpc('common', 'authenticate', [this.db, this.username, this.key, {}]);
+    if (!uid) throw new OdooError('auth', 'Odoo rejected the credentials. Check the database name, username and API key.');
+    this.uid = uid; return uid;
+  }
+  execute(model, method, args = [], kwargs = {}) { return this.rpc('object', 'execute_kw', [this.db, this.uid, this.key, model, method, args, kwargs]); }
+  searchRead(model, domain, fields, opts = {}) { return this.execute(model, 'search_read', [domain], Object.assign({ fields }, opts)); }
+  create(model, vals) { return this.execute(model, 'create', [vals]); }
+}
+
+const EQUIP_RE = /equip|device|dispositiv|aparat|maquin|m[aá]quina|laser|l[aá]ser|system|sistema|plataforma/i;
+async function loadFromOdoo(client, log) {
+  const today = startOfDay(Date.now());
+  const since = new Date(today - 548 * DAY).toISOString().slice(0, 19).replace('T', ' ');
+  const parseDate = s => { if (!s) return today; const t = Date.parse(String(s).replace(' ', 'T') + 'Z'); return isNaN(t) ? today : t; };
+  log('Reading sale.order (confirmed, last 18 months)…');
+  const orders = await client.searchRead('sale.order', [['state', 'in', ['sale', 'done']], ['date_order', '>=', since]], ['id', 'name', 'partner_id', 'date_order', 'amount_total', 'user_id'], { limit: 10000, order: 'date_order asc' });
+  log(`  ${orders.length} sale.order`, 'o');
+  const orderIds = orders.map(o => o.id);
+  let lines = [];
+  if (orderIds.length) {
+    log('Reading sale.order.line…');
+    for (let i = 0; i < orderIds.length; i += 2000) {
+      const chunk = await client.searchRead('sale.order.line', [['order_id', 'in', orderIds.slice(i, i + 2000)]], ['order_id', 'product_id', 'product_uom_qty', 'price_subtotal', 'display_type'], { limit: 100000 });
+      lines = lines.concat(chunk.filter(l => !l.display_type && l.product_id));
+    }
+    log(`  ${lines.length} sale.order.line`, 'o');
+  }
+  const partnerIds = [...new Set(orders.map(o => o.partner_id && o.partner_id[0]).filter(Boolean))];
+  log('Reading res.partner…');
+  const partners = partnerIds.length ? await client.searchRead('res.partner', [['id', 'in', partnerIds]], ['id', 'name', 'city', 'email', 'phone', 'user_id', 'country_id'], { limit: 20000 }) : [];
+  log(`  ${partners.length} res.partner`, 'o');
+  const productIds = [...new Set(lines.map(l => l.product_id[0]))];
+  log('Reading product.product…');
+  const prods = productIds.length ? await client.searchRead('product.product', [['id', 'in', productIds]], ['id', 'name', 'default_code', 'list_price', 'categ_id'], { limit: 20000 }) : [];
+  log(`  ${prods.length} product.product`, 'o');
+  let leads = [], activities = [];
+  try { log('Reading crm.lead…'); leads = await client.searchRead('crm.lead', [['type', '=', 'opportunity']], ['id', 'name', 'partner_id', 'stage_id'], { limit: 500 }); log(`  ${leads.length} crm.lead`, 'o'); }
+  catch (e) { log('  crm.lead unavailable: ' + e.message, 'e'); }
+  try { log('Reading mail.activity…'); activities = await client.searchRead('mail.activity', [], ['id', 'res_model', 'res_id', 'summary', 'date_deadline'], { limit: 500 }); log(`  ${activities.length} mail.activity`, 'o'); }
+  catch (e) { log('  mail.activity unavailable: ' + e.message, 'e'); }
+
+  const orderMap = new Map(orders.map(o => [o.id, o]));
+  const repByPartner = {};
+  for (const o of orders) if (o.user_id && o.partner_id) repByPartner[o.partner_id[0]] = { name: o.user_id[1], id: o.user_id[0] };
+  const customers = partners.map(p => ({
+    id: String(p.id), odooId: p.id, name: p.name, city: normalizeCity(p.city), email: p.email || '', phone: p.phone || '',
+    rep: (p.user_id && p.user_id[1]) || (repByPartner[p.id] && repByPartner[p.id].name) || 'Unassigned',
+    repUserId: (p.user_id && p.user_id[0]) || (repByPartner[p.id] && repByPartner[p.id].id) || null
+  }));
+  const products = prods.map(p => {
+    const cat = p.categ_id ? String(p.categ_id[1]).split('/').pop().trim() : 'Uncategorized';
+    const equipment = EQUIP_RE.test(cat) || p.list_price >= 5000;
+    return { id: String(p.id), odooId: p.id, sku: p.default_code || '', name: p.name, category: equipment ? 'Equipment' : cat, price: p.list_price || 0, equipment };
+  });
+  const outLines = lines.map(l => { const o = orderMap.get(l.order_id[0]); return { orderId: l.order_id[0], customerId: String(o.partner_id[0]), productId: String(l.product_id[0]), qty: l.product_uom_qty || 0, subtotal: l.price_subtotal || 0, date: parseDate(o.date_order) }; });
+  const outOrders = orders.map(o => ({ id: o.id, name: o.name, customerId: String(o.partner_id[0]), date: parseDate(o.date_order), rep: o.user_id ? o.user_id[1] : '', total: o.amount_total }));
+  return { source: 'odoo', today, customers, products, orders: outOrders, lines: outLines, leads: leads.map(l => ({ id: l.id, name: l.name, partnerId: l.partner_id ? l.partner_id[0] : null, stage: l.stage_id ? l.stage_id[1] : '' })), activities, loadedAt: Date.now() };
+}
+
+/* Live sync with Odoo every 10 minutes */
+let syncTimer = null;
+function startSync() {
+  clearInterval(syncTimer);
+  syncTimer = setInterval(async () => {
+    if (S.mode !== 'live' || !S.odoo) return;
+    try {
+      const before = S.data.orders.length;
+      const data = await loadFromOdoo(S.odoo, () => {});
+      S.data = data; analyze();
+      const diff = data.orders.length - before;
+      audit('odoo', 'Sync', `${data.orders.length} orders (${diff >= 0 ? '+' : ''}${diff})`, 'ok');
+      if (diff > 0) Agent.say(`<p>Sincronicé con Odoo: <b>${diff} ${plural(diff, 'pedido nuevo', 'pedidos nuevos')}</b>. Recalculé las oportunidades: ahora hay ${S.opps.length} por ${money(S.kpi.potential, true)}.</p>`, { notify: true, bubble: `${diff} pedidos nuevos desde Odoo` });
+      if (['dashboard', 'agents'].includes(S.route)) rerenderKeepScroll();
+    } catch (e) { audit('odoo', 'Sync failed', e.message, 'error'); }
+  }, 10 * 60 * 1000);
+}
+
+/* =========================================================
+   Connect Odoo view
+   ========================================================= */
+VIEWS.connect = () => {
+  const c = S.conn, live = S.mode === 'live';
+  return pageHead('Connect Odoo', 'Sincroniza clientes, productos y ventas desde Odoo. Los agentes recalculan todo con los datos reales y el estado cambia a ODOO LIVE cuando la autenticación y la carga terminan.') +
+  `<div class="conn">
+    <section class="panel">
+      <div class="panel-h"><h2>Conexión</h2>${live ? '<span class="chip-btn live" style="cursor:default"><span class="pulse" style="width:7px;height:7px"></span>ODOO LIVE</span>' : ''}</div>
+      <form id="connForm" class="form-grid" autocomplete="off">
+        <div class="field"><label for="oUrl">Odoo URL</label><input id="oUrl" type="url" required placeholder="https://eurolab.odoo.com" value="${esc(c.url)}"></div>
+        <div class="field"><label for="oDb">Database</label><input id="oDb" type="text" required placeholder="eurolab-production" value="${esc(c.db)}"></div>
+        <div class="field"><label for="oUser">Username</label><input id="oUser" type="text" required placeholder="ventas@eurolab.cl" value="${esc(c.username)}"></div>
+        <div class="field"><label for="oKey">API Key / Password</label><input id="oKey" type="password" required placeholder="Odoo API key" autocomplete="new-password"><span class="help">Se mantiene solo en memoria durante la sesión.</span></div>
+        <div class="field"><label for="oProxy">Proxy URL (opcional)</label><input id="oProxy" type="text" placeholder="https://your-proxy.example/?url=" value="${esc(c.proxy)}"><span class="help">Prefijo antes de la URL de Odoo cuando el servidor bloquea llamadas desde el navegador (CORS).</span></div>
+        <label class="check"><input type="checkbox" id="oRemember" ${c.url ? 'checked' : ''}> Recordar URL, base y usuario en este equipo</label>
+        <div class="row-flex"><button class="btn primary" type="submit" id="connBtn">${live ? 'Reconectar y recargar' : 'Conectar y sincronizar'}</button>${live ? '<button class="btn" type="button" data-action="disconnect">Desconectar</button>' : ''}</div>
+      </form>
+    </section>
+    <section class="panel">
+      <div class="panel-h"><h2>Log de conexión</h2><span class="hint">JSON-RPC /jsonrpc</span></div>
+      <div class="conn-log" id="connLog">${esc(S.connLog || (live ? 'Conectado.' : 'Sin conexión a Odoo.'))}</div>
+      <div class="note mt"><b>Modelos leídos:</b> res.partner, sale.order, sale.order.line, product.product, crm.lead, mail.activity. <b>Modelo escrito:</b> crm.lead, solo cuando confirmas “Create in Odoo”. Con la conexión activa, los agentes resincronizan cada 10 minutos.</div>
+      <div class="note mt"><b>Acceso desde el navegador.</b> La app habla con Odoo directamente desde el navegador. Odoo Online y la mayoría de servidores lo bloquean por defecto (CORS). Si el log muestra un error de red, habilita el origen en el servidor o usa un proxy propio.</div>
+      ${live ? `<div class="note mt"><b>Sincronizado:</b> ${S.data.customers.length} partners, ${S.data.orders.length} pedidos, ${S.data.lines.length} líneas, ${S.data.products.length} productos, ${S.data.leads.length} oportunidades CRM, ${S.data.activities.length} actividades.</div>` : ''}
+    </section>
+  </div>`;
+};
+AFTER.connect = () => { $('#connForm').addEventListener('submit', e => { e.preventDefault(); connectOdoo(); }); };
+
+async function connectOdoo() {
+  const url = $('#oUrl').value.trim(), db = $('#oDb').value.trim(), username = $('#oUser').value.trim(), key = $('#oKey').value, proxy = $('#oProxy').value.trim();
+  const logEl = $('#connLog'), btn = $('#connBtn');
+  let text = '';
+  const log = (m, cls) => { text += (text ? '\n' : '') + m; S.connLog = text; if (logEl && document.body.contains(logEl)) { logEl.insertAdjacentHTML('beforeend', (logEl.dataset.started ? '\n' : '') + `<span class="${cls || ''}">${esc(m)}</span>`); logEl.dataset.started = '1'; logEl.scrollTop = logEl.scrollHeight; } };
+  if (logEl) { logEl.innerHTML = ''; delete logEl.dataset.started; }
+  if (!/^https?:\/\//i.test(url)) { log('La URL de Odoo debe empezar con https:// o http://', 'e'); return; }
+  if ($('#oRemember').checked) { S.conn = { url, db, username, proxy }; store.set('conn', S.conn); } else { store.del('conn'); S.conn = { url: '', db: '', username: '', proxy: '' }; }
+  btn.disabled = true; btn.textContent = 'Conectando…';
+  const client = new OdooClient({ url, db, username, key, proxy });
+  audit('odoo', 'Connection attempt', `${client.url} · db ${db} · user ${username}`, 'info');
+  try {
+    log(`${fmtTime(Date.now())}  Authenticating ${username} on ${db} at ${client.url}…`, 'm');
+    const uid = await client.authenticate();
+    log(`  Authenticated. uid ${uid}`, 'o');
+    const data = await loadFromOdoo(client, log);
+    S.odoo = client; S.mode = 'live'; S.data = data; S.created = {}; S.agentRuns = {}; S.geoCity = null;
+    S.filters = { city: '', product: '', type: '', rep: '', minScore: 0, minRev: 0, q: '' };
+    Live.feed = []; Live.perAgent = {}; Live.announced = new Set();
+    analyze(); startSync();
+    log(`✓ ODOO LIVE. ${S.opps.length} opportunities detected.`, 'o');
+    audit('odoo', 'Connected — ODOO LIVE', `${data.customers.length} partners, ${data.lines.length} order lines, ${S.opps.length} opportunities`, 'ok');
+    toast('Conectado a Odoo. Los agentes están analizando los datos reales.', 'ok');
+    render();
+    Agent.brief(true);
+  } catch (e) {
+    log('✕ ' + e.message, 'e');
+    audit('odoo', 'Connection failed', e.message, 'error');
+    btn.disabled = false; btn.textContent = S.mode === 'live' ? 'Reconectar y recargar' : 'Conectar y sincronizar';
+  }
+}
+function disconnect() {
+  S.odoo = null; S.mode = 'local'; S.created = {}; S.agentRuns = {}; S.geoCity = null; S.connLog = 'Desconectado de Odoo.';
+  clearInterval(syncTimer);
+  S.data = genDemo(S.settings.seed); analyze();
+  audit('odoo', 'Disconnected', '', 'info');
+  toast('Desconectado de Odoo.'); render();
+}
+
+/* =========================================================
+   Create in Odoo (crm.lead)
+   ========================================================= */
+function leadVals(o) {
+  const c = S.cs.get(o.customerId).c;
+  const vals = { name: `${TYPES[o.type].label}: ${o.product ? o.product + ' — ' : ''}${o.customer}`, type: 'opportunity', partner_id: c.odooId || false, expected_revenue: o.potential, probability: Math.min(90, Math.max(10, o.score)), description: `<p><b>AI Revenue Intelligence (${esc(o.type)}, score ${o.score}/100)</b></p><p>${esc(o.reason)}</p><p>Recommended action: ${esc(o.action)}</p>` };
+  if (c.repUserId) vals.user_id = c.repUserId;
+  return vals;
+}
+function openCreate(id) {
+  const o = S.opps.find(x => x.id === id); if (!o) return;
+  const m = $('#modal');
+  if (S.mode !== 'live' || !S.odoo) {
+    m.innerHTML = `<h3>Conecta Odoo para crear la oportunidad</h3><p class="muted">Cuando Odoo esté conectado, esta oportunidad se crea como crm.lead y verás aquí el ID que devuelve Odoo.</p>
+      <dl class="kv"><dt>Customer</dt><dd>${esc(o.customer)}</dd><dt>Opportunity</dt><dd>${esc(TYPES[o.type].label)} ${esc(o.product)}</dd><dt>Expected revenue</dt><dd>${money(o.potential)}</dd><dt>AI Score</dt><dd>${o.score}/100</dd></dl>
+      <div class="acts"><button class="btn" data-action="close-modal">Cerrar</button><button class="btn primary" data-action="goto-connect">Conectar Odoo</button></div>`;
+    audit('odoo', 'Create in Odoo — not connected', `${o.customer} · ${o.type}`, 'info');
+  } else {
+    const v = leadVals(o);
+    m.innerHTML = `<h3>¿Crear esta oportunidad en Odoo CRM?</h3><p class="muted">Se creará un crm.lead en <b style="color:#fff">${esc(S.odoo.db)}</b>.</p>
+      <dl class="kv"><dt>Name</dt><dd>${esc(v.name)}</dd><dt>Customer</dt><dd>${esc(o.customer)} (partner #${esc(v.partner_id)})</dd><dt>Expected revenue</dt><dd>${money(v.expected_revenue)}</dd><dt>Probability</dt><dd>${v.probability}%</dd><dt>Salesperson</dt><dd>${esc(o.rep)}${v.user_id ? ' (user #' + v.user_id + ')' : ''}</dd><dt>Reason</dt><dd>${esc(o.reason)}</dd></dl>
+      <div id="createErr" class="err"></div>
+      <div class="acts"><button class="btn" data-action="close-modal">Cancelar</button><button class="btn primary" id="confirmCreate" data-action="confirm-create" data-id="${o.id}">Create in Odoo</button></div>`;
+  }
+  m.classList.add('on'); $('#overlay').classList.add('on');
+  setTimeout(() => m.querySelector('.btn.primary')?.focus(), 50);
+}
+async function confirmCreate(id) {
+  const o = S.opps.find(x => x.id === id); if (!o || !S.odoo) return;
+  const btn = $('#confirmCreate'); btn.disabled = true; btn.textContent = 'Creando…';
+  const vals = leadVals(o);
+  try {
+    let newId;
+    try { newId = await S.odoo.create('crm.lead', vals); }
+    catch (e) { if (/expected_revenue/.test(e.message)) { const v2 = Object.assign({}, vals, { planned_revenue: vals.expected_revenue }); delete v2.expected_revenue; newId = await S.odoo.create('crm.lead', v2); } else throw e; }
+    if (typeof newId !== 'number' && !(Array.isArray(newId) && newId.length)) throw new Error('Odoo did not return a record ID.');
+    const rid = Array.isArray(newId) ? newId[0] : newId;
+    o.odooId = rid; S.created[oppKey(o)] = rid;
+    audit('odoo', 'Opportunity created', `crm.lead #${rid} · ${o.customer} · ${o.type} · ${money(o.potential)}`, 'ok');
+    closeModal();
+    toast(`✓ Opportunity Created — Odoo CRM #${rid}`, 'ok');
+    $$(`[data-action="create"][data-id="${o.id}"]`).forEach(b => { b.outerHTML = createBtn(o); });
+    Agent.say(`<p>Listo: creé la oportunidad de <b>${esc(o.customer)}</b> en Odoo CRM <b>#${rid}</b>, asignada a ${esc(o.rep)}.</p>`);
+  } catch (e) {
+    $('#createErr').textContent = 'No se creó: ' + e.message;
+    audit('odoo', 'Create in Odoo failed', `${o.customer} · ${e.message}`, 'error');
+    btn.disabled = false; btn.textContent = 'Reintentar';
+  }
+}
+function closeModal() { $('#modal').classList.remove('on'); if (!$('#drawer').classList.contains('on')) $('#overlay').classList.remove('on'); }
+
+/* =========================================================
+   Audit log & Settings
+   ========================================================= */
+VIEWS.audit = () => pageHead('Audit Log', 'Conexiones, escaneos de agentes, preguntas al Copilot y cada intento de escritura en Odoo, del más reciente al más antiguo.', '<button class="btn sm" data-action="export-audit">Export CSV</button><button class="btn sm" data-action="clear-audit">Limpiar</button>') +
+  `<section class="panel">${S.audit.length ? `<div class="tbl-wrap"><table class="tbl cards"><thead><tr><th>Time</th><th>Area</th><th>Event</th><th>Detail</th><th>Result</th></tr></thead><tbody>${S.audit.map(a => `<tr><td data-l="Time" style="white-space:nowrap">${fmtTime(a.t)}</td><td data-l="Area">${esc(a.cat)}</td><td data-l="Event"><b style="color:#fff">${esc(a.event)}</b></td><td data-l="Detail" class="sub">${esc(a.detail)}</td><td data-l="Result" class="${a.status === 'error' ? 'risk-h' : a.status === 'ok' ? 'risk-l' : 'muted'}">${a.status === 'error' ? 'Error' : a.status === 'ok' ? 'OK' : 'Info'}</td></tr>`).join('')}</tbody></table></div>` : '<div class="empty">Sin eventos todavía.</div>'}</section>`;
+
+VIEWS.settings = () => {
+  const s = S.settings;
+  const f = (id, label, val, help, attrs = '') => `<div class="field"><label for="${id}">${label}</label><input id="${id}" type="number" value="${val}" ${attrs}><span class="help">${help}</span></div>`;
+  return pageHead('Settings', 'Umbrales que usan los agentes. Al aplicar, todo se recalcula sobre los datos cargados.') +
+  `<div class="grid g-1-1"><section class="panel"><div class="panel-h"><h2>Opportunity engine</h2></div><div class="form-grid">
+    ${f('sReorder', 'Reorder trigger (× ciclo habitual)', s.reorderFactor, 'Marca recompra cuando los días desde la última compra alcanzan este múltiplo del ciclo.', 'step="0.05" min="0.5" max="3"')}
+    ${f('sDormant', 'Dormant después de (días sin pedidos)', s.dormantDays, 'Cuentas sin pedidos por este tiempo pasan a dormidas.', 'step="5" min="60" max="400"')}
+    ${f('sRisk', 'Riesgo: caída de revenue (%)', Math.round(s.riskDrop * 100), 'Últimos 6 meses vs los 6 anteriores.', 'step="5" min="10" max="90"')}
+    ${f('sEquip', 'Equipos: revenue mínimo en inyectables 12M (USD)', s.equipMin, 'Clínicas sobre este monto, con 5+ pedidos, son candidatas a equipos.', 'step="1000" min="0"')}
+    ${f('sCross', 'Cross-sell: afinidad mínima (%)', Math.round(s.crossMin * 100), '% de clínicas que compran A y también compran B.', 'step="5" min="10" max="95"')}
+  </div></section>
+  <section class="panel"><div class="panel-h"><h2>Display</h2></div><div class="form-grid">
+    <div class="field"><label for="sCur">Currency</label><select id="sCur"><option value="USD" ${s.currency === 'USD' ? 'selected' : ''}>USD</option><option value="CLP" ${s.currency === 'CLP' ? 'selected' : ''}>CLP (convertido)</option></select></div>
+    ${f('sRate', 'CLP por USD', s.clpRate, 'Solo para visualización en CLP.', 'step="1" min="1"')}
+    <div class="field"><label>Eurolab AI</label><label class="check"><input type="checkbox" id="sBrief" ${s.autoBrief !== false ? 'checked' : ''}> El agente abre la conversación con el briefing al iniciar</label></div>
+    <div class="row-flex"><button class="btn" data-action="reset-settings">Restaurar valores</button><button class="btn" data-action="forget-conn">Olvidar conexión guardada</button></div>
+  </div></section></div>
+  <div class="row-flex"><button class="btn primary" data-action="save-settings">Aplicar y recalcular</button></div>`;
+};
+function saveSettings() {
+  const n = id => Number($('#' + id).value);
+  const s = S.settings;
+  s.reorderFactor = clamp(n('sReorder') || 0.9, 0.5, 3); s.dormantDays = clamp(n('sDormant') || 150, 60, 400);
+  s.riskDrop = clamp((n('sRisk') || 40) / 100, 0.1, 0.9); s.equipMin = Math.max(0, n('sEquip') || 0);
+  s.crossMin = clamp((n('sCross') || 45) / 100, 0.1, 0.95); s.currency = $('#sCur').value; s.clpRate = Math.max(1, n('sRate') || 940);
+  s.autoBrief = $('#sBrief').checked;
+  store.set('settings', s);
+  analyze();
+  audit('system', 'Settings applied', `reorder ×${s.reorderFactor}, dormant ${s.dormantDays}d, risk ${Math.round(s.riskDrop * 100)}%, equipment ${s.equipMin}, cross ${Math.round(s.crossMin * 100)}%, ${s.currency}`, 'ok');
+  toast(`Recalculado: ${S.opps.length} oportunidades.`, 'ok'); render();
+  Agent.say(`<p>Apliqué los nuevos umbrales y recalculé todo: ahora veo <b>${S.opps.length}</b> oportunidades por <b class="money">${money(S.kpi.potential, true)}</b>.</p>`);
+}
+
+/* =========================================================
+   CSV, toast
+   ========================================================= */
+function downloadCSV(name, rows) {
+  const csv = rows.map(r => r.map(v => { const s = String(v ?? ''); return /[",\n;]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; }).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\ufeff' + csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
+}
+let toastT;
+function toast(msg, kind = '') { const t = $('#toast'); t.textContent = msg; t.className = 'toast on ' + kind; clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('on'), 4200); }
+
+/* =========================================================
+   Events
+   ========================================================= */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-route],[data-action]');
+  if (!el) return;
+  if (el.dataset.route) { e.preventDefault(); closeDrawer(); closeModal(); go(el.dataset.route); return; }
+  const a = el.dataset.action, d = el.dataset;
+  switch (a) {
+    case 'open-dock': Agent.openDock(); break;
+    case 'close-dock': Agent.closeDock(); break;
+    case 'open-customer': openCustomer(d.id); break;
+    case 'close-drawer': closeDrawer(); break;
+    case 'create': openCreate(d.id); break;
+    case 'confirm-create': confirmCreate(d.id); break;
+    case 'close-modal': closeModal(); break;
+    case 'goto-connect': closeModal(); closeDrawer(); go('connect'); break;
+    case 'set-city': S.geoCity = d.city; closeDrawer(); if (S.route === 'geo') rerenderKeepScroll(); else go('geo'); break;
+    case 'geo-metric': S.geoMetric = d.m; rerenderKeepScroll(); break;
+    case 'filter-go': S.filters = { city: d.city || '', product: d.product || '', type: d.type || '', rep: '', minScore: 0, minRev: 0, q: '' }; S.oppLimit = 40; closeDrawer(); go('opportunities'); break;
+    case 'clear-filters': S.filters = { city: '', product: '', type: '', rep: '', minScore: 0, minRev: 0, q: '' }; S.oppLimit = 40; render(); break;
+    case 'more-opps': S.oppLimit += 40; $('#oppResults').innerHTML = oppResultsHtml(filteredOpps()); break;
+    case 'export-opps': { const l = filteredOpps(); downloadCSV('eurolab-opportunities.csv', [['ID', 'Type', 'Customer', 'City', 'Rep', 'Product', 'AI Score', 'Potential USD', 'Reason', 'Recommended Action', 'Odoo CRM ID'], ...l.map(o => [o.id, o.type, o.customer, o.city, o.rep, o.product, o.score, o.potential, o.reason, o.action, o.odooId || ''])]); audit('system', 'Opportunities exported', l.length + ' rows', 'ok'); break; }
+    case 'ask': closeDrawer(); Agent.ask(d.q); break;
+    case 'run-agent': runAgent(d.id); break;
+    case 'run-all': (async () => { el.disabled = true; for (const ag of AGENTS) { if (S.route !== 'agents') break; await runAgent(ag.id); } })(); break;
+    case 'disconnect': disconnect(); break;
+    case 'save-settings': saveSettings(); break;
+    case 'reset-settings': S.settings = Object.assign({}, DEFAULT_SETTINGS, { seed: S.settings.seed }); store.set('settings', S.settings); analyze(); audit('system', 'Settings restored', '', 'ok'); render(); break;
+    case 'forget-conn': store.del('conn'); S.conn = { url: '', db: '', username: '', proxy: '' }; toast('Conexión guardada eliminada.'); break;
+    case 'export-audit': downloadCSV('eurolab-audit-log.csv', [['Time', 'Area', 'Event', 'Detail', 'Result'], ...S.audit.map(x => [new Date(x.t).toISOString(), x.cat, x.event, x.detail, x.status])]); break;
+    case 'clear-audit': S.audit = []; store.set('audit', []); render(); break;
+  }
+});
+document.addEventListener('submit', e => {
+  const f = e.target.closest('[data-composer]'); if (!f) return;
+  e.preventDefault();
+  const inp = f.querySelector('input'), v = inp.value.trim();
+  if (v) { inp.value = ''; Agent.ask(v); }
+});
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') { if ($('#modal').classList.contains('on')) closeModal(); else if ($('#drawer').classList.contains('on')) closeDrawer(); else if (Agent.open) Agent.closeDock(); }
+  if ((e.key === 'Enter' || e.key === ' ') && e.target.matches('g.city,[data-action]:not(button):not(form)')) { e.preventDefault(); e.target.dispatchEvent(new MouseEvent('click', { bubbles: true })); }
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); Agent.openDock(); }
+});
+$('#overlay').addEventListener('click', () => { closeModal(); closeDrawer(); });
+$('#menuBtn').addEventListener('click', () => { $('#sidebar').classList.add('open'); $('#scrim').classList.add('on'); });
+$('#scrim').addEventListener('click', () => { $('#sidebar').classList.remove('open'); $('#scrim').classList.remove('on'); });
+window.addEventListener('hashchange', render);
+
+/* =========================================================
+   Init
+   ========================================================= */
+S.mode = 'local';
+S.created = {};
+S.data = genDemo(S.settings.seed);
+analyze();
+audit('system', 'Agents started', `${S.data.customers.length} customers, ${S.data.products.length} products, ${S.data.lines.length} order lines, ${S.opps.length} opportunities`, 'info');
+$('#dockSuggest').innerHTML = DOCK_SUGGEST.map(q => `<button data-action="ask" data-q="${esc(q)}">${esc(q)}</button>`).join('');
+render();
+Live.start();
+for (let i = 0; i < 6; i++) Live.tick();
+setTimeout(() => {
+  if (S.settings.autoBrief === false) return;
+  const wide = window.matchMedia('(min-width:1100px)').matches;
+  if (wide && S.route !== 'copilot') Agent.openDock();
+  Agent.brief(!wide);
+}, 900);
+</script>
+</body></html>
