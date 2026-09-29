@@ -1,0 +1,1320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Eurolab Group · Inteligencia de Mercado con IA (MVP simulado)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07111D; --bg2:#0B1929; --surf:rgba(17,35,57,.72); --solid:#102238; --solid2:#0D1C2F;
+  --line:rgba(150,190,230,.15); --line2:rgba(150,190,230,.08);
+  --ink:#EAF2FA; --ink2:#A7BACD; --mute:#6D8399;
+  --cyan:#3FD0C9; --violet:#8F7DFF; --rose:#F07AA0; --gold:#E9B65E; --ok:#4FDE9E; --blue:#5AAEFF;
+  --ai:linear-gradient(100deg,#3FD0C9 0%,#6FA8FF 45%,#8F7DFF 100%);
+  --sans:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+  box-sizing:border-box;color-scheme:dark;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html,body{height:100%}
+body{margin:0;background:radial-gradient(1200px 700px at 85% -10%,rgba(143,125,255,.16),transparent 60%),radial-gradient(900px 600px at 10% 110%,rgba(63,208,201,.12),transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font:14px/1.5 var(--sans);-webkit-font-smoothing:antialiased}
+#neural{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.num{font-family:var(--serif);font-variant-numeric:lining-nums tabular-nums;font-weight:400;letter-spacing:-.01em}
+.tab{font-variant-numeric:tabular-nums}
+.grad{background:var(--ai);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* shell */
+.app{position:relative;z-index:1;display:grid;grid-template-columns:258px 1fr;min-height:100%}
+.side{background:rgba(9,21,35,.82);backdrop-filter:blur(14px);border-right:1px solid var(--line);padding:22px 14px 18px;position:sticky;top:0;height:100vh;overflow-y:auto;display:flex;flex-direction:column}
+.brand{display:flex;gap:12px;align-items:center;padding:0 8px 18px;border-bottom:1px solid var(--line2);margin-bottom:10px}
+.mark{width:38px;height:38px;border-radius:11px;background:var(--ai);display:grid;place-items:center;flex:none;box-shadow:0 0 24px rgba(111,168,255,.35)}
+.mark svg{width:22px;height:22px;stroke:#07111D;fill:none;stroke-width:2}
+.brand b{display:block;font-weight:700;font-size:13.5px;letter-spacing:.1em;white-space:nowrap}
+.brand span{display:block;font-family:var(--serif);font-style:italic;font-size:16px;color:var(--ink2)}
+.navgrp{margin:10px 0 4px}
+.navgrp h6{margin:0;padding:6px 10px;font-size:12px;font-weight:500;color:var(--mute)}
+.nav{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;text-align:left;padding:8px 10px;border-radius:8px;color:var(--ink2);font-weight:500;position:relative}
+.nav:hover{background:rgba(150,190,230,.07);color:var(--ink)}
+.nav.on{background:linear-gradient(90deg,rgba(63,208,201,.16),rgba(143,125,255,.08));color:var(--ink)}
+.nav.on::before{content:"";position:absolute;left:0;top:8px;bottom:8px;width:3px;border-radius:3px;background:var(--ai)}
+.nav svg{width:16px;height:16px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7}
+.nav .live{margin-left:auto;font-size:10.5px;font-weight:700;color:var(--ok);display:flex;align-items:center;gap:5px}
+.nav .live i,.dotlive{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 0 rgba(79,222,158,.6);animation:ping 1.8s infinite;display:inline-block}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(79,222,158,.55)}80%,100%{box-shadow:0 0 0 8px rgba(79,222,158,0)}}
+.side-foot{margin-top:auto;padding:14px 10px 0;font-size:12px;color:var(--mute);border-top:1px solid var(--line2)}
+.side-foot .eng{display:flex;align-items:center;gap:8px;color:var(--ink2);margin-bottom:6px;font-weight:500}
+.main{min-width:0;padding:26px 34px 60px}
+.top{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.top h1{margin:0;font-family:var(--serif);font-weight:400;font-size:42px;line-height:1.05;letter-spacing:-.01em}
+.top p{margin:8px 0 0;color:var(--ink2);max-width:74ch}
+.tags{display:flex;gap:8px;flex-wrap:wrap}
+.simtag{display:inline-flex;align-items:center;gap:6px;border:1px dashed rgba(240,122,160,.6);color:var(--rose);background:rgba(240,122,160,.08);padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.06em;white-space:nowrap}
+.simtag i{width:6px;height:6px;border-radius:50%;background:var(--rose)}
+.aitag{display:inline-flex;align-items:center;gap:7px;border:1px solid rgba(63,208,201,.35);color:var(--cyan);background:rgba(63,208,201,.08);padding:4px 11px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+
+/* blocks */
+.panel{background:var(--surf);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:14px;padding:18px 20px;position:relative}
+.panel h3{margin:0 0 4px;font-size:15px;font-weight:600}
+.panel .sub{margin:0 0 14px;color:var(--mute);font-size:13px}
+.glow{border-color:rgba(111,168,255,.35);box-shadow:0 0 0 1px rgba(143,125,255,.08),0 20px 60px -30px rgba(111,168,255,.45)}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g-side{grid-template-columns:minmax(0,1.6fr) minmax(300px,1fr)}
+.mt{margin-top:16px}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.muted{color:var(--mute)}
+.small{font-size:12.5px}
+.btn{border:1px solid var(--line);background:rgba(150,190,230,.06);padding:8px 14px;border-radius:8px;font-weight:600;font-size:13px;color:var(--ink)}
+.btn:hover{border-color:var(--cyan);color:var(--cyan)}
+.btn.pri{background:var(--ai);border:0;color:#06101B}
+.btn.pri:hover{filter:brightness(1.1);color:#06101B}
+.btn.big{padding:14px 26px;font-size:14px;letter-spacing:.05em;box-shadow:0 10px 40px -12px rgba(111,168,255,.7)}
+.btn.sm{padding:5px 10px;font-size:12px}
+.btn:disabled{opacity:.45;cursor:default}
+.lnk{border:0;background:none;padding:0;color:var(--cyan);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+select,input[type=text],input[type=search]{border:1px solid var(--line);background:var(--solid2);border-radius:8px;padding:8px 10px;min-width:0;color:var(--ink)}
+select option{background:var(--solid)}
+input[type=range]{accent-color:var(--cyan)}
+label.f{display:flex;flex-direction:column;gap:5px;font-size:12px;color:var(--ink2);font-weight:500}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:rgba(150,190,230,.04);border-radius:999px;padding:5px 12px;font-size:13px;color:var(--ink2);display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:rgba(63,208,201,.5)}
+.chip.on{background:rgba(63,208,201,.16);border-color:var(--cyan);color:var(--ink)}
+.chip svg{width:14px;height:14px;stroke:var(--c,currentColor);fill:none;stroke-width:1.8}
+.pill{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600;white-space:nowrap}
+.p-hi{background:rgba(240,122,160,.15);color:var(--rose)}
+.p-mid{background:rgba(233,182,94,.14);color:var(--gold)}
+.p-lo{background:rgba(150,190,230,.1);color:var(--ink2)}
+.p-ok{background:rgba(79,222,158,.14);color:var(--ok)}
+.p-pe{background:rgba(63,208,201,.13);color:var(--cyan)}
+.score{display:inline-flex;align-items:center;justify-content:center;min-width:40px;height:27px;border-radius:7px;font-family:var(--serif);font-size:18px}
+.s-hi{background:linear-gradient(135deg,#F07AA0,#C45B9E);color:#fff;box-shadow:0 0 18px -4px rgba(240,122,160,.7)}
+.s-mid{background:rgba(63,208,201,.15);color:var(--cyan)}
+.s-lo{background:rgba(150,190,230,.1);color:var(--ink2)}
+.src{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:600;color:var(--c);white-space:nowrap}
+.src svg{width:15px;height:15px;stroke:var(--c);fill:none;stroke-width:1.8;flex:none}
+.srcs{display:inline-flex;gap:4px}
+.srci{width:24px;height:24px;border-radius:7px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 16%,transparent);border:1px solid color-mix(in srgb,var(--c) 40%,transparent)}
+.srci svg{width:13px;height:13px;stroke:var(--c);fill:none;stroke-width:2}
+.srci.off{opacity:.2}
+.shimmer{background:linear-gradient(90deg,var(--ink2) 0%,#fff 50%,var(--ink2) 100%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shim 2.2s linear infinite}
+@keyframes shim{to{background-position:-200% 0}}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));border:1px solid var(--line);border-radius:14px;background:var(--surf);overflow:hidden}
+.kpi{padding:16px 16px;border-right:1px solid var(--line2)}
+.kpi:last-child{border-right:0}
+.kpi .num{font-size:36px;line-height:1.05;display:block}
+.kpi small{color:var(--mute);font-size:12.5px}
+.kpi.acc .num{color:var(--gold)}
+
+/* hero */
+.hero{border:1px solid rgba(111,168,255,.28);border-radius:18px;padding:24px 26px 12px;margin-bottom:16px;position:relative;overflow:hidden;background:linear-gradient(160deg,rgba(18,40,66,.9),rgba(10,22,38,.9))}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,rgba(63,208,201,.07),transparent);width:40%;animation:scan 6s ease-in-out infinite;pointer-events:none}
+@keyframes scan{0%{transform:translateX(-120%)}100%{transform:translateX(350%)}}
+.hero-head{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;align-items:flex-start;position:relative;z-index:1}
+.hero-head h2{margin:10px 0 0;font-family:var(--serif);font-weight:400;font-size:32px;line-height:1.15;max-width:30ch}
+.hero-head .big{text-align:right}
+.hero-head .big .num{font-size:68px;line-height:1}
+.hero-head .big small{display:block;color:var(--ink2)}
+.chile{width:100%;height:auto;display:block;position:relative}
+.chile .land{fill:rgba(111,168,255,.07);stroke:rgba(111,168,255,.75);stroke-width:1.2;stroke-linejoin:round}
+.chile .sea{fill:rgba(63,208,201,.045)}
+.chile .grid-l{stroke:rgba(150,190,230,.06);stroke-width:1}
+.chile .bub{fill:var(--rose);fill-opacity:.14;stroke:var(--rose);stroke-width:1.2;cursor:pointer;transition:fill-opacity .2s}
+.chile .bub:hover,.chile .bub.sel{fill-opacity:.4}
+.chile .halo{fill:none;stroke:var(--rose);stroke-width:1;opacity:0;transform-box:fill-box;transform-origin:center;animation:halo 3s ease-out infinite}
+@keyframes halo{0%{opacity:.7;transform:scale(.6)}100%{opacity:0;transform:scale(1.9)}}
+.chile .dot{fill:#fff}
+.chile .lead{stroke:rgba(167,186,205,.5);stroke-width:.7;stroke-dasharray:2 2}
+.chile .lbl{font:600 12px var(--sans);fill:var(--ink)}
+.chile .lbl2{font:400 11px var(--sans);fill:var(--mute)}
+.chile .lblsel{fill:var(--rose)}
+.chile .ocean{font:italic 15px var(--serif);fill:var(--cyan);opacity:.7}
+.chile .pdot{fill:var(--cyan);opacity:.55}
+.chile .blip{fill:var(--cyan);transform-box:fill-box;transform-origin:center;animation:blip 1.6s ease-out forwards}
+@keyframes blip{0%{opacity:1;transform:scale(3)}100%{opacity:.8;transform:scale(1)}}
+.sweep{stroke:url(#sw);stroke-width:2;opacity:.9}
+.scroll-x{overflow-x:auto}
+
+/* bars */
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:130px 1fr 66px;gap:10px;align-items:center;font-size:13px}
+.bar .t{height:8px;background:rgba(150,190,230,.1);border-radius:5px;overflow:hidden}
+.bar .t i{display:block;height:100%;background:var(--ai);border-radius:5px;transform-origin:left;animation:grow 1s cubic-bezier(.2,.7,.2,1) both}
+.bar.rose .t i{background:linear-gradient(90deg,#C45B9E,#F07AA0)}
+.bar.amb .t i{background:linear-gradient(90deg,#B98535,#E9B65E)}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink2)}
+@keyframes grow{from{transform:scaleX(0)}}
+.funnel{display:flex;flex-direction:column;gap:6px}
+.fstep{display:flex;align-items:center;gap:12px}
+.fstep .fb{height:34px;border-radius:6px;color:#06101B;display:flex;align-items:center;padding:0 12px;font-weight:700;font-size:13px;white-space:nowrap;min-width:max-content;transform-origin:left;animation:grow 1s cubic-bezier(.2,.7,.2,1) both}
+.fstep:nth-child(1) .fb{background:#3FD0C9}
+.fstep:nth-child(2) .fb{background:#5ABEE0;animation-delay:.08s}
+.fstep:nth-child(3) .fb{background:#6FA8FF;animation-delay:.16s}
+.fstep:nth-child(4) .fb{background:#8F7DFF;animation-delay:.24s}
+.fstep:nth-child(5) .fb{background:#F07AA0;animation-delay:.32s}
+.fstep span{color:var(--ink2);font-size:13px}
+
+/* table */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--surf)}
+table{border-collapse:collapse;width:100%;min-width:820px}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--line2);font-size:13px;vertical-align:middle}
+th{font-weight:600;color:var(--ink2);background:var(--solid);position:sticky;top:0;white-space:nowrap}
+th.s{cursor:pointer}
+th.s:hover{color:var(--cyan)}
+td.r,th.r{text-align:right}
+tbody tr{cursor:pointer;transition:background .15s}
+tbody tr:hover{background:rgba(63,208,201,.05)}
+td .nm{font-weight:600}
+td .ad{display:block;font-size:12px;color:var(--mute)}
+.filters{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin-bottom:12px}
+.preset{display:flex;align-items:center;gap:10px;background:rgba(233,182,94,.1);border:1px solid rgba(233,182,94,.3);color:var(--gold);border-radius:10px;padding:8px 12px;margin-bottom:12px;font-size:13px}
+
+/* discovery run */
+.srcrun{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.sr{background:var(--solid2);border:1px solid var(--line);border-radius:12px;padding:12px}
+.sr .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.sr .n{font-family:var(--serif);font-size:30px;line-height:1}
+.sr .pb{height:4px;border-radius:3px;background:rgba(150,190,230,.1);overflow:hidden;margin-top:10px}
+.sr .pb i{display:block;height:100%;width:0;background:var(--c);box-shadow:0 0 10px var(--c);transition:width .25s linear}
+.sr small{color:var(--mute);font-size:11.5px}
+.sr.off{opacity:.3}
+.term{background:#050C15;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:12.5px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#9FE8E2;height:250px;overflow-y:auto}
+.term .c{color:var(--mute)}
+.term .v{color:var(--violet)}
+.term .g{color:var(--gold)}
+.term .cur::after{content:"▋";animation:blink 1s steps(1) infinite;margin-left:2px}
+@keyframes blink{50%{opacity:0}}
+.det{display:flex;flex-direction:column;gap:6px;height:250px;overflow:hidden}
+.dcard{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:var(--solid2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;animation:slidein .45s cubic-bezier(.2,.7,.2,1)}
+.dcard .nm{font-weight:600;font-size:13px}
+.dcard .ad{font-size:11.5px;color:var(--mute);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@keyframes slidein{from{opacity:0;transform:translateY(-10px) scale(.98)}}
+.results{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.results div{background:var(--solid);padding:14px 16px}
+.results .num{font-size:40px;display:block;line-height:1.05}
+.results small{color:var(--mute)}
+.results .acc .num{color:var(--gold)}
+.phase{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.phase .spin{width:18px;height:18px;border-radius:50%;border:2px solid rgba(63,208,201,.25);border-top-color:var(--cyan);animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* radar live */
+.live-grid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(320px,1fr);gap:16px}
+.stream{display:flex;flex-direction:column;gap:8px;height:520px;overflow:hidden;mask-image:linear-gradient(#000 80%,transparent)}
+.scard{display:grid;grid-template-columns:40px 1fr auto;gap:12px;align-items:center;background:var(--solid2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;animation:slidein .5s cubic-bezier(.2,.7,.2,1);cursor:pointer}
+.scard:hover{border-color:rgba(63,208,201,.4)}
+.scard .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 15%,transparent);border:1px solid color-mix(in srgb,var(--c) 45%,transparent)}
+.scard .ic svg{width:20px;height:20px;stroke:var(--c);fill:none;stroke-width:1.8}
+.scard .nm{font-weight:600}
+.scard .ev{font-size:12px;color:var(--ink2);margin-top:1px}
+.scard .tg{display:flex;gap:5px;margin-top:5px;flex-wrap:wrap}
+.scard .tg span{font-size:11px;padding:1px 7px;border-radius:999px;background:rgba(143,125,255,.14);color:#BDB2FF}
+.ctr{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.ctr div{background:var(--solid2);border:1px solid var(--line);border-radius:10px;padding:10px;text-align:center}
+.ctr .num{display:block;font-size:28px;line-height:1.1}
+.ctr small{font-size:11px;color:var(--mute)}
+.flow{width:100%;height:auto;display:block}
+.flow .node{fill:var(--solid);stroke:var(--line)}
+.flow .core{fill:url(#coreg);filter:drop-shadow(0 0 14px rgba(111,168,255,.6))}
+.flow text{font:600 11px var(--sans);fill:var(--ink2)}
+.flow .path{fill:none;stroke:rgba(150,190,230,.16);stroke-width:1.2}
+
+/* drawer */
+.scrim{position:fixed;inset:0;background:rgba(3,8,14,.6);backdrop-filter:blur(2px);opacity:0;pointer-events:none;transition:opacity .2s;z-index:40}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(660px,100%);background:linear-gradient(180deg,#0F2136,#0A1728);border-left:1px solid rgba(111,168,255,.25);z-index:50;transform:translateX(102%);transition:transform .32s cubic-bezier(.2,.7,.2,1);display:flex;flex-direction:column;box-shadow:-20px 0 60px rgba(0,0,0,.5);padding-top:env(safe-area-inset-top,0px)}
+.drawer.on{transform:none}
+.dh{padding:20px 24px 16px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:flex-start}
+.dh h2{margin:8px 0 0;font-family:var(--serif);font-weight:400;font-size:34px;line-height:1.05}
+.dh .loc{color:var(--ink2);margin-top:4px}
+.db{overflow-y:auto;padding:4px 24px 30px;flex:1}
+.sec{padding:16px 0;border-bottom:1px solid var(--line2)}
+.sec:last-child{border-bottom:0}
+.sec h4{margin:0 0 10px;font-size:13px;font-weight:600;color:var(--cyan)}
+.checks{display:grid;grid-template-columns:1fr 1fr;gap:6px 16px;font-size:13px}
+.checks span::before{content:"✓";color:var(--ok);font-weight:700;margin-right:6px}
+.checks span.no{color:var(--mute)}
+.checks span.no::before{content:"–";color:var(--mute)}
+.kv{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.kv div{background:rgba(150,190,230,.05);border:1px solid var(--line2);border-radius:10px;padding:10px 12px}
+.kv b{display:block;font-family:var(--serif);font-weight:400;font-size:26px;line-height:1.15}
+.kv small{color:var(--mute);font-size:12px}
+.x{margin-left:auto;border:1px solid var(--line);background:rgba(150,190,230,.06);width:36px;height:36px;border-radius:50%;font-size:18px;line-height:1;flex:none}
+.ring{flex:none}
+.ring .arc{animation:dash 1.2s cubic-bezier(.2,.7,.2,1) both}
+@keyframes dash{from{stroke-dasharray:0 999}}
+.why{margin:8px 0 0;padding-left:18px;font-size:13px;color:var(--ink2)}
+.sell{display:grid;grid-template-columns:36px 1fr auto;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line2);align-items:start}
+.sell:last-child{border-bottom:0}
+.sell .rk{font-family:var(--serif);font-size:26px;line-height:1}
+.sell p{margin:2px 0 0;font-size:12.5px;color:var(--ink2)}
+.stepper{display:flex;gap:4px;margin:4px 0 12px}
+.stepper span{flex:1;text-align:center;font-size:10.5px;font-weight:700;letter-spacing:.03em;padding:6px 2px;border-radius:5px;background:rgba(150,190,230,.07);color:var(--mute)}
+.stepper span.on{background:var(--ai);color:#06101B}
+.srcblk{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.sb{border:1px solid color-mix(in srgb,var(--c) 35%,transparent);background:color-mix(in srgb,var(--c) 6%,transparent);border-radius:12px;padding:12px}
+.sb .h{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.sb .m{display:flex;gap:16px}
+.sb .m b{display:block;font-family:var(--serif);font-weight:400;font-size:22px;line-height:1.1}
+.sb .m small{font-size:11px;color:var(--mute)}
+.sb p{margin:8px 0 0;font-size:12px;color:var(--ink2)}
+.sb.off{opacity:.35}
+.sig{display:grid;grid-template-columns:110px 1fr auto;gap:10px;padding:8px 0;border-bottom:1px solid var(--line2);font-size:13px;align-items:center}
+.sig q{quotes:"“" "”"}
+.interp{border:1px solid rgba(143,125,255,.35);background:linear-gradient(120deg,rgba(143,125,255,.12),rgba(63,208,201,.06));padding:12px 14px;border-radius:12px;margin-top:12px}
+.interp b{display:flex;align-items:center;gap:8px;letter-spacing:.05em;font-size:13px}
+.interp div{color:var(--ink2)}
+
+/* lists / insights / agents */
+.list{display:flex;flex-direction:column}
+.li{display:grid;grid-template-columns:1fr auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line2);align-items:center}
+.li:last-child{border-bottom:0}
+.li.click{cursor:pointer}
+.li.click:hover .nm{color:var(--cyan)}
+.li .nm{font-weight:600}
+.li .ad{font-size:12px;color:var(--mute)}
+.insight{display:grid;grid-template-columns:110px 1fr auto;gap:18px;align-items:center;padding:20px 22px;border-bottom:1px solid var(--line2)}
+.insight:last-child{border-bottom:0}
+.insight .num{font-size:52px;text-align:right;line-height:1}
+.insight p{margin:0;font-family:var(--serif);font-size:23px;line-height:1.3;max-width:58ch}
+.insight small{display:block;color:var(--mute);font-family:var(--sans);font-size:12.5px;margin-top:6px}
+.agents{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.agent{background:var(--surf);border:1px solid var(--line);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;transition:border-color .3s,box-shadow .3s}
+.agent h3{margin:0;font-size:16px}
+.agent p{margin:0;color:var(--ink2);font-size:13px}
+.agent .st{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--mute)}
+.agent .st i{width:8px;height:8px;border-radius:50%;background:var(--mute)}
+.agent.live{border-color:rgba(63,208,201,.55);box-shadow:0 0 40px -12px rgba(63,208,201,.6)}
+.agent.live .st i{background:var(--ok);animation:ping 1.2s infinite}
+.agent.done .st i{background:var(--cyan)}
+.agent .met{display:flex;gap:18px}
+.agent .met b{display:block;font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.1}
+.agent .met small{color:var(--mute);font-size:12px}
+.log{font:12px/1.6 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;color:#9FE8E2;background:#050C15;border:1px solid var(--line2);border-radius:8px;padding:8px 10px;min-height:92px;display:flex;flex-direction:column;gap:2px}
+.log span{animation:slidein .3s ease}
+.chain{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin-bottom:16px}
+.chain span{background:rgba(150,190,230,.06);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:500;transition:.3s}
+.chain em{width:22px;height:1px;background:var(--line);display:inline-block}
+.chain span.on{background:var(--ai);color:#06101B;border-color:transparent;box-shadow:0 0 20px -4px rgba(111,168,255,.8)}
+
+/* copilot */
+.chat{display:flex;flex-direction:column;gap:14px;min-height:380px;max-height:62vh;overflow-y:auto;padding:4px 4px 10px}
+.msg{max-width:90%;animation:slidein .35s ease}
+.msg.u{align-self:flex-end;background:var(--ai);color:#06101B;font-weight:500;border-radius:14px 14px 3px 14px;padding:9px 14px}
+.msg.a{align-self:flex-start;background:var(--solid2);border:1px solid var(--line);border-radius:14px 14px 14px 3px;padding:12px 16px}
+.msg.a p{margin:0 0 8px}
+.who{display:flex;align-items:center;gap:8px;font-family:var(--serif);font-style:italic;font-size:16px;margin-bottom:4px}
+.who i{width:18px;height:18px;border-radius:6px;background:var(--ai);display:inline-block}
+.dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--cyan);margin-right:4px;animation:bob 1s infinite}
+.dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+@keyframes bob{0%,100%{opacity:.3;transform:translateY(0)}50%{opacity:1;transform:translateY(-4px)}}
+.ask{display:flex;gap:8px;margin-top:10px}
+.ask input{flex:1;padding:12px 14px;border-radius:10px}
+.sugg{display:flex;flex-direction:column;gap:6px}
+.sugg button{text-align:left;border:1px solid var(--line);background:rgba(150,190,230,.04);border-radius:10px;padding:9px 12px;font-size:13px;color:var(--ink2)}
+.sugg button:hover{border-color:var(--cyan);color:var(--ink)}
+.mini{width:100%;min-width:0;margin-top:6px}
+.mini td,.mini th{padding:6px 8px;font-size:12.5px}
+.mini th{position:static;background:transparent}
+
+/* pipeline */
+.kanban{display:grid;grid-template-columns:repeat(5,minmax(220px,1fr));gap:12px;overflow-x:auto;padding-bottom:6px}
+.col{background:rgba(9,21,35,.6);border:1px solid var(--line);border-radius:14px;padding:12px;min-height:320px}
+.col h4{margin:0;font-size:12px;letter-spacing:.07em}
+.col .cv{font-size:12px;color:var(--mute);margin-bottom:10px}
+.card{background:var(--solid);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;font-size:12.5px;animation:slidein .35s ease}
+.card .nm{font-weight:600;font-size:13.5px;cursor:pointer}
+.card .nm:hover{color:var(--cyan)}
+.card .meta{color:var(--mute);margin:2px 0 8px}
+.card .ft{display:flex;justify-content:space-between;align-items:center;gap:6px;flex-wrap:wrap}
+.empty{padding:28px;text-align:center;color:var(--mute);border:1px dashed var(--line);border-radius:12px}
+
+#toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);background:var(--solid);border:1px solid rgba(63,208,201,.4);color:var(--ink);padding:10px 18px;border-radius:10px;font-size:13px;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;box-shadow:0 10px 40px rgba(0,0,0,.5)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+.view-in{animation:viewin .45s cubic-bezier(.2,.7,.2,1)}
+@keyframes viewin{from{opacity:0;transform:translateY(8px)}}
+
+@media (max-width:1200px){
+  .kpis{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .kpi{border-bottom:1px solid var(--line2)}
+  .agents{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g-side,.live-grid{grid-template-columns:1fr}
+  .srcrun{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{position:sticky;top:0;height:auto;flex-direction:row;align-items:center;overflow-x:auto;padding:10px 12px;z-index:30;border-right:0;border-bottom:1px solid var(--line);gap:4px}
+  .brand{border:0;margin:0;padding:0 10px 0 2px;flex:none}
+  .brand span{display:none}
+  #nav{display:flex;flex:none}
+  .navgrp{display:flex;margin:0;flex:none}
+  .navgrp h6,.side-foot{display:none}
+  .nav{white-space:nowrap}
+  .nav.on::before{display:none}
+  .main{padding:18px 16px 50px}
+  .top h1{font-size:32px}
+  .hero-head h2{font-size:25px}
+  .hero-head .big{text-align:left}
+  .hero-head .big .num{font-size:52px}
+  .chile{min-width:760px}
+  .g2,.g3{grid-template-columns:1fr}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .results,.ctr{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .srcrun{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .agents{grid-template-columns:1fr}
+  .insight{grid-template-columns:1fr;gap:6px}
+  .insight .num{text-align:left}
+  .checks,.kv,.srcblk{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<canvas id="neural" aria-hidden="true"></canvas>
+<div class="app">
+  <aside class="side" aria-label="Navegación principal">
+    <div class="brand"><div class="mark"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></svg></div><div><b>EUROLAB GROUP</b><span>Inteligencia de mercado</span></div></div>
+    <nav id="nav"></nav>
+    <div class="side-foot"><div class="eng"><span class="dotlive"></span>Motor IA activo</div>Demo del mercado chileno. Todos los negocios, teléfonos, sitios y señales de esta app son simulados.</div>
+  </aside>
+  <main class="main">
+    <header class="top">
+      <div><h1 id="vt"></h1><p id="vs"></p></div>
+      <div class="tags"><span class="aitag"><span class="dotlive"></span>IA analizando 5 fuentes</span><span class="simtag" title="Todos los registros se generan en el navegador para demostración"><i></i>DATOS SIMULADOS</span></div>
+    </header>
+    <section id="view" aria-live="polite"></section>
+  </main>
+</div>
+<div class="scrim" id="scrim" data-a="close"></div>
+<aside class="drawer" id="drawer" aria-label="Inteligencia del prospecto" aria-hidden="true"></aside>
+<div id="toast" role="status"></div>
+<script>
+/* =========================================================
+   EUROLAB GROUP · AI PROSPECT INTELLIGENCE — MVP SIMULADO
+   Todos los datos se generan en el navegador. Sin nombres,
+   teléfonos, correos ni negocios reales. Cada generador está
+   pensado para reemplazarse luego por una API / proveedor autorizado.
+   ========================================================= */
+'use strict';
+
+function mulberry(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+const R=mulberry(20260929);
+const pick=a=>a[Math.floor(R()*a.length)];
+const between=(a,b)=>a+R()*(b-a);
+const ri=(a,b)=>Math.floor(between(a,b+1));
+const clamp=(v,a=0,b=100)=>Math.max(a,Math.min(b,v));
+const shuffle=(a,rnd=R)=>{const b=a.slice();for(let i=b.length-1;i>0;i--){const j=Math.floor(rnd()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+const wpick=items=>{const tot=items.reduce((s,i)=>s+i.w,0);let r=R()*tot;for(const i of items){if((r-=i.w)<=0)return i;}return items[items.length-1];};
+
+/* ---------- geografía ---------- */
+const CITIES=[
+ {name:'Santiago',     region:'Metropolitana', lat:-33.45,lon:-70.66,n:108,tier:100,cust:38,comp:92,zones:['Providencia','Las Condes','Vitacura','Ñuñoa','Santiago Centro','Lo Barnechea','La Reina']},
+ {name:'Viña del Mar', region:'Valparaíso',    lat:-33.02,lon:-71.55,n:28, tier:90, cust:5, comp:64,zones:['Reñaca','Centro','Jardín del Mar']},
+ {name:'Valparaíso',   region:'Valparaíso',    lat:-33.05,lon:-71.62,n:13, tier:70, cust:4, comp:48,zones:['Plan','Cerro Alegre','Playa Ancha']},
+ {name:'Concepción',   region:'Biobío',        lat:-36.83,lon:-73.05,n:25, tier:82, cust:3, comp:70,zones:['Centro','San Pedro de la Paz','Chiguayante']},
+ {name:'Antofagasta',  region:'Antofagasta',   lat:-23.65,lon:-70.40,n:17, tier:86, cust:3, comp:52,zones:['Centro','Sector Sur','Costanera']},
+ {name:'La Serena',    region:'Coquimbo',      lat:-29.90,lon:-71.25,n:16, tier:76, cust:4, comp:46,zones:['Centro','Av. del Mar','San Joaquín']},
+ {name:'Temuco',       region:'Araucanía',     lat:-38.74,lon:-72.60,n:12, tier:66, cust:2, comp:38,zones:['Centro','Poniente']},
+ {name:'Puerto Montt', region:'Los Lagos',     lat:-41.47,lon:-72.94,n:11, tier:68, cust:2, comp:34,zones:['Centro','Pelluco']},
+ {name:'Rancagua',     region:"O'Higgins",     lat:-34.17,lon:-70.74,n:9,  tier:62, cust:3, comp:36,zones:['Centro','Oriente']},
+ {name:'Talca',        region:'Maule',         lat:-35.43,lon:-71.66,n:8,  tier:58, cust:2, comp:30,zones:['Centro','Oriente']}
+];
+const CITY=Object.fromEntries(CITIES.map(c=>[c.name,c]));
+const REGIONS=[...new Set(CITIES.map(c=>c.region))];
+
+/* ---------- fuentes de descubrimiento ---------- */
+const SOURCES=['Google Maps','Instagram','Facebook','TikTok','Web'];
+const SRC={
+ 'Google Maps':{c:'#5AAEFF',d:'M12 21s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12zM12 11.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z',q:'Fichas de negocio, categoría, reseñas y ubicación'},
+ 'Instagram':  {c:'#F07AA0',d:'M4 7h3l2-2h6l2 2h3v12H4zM12 16a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z',q:'Perfiles de empresa, bio, hashtags y publicaciones'},
+ 'Facebook':   {c:'#8F9DFF',d:'M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M16 11a2.5 2.5 0 1 0 0-5M17 14c2.4.5 4 2.9 4 6',q:'Páginas, eventos, promociones y reseñas'},
+ 'TikTok':     {c:'#3FE0D0',d:'M9 18a3 3 0 1 1-3-3h3V4c1 2.5 3 4 6 4',q:'Videos de tratamientos, alcance y tendencias'},
+ 'Web':        {c:'#E9B65E',d:'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM3 12h18M12 3c2.5 2.5 3.5 5.5 3.5 9s-1 6.5-3.5 9c-2.5-2.5-3.5-5.5-3.5-9s1-6.5 3.5-9z',q:'Sitios web: servicios, equipo médico y tecnología'}
+};
+const HASHTAGS=['#armonizacionfacial','#medicinaestetica','#botox','#acidohialuronico','#rejuvenecimiento','#skincarechile','#bioestimuladores','#rellenolabial','#dermatologia','#laserfacial','#esteticachile','#antiage'];
+
+/* ---------- catálogo ---------- */
+const PRODUCTS=['Inyectables','Rellenos','Bioestimuladores','Dispositivos médicos','Equipos estéticos','Consumibles'];
+const SV={FR:'Rejuvenecimiento facial',INJ:'Tratamientos inyectables',FIL:'Rellenos dérmicos',SKIN:'Tratamientos de piel',LAS:'Tratamientos láser',BODY:'Contorno corporal',SURG:'Cirugía',DENT:'Estética dental',GEN:'Medicina general',DX:'Diagnóstico'};
+const AESTH=[SV.FR,SV.INJ,SV.FIL,SV.SKIN,SV.LAS,SV.BODY];
+
+const TYPES={
+ 'Clínica estética':          {spec:'Medicina estética',   fit:92,w:22,aff:[92,90,86,45,68,70],pre:['Clínica','Clínica Estética','Espacio'],           svc:[SV.FR,SV.INJ,SV.FIL,SV.SKIN,SV.LAS,SV.BODY]},
+ 'Clínica dermatológica':     {spec:'Dermatología',        fit:87,w:14,aff:[80,76,78,55,74,68],pre:['Clínica Dermatológica','Dermocentro'],             svc:[SV.SKIN,SV.LAS,SV.INJ,SV.FR,SV.DX]},
+ 'Centro médico':             {spec:'Multiespecialidad',   fit:60,w:12,aff:[50,45,42,78,52,80],pre:['Centro Médico','Policlínico'],                     svc:[SV.GEN,SV.DX,SV.SKIN,SV.SURG]},
+ 'Hospital':                  {spec:'Hospital general',    fit:54,w:4, aff:[35,30,28,90,40,88],pre:['Hospital Clínico','Clínica Hospitalaria'],         svc:[SV.GEN,SV.DX,SV.SURG]},
+ 'Consulta dermatológica':    {spec:'Dermatología',        fit:81,w:10,aff:[78,72,70,40,48,60],pre:['Consulta Dermatológica','Dermoconsulta'],          svc:[SV.SKIN,SV.INJ,SV.DX,SV.FR]},
+ 'Cirugía plástica':          {spec:'Cirugía plástica',    fit:89,w:10,aff:[80,86,90,62,70,72],pre:['Centro de Cirugía Plástica','Instituto Plástico'], svc:[SV.SURG,SV.FIL,SV.FR,SV.INJ,SV.BODY]},
+ 'Medicina estética':         {spec:'Medicina estética',   fit:95,w:14,aff:[95,92,90,42,66,72],pre:['Medicina Estética','Instituto'],                  svc:[SV.INJ,SV.FIL,SV.FR,SV.SKIN,SV.BODY]},
+ 'Odontología estética':      {spec:'Odontología estética',fit:68,w:6, aff:[62,70,48,50,38,66],pre:['Odontología Estética','Clínica Dental'],          svc:[SV.DENT,SV.INJ,SV.FIL]},
+ 'Centro láser':              {spec:'Láser y energía',     fit:79,w:5, aff:[58,52,60,66,94,62],pre:['Centro Láser','Láser Studio'],                     svc:[SV.LAS,SV.SKIN,SV.BODY,SV.FR]},
+ 'Centro de rejuvenecimiento':{spec:'Antienvejecimiento',  fit:85,w:5, aff:[86,84,92,40,78,64],pre:['Centro de Rejuvenecimiento','Anti-Age'],          svc:[SV.FR,SV.INJ,SV.FIL,SV.LAS,SV.SKIN]}
+};
+const TYPE_NAMES=Object.keys(TYPES);
+const SPECIALTIES=[...new Set(Object.values(TYPES).map(t=>t.spec))];
+
+const TREATMENTS={
+ [SV.FR]:['Armonización facial','Rejuvenecimiento de manos','Hilos tensores'],
+ [SV.INJ]:['Toxina botulínica','Tratamiento de bruxismo'],
+ [SV.FIL]:['Ácido hialurónico labial','Rinomodelación','Relleno de ojeras'],
+ [SV.SKIN]:['Peeling químico','Mesoterapia facial','Tratamiento de manchas'],
+ [SV.LAS]:['Láser fraccionado','Depilación láser','Ultrasonido focalizado'],
+ [SV.BODY]:['Radiofrecuencia corporal','Criolipólisis'],
+ [SV.SURG]:['Blefaroplastia','Lipoescultura'],
+ [SV.DENT]:['Carillas estéticas','Diseño de sonrisa'],
+ [SV.GEN]:['Medicina general','Chequeo preventivo'],
+ [SV.DX]:['Dermatoscopía digital','Biopsia cutánea']
+};
+
+const WORDS=['Aurora','Lumen','Andina','Pacífico','Nativa','Brisa','Alma','Vértice','Cumbre','Mirador','Albor','Cénit','Litoral','Austral','Boreal','Ámbar','Coral','Magnolia','Olivo','Quillay','Maitén','Arrayán','Canelo','Copihue','Nácar','Perla','Sirio','Orión','Lira','Vega','Costanera','Bosque','Ribera','Solana','Atalaya','Aura','Esencia','Armonía','Equilibrio','Serena','Bruma','Marea','Oasis','Prisma','Fénix','Kora','Nuvia','Dermia','Estela','Velia','Aria','Duna','Mistral','Faro','Delta','Rumbo','Nova','Bella','Alba','Luma','Kalma','Ciprés','Laurel','Jade','Lucerna','Brío','Ondina','Sélvica','Norte Claro','Vía Sur'];
+const SUFFIX=['','','',' Plaza',' Oriente',' Costa',' Centro',' Norte',' Sur',' Parque'];
+const STREETS=['Av. Central','Calle Los Aromos','Av. del Parque','Calle Las Camelias','Av. Costanera','Calle El Roble','Av. Libertad','Calle Los Olmos','Av. Las Industrias','Calle Los Tilos','Paseo del Mar','Av. Los Pinos'];
+
+const GROWTH=[
+ {k:'equipment',w:3,t:['Nueva tecnología estética llega pronto','Anuncia nueva plataforma láser','Lanza tratamientos con equipos de energía']},
+ {k:'hiring',   w:3,t:['Busca médico estético','Busca dermatólogo(a)','Recluta enfermeras para procedimientos']},
+ {k:'expansion',w:3,t:['Amplió sus salas de tratamiento','Remodela un segundo piso para procedimientos']},
+ {k:'opening',  w:2,t:['Abre una nueva sucursal','Anuncia nueva sede']},
+ {k:'physician',w:2,t:['Se suma un nuevo médico al equipo','Incorpora cirujano plástico']},
+ {k:'training', w:2,t:['Organiza jornada de capacitación en inyectables','Equipo certificado en nuevas técnicas']},
+ {k:'event',    w:1,t:['Evento abierto para pacientes','Taller de medicina estética']}
+];
+const GLABEL={equipment:'Equipamiento',hiring:'Contratación',expansion:'Expansión',opening:'Nueva sede',physician:'Nuevo médico',training:'Capacitación',event:'Evento',promo:'Promoción',service:'Servicios'};
+const PROMOS={[SV.FR]:'Nuevos tratamientos de rejuvenecimiento facial',[SV.INJ]:'Promoción de tratamientos inyectables este mes',[SV.FIL]:'Promoción de rellenos de labios y pómulos',[SV.SKIN]:'Lanzamiento de programa de calidad de piel',[SV.LAS]:'Paquetes de temporada láser',[SV.BODY]:'Campaña de contorno corporal',[SV.SURG]:'Jornadas de evaluación quirúrgica',[SV.DENT]:'Promoción diseño de sonrisa',[SV.GEN]:'Campaña de chequeo preventivo',[SV.DX]:'Semana de pesquisa de cáncer de piel'};
+
+/* ---------- generación de prospectos ---------- */
+const usedNames=new Set();
+function makeName(type){
+  const t=TYPES[type];
+  for(let i=0;i<60;i++){const n=pick(t.pre)+' '+pick(WORDS)+pick(SUFFIX);if(!usedNames.has(n)){usedNames.add(n);return n;}}
+  const n=pick(t.pre)+' '+pick(WORDS)+' '+usedNames.size;usedNames.add(n);return n;
+}
+const slug=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'');
+const kfmt=v=>v>=1000?(v/1000).toFixed(v>=10000?0:1).replace('.',',')+'K':String(v);
+
+const P=[];
+let pid=1;
+CITIES.forEach(city=>{
+  for(let i=0;i<city.n;i++){
+    const type=wpick(TYPE_NAMES.map(n=>({n,w:TYPES[n].w}))).n;
+    const T=TYPES[type];
+    const name=makeName(type);
+    const s=slug(name);
+    const sizeRoll=R()+(type==='Hospital'?0.6:type==='Centro médico'?0.3:0)+(city.tier-70)/200;
+    const size=sizeRoll>0.9?'Grande':sizeRoll>0.45?'Mediana':'Pequeña';
+    const physicians=size==='Grande'?ri(6,18):size==='Mediana'?ri(3,6):ri(1,2);
+    const services=shuffle(T.svc).slice(0,ri(Math.min(3,T.svc.length),T.svc.length)).sort((a,b)=>T.svc.indexOf(a)-T.svc.indexOf(b));
+    const treatments=[...new Set(services.flatMap(sv=>shuffle(TREATMENTS[sv]).slice(0,ri(1,2))))];
+    const activity=Math.round(clamp(between(20,80)+(size==='Grande'?12:size==='Mediana'?5:-4)+(T.fit>85?10:0)+between(-10,14),6,99));
+    const socialLevel=activity>=70?'Alta':activity>=42?'Media':'Baja';
+    const presence={
+      Web:R()<(size==='Pequeña'?0.78:0.97),
+      'Google Maps':R()<0.95,
+      Instagram:R()<(T.fit>75?0.93:0.6),
+      Facebook:R()<0.72,
+      LinkedIn:R()<(size==='Grande'?0.85:0.3),
+      TikTok:R()<(activity>65?0.55:0.15)
+    };
+    const nGrowth=activity>75?ri(1,3):activity>50?ri(0,2):ri(0,1);
+    const growth=[];const gk=new Set();
+    for(let g=0;g<nGrowth;g++){const G=wpick(GROWTH);if(gk.has(G.k))continue;gk.add(G.k);growth.push({kind:G.k,text:pick(G.t),days:ri(1,40),plat:pick(presence.LinkedIn&&G.k==='hiring'?['LinkedIn']:['Instagram','Facebook','Web','Instagram'])});}
+    const aff={};
+    PRODUCTS.forEach((pr,idx)=>{
+      let v=T.aff[idx]+between(-9,7);
+      if(pr==='Inyectables'&&services.includes(SV.INJ))v+=3;
+      if(pr==='Rellenos'&&services.includes(SV.FIL))v+=3;
+      if(pr==='Bioestimuladores'&&services.includes(SV.FR))v+=3;
+      if(pr==='Equipos estéticos'&&(gk.has('equipment')||gk.has('expansion')))v+=12;
+      if(pr==='Equipos estéticos'&&services.includes(SV.LAS))v+=4;
+      if(pr==='Dispositivos médicos'&&size==='Grande')v+=6;
+      if(pr==='Consumibles')v+=size==='Grande'?6:0;
+      aff[pr]=Math.round(clamp(v,8,97));
+    });
+    const ranked=PRODUCTS.slice().sort((a,b)=>aff[b]-aff[a]);
+    const relevant=services.filter(x=>AESTH.includes(x)).length;
+    const comp={
+      specialty:Math.round(clamp(T.fit+between(-7,6))),
+      services:Math.round(clamp(28+relevant*15+between(-6,6))),
+      size:size==='Grande'?90:size==='Mediana'?70:48,
+      social:activity,
+      growth:Math.min(100,22+growth.length*27),
+      geo:city.tier,
+      affinity:aff[ranked[0]]
+    };
+    const score=Math.round(comp.specialty*.25+comp.services*.20+comp.size*.15+comp.social*.10+comp.growth*.10+comp.geo*.10+comp.affinity*.10);
+    const base=size==='Grande'?between(16,34):size==='Mediana'?between(7,15):between(2.5,7);
+    const mult=type==='Hospital'?1.8:type==='Centro médico'?1.2:1;
+    const opp=Math.round(base*mult*(score/82)*6.0)*100;
+    const jit=city.name==='Santiago'?0.11:0.05;
+    const signals=[];
+    growth.forEach(g=>signals.push({plat:g.plat,text:g.text,days:g.days,kind:g.kind}));
+    services.slice(0,ri(1,3)).forEach(sv=>signals.push({plat:pick(['Instagram','Instagram','Facebook','TikTok','Web']),text:PROMOS[sv],days:ri(1,socialLevel==='Alta'?9:30),kind:sv===SV.INJ||sv===SV.FIL?'promo':'service'}));
+    signals.forEach(sg=>{if(!presence[sg.plat])sg.plat=presence.Instagram?'Instagram':'Web';});
+    signals.sort((a,b)=>a.days-b.days);
+
+    /* métricas por fuente (simuladas) */
+    const zone=pick(city.zones);
+    const tags=shuffle(HASHTAGS).slice(0,3);
+    const gm={rating:+clamp(between(4.0,4.9)-(score<65?0.3:0),3.4,5).toFixed(1),reviews:Math.round((size==='Grande'?between(250,1400):size==='Mediana'?between(80,420):between(12,140))),photos:ri(8,160),verified:R()<.8};
+    const ig={followers:Math.round(activity*activity*between(0.6,2.4)+ri(200,900)),eng:+between(1.1,6.8).toFixed(1),posts:socialLevel==='Alta'?ri(14,30):socialLevel==='Media'?ri(5,13):ri(0,4),tags};
+    const fb={followers:Math.round(ig.followers*between(.3,.9)),rating:+between(4.1,4.9).toFixed(1),events:ri(0,4)};
+    const tt={followers:Math.round(activity*activity*between(.4,3)),views:Math.round(activity*between(60,420)),videos:ri(6,90)};
+    const evidence={
+      'Google Maps':`Ficha "${type}" en ${zone}, ${String(gm.rating).replace('.',',')}★ con ${gm.reviews} reseñas`,
+      'Instagram':`Bio y publicaciones mencionan ${tags.slice(0,2).join(' ')}; ${kfmt(ig.followers)} seguidores`,
+      'Facebook':`Página con ${kfmt(fb.followers)} seguidores y promociones de ${services[0].toLowerCase()}`,
+      'TikTok':`Videos de ${(treatments[0]||'tratamientos').toLowerCase()} con ${kfmt(tt.views)} vistas promedio`,
+      'Web':`Sitio lista ${services.length} servicios y ${physicians} profesionales`
+    };
+    const foundBy=SOURCES.filter(x=>presence[x]);
+    if(!foundBy.length)foundBy.push('Google Maps');
+    const ow={'Google Maps':45,Instagram:30,Facebook:12,TikTok:9,Web:4};
+    const origin=wpick(foundBy.map(x=>({x,w:ow[x]}))).x;
+
+    P.push({
+      id:'EL-'+String(pid++).padStart(4,'0'),
+      name,type,spec:T.spec,city:city.name,region:city.region,zone,
+      address:pick(STREETS)+' '+ri(100,4800)+(R()<.5?', Of. '+ri(101,1204):''),
+      lat:+(city.lat+between(-jit,jit)).toFixed(4),lon:+(city.lon+between(-jit,jit)).toFixed(4),
+      website:presence.Web?s+'.demo':'',
+      phone:'+56 9 5550 '+String(ri(1000,9999)),
+      email:presence.Web&&R()<.85?'contacto@'+s+'.demo':'',
+      presence,services,treatments,
+      activity,socialLevel,
+      lastPost:socialLevel==='Alta'?ri(1,4):socialLevel==='Media'?ri(3,14):ri(10,60),
+      postsMonth:ig.posts,
+      mentions:Math.round(relevant*between(1.5,4)+activity/12),
+      equipContent:Math.round((services.includes(SV.LAS)?3:0)+(gk.has('equipment')?3:0)+between(0,3)),
+      growth,signals,size,physicians,
+      aff,ranked,recommended:ranked[0],comp,score,opp,
+      gm,ig,fb,tt,evidence,foundBy,origin,
+      stage:null,rep:null
+    });
+  }
+});
+
+const Q_MIN=69, HI_MIN=82;
+const isQ=p=>p.score>=Q_MIN, isHi=p=>p.score>=HI_MIN;
+const isEquip=p=>p.aff['Equipos estéticos']>=93||p.aff["Dispositivos médicos"]>=96;
+const isInj=p=>p.aff.Inyectables>=86;
+
+/* ---------- clientes actuales de Eurolab (referencias simuladas para lookalike) ---------- */
+const CUSTOMERS=[
+ {name:'Clínica Bella',          type:'Clínica estética',     city:'Santiago',    size:'Mediana',activity:82,services:[SV.FR,SV.INJ,SV.FIL,SV.SKIN],buys:['Inyectables','Bioestimuladores','Rellenos']},
+ {name:'Instituto Dermia',       type:'Clínica dermatológica',city:'Santiago',    size:'Grande', activity:71,services:[SV.SKIN,SV.LAS,SV.INJ,SV.DX],buys:['Inyectables','Equipos estéticos']},
+ {name:'Medicina Estética Alba', type:'Medicina estética',    city:'Viña del Mar',size:'Pequeña',activity:88,services:[SV.INJ,SV.FIL,SV.FR],buys:['Rellenos','Bioestimuladores']},
+ {name:'Centro Láser Prisma',    type:'Centro láser',         city:'Antofagasta', size:'Mediana',activity:64,services:[SV.LAS,SV.SKIN,SV.BODY],buys:['Equipos estéticos','Consumibles']},
+ {name:'Cirugía Plástica Cumbre',type:'Cirugía plástica',     city:'Concepción',  size:'Grande', activity:58,services:[SV.SURG,SV.FIL,SV.FR],buys:['Rellenos','Dispositivos médicos']},
+ {name:'Centro Médico Litoral',  type:'Centro médico',        city:'La Serena',   size:'Grande', activity:40,services:[SV.GEN,SV.DX,SV.SKIN],buys:['Consumibles','Dispositivos médicos']}
+].map((c,i)=>{const T=TYPES[c.type];const aff={};PRODUCTS.forEach((pr,idx)=>aff[pr]=T.aff[idx]+(c.buys.includes(pr)?8:0));return Object.assign(c,{id:'CU-'+(i+1),spec:T.spec,region:CITY[c.city].region,aff});});
+
+/* ---------- pipeline ---------- */
+const STAGES=['DESCUBIERTO','ANALIZADO','CALIFICADO','ASIGNADO','OPORTUNIDAD'];
+const REPS=['Ejecutivo Santiago Oriente','Ejecutivo Santiago Centro','Ejecutivo Costa Central','Ejecutivo Zona Norte','Ejecutivo Zona Sur'];
+function repFor(p){if(p.city==='Santiago')return p.lon>-70.62?REPS[0]:REPS[1];if(['Viña del Mar','Valparaíso','Rancagua','Talca'].includes(p.city))return REPS[2];if(['Antofagasta','La Serena'].includes(p.city))return REPS[3];return REPS[4];}
+const LSK='eurolab-pipeline-es';
+(function seed(){
+  const top=P.slice().sort((a,b)=>b.score-a.score);
+  const plan=[['OPORTUNIDAD',2],['ASIGNADO',3],['CALIFICADO',3],['ANALIZADO',3],['DESCUBIERTO',4]];
+  let k=0;plan.forEach(([st,n])=>{for(let i=0;i<n;i++){const p=top[k*3+1];k++;if(!p)continue;p.stage=st;if(st==='ASIGNADO'||st==='OPORTUNIDAD')p.rep=repFor(p);}});
+  try{const saved=JSON.parse(localStorage.getItem(LSK)||'null');if(saved){P.forEach(p=>{p.stage=null;p.rep=null;});Object.entries(saved).forEach(([id,v])=>{const p=P.find(x=>x.id===id);if(p&&STAGES.includes(v.s)){p.stage=v.s;p.rep=v.r||null;}});}}catch(e){}
+})();
+function persist(){try{const o={};P.forEach(p=>{if(p.stage)o[p.id]={s:p.stage,r:p.rep};});localStorage.setItem(LSK,JSON.stringify(o));}catch(e){}}
+
+/* =================== utilidades =================== */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+const money=v=>v>=1e6?'US$'+(v/1e6).toFixed(1).replace('.',',')+'M':'US$'+Math.round(v/1e3)+'K';
+const sum=(a,f)=>a.reduce((s,x)=>s+f(x),0);
+const byId=id=>P.find(p=>p.id===id);
+const scoreCls=s=>s>=HI_MIN?'s-hi':s>=Q_MIN?'s-mid':'s-lo';
+const scoreTag=s=>`<span class="score ${scoreCls(s)}">${s}</span>`;
+const lvlPill=l=>`<span class="pill ${l==='Alta'?'p-hi':l==='Media'?'p-mid':'p-lo'}">${l}</span>`;
+const stagePill=s=>s?`<span class="pill ${s==='OPORTUNIDAD'?'p-ok':'p-pe'}">${s}</span>`:'<span class="muted small">Fuera del pipeline</span>';
+const REDUCED=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+const icon=(src,sz)=>`<svg viewBox="0 0 24 24"${sz?` width="${sz}" height="${sz}"`:''}><path d="${SRC[src].d}"/></svg>`;
+const srcTag=src=>`<span class="src" style="--c:${SRC[src].c}">${icon(src)}${src}</span>`;
+const srcIcons=p=>`<span class="srcs">${SOURCES.map(s=>`<span class="srci ${p.foundBy.includes(s)?'':'off'}" style="--c:${SRC[s].c}" title="${s}${p.foundBy.includes(s)?': detectado':': sin presencia'}">${icon(s)}</span>`).join('')}</span>`;
+function bars(items,cls='',fmt=v=>v){const max=Math.max(...items.map(i=>i.v),1);return `<div class="bars">${items.map((i,n)=>`<div class="bar ${cls}"><span>${esc(i.k)}</span><span class="t"><i style="width:${(i.v/max*100).toFixed(1)}%;animation-delay:${n*.05}s"></i></span><span class="v">${fmt(i.v)}</span></div>`).join('')}</div>`;}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('on'),2600);}
+function countUp(root){
+  (root||document).querySelectorAll('[data-count]').forEach(el=>{
+    const end=+el.dataset.count,fmt=el.dataset.fmt;const f=v=>fmt==='money'?money(v):Math.round(v).toLocaleString('es-CL');
+    if(REDUCED){el.textContent=f(end);return;}
+    const t0=performance.now(),d=1300;
+    const step=t=>{const k=Math.min(1,(t-t0)/d),e=1-Math.pow(1-k,3);el.textContent=f(end*e);if(k<1)requestAnimationFrame(step);};requestAnimationFrame(step);
+  });
+}
+const cnt=(v,fmt)=>`<span data-count="${v}"${fmt?` data-fmt="${fmt}"`:''}>${fmt==='money'?money(0):0}</span>`;
+function cityStats(name){
+  const ps=P.filter(p=>p.city===name);const c=CITY[name];
+  const pc={};PRODUCTS.forEach(pr=>pc[pr]=sum(ps.filter(p=>p.recommended===pr),p=>p.opp));
+  const top=PRODUCTS.slice().sort((a,b)=>pc[b]-pc[a])[0];
+  const specs={};ps.forEach(p=>specs[p.spec]=(specs[p.spec]||0)+1);
+  const pen=c.cust/(c.cust+ps.length);
+  return {c,ps,n:ps.length,hi:ps.filter(isHi).length,q:ps.filter(isQ).length,eq:ps.filter(isEquip).length,inj:ps.filter(isInj).length,opp:sum(ps,p=>p.opp),top,specs,pen,dens:c.comp>=75?'Alta':c.comp>=45?'Media':'Baja'};
+}
+
+/* =================== mapa de Chile (norte a la izquierda, Pacífico abajo) =================== */
+const CL=[[-69.9,-17.5],[-70.4,-18.3],[-70.3,-19.6],[-70.1,-21.1],[-70.4,-23.6],[-70.6,-25.4],[-70.9,-27.1],[-71.3,-28.5],[-71.5,-29.9],[-71.7,-31.5],[-71.6,-33],[-71.9,-34.2],[-72.3,-35.5],[-72.8,-36.6],[-73.6,-37.3],[-73.4,-38.7],[-73.3,-39.9],[-73.8,-41],[-73.9,-41.9],[-74.3,-43],[-74.9,-44.5],[-75.5,-46.5],[-75.4,-48.5],[-75.4,-50.5],[-74.8,-52.3],[-73.4,-53.6],[-71.2,-54.9],[-68.6,-55.5],[-68.6,-52.6],[-69.6,-52.3],[-71.5,-52],[-72.3,-51.2],[-73.2,-50],[-72.6,-48.5],[-71.9,-47],[-71.7,-45.5],[-71.5,-44],[-71.8,-42.2],[-71.7,-40],[-71.4,-38],[-71.1,-36.5],[-70.4,-35],[-70,-33.5],[-70.3,-32],[-70,-30],[-69.6,-28.4],[-68.5,-27],[-68.3,-25],[-67.2,-23],[-67.8,-22.2],[-68.4,-21.3],[-68.8,-20],[-69.3,-18.5]];
+const K=24;
+const proj=(lat,lon)=>[(-17.3-lat)*K+20,(-66-lon)*K+14];
+const LBL={'Antofagasta':[0,-40],'La Serena':[0,-36],'Viña del Mar':[-100,60],'Valparaíso':[-20,96],'Santiago':[-16,-70],'Rancagua':[70,-100],'Talca':[-2,-60],'Concepción':[70,58],'Temuco':[44,-64],'Puerto Montt':[70,50]};
+function chileSVG(opts={}){
+  const sel=opts.sel||'';
+  const coast=CL.slice(0,28).map(([lo,la])=>proj(la,lo));
+  const sea=[[0,coast[0][1]],...coast,[960,coast[27][1]],[960,300],[0,300]].map(p=>p.map(v=>v.toFixed(1)).join(',')).join(' ');
+  const land=CL.map(([lo,la])=>proj(la,lo).map(v=>v.toFixed(1)).join(',')).join(' ');
+  let gridl='';for(let x=60;x<960;x+=60)gridl+=`<line class="grid-l" x1="${x}" y1="0" x2="${x}" y2="300"/>`;for(let y=40;y<300;y+=60)gridl+=`<line class="grid-l" x1="0" y1="${y}" x2="960" y2="${y}"/>`;
+  const dots=opts.dots?P.map(p=>{const[x,y]=proj(p.lat,p.lon);return `<circle class="pdot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1.5"/>`;}).join(''):'';
+  const cities=CITIES.map((c,i)=>{
+    const st=cityStats(c.name);const[x,y]=proj(c.lat,c.lon);const r=4+Math.sqrt(st.n)*1.7;const[dx,dy]=LBL[c.name];
+    const lx=x+dx,ly=y+dy;const on=sel===c.name;
+    return `<g><line class="lead" x1="${x}" y1="${y}" x2="${lx}" y2="${ly+(dy<0?19:-14)}"/>
+      <circle class="halo" cx="${x}" cy="${y}" r="${r.toFixed(1)}" style="animation-delay:${(i*.37).toFixed(2)}s"/>
+      <circle class="bub ${on?'sel':''}" cx="${x}" cy="${y}" r="${r.toFixed(1)}" data-a="city" data-v="${esc(c.name)}" tabindex="0" role="button" aria-label="${esc(c.name)}: ${st.n} prospectos"/>
+      <circle class="dot" cx="${x}" cy="${y}" r="2"/>
+      <text class="lbl ${on?'lblsel':''}" x="${lx}" y="${ly}" text-anchor="middle">${esc(c.name)} <tspan class="num">${st.n}</tspan></text>
+      <text class="lbl2" x="${lx}" y="${ly+14}" text-anchor="middle">${money(st.opp)}</text></g>`;
+  }).join('');
+  const sweep=REDUCED?'':`<line class="sweep" x1="0" y1="0" x2="0" y2="300"><animate attributeName="x1" from="0" to="960" dur="7s" repeatCount="indefinite"/><animate attributeName="x2" from="0" to="960" dur="7s" repeatCount="indefinite"/></line>`;
+  return `<svg class="chile" id="${opts.id||''}" viewBox="0 0 960 300" role="img" aria-label="Chile, norte a la izquierda, con clusters simulados de prospectos por ciudad">
+    <defs><linearGradient id="sw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3FD0C9" stop-opacity="0"/><stop offset=".5" stop-color="#3FD0C9" stop-opacity=".9"/><stop offset="1" stop-color="#8F7DFF" stop-opacity="0"/></linearGradient></defs>
+    ${gridl}<polygon class="sea" points="${sea}"/><polygon class="land" points="${land}"/>${dots}${sweep}<g class="blips"></g>${cities}
+    <text class="ocean" x="700" y="288">Océano Pacífico</text>
+    <text class="lbl2" x="20" y="288">Norte</text><text class="lbl2" x="930" y="288" text-anchor="end">Sur</text></svg>`;
+}
+function blip(svg,p){if(!svg)return;const g=svg.querySelector('.blips');if(!g)return;const[x,y]=proj(p.lat,p.lon);const c=document.createElementNS('http://www.w3.org/2000/svg','circle');c.setAttribute('cx',x);c.setAttribute('cy',y);c.setAttribute('r',2.4);c.setAttribute('class','blip');c.style.fill=SRC[p.origin].c;g.appendChild(c);if(g.childNodes.length>60)g.removeChild(g.firstChild);}
+
+/* =================== navegación =================== */
+const NAV=[
+ ['Descubrimiento',[['dashboard','Panel ejecutivo','M3 13h8V3H3zM13 21h8V11h-8zM3 21h8v-6H3zM13 3v6h8V3z'],['radar','Radar IA','M12 12l7-7M12 3a9 9 0 1 0 9 9M12 7a5 5 0 1 0 5 5',true],['discovery','Descubrimiento','M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5'],['database','Base de prospectos','M4 6h16M4 12h16M4 18h16'],['map','Mapa de mercado','M9 4 3 6v14l6-2 6 2 6-2V4l-6 2zM9 4v14M15 6v14']]],
+ ['Inteligencia',[['social','Inteligencia social','M4 12a8 8 0 0 1 16 0M8 12a4 4 0 0 1 8 0M12 12v8'],['geo','Inteligencia geográfica','M12 21s-7-6-7-12a7 7 0 0 1 14 0c0 6-7 12-7 12zM12 11a2 2 0 1 0 0-4 2 2 0 0 0 0 4z'],['products','Match de productos','M20 7 9 18l-5-5'],['gaps','Brechas de mercado','M3 17l6-6 4 4 8-8M15 7h6v6']]],
+ ['IA',[['agents','Agentes IA','M12 3v3M5 9h14v10H5zM9 13h.01M15 13h.01M9 17h6'],['copilot','Copiloto de mercado','M4 5h16v11H8l-4 4z']]],
+ ['Ventas',[['qualified','Prospectos calificados','M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z'],['pipeline','Pipeline comercial','M4 5h4v14H4zM10 5h4v10h-4zM16 5h4v6h-4z']]]
+];
+function renderNav(){$('#nav').innerHTML=NAV.map(([g,items])=>`<div class="navgrp"><h6>${g}</h6>${items.map(([id,l,d,live])=>`<button class="nav ${S.view===id?'on':''}" data-a="go" data-v="${id}"><svg viewBox="0 0 24 24"><path d="${d}"/></svg>${l}${live?'<span class="live"><i></i>EN VIVO</span>':''}</button>`).join('')}</div>`).join('');}
+
+const TOT={n:P.length,q:P.filter(isQ).length,hi:P.filter(isHi).length,eq:P.filter(isEquip).length,inj:P.filter(isInj).length,opp:sum(P,p=>p.opp)};
+const V={};
+
+/* ---------- Panel ejecutivo ---------- */
+V.dashboard={t:'Panel ejecutivo',s:'Dónde puede crecer Eurolab en Chile: negocios detectados por IA en Google Maps, Instagram, Facebook, TikTok y sitios web, calificados y conectados al portafolio.',r(){
+  const cityOpp=CITIES.map(c=>({k:c.name,v:cityStats(c.name).opp})).sort((a,b)=>b.v-a.v);
+  const prodOpp=PRODUCTS.map(pr=>({k:pr,v:sum(P.filter(p=>p.recommended===pr),p=>p.opp)})).sort((a,b)=>b.v-a.v);
+  const srcN=SOURCES.map(s=>({k:s,v:P.filter(p=>p.origin===s).length}));
+  const srcAll=SOURCES.map(s=>({k:s,v:P.filter(p=>p.foundBy.includes(s)).length}));
+  const specN=SPECIALTIES.map(s=>({k:s,v:P.filter(p=>p.spec===s).length})).sort((a,b)=>b.v-a.v);
+  const inPipe=P.filter(p=>p.stage).length;
+  const multi=P.filter(p=>p.foundBy.length>=3).length;
+  const f=[['Descubiertos',TOT.n],['Enriquecidos por IA',P.filter(p=>p.foundBy.length>=2).length],['Calificados',TOT.q],['Alto potencial',TOT.hi],['En pipeline',inPipe]];
+  const out=CITIES.filter(c=>c.name!=='Santiago').reduce((s,c)=>s+cityStats(c.name).opp,0);
+  return `<div class="hero">
+    <div class="hero-head"><div><span class="aitag"><span class="dotlive"></span><span class="shimmer">La IA cruzó ${sum(P,p=>p.foundBy.length)} perfiles públicos de 5 fuentes</span></span>
+    <h2><span class="grad">${TOT.hi} negocios de alto potencial</span> en ${CITIES.length} ciudades de Chile todavía no le compran a Eurolab.</h2></div>
+    <div class="big"><span class="num grad">${cnt(TOT.opp,'money')}</span><small>oportunidad anual estimada</small></div></div>
+    <div class="scroll-x">${chileSVG({dots:true,id:'heroMap'})}</div>
+    <p class="small muted" style="margin:0 0 6px;position:relative">Selecciona una ciudad para abrir su vista de mercado. El ${Math.round(out/TOT.opp*100)}% de la oportunidad está fuera de Santiago.</p></div>
+  <div class="kpis">
+    <div class="kpi"><span class="num">${cnt(TOT.n)}</span><small>Prospectos descubiertos</small></div>
+    <div class="kpi"><span class="num">${cnt(TOT.q)}</span><small>Prospectos calificados</small></div>
+    <div class="kpi"><span class="num">${cnt(TOT.hi)}</span><small>Alto potencial</small></div>
+    <div class="kpi"><span class="num">${cnt(CITIES.length)}</span><small>Ciudades analizadas</small></div>
+    <div class="kpi"><span class="num">${cnt(TOT.eq)}</span><small>Candidatos a equipos</small></div>
+    <div class="kpi"><span class="num">${cnt(TOT.inj)}</span><small>Candidatos a inyectables</small></div>
+    <div class="kpi acc"><span class="num">${cnt(TOT.opp,'money')}</span><small>Oportunidad estimada</small></div>
+  </div>
+  <div class="grid g2 mt">
+    <div class="panel glow"><h3>¿Dónde encontró la IA a cada prospecto?</h3><p class="sub">Primera fuente de detección. ${multi} prospectos fueron confirmados en 3 o más fuentes.</p>
+      <div class="bars">${srcN.map((x,n)=>`<div class="bar" style="--c:${SRC[x.k].c}"><span>${srcTag(x.k)}</span><span class="t"><i style="width:${(x.v/Math.max(...srcN.map(z=>z.v))*100).toFixed(0)}%;background:${SRC[x.k].c};animation-delay:${n*.06}s"></i></span><span class="v">${x.v}</span></div>`).join('')}</div>
+      <p class="small muted" style="margin:14px 0 6px">Presencia total por fuente</p>
+      <div class="row">${srcAll.map(x=>`<span class="pill p-lo">${x.k}: ${x.v}</span>`).join('')}</div></div>
+    <div class="panel"><h3>Embudo de prospectos IA</h3><p class="sub">Desde el descubrimiento hasta el pipeline comercial</p><div class="funnel">${f.map(([k,v])=>`<div class="fstep"><div class="fb" style="width:${Math.max(18,v/TOT.n*100)}%">${v}</div><span>${k}</span></div>`).join('')}</div></div>
+    <div class="panel"><h3>Oportunidad por ciudad</h3><p class="sub">Potencial de compra anual estimado</p>${bars(cityOpp,'amb',money)}</div>
+    <div class="panel"><h3>Oportunidad por producto</h3><p class="sub">Según el producto #1 recomendado para cada prospecto</p>${bars(prodOpp,'',money)}</div>
+    <div class="panel" style="grid-column:1/-1"><h3>Prospectos por especialidad</h3><p class="sub">Detectada por IA a partir de servicios, sitio web y contenido social</p>${bars(specN,'rose')}</div>
+  </div>`;},after(){countUp($('#view'));}};
+
+/* ---------- Radar IA en vivo ---------- */
+V.radar={t:'Radar IA en vivo',s:'La IA escanea fuentes públicas en tiempo real y convierte cada perfil en un prospecto calificado. Simulación del flujo que luego se conectará a APIs autorizadas.',r(){
+  const f=S.radar.filter;
+  return `<div class="row" style="justify-content:space-between;margin-bottom:14px">
+    <div class="chips"><button class="chip ${!f?'on':''}" data-a="rfilter" data-v="">Todas las fuentes</button>${SOURCES.map(s=>`<button class="chip ${f===s?'on':''}" data-a="rfilter" data-v="${s}" style="--c:${SRC[s].c}">${icon(s)}${s}</button>`).join('')}</div>
+    <button class="btn" data-a="rtoggle" id="rBtn">${S.radar.on?'Pausar radar':'Reanudar radar'}</button></div>
+  <div class="ctr">${SOURCES.map(s=>`<div style="border-color:color-mix(in srgb,${SRC[s].c} 35%,transparent)"><span class="src" style="--c:${SRC[s].c};justify-content:center">${icon(s)}${s}</span><span class="num" id="rc-${norm(s).replace(/ /g,'')}">${S.radar.counts[s]||0}</span><small>perfiles escaneados hoy</small></div>`).join('')}</div>
+  <div class="live-grid mt">
+    <div class="panel glow"><div class="row" style="justify-content:space-between;margin-bottom:10px"><h3 style="margin:0"><span class="dotlive"></span>&nbsp; Flujo de detección</h3><span class="small muted" id="rTotal"></span></div><div class="stream" id="stream"></div></div>
+    <div class="grid" style="align-content:start">
+      <div class="panel"><h3>Cómo procesa la IA cada señal</h3><p class="sub">Fuentes, motor de IA y resultado</p>${flowSVG()}</div>
+      <div class="panel" style="padding:12px 14px"><div class="scroll-x">${chileSVG({id:'radarMap'})}</div></div>
+    </div>
+  </div>`;},after(){const st=$('#stream');S.radar.buf.slice(-8).reverse().forEach(p=>st.insertAdjacentHTML('beforeend',radarCard(p.p,p.s)));updRadarTotal();if(S.radar.on){clearTimeout(S.radar.t);S.radar.t=setTimeout(radarLoop,500);}}};
+function flowSVG(){
+  const ys=[30,70,110,150,190];const out=[['Calificado',60],['Alto potencial',110],['Descartado',160]];
+  const paths=[];let dots='';
+  ys.forEach((y,i)=>{const d=`M118 ${y} C170 ${y},170 110,215 110`;paths.push(`<path class="path" d="${d}"/>`);if(!REDUCED)dots+=`<circle r="3" fill="${SRC[SOURCES[i]].c}"><animateMotion dur="${(2+i*.35).toFixed(2)}s" repeatCount="indefinite" path="${d}"/></circle>`;});
+  out.forEach(([l,y],i)=>{const d=`M275 110 C320 110,320 ${y},360 ${y}`;paths.push(`<path class="path" d="${d}"/>`);if(!REDUCED)dots+=`<circle r="2.6" fill="${['#3FD0C9','#F07AA0','#6D8399'][i]}"><animateMotion dur="${(1.8+i*.5).toFixed(2)}s" begin="${i*.4}s" repeatCount="indefinite" path="${d}"/></circle>`;});
+  return `<svg class="flow" viewBox="0 0 470 220" role="img" aria-label="Diagrama: cinco fuentes alimentan al motor de IA, que clasifica prospectos">
+   <defs><radialGradient id="coreg"><stop offset="0" stop-color="#8F7DFF"/><stop offset="1" stop-color="#3FD0C9"/></radialGradient></defs>
+   ${paths.join('')}${dots}
+   ${SOURCES.map((s,i)=>`<g><rect class="node" x="4" y="${ys[i]-13}" width="114" height="26" rx="8" style="stroke:${SRC[s].c}55"/><g transform="translate(14 ${ys[i]-7})" style="stroke:${SRC[s].c};fill:none;stroke-width:1.8">${`<svg width="14" height="14" viewBox="0 0 24 24"><path d="${SRC[s].d}"/></svg>`}</g><text x="34" y="${ys[i]+4}">${s}</text></g>`).join('')}
+   <circle class="core" cx="245" cy="110" r="30"/><text x="245" y="106" text-anchor="middle" style="fill:#06101B;font-weight:700">MOTOR</text><text x="245" y="120" text-anchor="middle" style="fill:#06101B;font-weight:700">IA</text>
+   ${out.map(([l,y])=>`<g><rect class="node" x="360" y="${y-13}" width="104" height="26" rx="8"/><text x="412" y="${y+4}" text-anchor="middle">${l}</text></g>`).join('')}
+  </svg>`;
+}
+function radarCard(p,s){
+  const tags=[p.spec,p.recommended+' '+p.aff[p.recommended]+'%'];if(p.growth.length)tags.push(GLABEL[p.growth[0].kind]);
+  return `<div class="scard" data-a="open" data-v="${p.id}" style="--c:${SRC[s].c}"><div class="ic">${icon(s)}</div>
+   <div style="min-width:0"><div class="nm">${esc(p.name)} <span class="muted small" style="font-weight:400">${esc(p.zone)}, ${esc(p.city)}</span></div><div class="ev">${esc(p.evidence[s])}</div><div class="tg">${tags.map(t=>`<span>${esc(t)}</span>`).join('')}</div></div>
+   <div style="text-align:right">${scoreTag(p.score)}<div class="small muted" style="margin-top:4px">${isHi(p)?'Alto potencial':isQ(p)?'Calificado':'En observación'}</div></div></div>`;
+}
+function updRadarTotal(){const e=$('#rTotal');if(e)e.textContent=S.radar.buf.length+' detecciones en esta sesión';}
+function radarLoop(){
+  clearTimeout(S.radar.t);
+  if(S.view!=='radar'||!S.radar.on)return;
+  const f=S.radar.filter;
+  let p,s,guard=0;
+  do{p=S.radar.queue[S.radar.i++%S.radar.queue.length];s=f&&p.foundBy.includes(f)?f:p.foundBy[Math.floor(Math.random()*p.foundBy.length)];guard++;}while(f&&s!==f&&guard<400);
+  S.radar.buf.push({p,s});if(S.radar.buf.length>200)S.radar.buf.shift();
+  S.radar.counts[s]=(S.radar.counts[s]||0)+1;
+  const st=$('#stream');st.insertAdjacentHTML('afterbegin',radarCard(p,s));while(st.children.length>9)st.removeChild(st.lastChild);
+  const ce=$('#rc-'+norm(s).replace(/ /g,''));if(ce)ce.textContent=S.radar.counts[s];
+  blip($('#radarMap'),p);updRadarTotal();
+  S.radar.t=setTimeout(radarLoop,REDUCED?2500:1300+Math.random()*700);
+}
+
+/* ---------- Descubrimiento ---------- */
+V.discovery={t:'Descubrimiento de prospectos',s:'Elige territorio, tipo de negocio, productos y fuentes. La IA simula el descubrimiento en Google Maps, redes sociales y sitios web.',r(){
+  const d=S.disc;const cities=CITIES.filter(c=>!d.region||c.region===d.region);
+  const types=TYPE_NAMES.map(t=>`<button class="chip ${d.types.includes(t)?'on':''}" data-a="dtype" data-v="${esc(t)}">${esc(t)}</button>`).join('');
+  const prods=[...PRODUCTS,'Otros productos Eurolab'].map(t=>`<button class="chip ${d.prods.includes(t)?'on':''}" data-a="dprod" data-v="${esc(t)}">${esc(t)}</button>`).join('');
+  const srcs=SOURCES.map(s=>`<button class="chip ${d.srcs.includes(s)?'on':''}" data-a="dsrc" data-v="${s}" style="--c:${SRC[s].c}">${icon(s)}${s}</button>`).join('');
+  const custOpts=CUSTOMERS.map(c=>`<option value="${c.id}" ${S.look===c.id?'selected':''}>${esc(c.name)} (${esc(c.city)})</option>`).join('');
+  return `<div class="grid g-side">
+   <div class="panel glow"><h3>Descubrimiento de prospectos con IA</h3><p class="sub">Deja un campo vacío para buscar en todo.</p>
+    <div class="grid g3">
+      <label class="f">País<select disabled><option>Chile</option></select></label>
+      <label class="f">Región<select data-f="dregion"><option value="">Todas las regiones</option>${REGIONS.map(r=>`<option ${d.region===r?'selected':''}>${esc(r)}</option>`).join('')}</select></label>
+      <label class="f">Ciudad<select data-f="dcity"><option value="">Todas las ciudades</option>${cities.map(c=>`<option ${d.city===c.name?'selected':''}>${esc(c.name)}</option>`).join('')}</select></label>
+    </div>
+    <p class="small muted" style="margin:18px 0 8px">Fuentes a escanear</p><div class="chips">${srcs}</div>
+    <p class="small muted" style="margin:18px 0 8px">Tipo de negocio</p><div class="chips">${types}</div>
+    <p class="small muted" style="margin:18px 0 8px">Productos y oportunidad</p><div class="chips">${prods}</div>
+    <div class="row" style="margin-top:22px"><button class="btn pri big" data-a="run" id="runBtn">INICIAR DESCUBRIMIENTO IA</button><button class="lnk small" data-a="dreset">Limpiar selección</button></div>
+   </div>
+   <div class="panel"><h3>Fuentes de descubrimiento</h3><p class="sub">Simuladas hoy. Cada una se conecta luego a una integración autorizada.</p>
+    <div class="list">${SOURCES.map(s=>`<div class="li"><div>${srcTag(s)}<div class="ad" style="margin-top:2px">${SRC[s].q}</div></div><span class="pill p-pe">${P.filter(p=>p.foundBy.includes(s)).length}</span></div>`).join('')}
+    <div class="li"><div><div class="nm">CRM Eurolab</div><div class="ad">Excluye clientes actuales y entrena el modelo de lookalikes</div></div><span class="pill p-lo">${CUSTOMERS.length} ref.</span></div></div>
+   </div>
+  </div>
+  <div id="runArea" class="mt">${S.lastRun?runResultHTML(S.lastRun):''}</div>
+  <div class="panel mt"><h3>Encontrar prospectos similares</h3><p class="sub">Elige un cliente actual de Eurolab. La IA busca no-clientes con el mismo perfil en todo Chile.</p>
+    <div class="row"><select data-f="look" style="min-width:260px"><option value="">Elige un cliente</option>${custOpts}</select><button class="btn pri" data-a="lookrun">Buscar similares</button></div>
+    <div id="lookArea">${S.look?lookHTML(CUSTOMERS.find(c=>c.id===S.look)):''}</div></div>`;}};
+function discMatch(){
+  const d=S.disc;
+  return P.filter(p=>(!d.region||p.region===d.region)&&(!d.city||p.city===d.city)&&(!d.types.length||d.types.includes(p.type))&&(!d.srcs.length||d.srcs.some(s=>p.foundBy.includes(s)))&&(!d.prods.length||d.prods.some(pr=>pr==='Otros productos Eurolab'?p.aff.Consumibles>=65:p.aff[pr]>=70)));
+}
+function runResultHTML(r){
+  if(!r.set.length)return `<div class="empty">Ningún negocio coincide con esa combinación. Quita un tipo de negocio, producto o fuente y vuelve a ejecutar el descubrimiento.</div>`;
+  const top=r.set.slice().sort((a,b)=>b.score-a.score).slice(0,6);
+  return `<div class="panel glow"><h3>Resultados del descubrimiento</h3><p class="sub">${esc(r.label)}</p>
+   <div class="results"><div><span class="num">${cnt(r.set.length)}</span><small>negocios descubiertos</small></div><div><span class="num">${cnt(r.set.filter(isQ).length)}</span><small>calificados</small></div><div><span class="num">${cnt(r.set.filter(isHi).length)}</span><small>alto potencial</small></div><div class="acc"><span class="num">${cnt(sum(r.set,p=>p.opp),'money')}</span><small>oportunidad de mercado estimada</small></div></div>
+   <div class="list mt">${top.map(p=>`<div class="li click" data-a="open" data-v="${p.id}"><div><div class="nm">${esc(p.name)}</div><div class="ad">${esc(p.type)}, ${esc(p.city)}. Mejor match: ${p.recommended} (${p.aff[p.recommended]}%). Detectado en ${p.origin}.</div></div><div class="row" style="gap:10px">${srcIcons(p)}${scoreTag(p.score)}</div></div>`).join('')}</div>
+   <div class="row mt"><button class="btn pri" data-a="toDb">Abrir los ${r.set.length} en la base de prospectos</button><button class="btn" data-a="addHi">Agregar alto potencial al pipeline</button></div></div>`;
+}
+
+/* ---------- Base de prospectos ---------- */
+const DB_COLS=[['name','Prospecto'],['type','Tipo'],['city','Ciudad'],['spec','Especialidad'],['origin','Fuentes'],['activity','Actividad social'],['score','Score IA'],['recommended','Oportunidad'],['opp','Valor est.']];
+V.database={t:'Base de prospectos',s:'Cada negocio descubierto con su score IA, las fuentes donde fue detectado y su mejor producto. Selecciona una fila para abrir el Prospecto 360.',r(){
+  const f=S.db;const o=(arr,val)=>arr.map(x=>`<option ${val===x?'selected':''}>${esc(x)}</option>`).join('');
+  return `${f.preset?`<div class="preset"><span>Mostrando: ${esc(f.preset.label)}</span><button class="lnk" data-a="clearPreset">Ver todos</button></div>`:''}
+  <div class="filters">
+   <label class="f">Buscar<input type="search" data-f="q" value="${esc(f.q)}" placeholder="Nombre, ciudad o comuna"></label>
+   <label class="f">Fuente<select data-f="src"><option value="">Todas</option>${o(SOURCES,f.src)}</select></label>
+   <label class="f">Región<select data-f="region"><option value="">Todas</option>${o(REGIONS,f.region)}</select></label>
+   <label class="f">Ciudad<select data-f="city"><option value="">Todas</option>${o(CITIES.map(c=>c.name),f.city)}</select></label>
+   <label class="f">Especialidad<select data-f="spec"><option value="">Todas</option>${o(SPECIALTIES,f.spec)}</select></label>
+   <label class="f">Tipo de negocio<select data-f="type"><option value="">Todos</option>${o(TYPE_NAMES,f.type)}</select></label>
+   <label class="f">Producto<select data-f="prod"><option value="">Todos</option>${o(PRODUCTS,f.prod)}</select></label>
+   <label class="f">Actividad social<select data-f="social"><option value="">Todas</option>${o(['Alta','Media','Baja'],f.social)}</select></label>
+   <label class="f">Score IA mínimo <b id="msv">${f.min}</b><input type="range" min="0" max="95" step="5" value="${f.min}" data-f="min"></label>
+  </div>
+  <div class="row" style="justify-content:space-between;margin-bottom:8px"><span class="small muted" id="dbCount"></span><button class="lnk small" data-a="dbReset">Limpiar filtros</button></div>
+  <div class="tbl-wrap"><table><thead><tr>${DB_COLS.map(([k,l])=>`<th class="s ${['score','opp'].includes(k)?'r':''}" data-a="sort" data-v="${k}">${l}${f.sort===k?(f.dir<0?' ▾':' ▴'):''}</th>`).join('')}</tr></thead><tbody id="dbBody"></tbody></table></div>`;},
+  after(){fillDb();}};
+function dbRows(){
+  const f=S.db,q=norm(f.q);
+  const r=P.filter(p=>(!f.src||p.foundBy.includes(f.src))&&(!f.region||p.region===f.region)&&(!f.city||p.city===f.city)&&(!f.spec||p.spec===f.spec)&&(!f.type||p.type===f.type)&&(!f.prod||p.recommended===f.prod)&&(!f.social||p.socialLevel===f.social)&&p.score>=f.min&&(!q||norm(p.name+' '+p.city+' '+p.zone+' '+p.type).includes(q))&&(!f.preset||f.preset.fn(p)));
+  return r.sort((a,b)=>{const x=a[f.sort],y=b[f.sort];return (typeof x==='number'?x-y:String(x).localeCompare(String(y),'es'))*f.dir;});
+}
+function fillDb(){
+  const rows=dbRows();
+  $('#dbCount').textContent=`${rows.length} de ${P.length} prospectos, ${money(sum(rows,p=>p.opp))} de oportunidad estimada`;
+  $('#dbBody').innerHTML=rows.length?rows.map(p=>`<tr data-a="open" data-v="${p.id}"><td><span class="nm">${esc(p.name)}</span><span class="ad">${esc(p.zone)}. ${p.id}</span></td><td>${esc(p.type)}</td><td>${esc(p.city)}</td><td>${esc(p.spec)}</td><td>${srcIcons(p)}</td><td>${lvlPill(p.socialLevel)}</td><td class="r">${scoreTag(p.score)}</td><td>${p.recommended}</td><td class="r tab">${money(p.opp)}</td></tr>`).join(''):`<tr><td colspan="9"><div class="empty">Ningún prospecto coincide con estos filtros. Baja el score mínimo o quita un filtro.</div></td></tr>`;
+}
+
+/* ---------- Mapa ---------- */
+V.map={t:'Mapa de mercado, Chile',s:'Inteligencia geográfica simulada a partir de Google Maps. El tamaño de cada burbuja indica prospectos por ciudad; cada punto es un negocio.',r(){
+  const st=cityStats(S.mapCity);
+  const specs=Object.entries(st.specs).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v);
+  const top=st.ps.slice().sort((a,b)=>b.score-a.score).slice(0,6);
+  const zones={};st.ps.forEach(p=>zones[p.zone]=(zones[p.zone]||0)+1);
+  return `<div class="panel glow"><div class="scroll-x">${chileSVG({sel:S.mapCity,dots:true})}</div>
+   <div class="chips" style="margin-top:6px">${CITIES.map(c=>`<button class="chip ${S.mapCity===c.name?'on':''}" data-a="city" data-v="${esc(c.name)}">${esc(c.name)} ${cityStats(c.name).n}</button>`).join('')}</div></div>
+  <div class="grid g-side mt">
+   <div class="panel"><h3 style="font-family:var(--serif);font-weight:400;font-size:34px">${esc(S.mapCity)}</h3><p class="sub">Región ${esc(st.c.region)}</p>
+    <div class="results"><div><span class="num">${cnt(st.n)}</span><small>Prospectos</small></div><div><span class="num">${cnt(st.hi)}</span><small>Alto potencial</small></div><div><span class="num">${cnt(st.eq)}</span><small>Candidatos a equipos</small></div><div><span class="num">${cnt(st.inj)}</span><small>Candidatos a inyectables</small></div></div>
+    <div class="kv mt"><div><b class="tab" style="color:var(--gold)">${money(st.opp)}</b><small>Oportunidad estimada</small></div><div><b>${st.top}</b><small>Principal producto</small></div><div><b>${st.dens}</b><small>Densidad competitiva</small></div></div>
+    <div class="grid g2 mt"><div><h3>Especialidades</h3>${bars(specs,'rose')}</div><div><h3>Comunas y sectores</h3>${bars(Object.entries(zones).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v))}</div></div>
+    <div class="row mt"><button class="btn pri" data-a="cityDb" data-v="${esc(S.mapCity)}">Abrir ${st.n} prospectos en la base</button></div></div>
+   <div class="panel"><h3>Mejores prospectos en ${esc(S.mapCity)}</h3><p class="sub">Ordenados por score IA</p><div class="list">${top.map(p=>`<div class="li click" data-a="open" data-v="${p.id}"><div><div class="nm">${esc(p.name)}</div><div class="ad">${esc(p.zone)}. ${p.recommended}</div></div>${scoreTag(p.score)}</div>`).join('')}</div></div>
+  </div>`;},after(){countUp($('#view'));}};
+
+/* ---------- Inteligencia social ---------- */
+V.social={t:'Inteligencia social',s:'Señales comerciales públicas de Instagram, Facebook, LinkedIn, TikTok y sitios web. Simuladas aquí: esta página no hace scraping.',r(){
+  const sf=S.social;
+  const feed=[];P.forEach(p=>p.signals.forEach(sg=>feed.push({p,sg})));
+  const plats=['Instagram','Facebook','TikTok','LinkedIn','Web'];
+  const kinds=['equipment','hiring','expansion','opening','physician','training','promo','service','event'];
+  const list=feed.filter(x=>(!sf.plat||x.sg.plat===sf.plat)&&(!sf.kind||x.sg.kind===sf.kind)).sort((a,b)=>a.sg.days-b.sg.days||b.p.score-a.p.score).slice(0,40);
+  const sel=byId(sf.sel)||P.slice().sort((a,b)=>b.growth.length-a.growth.length||b.score-a.score)[0];
+  const tagN={};P.forEach(p=>{if(p.foundBy.includes('Instagram'))p.ig.tags.forEach(t=>tagN[t]=(tagN[t]||0)+1);});
+  return `<div class="grid g3">
+   <div class="panel"><h3>Presencia por plataforma</h3><p class="sub">% de prospectos con perfil de empresa activo</p>${bars(plats.map(pl=>({k:pl,v:Math.round(P.filter(p=>p.presence[pl]).length/P.length*100)})),'',v=>v+'%')}</div>
+   <div class="panel"><h3>Hashtags más detectados</h3><p class="sub">Instagram y TikTok, últimos 60 días</p>${bars(Object.entries(tagN).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v).slice(0,6),'rose')}</div>
+   <div class="panel"><h3>Señales por tipo</h3><p class="sub">Todas las fuentes</p>${bars(kinds.map(k=>({k:GLABEL[k],v:feed.filter(x=>x.sg.kind===k).length})).filter(x=>x.v).sort((a,b)=>b.v-a.v).slice(0,6),'amb')}
+    <p class="small muted" style="margin:12px 0 0">${P.filter(p=>p.growth.length>=2).length} prospectos muestran dos o más señales de crecimiento.</p></div>
+  </div>
+  <div class="grid g-side mt">
+   <div class="panel"><h3>Feed de señales</h3>
+    <div class="chips" style="margin:8px 0 6px"><button class="chip ${!sf.plat?'on':''}" data-a="splat" data-v="">Todas las plataformas</button>${plats.map(pl=>`<button class="chip ${sf.plat===pl?'on':''}" data-a="splat" data-v="${pl}">${pl}</button>`).join('')}</div>
+    <div class="chips" style="margin-bottom:8px"><button class="chip ${!sf.kind?'on':''}" data-a="skind" data-v="">Todas las señales</button>${kinds.map(k=>`<button class="chip ${sf.kind===k?'on':''}" data-a="skind" data-v="${k}">${GLABEL[k]}</button>`).join('')}</div>
+    <div>${list.length?list.map(({p,sg})=>`<div class="sig li click" data-a="ssel" data-v="${p.id}">${SRC[sg.plat]?srcTag(sg.plat):`<span class="src" style="--c:#7FA8D8">${sg.plat}</span>`}<div><q>${esc(sg.text)}</q><div class="ad">${esc(p.name)}, ${esc(p.city)}</div></div><span class="small muted">hace ${sg.days}d</span></div>`).join(''):'<div class="empty">No hay señales de este tipo en esta plataforma. Elige otro filtro.</div>'}</div></div>
+   <div class="panel glow" id="socialSel">${socialDetail(sel)}</div>
+  </div>`;}};
+function interpret(p){
+  const k=new Set(p.growth.map(g=>g.kind));
+  const growthy=k.has('equipment')||k.has('expansion')||k.has('opening')||p.growth.length>=2;
+  const head=growthy?'SEÑAL DE ALTO CRECIMIENTO':p.socialLevel==='Alta'?'SEÑAL DE DEMANDA ACTIVA':'PERFIL ESTABLE';
+  const lines=[];
+  if(k.has('equipment')||k.has('expansion'))lines.push('Oportunidad potencial de equipamiento detectada.');
+  if(k.has('hiring')||k.has('physician'))lines.push('Equipo médico en crecimiento: más procedimientos, más consumo de producto.');
+  if(p.services.includes(SV.INJ))lines.push('La demanda de inyectables ya es visible en su contenido.');
+  if(k.has('opening'))lines.push('Nueva sede: una cuenta nueva para abastecer desde el primer día.');
+  if(!lines.length)lines.push('Monitorear 30 días antes de contactar.');
+  return {head,lines};
+}
+function interpHTML(p){const it=interpret(p);return `<div class="interp"><b><span class="grad">✦ Interpretación IA:</span> ${it.head}</b>${it.lines.map(l=>`<div class="small">${l}</div>`).join('')}</div>`;}
+function socialDetail(p){
+  return `<h3 style="font-family:var(--serif);font-weight:400;font-size:28px">${esc(p.name)}</h3><p class="sub">${esc(p.type)}, ${esc(p.zone)}, ${esc(p.city)}</p>
+   <div class="kv"><div><b>${p.socialLevel}</b><small>Actividad en Instagram</small></div><div><b>${p.lastPost}d</b><small>Última publicación</small></div><div><b>${p.postsMonth}</b><small>Publicaciones al mes</small></div><div><b>${p.mentions}</b><small>Tratamientos estéticos mencionados</small></div><div><b>${p.equipContent}</b><small>Contenido de equipos</small></div><div><b>${p.growth.length}</b><small>Señales de crecimiento</small></div></div>
+   <h4 class="mt" style="margin-bottom:4px;font-size:13px;color:var(--cyan)">Señales recientes</h4>
+   ${p.signals.map(sg=>`<div class="sig">${SRC[sg.plat]?srcTag(sg.plat):`<span class="src" style="--c:#7FA8D8">${sg.plat}</span>`}<q>${esc(sg.text)}</q><span class="small muted">${sg.days}d</span></div>`).join('')}
+   ${interpHTML(p)}
+   <div class="row mt"><button class="btn pri" data-a="open" data-v="${p.id}">Abrir Prospecto 360</button></div>`;
+}
+
+/* ---------- Inteligencia geográfica ---------- */
+V.geo={t:'Inteligencia geográfica',s:'Territorios ordenados por oportunidad sin explotar: prospectos que aún no compran a Eurolab frente a la penetración actual.',r(){
+  const rows=CITIES.map(c=>cityStats(c.name)).map(s=>Object.assign(s,{white:Math.round(s.opp*(1-s.pen))})).sort((a,b)=>b.white-a.white);
+  const maxW=Math.max(...rows.map(r=>r.white));
+  const reg={};rows.forEach(r=>{reg[r.c.region]=(reg[r.c.region]||0)+r.white;});
+  return `<div class="tbl-wrap"><table><thead><tr><th>Ciudad</th><th>Región</th><th class="r">Prospectos</th><th class="r">Alto potencial</th><th class="r">Clientes</th><th class="r">Penetración</th><th>Densidad competitiva</th><th>Producto principal</th><th class="r">Oportunidad</th><th style="min-width:170px">Espacio sin explotar</th></tr></thead><tbody>
+  ${rows.map((r,n)=>`<tr data-a="city" data-v="${esc(r.c.name)}"><td class="nm">${esc(r.c.name)}</td><td>${esc(r.c.region)}</td><td class="r tab">${r.n}</td><td class="r tab">${r.hi}</td><td class="r tab">${r.c.cust}</td><td class="r tab">${Math.round(r.pen*100)}%</td><td>${lvlPill(r.dens)}</td><td>${r.top}</td><td class="r tab">${money(r.opp)}</td><td><div class="bar amb" style="grid-template-columns:1fr 64px"><span class="t"><i style="width:${(r.white/maxW*100).toFixed(0)}%;animation-delay:${n*.05}s"></i></span><span class="v">${money(r.white)}</span></div></td></tr>`).join('')}
+  </tbody></table></div>
+  <div class="grid g2 mt"><div class="panel"><h3>Oportunidad sin explotar por región</h3><p class="sub">Oportunidad ponderada por la baja presencia de clientes Eurolab</p>${bars(Object.entries(reg).map(([k,v])=>({k,v})).sort((a,b)=>b.v-a.v),'amb',money)}</div>
+  <div class="panel"><h3>Cómo leer esta vista</h3><p class="small" style="margin:0 0 8px;color:var(--ink2)">La penetración es clientes simulados divididos por clientes más prospectos descubiertos. El espacio sin explotar es la oportunidad multiplicada por la parte del mercado que Eurolab aún no atiende.</p><p class="small" style="margin:0;color:var(--ink2)">La densidad competitiva viene de conteos simulados de actividad de otros distribuidores. Densidad alta con baja penetración marca un territorio a disputar; densidad baja con mucho espacio libre marca uno a conquistar primero.</p></div></div>`;}};
+
+/* ---------- Match de productos ---------- */
+V.products={t:'Match de productos',s:'¿Qué deberíamos venderles? La IA conecta cada prospecto con el portafolio Eurolab según sus servicios, tratamientos y señales de crecimiento.',r(){
+  const pr=S.prod;
+  const ranked=P.slice().sort((a,b)=>b.aff[pr]-a.aff[pr]||b.score-a.score).slice(0,15);
+  return `<div class="chips" style="margin-bottom:14px">${PRODUCTS.map(x=>`<button class="chip ${pr===x?'on':''}" data-a="prod" data-v="${x}">${x}</button>`).join('')}</div>
+  <div class="grid g-side"><div class="tbl-wrap"><table><thead><tr><th>Prospecto</th><th>Ciudad</th><th class="r">Match</th><th>Por qué este producto</th><th class="r">Score</th></tr></thead><tbody>
+  ${ranked.map(p=>`<tr data-a="open" data-v="${p.id}"><td><span class="nm">${esc(p.name)}</span><span class="ad">${esc(p.type)}</span></td><td>${esc(p.city)}</td><td class="r"><span class="num grad" style="font-size:22px">${p.aff[pr]}%</span></td><td class="small">${esc(prodReason(p,pr))}</td><td class="r">${scoreTag(p.score)}</td></tr>`).join('')}
+  </tbody></table></div>
+  <div class="panel glow"><h3 style="font-family:var(--serif);font-weight:400;font-size:28px">${pr}</h3><p class="sub">Vista de portafolio sobre los ${P.length} prospectos</p>
+   <div class="kv" style="grid-template-columns:1fr 1fr"><div><b>${cnt(P.filter(p=>p.aff[pr]>=85).length)}</b><small>Match fuerte (85%+)</small></div><div><b>${cnt(P.filter(p=>p.recommended===pr).length)}</b><small>Recomendación #1</small></div><div><b style="color:var(--gold)">${money(sum(P.filter(p=>p.recommended===pr),p=>p.opp))}</b><small>Oportunidad como producto #1</small></div><div><b>${Math.round(sum(P,p=>p.aff[pr])/P.length)}%</b><small>Match promedio</small></div></div>
+   <h3 class="mt">Match fuerte por ciudad</h3>${bars(CITIES.map(c=>({k:c.name,v:P.filter(p=>p.city===c.name&&p.aff[pr]>=85).length})).filter(x=>x.v).sort((a,b)=>b.v-a.v))}</div></div>`;},after(){countUp($('#view'));}};
+function prodReason(p,pr){
+  const has=s=>p.services.includes(s);const gk=new Set(p.growth.map(g=>g.kind));
+  switch(pr){
+    case 'Inyectables':return has(SV.INJ)?'Ya promueve tratamientos inyectables'+(p.socialLevel==='Alta'?' con alta actividad social':''):'Sus servicios faciales sugieren demanda de neuromoduladores';
+    case 'Rellenos':return has(SV.FIL)?'Ofrece procedimientos de relleno como '+(p.treatments.find(t=>/labial|Rinomodel|ojeras/.test(t))||'restauración de volumen').toLowerCase():'Su base de pacientes estéticos calza con rellenos';
+    case 'Bioestimuladores':return has(SV.FR)&&has(SV.INJ)?'Ya promueve rejuvenecimiento facial y tratamientos inyectables':has(SV.FR)?'Su foco en rejuvenecimiento facial calza con estimulación de colágeno':'Interés antiedad visible en su contenido';
+    case 'Dispositivos médicos':return p.size==='Grande'?'Centro grande con '+p.physicians+' médicos y salas de procedimiento':'Sus procedimientos clínicos requieren renovación de dispositivos';
+    case 'Equipos estéticos':return gk.has('equipment')?'Anunció nueva tecnología o equipamiento':gk.has('expansion')?'Está ampliando sus salas de tratamiento':has(SV.LAS)?'Realiza tratamientos láser y con equipos de energía':'Podría sumar servicios con equipos de energía';
+    default:return p.size==='Grande'?'Alto volumen de procedimientos: abastecimiento recurrente':'Abastecimiento recurrente para procedimientos diarios';
+  }
+}
+function reasons(p){
+  const r=[];const gk=new Set(p.growth.map(g=>g.kind));
+  if(p.comp.specialty>=85)r.push('Fuerte especialización en '+p.spec.toLowerCase());
+  if(p.services.includes(SV.INJ))r.push('Promueve tratamientos inyectables');
+  if(p.socialLevel==='Alta')r.push('Alta actividad social ('+p.postsMonth+' publicaciones al mes)');
+  if(p.physicians>=3)r.push('Varios médicos ('+p.physicians+')');
+  if(p.growth.length)r.push('Señales de crecimiento: '+[...gk].map(k=>GLABEL[k].toLowerCase()).join(', '));
+  if(p.foundBy.length>=3)r.push('Confirmado en '+p.foundBy.length+' fuentes públicas');
+  if(CITY[p.city].tier>=85)r.push('Ubicado en territorio de alto valor');
+  if(r.length<3)r.push(p.services.length+' servicios relevantes detectados');
+  return r;
+}
+
+/* ---------- Brechas ---------- */
+V.gaps={t:'Brechas de mercado',s:'Diferencias entre dónde está la demanda y dónde vende Eurolab hoy. Insights generados por IA desde el dataset simulado.',r(){
+  const ins=gapInsights();
+  return `<div class="panel glow" style="padding:0">${ins.map((g,i)=>`<div class="insight"><span class="num grad">${g.n}</span><p>${g.text}<small>${g.note}</small></p><button class="btn" data-a="gap" data-v="${i}">Ver prospectos</button></div>`).join('')}</div>`;}};
+function gapInsights(){
+  const stg=cityStats('Santiago');
+  const out=CITIES.filter(c=>c.name!=='Santiago').map(c=>cityStats(c.name)).filter(s=>s.n>=14).sort((a,b)=>a.pen-b.pen)[0];
+  const aest=['Clínica estética','Medicina estética','Centro de rejuvenecimiento'];
+  return [
+   {n:P.filter(p=>p.city==='Santiago'&&isHi(p)&&aest.includes(p.type)).length,text:'clínicas estéticas de alto potencial detectadas en Santiago que hoy no son clientes de Eurolab.',note:`Santiago concentra ${money(stg.opp)} de oportunidad estimada.`,label:'Clínicas estéticas de alto potencial en Santiago',fn:p=>p.city==='Santiago'&&isHi(p)&&aest.includes(p.type)},
+   {n:Math.round(out.pen*100)+'%',text:`de penetración en ${out.c.name}: alta densidad de clínicas estéticas, baja presencia de Eurolab.`,note:`${out.n} prospectos frente a ${out.c.cust} clientes actuales.`,label:'Prospectos en '+out.c.name,fn:p=>p.city===out.c.name},
+   {n:P.filter(p=>p.services.includes(SV.INJ)&&p.aff.Bioestimuladores>=85).length,text:'clínicas que promueven inyectables muestran fuerte potencial para bioestimuladores.',note:'Venta cruzada: ya atienden al paciente correcto.',label:'Clínicas de inyectables con potencial de bioestimuladores',fn:p=>p.services.includes(SV.INJ)&&p.aff.Bioestimuladores>=85},
+   {n:P.filter(p=>p.growth.some(x=>x.kind==='equipment'||x.kind==='expansion')).length,text:'clínicas anunciaron recientemente nuevo equipamiento o ampliación de instalaciones.',note:'El momento importa: las decisiones de equipos se están tomando ahora.',label:'Señales de equipamiento o expansión',fn:p=>p.growth.some(x=>x.kind==='equipment'||x.kind==='expansion')},
+   {n:P.filter(p=>p.city==='Viña del Mar'&&isQ(p)&&p.opp>=7000).length,text:'prospectos de alto valor en Viña del Mar calzan con el perfil de cliente ideal de Eurolab.',note:'Score calificado y valor estimado de US$7K o más al año.',label:'Prospectos de alto valor en Viña del Mar',fn:p=>p.city==='Viña del Mar'&&isQ(p)&&p.opp>=7000},
+   {n:P.filter(p=>p.origin==='TikTok'||p.origin==='Instagram').filter(isHi).length,text:'prospectos de alto potencial fueron encontrados primero en Instagram o TikTok, no en directorios.',note:'Sin inteligencia social, estos negocios no aparecerían en una búsqueda tradicional.',label:'Alto potencial descubierto en redes sociales',fn:p=>(p.origin==='TikTok'||p.origin==='Instagram')&&isHi(p)},
+   {n:P.filter(p=>p.growth.some(x=>x.kind==='opening')).length,text:'negocios anunciaron una nueva sucursal o sede en los últimos 40 días.',note:'Una sede nueva necesita proveedor desde el primer día.',label:'Nuevas sedes anunciadas',fn:p=>p.growth.some(x=>x.kind==='opening')}
+  ];
+}
+
+/* ---------- Agentes ---------- */
+const AGENTS=[
+ {n:'Cazador de prospectos',d:'Descubre clientes potenciales en Google Maps, directorios y redes.',m:()=>[[P.length,'negocios'],[CITIES.length,'ciudades']],log:()=>CITIES.slice(0,4).map(c=>`› Google Maps: ${c.n} negocios en ${c.name}`)},
+ {n:'Agente de señales sociales',d:'Analiza señales comerciales públicas en Instagram, Facebook, TikTok y sitios web.',m:()=>[[sum(P,p=>p.signals.length),'señales'],[P.filter(p=>p.socialLevel==='Alta').length,'muy activos']],log:()=>P.filter(p=>p.signals.length).slice(0,4).map(p=>`› ${p.signals[0].plat}: "${p.signals[0].text}"`)},
+ {n:'Agente de inteligencia geográfica',d:'Encuentra oportunidades por territorio y mide penetración.',m:()=>[[REGIONS.length,'regiones'],[money(TOT.opp),'mapeados']],log:()=>CITIES.map(c=>cityStats(c.name)).sort((a,b)=>a.pen-b.pen).slice(0,4).map(s=>`› ${s.c.name}: ${Math.round(s.pen*100)}% de penetración`)},
+ {n:'Agente de match de productos',d:'Determina qué productos Eurolab calzan mejor con cada prospecto.',m:()=>[[PRODUCTS.length,'líneas'],[P.filter(p=>p.aff[p.recommended]>=85).length,'match fuerte']],log:()=>P.slice(0,4).map(p=>`› ${p.name}: ${p.recommended} ${p.aff[p.recommended]}%`)},
+ {n:'Agente de señales de crecimiento',d:'Detecta expansiones, contrataciones, nuevas sedes y equipamiento.',m:()=>[[P.filter(p=>p.growth.length).length,'creciendo'],[P.filter(p=>p.growth.some(g=>g.kind==='equipment')).length,'equipos']],log:()=>P.filter(p=>p.growth.length).slice(0,4).map(p=>`› ${GLABEL[p.growth[0].kind]} en ${p.name}`)},
+ {n:'Agente de calificación',d:'Calcula el score del prospecto y define la prioridad de contacto.',m:()=>[[TOT.q,'calificados'],[TOT.hi,'alto potencial']],log:()=>P.slice().sort((a,b)=>b.score-a.score).slice(0,4).map(p=>`› ${p.name}: score ${p.score}`)}
+];
+V.agents={t:'Agentes de ventas IA',s:'Seis agentes especializados ejecutan la cadena de descubrimiento. Cada uno entrega su resultado al siguiente.',r(){
+  return `<div class="chain" id="chain">${AGENTS.map((a,i)=>`${i?'<em></em>':''}<span data-i="${i}">${a.n}</span>`).join('')}</div>
+  <div class="row" style="margin-bottom:16px"><button class="btn pri" data-a="runAgents" id="agBtn">Ejecutar todos los agentes</button><span class="small muted">Reproduce un ciclo completo de descubrimiento sobre el dataset simulado.</span></div>
+  <div class="agents">${AGENTS.map((a,i)=>`<div class="agent" id="ag${i}"><div class="st"><i></i><span>En espera</span></div><h3>${a.n}</h3><p>${a.d}</p><div class="met">${a.m().map(([v,l])=>`<div><b>${v}</b><small>${l}</small></div>`).join('')}</div><div class="log" id="log${i}"><span class="c" style="color:var(--mute)">Esperando la próxima ejecución.</span></div></div>`).join('')}</div>`;}};
+
+/* ---------- Copiloto ---------- */
+const SUGG=['Busca clínicas estéticas en Santiago.','Muestra dermatólogos en Viña del Mar.','¿Qué prospectos tienen mayor potencial de equipos?','Busca clínicas que promueven inyectables.','Busca clínicas de alto crecimiento en Chile.','¿Qué ciudad tiene la mayor oportunidad sin explotar?','Muestra clínicas similares a nuestros mejores clientes.','¿A qué prospectos debería contactar el equipo esta semana?','¿Qué prospectos encontró la IA en TikTok?'];
+V.copilot={t:'Copiloto de mercado Eurolab',s:'Pregunta sobre el mercado chileno en lenguaje natural. Las respuestas salen solo del dataset simulado de esta página.',r(){
+  return `<div class="grid g-side"><div class="panel glow"><div class="chat" id="chat">${S.chat.length?S.chat.map(m=>m.u?`<div class="msg u">${esc(m.u)}</div>`:`<div class="msg a"><span class="who"><i></i>Copiloto IA</span>${m.a}</div>`).join(''):`<div class="msg a"><span class="who"><i></i>Copiloto IA</span><p>Puedo buscar entre ${P.length} prospectos simulados en ${CITIES.length} ciudades por ciudad, especialidad, fuente, afinidad de producto, señales de crecimiento y prioridad. Prueba una de las preguntas de la derecha.</p></div>`}</div>
+   <div class="ask"><input type="text" id="askIn" placeholder="Pregunta sobre prospectos, ciudades, fuentes o productos" aria-label="Pregunta para el copiloto"><button class="btn pri" data-a="ask">Preguntar</button></div></div>
+   <div class="panel"><h3>Prueba preguntar</h3><p class="sub">Funciona en español o en inglés</p><div class="sugg">${SUGG.map(q=>`<button data-a="askq" data-v="${esc(q)}">${esc(q)}</button>`).join('')}</div></div></div>`;},
+  after(){const c=$('#chat');c.scrollTop=c.scrollHeight;$('#askIn').addEventListener('keydown',e=>{if(e.key==='Enter')ask($('#askIn').value);});}};
+
+/* ---------- Calificados ---------- */
+V.qualified={t:'Prospectos calificados',s:`Prospectos con score ${Q_MIN} o más, listos para acción comercial. Llévalos al pipeline desde aquí.`,r(){
+  const rows=P.filter(isQ).sort((a,b)=>b.score-a.score);
+  return `<p class="small muted" style="margin:0 0 10px">${rows.length} prospectos calificados, ${rows.filter(isHi).length} de alto potencial. ${money(sum(rows,p=>p.opp))} de valor estimado combinado.</p>
+  <div class="tbl-wrap"><table><thead><tr><th>Prospecto</th><th>Ciudad</th><th>Fuentes</th><th class="r">Score</th><th>Producto #1</th><th class="r">Valor</th><th>Etapa</th><th>Acciones</th></tr></thead><tbody>
+  ${rows.map(p=>`<tr><td data-a="open" data-v="${p.id}"><span class="nm">${esc(p.name)}</span><span class="ad">${esc(p.type)}</span></td><td>${esc(p.city)}</td><td>${srcIcons(p)}</td><td class="r">${scoreTag(p.score)}</td><td>${p.recommended}</td><td class="r tab">${money(p.opp)}</td><td>${stagePill(p.stage)}</td><td><div class="row" style="gap:6px;flex-wrap:nowrap">${actionBtns(p,true)}</div></td></tr>`).join('')}
+  </tbody></table></div>`;}};
+function actionBtns(p,sm){
+  const c=sm?'btn sm':'btn';const idx=p.stage?STAGES.indexOf(p.stage):-1;
+  return `${idx<0?`<button class="${c}" data-a="stage" data-v="${p.id}|DESCUBIERTO">Agregar a lista</button>`:''}
+  ${idx<2?`<button class="${c}" data-a="stage" data-v="${p.id}|CALIFICADO">Calificar</button>`:''}
+  ${idx<3?`<button class="${c}" data-a="stage" data-v="${p.id}|ASIGNADO">Asignar ejecutivo</button>`:''}
+  ${idx<4?`<button class="${c} pri" data-a="stage" data-v="${p.id}|OPORTUNIDAD">Crear oportunidad</button>`:'<span class="pill p-ok">Oportunidad creada</span>'}`;
+}
+
+/* ---------- Pipeline ---------- */
+V.pipeline={t:'Pipeline comercial',s:'Inteligencia de mercado convertida en pipeline: descubierto, analizado, calificado, asignado, oportunidad.',r(){
+  const inP=P.filter(p=>p.stage);
+  const stc=['#3FD0C9','#5ABEE0','#6FA8FF','#8F7DFF','#F07AA0'];
+  return `<div class="row" style="justify-content:space-between;margin-bottom:12px"><span class="small muted">${inP.length} prospectos en pipeline, ${money(sum(inP,p=>p.opp))} de valor total. Las etapas se guardan en este navegador.</span><button class="lnk small" data-a="resetPipe">Reiniciar pipeline</button></div>
+  <div class="kanban">${STAGES.map((st,i)=>{const cs=inP.filter(p=>p.stage===st).sort((a,b)=>b.score-a.score);return `<div class="col" style="border-top:2px solid ${stc[i]}"><h4 style="color:${stc[i]}">${st}</h4><div class="cv">${cs.length} prospectos, ${money(sum(cs,p=>p.opp))}</div>
+  ${cs.map(p=>`<div class="card"><div class="nm" data-a="open" data-v="${p.id}">${esc(p.name)}</div><div class="meta">${esc(p.city)}. ${p.recommended}${p.rep?'<br>'+esc(p.rep):''}</div><div class="ft">${scoreTag(p.score)}<span class="tab">${money(p.opp)}</span>${i<4?`<button class="btn sm" data-a="stage" data-v="${p.id}|${STAGES[i+1]}">Mover a ${STAGES[i+1].toLowerCase()}</button>`:''}</div></div>`).join('')||'<div class="small muted">Aún no hay prospectos aquí.</div>'}</div>`;}).join('')}</div>`;}};
+
+/* =================== estado =================== */
+const DB0={q:'',src:'',region:'',city:'',spec:'',type:'',prod:'',social:'',min:0,sort:'score',dir:-1,preset:null};
+const S={view:'dashboard',db:Object.assign({},DB0),mapCity:'Santiago',social:{plat:'',kind:'',sel:null},prod:'Bioestimuladores',chat:[],disc:{region:'',city:'',types:[],prods:[],srcs:[]},lastRun:null,look:'',
+  radar:{on:true,filter:'',i:0,t:null,buf:[],counts:Object.fromEntries(SOURCES.map(s=>[s,P.filter(p=>p.foundBy.includes(s)).length])),queue:shuffle(P,mulberry(7))}};
+(function prefill(){const r=S.radar;for(let k=0;k<8;k++){const p=r.queue[r.i++];r.buf.push({p,s:p.origin});}})();
+let heroTimer=null;
+
+function go(v){
+  if(!V[v])v='dashboard';S.view=v;clearTimeout(runAgents._t);clearTimeout(S.radar.t);clearInterval(heroTimer);
+  if($('#drawer').classList.contains('on'))closeDrawer();
+  $('#vt').textContent=V[v].t;$('#vs').textContent=V[v].s;
+  const view=$('#view');view.classList.remove('view-in');void view.offsetWidth;view.classList.add('view-in');
+  view.innerHTML=V[v].r();V[v].after&&V[v].after();renderNav();
+  if(v==='dashboard'&&!REDUCED){let k=0;const q=S.radar.queue;heroTimer=setInterval(()=>{if(S.view!=='dashboard')return clearInterval(heroTimer);blip($('#heroMap'),q[k++%q.length]);},650);}
+  if(location.hash!=='#'+v)history.replaceState(null,'','#'+v);
+  window.scrollTo(0,0);
+}
+function refresh(){const y=window.scrollY;$('#view').innerHTML=V[S.view].r();V[S.view].after&&V[S.view].after();window.scrollTo(0,y);}
+
+/* =================== Prospecto 360 =================== */
+function ring(s){const c=2*Math.PI*32,col=s>=HI_MIN?'url(#rg)':s>=Q_MIN?'#3FD0C9':'#6D8399';return `<svg class="ring" width="92" height="92" viewBox="0 0 92 92" aria-label="Score IA ${s} de 100"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" stop-color="#3FD0C9"/><stop offset="1" stop-color="#F07AA0"/></linearGradient></defs><circle cx="46" cy="46" r="32" fill="none" stroke="rgba(150,190,230,.12)" stroke-width="7"/><circle class="arc" cx="46" cy="46" r="32" fill="none" stroke="${col}" stroke-width="7" stroke-linecap="round" stroke-dasharray="${(c*s/100).toFixed(1)} ${c.toFixed(1)}" transform="rotate(-90 46 46)"/><text x="46" y="52" text-anchor="middle" font-size="28" fill="#EAF2FA" font-family="Instrument Serif,Georgia,serif">${s}</text><text x="46" y="67" text-anchor="middle" font-size="9" fill="#6D8399" font-family="Schibsted Grotesk,sans-serif">SCORE IA</text></svg>`;}
+function srcBlock(p,s){
+  const on=p.foundBy.includes(s);
+  const m={
+    'Google Maps':[[String(p.gm.rating).replace('.',',')+'★','calificación'],[p.gm.reviews,'reseñas'],[p.gm.photos,'fotos']],
+    'Instagram':[[kfmt(p.ig.followers),'seguidores'],[String(p.ig.eng).replace('.',',')+'%','engagement'],[p.ig.posts,'posts/mes']],
+    'Facebook':[[kfmt(p.fb.followers),'seguidores'],[String(p.fb.rating).replace('.',',')+'★','calificación'],[p.fb.events,'eventos']],
+    'TikTok':[[kfmt(p.tt.followers),'seguidores'],[kfmt(p.tt.views),'vistas prom.'],[p.tt.videos,'videos']],
+    'Web':[[p.services.length,'servicios'],[p.physicians,'profesionales'],[p.email?'Sí':'No','email público']]
+  }[s];
+  return `<div class="sb ${on?'':'off'}" style="--c:${SRC[s].c}"><div class="h">${srcTag(s)}${on?(p.origin===s?'<span class="pill p-pe">Primera detección</span>':'<span class="pill p-ok">Confirmado</span>'):'<span class="pill p-lo">Sin presencia</span>'}</div>
+   ${on?`<div class="m">${m.map(([v,l])=>`<div><b>${v}</b><small>${l}</small></div>`).join('')}</div><p>${esc(p.evidence[s])}</p>`:'<p>No se detectó perfil público en esta fuente.</p>'}</div>`;
+}
+function drawerHTML(p){
+  const W=[['specialty','Match de especialidad',25],['services','Match de servicios',20],['size','Tamaño del negocio',15],['social','Actividad social',10],['growth','Señales de crecimiento',10],['geo','Potencial geográfico',10],['affinity','Afinidad de producto',10]];
+  const pr=p.presence;const idx=p.stage?STAGES.indexOf(p.stage):-1;
+  return `<div class="dh"><div style="min-width:0"><div class="row" style="gap:6px"><span class="simtag" style="font-size:10.5px;padding:2px 8px"><i></i>DATOS SIMULADOS</span><span class="aitag" style="font-size:10.5px;padding:2px 8px">✦ Inteligencia del prospecto</span></div>
+   <h2>${esc(p.name)}</h2><div class="loc">${esc(p.zone)}, ${esc(p.city)}, Chile</div><div class="small muted">${esc(p.type)}. Especialidad: ${esc(p.spec)}. ${p.id}</div></div>
+   ${ring(p.score)}<button class="x" data-a="close" aria-label="Cerrar">×</button></div>
+  <div class="db">
+   <div class="sec"><h4>¿Dónde lo encontró la IA?</h4><div class="srcblk">${SOURCES.map(s=>srcBlock(p,s)).join('')}</div></div>
+   <div class="sec"><h4>Pipeline</h4><div class="stepper">${STAGES.map((s,i)=>`<span class="${i<=idx?'on':''}">${s}</span>`).join('')}</div>
+    <div class="row">${actionBtns(p,false)}</div>
+    <div class="row mt"><label class="f" style="flex-direction:row;align-items:center;gap:8px">Ejecutivo<select data-f="rep" data-id="${p.id}"><option value="">Sin asignar</option>${REPS.map(r=>`<option ${p.rep===r?'selected':''}>${r}</option>`).join('')}</select></label></div></div>
+   <div class="sec"><h4>Score IA del prospecto</h4>
+    ${W.map(([k,l,w],n)=>`<div class="bar" style="grid-template-columns:170px 1fr 40px;margin-bottom:6px"><span>${l} <span class="muted small">${w}%</span></span><span class="t"><i style="width:${p.comp[k]}%;animation-delay:${n*.06}s"></i></span><span class="v">${p.comp[k]}</span></div>`).join('')}
+    <ul class="why">${reasons(p).map(r=>`<li>${esc(r)}</li>`).join('')}</ul></div>
+   <div class="sec"><h4>¿Qué deberíamos venderle?</h4>
+    ${p.ranked.slice(0,3).map((x,i)=>`<div class="sell"><span class="rk grad">#${i+1}</span><div><b>${x}</b><p>${esc(prodReason(p,x))}</p></div><span class="num" style="font-size:26px">${p.aff[x]}%</span></div>`).join('')}</div>
+   <div class="sec"><h4>Match comercial IA</h4>${bars(p.ranked.map(x=>({k:x,v:p.aff[x]})),'rose',v=>v+'%')}</div>
+   <div class="sec"><h4>Señales públicas del negocio</h4><div class="checks">
+    <span class="${pr.Web?'':'no'}">Sitio web detectado</span><span class="${pr['Google Maps']?'':'no'}">Presencia en Google Maps</span><span class="${pr.Instagram?'':'no'}">Presencia en Instagram</span><span class="${pr.Facebook?'':'no'}">Presencia en Facebook</span><span class="${pr.LinkedIn?'':'no'}">Presencia en LinkedIn</span><span class="${pr.TikTok?'':'no'}">Presencia en TikTok</span><span>Teléfono público detectado</span><span class="${p.email?'':'no'}">Email comercial público</span></div>
+    <p class="small muted" style="margin:10px 0 0">${esc(p.address)}, ${esc(p.city)}. ${p.phone}${p.website?'. '+p.website:''}${p.email?'. '+p.email:''}. Datos de contacto ficticios.</p></div>
+   <div class="sec"><h4>Servicios y tratamientos detectados</h4><div class="chips">${p.services.map(s=>`<span class="chip">${s}</span>`).join('')}</div><p class="small muted" style="margin:10px 0 0">${p.treatments.map(esc).join(', ')}</p>
+    <div class="kv mt"><div><b>${p.size}</b><small>Tamaño estimado</small></div><div><b>${p.physicians}</b><small>Médicos</small></div><div><b style="color:var(--gold)">${money(p.opp)}</b><small>Valor anual est.</small></div></div></div>
+   <div class="sec"><h4>Señales sociales</h4><div class="kv"><div><b>${p.socialLevel}</b><small>Actividad en Instagram</small></div><div><b>${p.lastPost} días</b><small>Actividad reciente</small></div><div><b>${p.postsMonth>=14?'Alta':p.postsMonth>=5?'Media':'Baja'}</b><small>Frecuencia de contenido</small></div><div><b>${p.mentions}</b><small>Tratamientos mencionados</small></div><div><b>${p.equipContent}</b><small>Contenido de equipos</small></div><div><b>${p.growth.length}</b><small>Señales de crecimiento</small></div></div>
+    ${p.signals.map(sg=>`<div class="sig">${SRC[sg.plat]?srcTag(sg.plat):`<span class="src" style="--c:#7FA8D8">${sg.plat}</span>`}<q>${esc(sg.text)}</q><span class="small muted">${sg.days}d</span></div>`).join('')}
+    ${interpHTML(p)}</div>
+   <div class="sec"><h4>Prospectos similares</h4><p class="small muted" style="margin:0 0 8px">Negocios con un perfil parecido en otras zonas de Chile.</p><div class="list">${similarTo(p,P.filter(x=>x.id!==p.id)).slice(0,5).map(({p:x,s})=>`<div class="li click" data-a="open" data-v="${x.id}"><div><div class="nm">${esc(x.name)}</div><div class="ad">${esc(x.type)}, ${esc(x.city)}</div></div><span class="pill p-pe">${s}% similar</span></div>`).join('')}</div></div>
+  </div>`;
+}
+let lastFocus=null;
+function openDrawer(id){const p=byId(id);if(!p)return;const d=$('#drawer');if(!d.classList.contains('on'))lastFocus=document.activeElement;d.innerHTML=drawerHTML(p);d.dataset.id=id;d.classList.add('on');d.setAttribute('aria-hidden','false');$('#scrim').classList.add('on');d.querySelector('.db').scrollTop=0;d.querySelector('.x').focus({preventScroll:true});}
+function closeDrawer(){const d=$('#drawer');d.classList.remove('on');d.setAttribute('aria-hidden','true');$('#scrim').classList.remove('on');d.dataset.id='';lastFocus&&lastFocus.focus&&lastFocus.focus({preventScroll:true});}
+
+/* =================== lookalike =================== */
+function similarTo(src,pool){
+  const vec=o=>PRODUCTS.map(pr=>o.aff[pr]);const a=vec(src),na=Math.hypot(...a);
+  const sz={'Pequeña':1,'Mediana':2,'Grande':3};
+  return pool.map(p=>{
+    const b=vec(p);const cos=a.reduce((s,v,i)=>s+v*b[i],0)/(na*Math.hypot(...b));
+    const inter=src.services.filter(s=>p.services.includes(s)).length,uni=new Set([...src.services,...p.services]).size;
+    const parts={'Especialidad':p.spec===src.spec?100:30,'Servicios':Math.round(inter/uni*100),'Geografía':p.city===src.city?100:p.region===src.region?75:45,'Tamaño':100-Math.abs(sz[p.size]-sz[src.size])*40,'Actividad social':100-Math.abs(p.activity-src.activity),'Afinidad':Math.round(Math.max(0,(cos-.85)/.15)*100)};
+    const s=Math.round(parts['Especialidad']*.25+parts['Servicios']*.2+parts['Geografía']*.1+parts['Tamaño']*.1+parts['Actividad social']*.1+parts['Afinidad']*.25);
+    return {p,s,parts};
+  }).sort((x,y)=>y.s-x.s);
+}
+function lookHTML(c){
+  if(!c)return '';
+  const res=similarTo(c,P).filter(r=>r.s>=80);const top=res.slice(0,8);
+  return `<div class="chain mt"><span>${esc(c.name)}</span><em></em><span>Buscar similares</span><em></em><span>Chile</span><em></em><span class="on">${res.length} clínicas similares encontradas</span></div>
+  <div class="tbl-wrap"><table><thead><tr><th>Prospecto</th><th>Ciudad</th><th class="r">Similitud</th>${Object.keys(top[0]?top[0].parts:{}).map(k=>`<th class="r">${k}</th>`).join('')}<th class="r">Score</th></tr></thead><tbody>
+  ${top.map(r=>`<tr data-a="open" data-v="${r.p.id}"><td><span class="nm">${esc(r.p.name)}</span><span class="ad">${esc(r.p.type)}</span></td><td>${esc(r.p.city)}</td><td class="r"><span class="num grad" style="font-size:22px">${r.s}%</span></td>${Object.values(r.parts).map(v=>`<td class="r tab muted">${v}</td>`).join('')}<td class="r">${scoreTag(r.p.score)}</td></tr>`).join('')}
+  </tbody></table></div>
+  <p class="small muted">El cliente de referencia compra ${c.buys.join(', ').toLowerCase()}. ${c.type}, tamaño ${c.size.toLowerCase()}.</p>
+  <button class="btn" data-a="lookDb">Abrir los ${res.length} en la base</button>`;
+}
+
+/* =================== descubrimiento animado =================== */
+function runDiscovery(){
+  const set=discMatch();const d=S.disc;
+  const srcs=d.srcs.length?d.srcs:SOURCES;
+  const label=[d.city||d.region||'Todo Chile',d.types.length?d.types.join(', '):'todos los tipos de negocio',d.prods.length?d.prods.join(', '):'todos los productos','fuentes: '+srcs.join(', ')].join('; ');
+  const dups=Math.max(2,Math.round(sum(set,p=>p.foundBy.filter(s=>srcs.includes(s)).length)-set.length));
+  const where=d.city||d.region||'Chile';
+  const LOG=[
+   [`<span class="c">$</span> eurolab-ai discover --pais=CL --zona="${where}"`],
+   [`<span class="v">[geo]</span> Buscando mercado geográfico: ${d.city?1:d.region?CITIES.filter(c=>c.region===d.region).length:CITIES.length} ciudades`],
+   ...srcs.map(s=>[`<span class="v">[${s.toLowerCase()}]</span> ${{'Google Maps':'Consultando fichas: "clínica estética", "dermatólogo", "centro láser"','Instagram':'Escaneando perfiles de empresa y hashtags '+HASHTAGS.slice(0,2).join(' '),'Facebook':'Leyendo páginas, eventos y promociones','TikTok':'Analizando videos de tratamientos y alcance','Web':'Rastreando sitios: servicios, equipo médico y tecnología'}[s]}`]),
+   [`<span class="v">[nlp]</span> Detectando especialidades: ${new Set(set.map(p=>p.spec)).size} encontradas`],
+   [`<span class="v">[nlp]</span> Detectando tratamientos: ${new Set(set.flatMap(p=>p.treatments)).size} tipos`],
+   [`<span class="v">[entity]</span> Fusionando perfiles entre fuentes: ${dups} duplicados unificados`],
+   [`<span class="v">[match]</span> Cruzando con portafolio Eurolab: ${PRODUCTS.length} líneas de producto`],
+   [`<span class="v">[score]</span> Calculando potencial comercial: <span class="g">${money(sum(set,p=>p.opp))}</span>`],
+   [`<span class="v">[rank]</span> Ordenando ${set.length} prospectos por score IA`],
+   [`<span class="g">✓ Descubrimiento completo</span>`]
+  ];
+  const area=$('#runArea');$('#runBtn').disabled=true;
+  area.innerHTML=`<div class="panel glow"><div class="phase"><span class="spin"></span><h3 style="margin:0" class="shimmer">IA DESCUBRIENDO PROSPECTOS</h3><span class="small muted" style="margin-left:auto">${esc(label)}</span></div>
+   <div class="srcrun">${SOURCES.map(s=>`<div class="sr ${srcs.includes(s)?'':'off'}" style="--c:${SRC[s].c}"><div class="h">${srcTag(s)}</div><span class="n" id="sn-${norm(s).replace(/ /g,'')}">0</span><small> perfiles</small><div class="pb"><i id="sp-${norm(s).replace(/ /g,'')}"></i></div></div>`).join('')}</div>
+   <div class="grid g2 mt"><div class="term" id="term"></div><div class="det" id="det"></div></div></div>`;
+  area.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'start'});
+  const targets={};srcs.forEach(s=>targets[s]=set.filter(p=>p.foundBy.includes(s)).length);
+  const order=shuffle(set,mulberry(set.length+3));
+  const total=REDUCED?800:6400;const t0=performance.now();let li=0,di=0;
+  const term=$('#term'),det=$('#det');
+  const frame=t=>{
+    if(S.view!=='discovery')return;
+    const k=Math.min(1,(t-t0)/total);
+    srcs.forEach((s,i)=>{const kk=Math.min(1,k*(1.25-i*.05));const id=norm(s).replace(/ /g,'');const n=$('#sn-'+id),b=$('#sp-'+id);if(n)n.textContent=Math.round(targets[s]*kk);if(b)b.style.width=(kk*100)+'%';});
+    while(li<LOG.length&&li/LOG.length<=k){term.querySelectorAll('.cur').forEach(e=>e.classList.remove('cur'));term.insertAdjacentHTML('beforeend',`<div class="cur">${LOG[li][0]}</div>`);term.scrollTop=term.scrollHeight;li++;}
+    const want=Math.floor(k*Math.min(order.length,40));
+    while(di<want){const p=order[di++];det.insertAdjacentHTML('afterbegin',`<div class="dcard" style="--c:${SRC[p.origin].c}"><span class="srci" style="--c:${SRC[p.origin].c}">${icon(p.origin)}</span><div style="min-width:0"><div class="nm">${esc(p.name)}</div><div class="ad">${esc(p.evidence[p.origin])}</div></div>${scoreTag(p.score)}</div>`);while(det.children.length>7)det.removeChild(det.lastChild);}
+    if(k<1)requestAnimationFrame(frame);
+    else{S.lastRun={set,label};setTimeout(()=>{if(S.view!=='discovery')return;area.innerHTML=runResultHTML(S.lastRun);countUp(area);$('#runBtn').disabled=false;},REDUCED?0:700);}
+  };
+  requestAnimationFrame(frame);
+}
+
+/* =================== copiloto =================== */
+function miniTable(list,extra){
+  return `<table class="mini"><thead><tr><th>Prospecto</th><th>Ciudad</th><th>${extra?extra[0]:'Producto #1'}</th><th class="r">Score</th></tr></thead><tbody>${list.map(p=>`<tr data-a="open" data-v="${p.id}"><td><b>${esc(p.name)}</b></td><td>${esc(p.city)}</td><td>${extra?extra[1](p):p.recommended}</td><td class="r">${scoreTag(p.score)}</td></tr>`).join('')}</tbody></table>`;
+}
+function answer(q){
+  const s=norm(q);const has=(...w)=>w.some(x=>s.includes(x));
+  const city=CITIES.find(c=>s.includes(norm(c.name))||(c.name==='Viña del Mar'&&s.includes('vina')));
+  let set=P.slice();const scope=[];
+  if(city){set=set.filter(p=>p.city===city.name);scope.push('en '+city.name);}
+  const src=SOURCES.find(x=>s.includes(norm(x))||(x==='Google Maps'&&s.includes('maps')));
+  if(src){set=set.filter(p=>p.foundBy.includes(src));scope.push('detectados en '+src);}
+  const TMAP=[[['dermatolog'],t=>/dermatol/i.test(t),'dermatología'],[['plastic','plastica','cirugia'],t=>t==='Cirugía plástica','cirugía plástica'],[['dental','odont'],t=>t==='Odontología estética','odontología estética'],[['laser'],t=>t==='Centro láser','láser'],[['hospital'],t=>t==='Hospital','hospitales'],[['medical center','centro medico','centros medicos'],t=>t==='Centro médico','centros médicos'],[['aesthetic','estetic','rejuven'],t=>['Clínica estética','Medicina estética','Centro de rejuvenecimiento'].includes(t),'estética']];
+  for(const [w,fn,l] of TMAP){if(has(...w)&&!(l==='estética'&&has('dental','odont'))){set=set.filter(p=>fn(p.type));scope.push(l);break;}}
+  const sc=scope.length?' ('+scope.join(', ')+')':'';
+  if(has('untapped','largest','which city','que ciudad','mayor oportunidad','sin explotar')){
+    const rows=CITIES.map(c=>cityStats(c.name)).map(x=>Object.assign(x,{white:Math.round(x.opp*(1-x.pen))})).sort((a,b)=>b.white-a.white);
+    const t=rows[0],alt=rows.filter(r=>r.c.name!=='Santiago')[0];
+    return `<p><b>${t.c.name}</b> tiene la mayor oportunidad sin explotar: ${money(t.white)} después de descontar el ${Math.round(t.pen*100)}% que Eurolab ya atiende. Fuera de la capital lidera <b>${alt.c.name}</b> con ${money(alt.white)} y solo ${Math.round(alt.pen*100)}% de penetración.</p><table class="mini"><thead><tr><th>Ciudad</th><th class="r">Sin explotar</th><th class="r">Penetración</th><th class="r">Alto potencial</th></tr></thead><tbody>${rows.slice(0,6).map(r=>`<tr data-a="city" data-v="${esc(r.c.name)}"><td><b>${r.c.name}</b></td><td class="r">${money(r.white)}</td><td class="r">${Math.round(r.pen*100)}%</td><td class="r">${r.hi}</td></tr>`).join('')}</tbody></table>`;
+  }
+  if(has('similar','lookalike','best customer','mejores clientes','parecid')){
+    const c=CUSTOMERS[0];const res=similarTo(c,set).filter(r=>r.s>=80);
+    return `<p>Usando a <b>${c.name}</b>, uno de los mejores clientes, como perfil de referencia: <b>${res.length}</b> negocios similares encontrados${sc}.</p>${miniTable(res.slice(0,8).map(r=>r.p),['Similitud',p=>res.find(r=>r.p===p).s+'%'])}`;
+  }
+  if(has('this week','contact','semana','contactar','priori')){
+    const pr=set.filter(p=>isQ(p)&&p.stage!=='OPORTUNIDAD').map(p=>({p,v:p.score+p.growth.length*4+(p.lastPost<=3?4:0)+p.opp/4000})).sort((a,b)=>b.v-a.v).slice(0,8).map(x=>x.p);
+    return `<p>Contacta primero a estos ${pr.length}${sc}. El ranking combina score IA, señales de crecimiento recientes, actividad en redes y valor estimado.</p>${miniTable(pr,['Por qué ahora',p=>p.growth.length?'Señal: '+GLABEL[p.growth[0].kind].toLowerCase():'Publicó hace '+p.lastPost+'d'])}`;
+  }
+  if(has('equipment','equipo','device','dispositivo')){
+    const r=set.slice().sort((a,b)=>b.aff['Equipos estéticos']-a.aff['Equipos estéticos']);const n=set.filter(isEquip).length;
+    return `<p><b>${n}</b> candidatos a equipos${sc}. Mayor potencial de equipamiento:</p>${miniTable(r.slice(0,8),['Match equipos',p=>p.aff['Equipos estéticos']+'%'])}`;
+  }
+  if(has('injectable','inyect','toxin','botox')){
+    const r=set.filter(p=>p.services.includes(SV.INJ)).sort((a,b)=>b.aff.Inyectables-a.aff.Inyectables);
+    return `<p><b>${r.length}</b> clínicas promueven tratamientos inyectables${sc}.</p>${miniTable(r.slice(0,8),['Match inyectables',p=>p.aff.Inyectables+'%'])}`;
+  }
+  if(has('growth','crecimiento','growing','expansion','expand')){
+    const r=set.filter(p=>p.growth.length>=2).sort((a,b)=>b.growth.length-a.growth.length||b.score-a.score);
+    return `<p><b>${r.length}</b> negocios de alto crecimiento${sc} con dos o más señales recientes.</p>${miniTable(r.slice(0,8),['Señales',p=>p.growth.map(g=>GLABEL[g.kind]).join(', ')])}`;
+  }
+  if(src&&!city&&scope.length===1){
+    const r=set.sort((a,b)=>b.score-a.score);
+    return `<p><b>${r.length}</b> prospectos tienen presencia en ${src}; ${P.filter(p=>p.origin===src).length} fueron detectados ahí por primera vez. Los de mayor score:</p>${miniTable(r.slice(0,8),['Evidencia',p=>esc(p.evidence[src])])}`;
+  }
+  if(!scope.length&&!has('clinic','clinica','show','find','busca','muestra','prospect')){
+    return `<p>Puedo responder sobre ciudades, especialidades, fuentes (Google Maps, Instagram, Facebook, TikTok), afinidad de producto, señales de crecimiento y prioridad de contacto. Prueba "Busca clínicas estéticas en Santiago" o "¿Qué ciudad tiene la mayor oportunidad sin explotar?"</p>`;
+  }
+  const r=set.sort((a,b)=>b.score-a.score);
+  if(!r.length)return `<p>No hay prospectos que coincidan${sc}. Prueba otra ciudad o especialidad.</p>`;
+  return `<p><b>${r.length}</b> prospectos encontrados${sc}. ${r.filter(isHi).length} son de alto potencial, con ${money(sum(r,p=>p.opp))} de valor combinado. Los mejores:</p>${miniTable(r.slice(0,8))}`;
+}
+let asking=false;
+function ask(q){
+  q=(q||'').trim();if(!q||asking)return;asking=true;
+  S.chat.push({u:q});refresh();
+  const chat=$('#chat');const steps=['Interpretando la pregunta','Consultando '+P.length+' prospectos','Cruzando fuentes y scores'];
+  chat.insertAdjacentHTML('beforeend',`<div class="msg a" id="thinking"><span class="who"><i></i>Copiloto IA</span><div class="row" style="gap:10px"><span class="dots"><span></span><span></span><span></span></span><span class="small shimmer" id="thk">${steps[0]}</span></div></div>`);chat.scrollTop=chat.scrollHeight;
+  let k=0;const iv=setInterval(()=>{const e=$('#thk');if(e&&k<steps.length-1)e.textContent=steps[++k];},450);
+  setTimeout(()=>{clearInterval(iv);S.chat.push({a:answer(q)});asking=false;if(S.view!=='copilot')return;refresh();const last=[...document.querySelectorAll('#chat .msg.a')].pop();if(last&&!REDUCED){const p=last.querySelector('p');if(p){const html=p.innerHTML,txt=p.textContent;p.textContent='';let i=0;const tw=setInterval(()=>{i+=3;p.textContent=txt.slice(0,i);if(i>=txt.length){clearInterval(tw);p.innerHTML=html;}},14);}}const inp=$('#askIn');inp&&inp.focus();},REDUCED?100:1400);
+}
+
+/* =================== agentes =================== */
+function runAgents(){
+  const btn=$('#agBtn');btn.disabled=true;let i=0;
+  document.querySelectorAll('.agent').forEach(a=>{a.classList.remove('live','done');a.querySelector('.st span').textContent='En espera';});
+  const step=()=>{
+    if(S.view!=='agents')return;
+    if(i>0){const prev=$('#ag'+(i-1));prev.classList.remove('live');prev.classList.add('done');prev.querySelector('.st span').textContent='Completado';}
+    document.querySelectorAll('#chain span').forEach(s=>s.classList.toggle('on',+s.dataset.i===i));
+    if(i>=AGENTS.length){btn.disabled=false;toast('Los seis agentes terminaron. '+TOT.q+' prospectos calificados.');return;}
+    const card=$('#ag'+i),log=$('#log'+i);card.classList.add('live');card.querySelector('.st span').textContent='Ejecutando';log.innerHTML='';
+    card.scrollIntoView({behavior:REDUCED?'auto':'smooth',block:'nearest'});
+    const lines=AGENTS[i].log();let j=0;
+    const line=()=>{if(S.view!=='agents')return;if(j<lines.length){log.insertAdjacentHTML('beforeend',`<span>${esc(lines[j++])}</span>`);runAgents._t=setTimeout(line,REDUCED?20:320);}else{i++;runAgents._t=setTimeout(step,REDUCED?20:260);}};
+    line();
+  };step();
+}
+
+/* =================== pipeline =================== */
+function setStage(id,st){
+  const p=byId(id);if(!p)return;p.stage=st;
+  if((st==='ASIGNADO'||st==='OPORTUNIDAD')&&!p.rep)p.rep=repFor(p);
+  persist();
+  const msg={DESCUBIERTO:'agregado a la lista de prospectos',ANALIZADO:'analizado',CALIFICADO:'calificado',ASIGNADO:'asignado a '+p.rep,OPORTUNIDAD:'oportunidad creada'}[st];
+  toast(p.name+': '+msg);
+  if($('#drawer').dataset.id===id)openDrawer(id);
+  if(['pipeline','qualified','dashboard'].includes(S.view))refresh();
+}
+
+/* =================== eventos =================== */
+const A={
+  go:v=>{closeDrawer();go(v);},
+  open:v=>openDrawer(v),close:()=>closeDrawer(),
+  city:v=>{S.mapCity=v;closeDrawer();S.view==='map'?refresh():go('map');},
+  cityDb:v=>{S.db=Object.assign({},DB0,{city:v});go('database');},
+  sort:v=>{if(S.db.sort===v)S.db.dir*=-1;else{S.db.sort=v;S.db.dir=['name','type','city','spec','recommended','origin'].includes(v)?1:-1;}refresh();},
+  dbReset:()=>{S.db=Object.assign({},DB0);refresh();},
+  clearPreset:()=>{S.db.preset=null;refresh();},
+  dtype:v=>{const a=S.disc.types;a.includes(v)?a.splice(a.indexOf(v),1):a.push(v);refresh();},
+  dprod:v=>{const a=S.disc.prods;a.includes(v)?a.splice(a.indexOf(v),1):a.push(v);refresh();},
+  dsrc:v=>{const a=S.disc.srcs;a.includes(v)?a.splice(a.indexOf(v),1):a.push(v);refresh();},
+  dreset:()=>{S.disc={region:'',city:'',types:[],prods:[],srcs:[]};S.lastRun=null;refresh();},
+  run:()=>runDiscovery(),
+  toDb:()=>{const ids=new Set(S.lastRun.set.map(p=>p.id));S.db=Object.assign({},DB0,{preset:{label:'Resultados del descubrimiento: '+S.lastRun.label,fn:p=>ids.has(p.id)}});go('database');},
+  addHi:()=>{const hi=S.lastRun.set.filter(p=>isHi(p)&&!p.stage);hi.forEach(p=>p.stage='DESCUBIERTO');persist();toast(hi.length?hi.length+' prospectos de alto potencial agregados al pipeline':'Los prospectos de alto potencial de esta búsqueda ya están en el pipeline');},
+  lookrun:()=>{if(!S.look){toast('Primero elige un cliente');return;}$('#lookArea').innerHTML=lookHTML(CUSTOMERS.find(c=>c.id===S.look));},
+  lookDb:()=>{const c=CUSTOMERS.find(x=>x.id===S.look);const ids=new Set(similarTo(c,P).filter(r=>r.s>=80).map(r=>r.p.id));S.db=Object.assign({},DB0,{preset:{label:'Similares a '+c.name,fn:p=>ids.has(p.id)}});go('database');},
+  splat:v=>{S.social.plat=v;refresh();},skind:v=>{S.social.kind=v;refresh();},
+  ssel:v=>{S.social.sel=v;$('#socialSel').innerHTML=socialDetail(byId(v));if(innerWidth<1200)$('#socialSel').scrollIntoView({behavior:REDUCED?'auto':'smooth'});},
+  prod:v=>{S.prod=v;refresh();},
+  gap:v=>{const g=gapInsights()[+v];S.db=Object.assign({},DB0,{preset:{label:g.label,fn:g.fn}});go('database');},
+  runAgents:()=>runAgents(),
+  rtoggle:()=>{S.radar.on=!S.radar.on;$('#rBtn').textContent=S.radar.on?'Pausar radar':'Reanudar radar';if(S.radar.on)radarLoop();else clearTimeout(S.radar.t);},
+  rfilter:v=>{S.radar.filter=v;refresh();},
+  ask:()=>ask($('#askIn').value),askq:v=>ask(v),
+  stage:v=>{const[id,st]=v.split('|');setStage(id,st);},
+  resetPipe:()=>{P.forEach(p=>{p.stage=null;p.rep=null;});persist();refresh();toast('Pipeline reiniciado');}
+};
+document.addEventListener('click',e=>{const t=e.target.closest('[data-a]');if(!t)return;const fn=A[t.dataset.a];if(fn){e.stopPropagation();fn(t.dataset.v,t,e);}});
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&$('#drawer').classList.contains('on'))closeDrawer();
+  if((e.key==='Enter'||e.key===' ')&&e.target.matches('circle[data-a], tr[data-a], .li[data-a], .scard[data-a]')){e.preventDefault();e.target.click();}
+});
+function onField(e){
+  const t=e.target;const f=t.dataset&&t.dataset.f;if(!f)return;
+  if(f==='dregion'){S.disc.region=t.value;if(S.disc.city&&CITY[S.disc.city].region!==t.value)S.disc.city='';if(e.type==='change')refresh();return;}
+  if(f==='dcity'){S.disc.city=t.value;if(t.value)S.disc.region=CITY[t.value].region;if(e.type==='change')refresh();return;}
+  if(f==='look'){S.look=t.value;return;}
+  if(f==='rep'){const p=byId(t.dataset.id);p.rep=t.value||null;if(p.rep&&STAGES.indexOf(p.stage)<3)p.stage='ASIGNADO';persist();toast(p.name+(p.rep?': asignado a '+p.rep:': sin ejecutivo'));openDrawer(p.id);if(['pipeline','qualified'].includes(S.view))refresh();return;}
+  if(f in S.db){S.db[f]=f==='min'?+t.value:t.value;if(f==='min')$('#msv').textContent=t.value;if(f==='region'&&S.db.city&&CITY[S.db.city].region!==t.value)S.db.city='';fillDb();}
+}
+document.addEventListener('input',e=>{if(e.target.matches('input'))onField(e);});
+document.addEventListener('change',e=>{if(e.target.matches('select'))onField(e);});
+window.addEventListener('hashchange',()=>{const v=location.hash.slice(1);if(v!==S.view&&V[v])go(v);});
+
+/* =================== fondo de red neuronal =================== */
+(function neural(){
+  const cv=$('#neural');if(!cv||REDUCED)return;const ctx=cv.getContext('2d');let w,h,dpr,nodes=[];
+  const rs=()=>{dpr=Math.min(2,window.devicePixelRatio||1);w=innerWidth;h=innerHeight;cv.width=w*dpr;cv.height=h*dpr;cv.style.width=w+'px';cv.style.height=h+'px';ctx.setTransform(dpr,0,0,dpr,0,0);const n=Math.round(Math.min(70,w*h/26000));nodes=Array.from({length:n},()=>({x:Math.random()*w,y:Math.random()*h,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25}));};
+  rs();addEventListener('resize',rs);
+  const tick=()=>{
+    if(!document.hidden){
+      ctx.clearRect(0,0,w,h);
+      for(const a of nodes){a.x+=a.vx;a.y+=a.vy;if(a.x<0||a.x>w)a.vx*=-1;if(a.y<0||a.y>h)a.vy*=-1;}
+      for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j],d=Math.hypot(a.x-b.x,a.y-b.y);if(d<150){ctx.strokeStyle=`rgba(111,168,255,${(1-d/150)*.22})`;ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.stroke();}}
+      for(const a of nodes){ctx.fillStyle='rgba(63,208,201,.55)';ctx.beginPath();ctx.arc(a.x,a.y,1.4,0,6.3);ctx.fill();}
+    }
+    requestAnimationFrame(tick);
+  };tick();
+})();
+
+go(location.hash.slice(1)||'dashboard');
+</script>
+</body></html>
