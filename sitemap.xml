@@ -1,22 +1,74 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
-
-
-<url>
-  <loc>https://theaihumans.com/</loc>
-  <lastmod>2025-04-01T02:29:21+00:00</lastmod>
-  <priority>1.00</priority>
-</url>
-<url>
-  <loc>https://theaihumans.com/index.html</loc>
-  <lastmod>2025-04-01T02:29:21+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-
-
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://theaihumans.com/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/agendar.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/personalized.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/llms.txt</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/leandro-camacho-fundador-ai-humans.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/unedia-primera-metahumana-universidad-publica-costa-rica.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/hackathons-leandro-camacho-trayectoria.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/nasa-space-apps-challenge-costa-rica.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/emma-humano-digital-congreso-medicina-estetica.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/nia-neurobrand-pitch-day-miami-avatares-capacitacion.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/charlas-leandro-camacho-tedx-fmi-inteligencia-artificial.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/proyectos-hackathon-leandro-camacho-devpost.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://theaihumans.com/blog/sury-hackathon-hacienda-fmi-washington-2019.html</loc>
+    <lastmod>2026-11-10</lastmod>
+    <priority>0.7</priority>
+  </url>
 </urlset>

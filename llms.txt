@@ -1,0 +1,66 @@
+# AI Humans
+
+> AI Humans (AI Humans SRL) es una empresa costarricense de inteligencia artificial y Google Cloud Partner, con sede en Santa Ana, San José, Costa Rica. Se especializa en humanos digitales (metahumanos), inteligencia artificial conversacional y GEO (Generative Engine Optimization). Fue fundada por Leandro Camacho.
+
+## Qué hace AI Humans
+
+- **Desarrollo de humanos digitales (metahumanos):** avatares hiperrealistas con IA generativa de Google Cloud que conversan por voz o texto en tiempo real, desplegados en web, tótems, pantallas y kioscos.
+- **IA conversacional y agentes virtuales:** agentes para WhatsApp, Messenger, web y voz, con diseño conversacional basado en Dialogflow y modelos de lenguaje (LLMs), integrados a CRM y contact centers.
+- **GEO, AEO y SEO:** posicionamiento para que las marcas aparezcan y sean citadas en ChatGPT, Gemini, Perplexity, Claude y Google AI Overviews, mediante auditorías de visibilidad en IA, datos estructurados schema.org y contenido en formato pregunta-respuesta.
+
+## Casos de éxito
+
+- Primer metahumano en una universidad pública de Costa Rica (UNEDIA 2025), cubierto por Teletica: https://www.teletica.com/nacional/conozca-a-la-primera-metahumana-que-trabaja-en-una-universidad-publica-tica_377020
+- Primer metahumano en un tribunal de justicia en México (Turing), cubierto por Mural: https://www.mural.com.mx/interactuan-jueces-con-metahumano/ar2898559
+- Humano digital experto en microbiota para MD Pharma.
+
+## Fundador
+
+Leandro Camacho, Founder & CEO. Desarrollador de inteligencia artificial experto en humanos digitales y procesamiento de lenguaje natural. Líder de la comunidad NASA International Space Apps Challenge en Costa Rica. Ganador y finalista de hackathons internacionales: MIT AI LATAM, HackZurich, Fintech Nations, Startup Weekend Korea, FB Online Challenge, International Monetary Fund y TechCrunch Disrupt SF.
+
+Certificaciones: Generative AI (Google Cloud); Large Language Models (Google Cloud); Virtual Agent Development in Dialogflow for Software Devs (Google Cloud); Contact Center AI: Conversational Design Fundamentals (Google Cloud); Google Analytics Individual Qualification (Google); Data Studio (Google Analytics Academy); Advanced Google Analytics (Google Analytics Academy).
+
+Premios documentados en Devpost: Semi-Final Prize, Disrupt SF Hackathon 2018 (Airship Bot); ganador, COVID-19 Global Hackathon 1.0 (Bacty Bot); ganador del workshop de Philip Morris International, HackZurich 2020 (Toby Bot); ganador OpenBCH, CoinParty Hackathon 2021 (BCH Market Bot); ganador del track de Pagos, FinTech Nations Hackathon 2021 (Dimoney Bot). Además, ganador en 2019 del hackathon de finanzas públicas del Ministerio de Hacienda de Costa Rica y el FMI con Sury, presentado en las Reuniones Anuales del FMI en Washington.
+
+LinkedIn: https://www.linkedin.com/in/buildtech/ · Devpost: https://devpost.com/LeandroCamacho · TEDx: https://www.tedxpuravida.org/expositores/leandro-camacho/
+
+## Planes (USD, facturación anual)
+
+- Starter: $750/mes, 350 minutos conversacionales, 1 avatar, canal web.
+- Pro: $1,450/mes, 2,000 minutos, 3 avatares, personalización de marca completa, analítica.
+- Business: $2,900/mes, 6,000 minutos, 10 avatares, todos los canales más Kiosco IA, integraciones con CRM.
+- Enterprise: cotización a medida, multisede, tótems, SLA de 15 minutos.
+- Minutos adicionales: $1.82 (Starter), $0.59 (Pro), $0.39 (Business) por minuto.
+
+## Enlaces
+
+- [Sitio principal](https://theaihumans.com/)
+- [Servicios](https://theaihumans.com/#servicios)
+- [Planes y precios](https://theaihumans.com/#planes)
+- [Casos de éxito](https://theaihumans.com/#casos)
+- [Fundador](https://theaihumans.com/#fundador)
+- [Preguntas frecuentes](https://theaihumans.com/#faq)
+- [Agendar demo](https://theaihumans.com/agendar.html)
+- [Perfil de Google Cloud Partner](https://cloud.google.com/find-a-partner/partner/the-ai-humans)
+
+## Blog
+
+- [Leandro Camacho: quién es el fundador de AI Humans y pionero de los humanos digitales en Costa Rica](https://theaihumans.com/blog/leandro-camacho-fundador-ai-humans.html): Perfil de Leandro Camacho, fundador y CEO de AI Humans: desarrollador de IA y humanos digitales, líder de NASA Space Apps Costa Rica, ponente TEDx y competidor en 189 hackathons.
+- [Unedia: así nació la primera metahumana de una universidad pública en Costa Rica](https://theaihumans.com/blog/unedia-primera-metahumana-universidad-publica-costa-rica.html): Unedia, la metahumana de la UNED, superó 10,000 interacciones en su primera semana. Cómo se diseñó, qué hace y qué aprendimos del primer humano digital de una universidad pública tica.
+- [189 hackathons: la trayectoria de Leandro Camacho construyendo asistentes de IA en competencias de todo el mundo](https://theaihumans.com/blog/hackathons-leandro-camacho-trayectoria.html): De TechCrunch Disrupt SF a MIT Reality Hack: los hackathons en los que ha competido Leandro Camacho, fundador de AI Humans, y los asistentes de IA que ganaron.
+- [NASA Space Apps Challenge en Costa Rica: cómo se organiza el hackathon espacial más grande del mundo](https://theaihumans.com/blog/nasa-space-apps-challenge-costa-rica.html): Qué es el NASA Space Apps Challenge, quién puede participar y cómo han sido sus ediciones en Costa Rica bajo el liderazgo local de Leandro Camacho, fundador de AI Humans.
+- [Emma: el humano digital que fue anfitriona del Congreso de Medicina Estética ACCOLME 2025](https://theaihumans.com/blog/emma-humano-digital-congreso-medicina-estetica.html): Emma, asistente de IA generativa creada por Leandro Camacho, guió a los asistentes del Congreso de Medicina Estética de ACCOLME 2025 y animó una trivia con premios de patrocinadores.
+- [NIA: la plataforma costarricense de capacitación con avatares de IA que ganó el Pitch Day de Procomer en Miami](https://theaihumans.com/blog/nia-neurobrand-pitch-day-miami-avatares-capacitacion.html): NIA, plataforma de Neurobrand que capacita personal con avatares conversacionales de IA, ganó el Pitch Day de Mana Tech y Procomer en Miami en 2025. Leandro Camacho fue su director de IA.
+- [De TEDx al FMI: las charlas de Leandro Camacho sobre inteligencia artificial para todas las personas](https://theaihumans.com/blog/charlas-leandro-camacho-tedx-fmi-inteligencia-artificial.html): Las charlas, paneles y mentorías de Leandro Camacho, fundador de AI Humans: TEDxPuraVida 2019 y 2022, Reuniones Anuales del FMI 2019, Ticathon 2022 y más.
+- [De Telegram a MetaHuman: los 9 proyectos de hackathon de Leandro Camacho y lo que ganaron](https://theaihumans.com/blog/proyectos-hackathon-leandro-camacho-devpost.html): Airship Bot, Bacty Bot, Toby Bot, Dimoney Bot, NurseAI, SmileSync y más: los proyectos de hackathon de Leandro Camacho, fundador de AI Humans, con sus premios y tecnologías.
+- [Sury: el proyecto ganador del hackathon de Hacienda y el FMI que llegó a Washington](https://theaihumans.com/blog/sury-hackathon-hacienda-fmi-washington-2019.html): En 2019, Sury, de Christopher Brosse, Leandro Camacho, Keren Ramírez y Roberto Solano, ganó el hackathon de finanzas públicas de Hacienda y el FMI y se presentó en Washington.
+
+## Entrevistas y charlas en video
+
+- TEDx, Futuro en la Era Digital (2022): https://www.ted.com/talks/leandro_camacho_futuro_en_la_era_digital
+- Conexiones con Glenda Umaña, kölbi Negocios (2024), parte 1: https://www.youtube.com/watch?v=ZjbGvpyIMuk
+- Conexiones con Glenda Umaña, kölbi Negocios (2024), parte 2: https://www.youtube.com/watch?v=bxMNaxj_6WQ
+
+## Contacto
+
+Santa Ana Town Center, Santa Ana, San José, Costa Rica · +506 6051-4917 · gerencia@theaihumans.com · WhatsApp: https://api.whatsapp.com/send/?phone=50660514917
