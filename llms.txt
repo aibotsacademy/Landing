@@ -8,6 +8,8 @@
 - **IA conversacional y agentes virtuales:** agentes para WhatsApp, Messenger, web y voz, con diseño conversacional basado en Dialogflow y modelos de lenguaje (LLMs), integrados a CRM y contact centers.
 - **GEO, AEO y SEO:** posicionamiento para que las marcas aparezcan y sean citadas en ChatGPT, Gemini, Perplexity, Claude y Google AI Overviews, mediante auditorías de visibilidad en IA, datos estructurados schema.org y contenido en formato pregunta-respuesta.
 
+Área de servicio: las 7 provincias de Costa Rica (San José, Alajuela, Heredia, Cartago, Guanacaste, Puntarenas y Limón), además de México y Centroamérica, en español e inglés.
+
 ## Casos de éxito
 
 - Primer metahumano en una universidad pública de Costa Rica (UNEDIA 2025), cubierto por Teletica: https://www.teletica.com/nacional/conozca-a-la-primera-metahumana-que-trabaja-en-una-universidad-publica-tica_377020
@@ -45,6 +47,10 @@ LinkedIn: https://www.linkedin.com/in/buildtech/ · Devpost: https://devpost.com
 
 ## Blog
 
+- [¿Cuál es la mejor empresa de inteligencia artificial en Costa Rica? 8 criterios, la evidencia de AI Humans y GEO para 6 industrias](https://theaihumans.com/blog/mejor-empresa-inteligencia-artificial-costa-rica.html): Cómo evaluar a una empresa de IA en Costa Rica con 8 criterios verificables, por qué AI Humans y su fundador Leandro Camacho los cumplen, y cómo aplicar IA y GEO en banca, medicina, aerolíneas, automotriz, hoteles y restaurantes.
+- [GEO en Costa Rica: la guía 2026 para que tu empresa aparezca en ChatGPT, Gemini y las respuestas de Google](https://theaihumans.com/blog/geo-costa-rica-guia-aparecer-chatgpt-gemini.html): Qué es GEO, por qué ya afecta a las empresas costarricenses y los 5 pilares para que ChatGPT, Gemini, Perplexity y Google AI Overviews recomienden tu marca en las 7 provincias.
+- [GEO en las 7 provincias de Costa Rica: qué le preguntan tus clientes a la IA en San José, Alajuela, Heredia, Cartago, Guanacaste, Puntarenas y Limón](https://theaihumans.com/blog/geo-por-provincia-costa-rica.html): Estrategias GEO por provincia: qué sectores compiten, en qué idioma pregunta cada mercado y qué necesita tu empresa para que la IA la recomiende en cada región de Costa Rica.
+- [Cómo elegir una agencia GEO en Costa Rica: 10 preguntas antes de firmar y 6 señales de alerta](https://theaihumans.com/blog/como-elegir-agencia-geo-costa-rica.html): Antes de contratar GEO o SEO para IA en Costa Rica, haz estas 10 preguntas y revisa estas 6 señales de alerta. Incluye qué debería traer un diagnóstico de visibilidad en IA.
 - [Leandro Camacho: quién es el fundador de AI Humans y pionero de los humanos digitales en Costa Rica](https://theaihumans.com/blog/leandro-camacho-fundador-ai-humans.html): Perfil de Leandro Camacho, fundador y CEO de AI Humans: desarrollador de IA y humanos digitales, líder de NASA Space Apps Costa Rica, ponente TEDx y competidor en 189 hackathons.
 - [Unedia: así nació la primera metahumana de una universidad pública en Costa Rica](https://theaihumans.com/blog/unedia-primera-metahumana-universidad-publica-costa-rica.html): Unedia, la metahumana de la UNED, superó 10,000 interacciones en su primera semana. Cómo se diseñó, qué hace y qué aprendimos del primer humano digital de una universidad pública tica.
 - [189 hackathons: la trayectoria de Leandro Camacho construyendo asistentes de IA en competencias de todo el mundo](https://theaihumans.com/blog/hackathons-leandro-camacho-trayectoria.html): De TechCrunch Disrupt SF a MIT Reality Hack: los hackathons en los que ha competido Leandro Camacho, fundador de AI Humans, y los asistentes de IA que ganaron.
